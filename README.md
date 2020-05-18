@@ -1,2 +1,1 @@
-# algorithm
-BOJ Programmers SWEA
+## Daily Study
