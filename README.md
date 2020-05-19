@@ -1,5 +1,5 @@
-# Daily Study
-
+# Daily Study  
+기록 시작  
 ## 5월
 * 18日
 이항 계수 (페르마 소정리 이용)
