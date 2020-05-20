@@ -1,7 +1,12 @@
-# Daily Study  
-기록 시작  
-## 5월
-* 18日
+# Today I Learned  
+## 규칙
+* 기억에 남는 내용 기록
+* 1일 2개의 알고리즘 문제 해결
+
+---
+
+## 5월  
+* 18日  
 이항 계수 (페르마 소정리 이용)
 [SWEA](https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AWXGKdbqczEDFAUo&categoryId=AWXGKdbqczEDFAUo&categoryType=CODE)
 [BOJ](https://www.acmicpc.net/problem/11401)  
@@ -40,7 +45,7 @@ long long power(ll x, ll y) {
 ---
 
 * 19日  
-PL시간에서 배운 가변 인자 [참고](https://dojang.io/mod/page/view.php?id=577)
+PL시간에서 배운 가변 인자 [참고](https://dojang.io/mod/page/view.php?id=577)  
 가변 인자란 함수의 매개변수가 정해지지 않은 경우다.  
 대표적으로 C언어의 **printf**를 알아보았다.  
 ```
@@ -93,7 +98,7 @@ FOLLOW를 구하는 알고리즘은
 ```
 FIRST는 바로 직관적으로 이해되었으나 FOLLOW에서 꽤 긴 시간이 필요했다.  
 FIRST의 경우에는 생성 규칙 중 첫번째 심볼을 선택하면 되었다.  
-하지만 FOLLOW에서는 헷갈리는 부분이 많았다. [참고](https://gutte.tistory.com/129?category=1050871)여기를 통해 이해를 붙여갔다.
+하지만 FOLLOW에서는 헷갈리는 부분이 많았다. [참고](https://gutte.tistory.com/129?category=1050871)를 통해 이해를 붙여갔다.
 
 ---
 
