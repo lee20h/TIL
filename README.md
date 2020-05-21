@@ -46,6 +46,7 @@ long long power(ll x, ll y) {
 
 * 19日  
 PL시간에서 배운 가변 인자 [참고](https://dojang.io/mod/page/view.php?id=577)  
+
 가변 인자란 함수의 매개변수가 정해지지 않은 경우다.  
 대표적으로 C언어의 **printf**를 알아보았다.  
 ```
@@ -82,6 +83,7 @@ va_end: 가변 인자 처리가 끝났을 때 포인터를 NULL로 초기화
 
 * 20日  
 compiler과제로 LR Parser를 c++로 구현해야한다.  
+
 FIRST와 FOLLOW에 대해 공부하였다.  
 먼저 FIRST를 구하는 알고리즘은  
 ```
@@ -102,3 +104,96 @@ FIRST의 경우에는 생성 규칙 중 첫번째 심볼을 선택하면 되었�
 
 ---
 
+* 21日  
+Operating System수업에서 CPU Synchronization에 대해 배웠다.  
+CPU 동기화하는데에 있어 **Race Condition** 문제점이 있는데
+```
+//count = 5일때 counter++, counter-- 연산
+S0: producer execute register1 = counter {register1 = 5}  
+S1: producer execute register1 = register1 + 1 {register1 = 6}  
+S2: consumer execute register2 = counter{register2 = 5}  
+S3: consumer execute register2 = register2 –1 {register2 = 4}  
+S4: producer execute counter = register1 {counter = 6 }  
+S5: consumer execute counter = register2 {counter = 4}
+```  
+이런식으로 실행할 때마다 답이 달라지는 경우를 Race Condition이라고 한다.  
+프로세스끼리 변수를 공유하여 만들어진 시스템에 있어서 같은 변수를 사용하거나 table을 업데이트하거나 file을 쓰는 코드가 쓰인 부분을 **Critical Section**이라고 한다.  
+Critical Section은 Entry Section과 Exit Section으로 나누어지는데 나머지를 Remainder Section이라 부른다.  
+![Critical Section](https://www.geeksforgeeks.org/wp-content/uploads/gq/2015/06/critical-section-problem.png)  
+Critical Section은 3가지 필요조건을 만족해야한다.  
+*1. Mutual Exclusion* - 한 프로세스가 C-S을 수행중이라면 다른 프로세스들은 C-S을 수행할 수 없다.  
+*2. Progress* - C-S을 수행하는 프로세스가 없고 C-S을 수행하고자하는 프로세스가 있을 때 반드시 수행되어야 한다.  
+*3. Bounded Waiting* - C-S을 요청한 프로세스는 무한히 대기하면 안된다.  
+이 세가지 조건을 다 만족한 Peterson's Solution을 봐보자  
+```
+// int turn = 0; bool flag[3]; flag[1] = flag[2] = false;
+//Process P₁			//Process P₂
+flag[1] = true;			flag[2] = true;
+turn = 1;				turn = 0;
+while (flag[2] && (turn == 1));	while (flag[1] && (turn == 0));
+	critical section			critical section
+flag[1] = false;			flag[2] = false;
+	remainder section			remainder section
+```
+이러한 3가지 조건을 만족하는 해결법은 크게 소프트웨어적, 하드웨어적 해결법으로 나뉜다.  
+소프트웨어적 해결법은 test_and_set과 compare_and_swap 등이 있다.  
+```
+boolean test_and_set (boolean * target) {
+	boolean * rv = * target;
+	*target = TRUE;
+	return rv;
+}
+// 인자 값을 그대로 반환하되, 인자를 TRUE로 변경한다.
+do{
+	while (test_and_set(&lock)); /* do nothing */
+		/* critical section */
+	lock = false;
+		/* remainder section */
+	} while (true);
+// lock이 false로 초기화되어있으므로 처음엔 바로 C-S을 수행하지만 lock이 true가 되어 다른 프로세스들은 수행하지 못한다. 이후 lock을 바꾸면서 수행하여 Mutual Exclusion 조건을 해결하였다.
+
+do {
+	waiting[i] = true;
+	key = true;
+	while (waiting[i] && key)
+		key = test_and_set(&lock);
+	waiting[i] = false;
+	/* critical sectioin */
+	next = (i+1) % n;
+	while ((next != i) && !waiting[next])
+		next = (next + 1) % n;
+	if (next == i)
+		lock = false;
+	else
+		waiting[next] = false;
+	/*remainder section */
+} while (true);
+이 코드는 Bounded Waiting도 해결한 코드이다.
+```
+
+```
+int compare_and_swap(int *value, int expected, int new_value) {
+	int temp = *value;
+	if (*value == expected)
+		*value = new_value;
+	return temp;
+}
+do {
+	while (compare_and_swap(&lock, 0, 1) != 0);
+			/* do nothing */
+		/* ciritcal section */
+	lock = 0;
+		/* remainder section */
+	} while (true);
+이 방법 또한 Mutual exlusion 을 해결했다. 차이점은 반환형이 다르다는 점이다.
+```
+하드웨어적 해결법은 3가지가 있다.  
+*1. Mutex lock (spinlock)* - 가장 기본적인 형태의 방법이다. acquire()와 release()로 잠금과 잠금해제를 한다. 잠그면 CS에 접근할 수 없다.
+*2. Semaphore* - Binary와 Counting으로 나뉘어서 spinlock과 비슷하게 P()와 V()을 사용한다.  
+*3. Monitor* - 가장 high-level부분으로 가장 사용하기 편한 방법이라고 하나 크게 다루지 않았다.  
+추가적으로 Deadlock과 Starvation이 있는데  
+먼저 Deadlock은 여러 프로세스들이 수행될 때 프로세스 전부 wait상태에 빠진 경우다.  
+Starvation은 특정 프로세스의 우선순위가 낮아서 자원 할당을 받지 못하는 경우이다.  
+각각 코드와 내용은 이어서 공부할 것이다.  
+
+---
