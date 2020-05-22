@@ -2,6 +2,7 @@
 ## 규칙
 * 기억에 남는 내용 기록
 * 1일 2개의 알고리즘 문제 해결
+* markdown으로 작성
 
 ---
 
@@ -127,13 +128,13 @@ Critical Section은 3가지 필요조건을 만족해야한다.
 이 세가지 조건을 다 만족한 Peterson's Solution을 봐보자  
 ```
 // int turn = 0; bool flag[3]; flag[1] = flag[2] = false;
-//Process P₁			//Process P₂
-flag[1] = true;			flag[2] = true;
-turn = 1;				turn = 0;
-while (flag[2] && (turn == 1));	while (flag[1] && (turn == 0));
-	critical section			critical section
-flag[1] = false;			flag[2] = false;
-	remainder section			remainder section
+//Process P₁			|	//Process P₂
+flag[1] = true;			|	flag[2] = true;
+turn = 1;				|	turn = 0;
+while (flag[2] && (turn == 1));	|	while (flag[1] && (turn == 0));
+	critical section		|		critical section
+flag[1] = false;			|	flag[2] = false;
+	remainder section		|		remainder section
 ```
 이러한 3가지 조건을 만족하는 해결법은 크게 소프트웨어적, 하드웨어적 해결법으로 나뉜다.  
 소프트웨어적 해결법은 test_and_set과 compare_and_swap 등이 있다.  
@@ -188,12 +189,28 @@ do {
 이 방법 또한 Mutual exlusion 을 해결했다. 차이점은 반환형이 다르다는 점이다.
 ```
 하드웨어적 해결법은 3가지가 있다.  
-*1. Mutex lock (spinlock)* - 가장 기본적인 형태의 방법이다. acquire()와 release()로 잠금과 잠금해제를 한다. 잠그면 CS에 접근할 수 없다.
+*1. Mutex lock (spinlock)* - 가장 기본적인 형태의 방법이다. acquire()와 release()로 잠금과 잠금해제를 한다. 잠그면 CS에 접근할 수 없다.  
 *2. Semaphore* - Binary와 Counting으로 나뉘어서 spinlock과 비슷하게 P()와 V()을 사용한다.  
 *3. Monitor* - 가장 high-level부분으로 가장 사용하기 편한 방법이라고 하나 크게 다루지 않았다.  
 추가적으로 Deadlock과 Starvation이 있는데  
 먼저 Deadlock은 여러 프로세스들이 수행될 때 프로세스 전부 wait상태에 빠진 경우다.  
 Starvation은 특정 프로세스의 우선순위가 낮아서 자원 할당을 받지 못하는 경우이다.  
 각각 코드와 내용은 이어서 공부할 것이다.  
+
+---
+
+* 22日  
+연속합을 복습하였다. 예전에 스터디에서 최대 부분 배열 합이라는 이름으로 CSES에서 문제를 풀었는데 SWEA와 BOJ에 비슷한 문제가 있어서 다시 풀어보았다.  
+[CSES](https://cses.fi/problemset/task/1643) [BOJ](https://www.acmicpc.net/problem/1912) [SWEA](https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AWXQm2SqdxkDFAUo&categoryId=AWXQm2SqdxkDFAUo&categoryType=CODE&&&)  
+기본적으로 비슷한 문제로 처음에 떠올린 방법은 시간 복잡도 O(n)을 가졌다. 하지만 시간초과로 제대로 해결하지 못하였는데 이 부분은 O(1)로 구현해야했다. 그래서 밑과 같은 방식으로 복습하여 구현하였다.
+```
+int best = v[0], sum = 0; // best인 값은 초기에 첫번째 배열로 설정하고 합은 0으로 설정한다.
+for (int i=0; i<n; i++) {
+	if(sum + v[i] < v[i]) sum = v[i]; // if(sum < 0)과 동일 sum이 0보다 작으면 v[i]로 새롭게 초기화시켜준다.
+	else sum += v[i]; // sum이 양수거나 0과 같다면 sum에 현재 인덱스부분을 더해준다.
+	best = max(best,sum); // best는 best와 sum중 큰 값으로 갱신해준다.
+}
+```
+와 같은 알고리즘으로 구현하게 되면 연속적인 값들의 합을 구할 때 시간복잡도 O(1)로 구할 수 있다.
 
 ---
