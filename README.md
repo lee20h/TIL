@@ -214,3 +214,26 @@ for (int i=0; i<n; i++) {
 와 같은 알고리즘으로 구현하게 되면 연속적인 값들의 합을 구할 때 시간복잡도 O(1)로 구할 수 있다.
 
 ---
+
+* 23日  
+Algorithm 과제로 내준 그래프 이론에 대해 공부하였다.  
+1. [BFS](https://github.com/lee20h/Algoritm/blob/master/graph/BFS.cpp)  
+2. [DFS](https://github.com/lee20h/Algoritm/blob/master/graph/DFS.cpp)  
+3. [Prim](https://github.com/lee20h/Algoritm/blob/master/graph/Prim.cpp)
+4. [Kruskal](https://github.com/lee20h/Algoritm/blob/master/graph/Kruskal.cpp)  
+BFS와 DFS는 평소 알고리즘 문제를 풀어오니까 빠르게 해결할 수 있었다. 그와 반해 Prim과 Kruskal은 겉핥기식으로 가볍게 보고 넘어갔다보니 이번에 다시 문제를 받고 풀어볼려고 하니 당혹스러웠다.  
+작년에 자료구조 수업에서 그래프를 배울 때 제대로 배워뒀어야 했다.  
+Prim 알고리즘은 MST 즉 최소 비용 신장 트리를 구현할 때 사용하는 알고리즘으로,  
+임의의 점에서 시작해서 간선을 추가하면서 트리를 점점 키워간다.  
+1) 트리를 키워갈 때는 간선중 가장 작은 것을 선택  
+2) 사이클이 이뤄지면 안됨  
+![prim](https://t1.daumcdn.net/cfile/tistory/232ACE3F570B903F30)  
+(출처 : http://cbb1225.tistory.com/entry/%EC%B5%9C%EC%86%8C-%EC%8B%A0%EC%9E%A5-%ED%8A%B8%EB%A6%ACMinimum-Cost-Spanning-Trees)  
+Kruskal 알고리즘 또한 Prim 알고리즘과 같이 MST를 만드는 알고리즘이다.  
+Kruskal 알고리즘은 Greedy algorithm과 같이 매번 최선의 선택을 하여 모든 정점을 최소 비용으로 연결하는 트리를 구하는 것이다.  
+원래 Greedy algorithm으로 구한 답은 최적의 해답이라고 보장 할 수 없어서 검증이 필요하지만 Kruskal 알고리즘은 최적의 해답을 주는 것으로 증명이 되어있다.  
+![kruskal](https://gmlwjd9405.github.io/images/algorithm-mst/kruskal-example2.png)  
+(출처 : https://gmlwjd9405.github.io/2018/08/29/algorithm-kruskal-mst.html)  
+이 알고리즘 또한 사이클을 형성하면 안된다. union-find 알고리즘을 이용하여 사이클이 형성되나 확인한다.  
+
+--- 
