@@ -237,3 +237,49 @@ Kruskal 알고리즘은 Greedy algorithm과 같이 매번 최선의 선택을 �
 이 알고리즘 또한 사이클을 형성하면 안된다. union-find 알고리즘을 이용하여 사이클이 형성되나 확인한다.  
 
 --- 
+
+* 24日  
+Compiler 과제를 만들기 앞서 공부를 진행하였다.  
+오늘은 SLR파싱에 대해 공부하고, 테이블을 공부했다. [참고](http://courses.washington.edu/css448/zander/Notes/SLRtable.pdf) [참고2](http://blog.naver.com/PostView.nhn?blogId=moonsoo5522&logNo=220726316745&categoryNo=31&parentCategoryNo=0&viewDate=&currentPage=1&postListTopCurrentPage=1&from=postView)  
+**SLR Parsing**은 Simple Left-to-right scan of input Rightmost derivation in reverse의 준말로 bottom-up 파싱 방법의 일종이다.  
+단말노드로부터 생성규칙을 적용하면서 올라가는 방식이다. LL parsing에 비해 파싱 테이블을 얻기 어렵지만 효율적이고 에러 발견이 빠르다.  
+먼저 LR(0)방식으로 상태를 구하고 테이블을 구성할 때에 SLR(1)방식을 사용한다.  
+```
+(1) E -> E + T
+(2) E -> T
+(3) T -> T * F
+(4) T -> F
+(5) F -> ( E )
+(6) F -> a
+```  
+이러한 문법이 있다고 가정한다. LR parsing에는 dot이라는 기호가 있는데 dot 뒤에 있는 symbol이 *Mark Symbol*이다.  
+1) Mark Symbol이 non-terminal symbol인 경우는 closure한 모든 생성 규칙을 구한 뒤 dot을 한칸 옮겨 Mark Symbol을 옮긴다.  
+2) Mark Symbol이 terminal symbol인 경우는 바로 dot을 한칸 뒤로 옮겨 Mark symbol을 바꾼다.  
+3) dot 뒤에 아무것도 없는 경우는 해당 생성 규칙의 좌항 non-terminal symbol의 FOLLOW을 구한다.  
+![생성규칙으로 만든 그림](http://postfiles12.naver.net/20160602_123/moonsoo5522_1464875245472voI5t_JPEG/%C1%A6%B8%F1_%BE%F8%C0%BD.jpg?type=w2)  
+위의 규칙에 따라 dot을 옮겨가며 만들어진 그림이다. 이 그림을 통해서 파싱 테이블을 구성하면 된다. start symbol에서의 FOLLOW는 $을 주면 된다.  
+
+|q / symbol | E | T | F | ( | ) | + | * | a | $ |
+|:--------|:--------:|--------:|:--------|:--------:|--------:|:--------:|:--------:|:--------:|:--------:|
+| q0 | q1 | q2 | q3 | sq4 |  |  |  | sq5 |  |
+| q1 |  |  |  |  |  | sq6 |  |  | accept |
+| q2 |  |  |  |  | r2 | r2 | sq7 |  | r2 |
+| q3 |  |  |  |  | r4 | r4 | r4 |  | r4 |
+| q4 | q8 | q9 |  | sq4 |  |  |  | sq5 |  |
+| q5 |  |  |  |  | r6 | r6 | r6 |  | r6 |
+| q6 |  | q10 | q7 | sq4 |  |  |  | sq5 |  |
+| q7 |  |  | q11 | sq4 |  |  |  | sq5 |  |
+| q8 |  |  |  |  | sq12 | sq6 |  |  |  |
+| q9 |  |  |  |  | r2 | r2 | sq7 |  | r2 |
+| q10 |  |  |  |  | r1 | r1 | sq7 |  | r1 |
+| q11 |  |  |  |  | r3 | r3 | r3 |  | r3 |
+| q12 |  |  |  |  | r5 | r5 | r5 |  | r5 |
+  
+non-terminal symbol을 보고갈 때 -> 상태 전이  
+terminal symbol을 보고갈 때 -> 시프트 및 상태전이  
+모든 symbol을 다 봤을 때 -> FOLLOW set을 보고 reduce (reduce 번호는 production rule에 매겼던 번호.)  
+reduce 번호가 E' -> E 같은 시작 심볼일 경우에는 accpet 처리를 한다.  
+
+(출처 : http://blog.naver.com/PostView.nhn?blogId=moonsoo5522&logNo=220726316745&categoryNo=31&parentCategoryNo=0&viewDate=&currentPage=1&postListTopCurrentPage=1&from=postView)
+
+---
