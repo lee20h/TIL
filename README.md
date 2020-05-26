@@ -1,4 +1,4 @@
-# Today I Learned  
+# 📙 Today I Learned  
 ## 규칙
 * 기억에 남는 내용 기록
 * 1일 2개의 알고리즘 문제 해결
@@ -317,4 +317,56 @@ for (int k=1; k<100; k++) {
 ```
 k가 길이, i가 열, j가 행으로 잡고 길이가 k일때 (i,j)에서 시작하는 회문을 찾고 있으면 길이를 반환해서 len값과 비교해서 큰 값을 len에 넣는다.  
 
+---
+
+* 26日
+다익스트라, 벨만포드, 플루이드 워셜 알고리즘에 대해 공부해보았다.  
+먼저 **다익스트라** 알고리즘은 프림의 알고리즘와 같이 주어진 시작점을 루트로 한다. 그리고 루트로부터 최단 길이 트리(SPT)를 만든다. 알고리즘이 진행되면서 가장 짧고 포함되어지지 않은 정점을 찾아서 포함시킨다.  
+1) SPT에 포함되는 정점을 추적하기 위한 sptSet을 만든다. 즉 그 정점의 최단거리는 계산되어 결정되었다. 처음에 이 set은 비었다.  
+2) 그래프의 모든 정점에 거리(가중치) 값을 준다. 모든 거리는 처음에 무한대로 설정한다. 그리고 source 정점에는 0 값을 주어 처음에 선택되도록 한다.  
+3) 모든 정점이 sptSet에 포함될 때 까지 반복한다.  
+	a) 아직 sptSet에 포함되지 않았고 가장 짧은 길이를 갖진 정점 u를 선택한다.  
+	b) 이를 sptSet에 포함한다.  
+	c) 정점 u에 인접한 모든 정점의 거리를 업데이트한다. 정점의 거리를 업데이트하기 위해, 모든 정점을 반복한다. 모든 정점 v에 대해서, 정점 u의 값과 u-v 간선의 가중치의 합이 정점 v의 값보다 작다면 정점 v의 거리 값을 갱신한다.  
+![Dijsktra1](https://www.geeksforgeeks.org/wp-content/uploads/Fig-11.jpg)  
+처음 시작할 때 sptSet은 비어있고 시작점 은 0, 그외 모든 정점은 무한대 값으로 할당한다. 그 후 가장 작은 거리값을 가진 정점을 선택한다. 처음에는 0으로 할당된 시작 점을 sptSet에 포함 시킨 후 인접한 정점들의 거리를 갱신한다.  
+![Dijsktra2](https://www.geeksforgeeks.org/wp-content/uploads/MST1.jpg)  
+초록색은 sptSet에 포함된 경우, 빨간색은 인접한 정점 중 sptSet에 포함되지 않은 경우이다.  
+계속 3번 방법을 반복하면
+![Dijsktra3](https://www.geeksforgeeks.org/wp-content/uploads/DIJ2.jpg)  
+![Dijsktra4](https://www.geeksforgeeks.org/wp-content/uploads/DIJ3.jpg)  
+![Dijsktra5](https://www.geeksforgeeks.org/wp-content/uploads/DIJ4.jpg)  
+![Dijsktra6](https://www.geeksforgeeks.org/wp-content/uploads/DIJ5.jpg)  
+이런식으로 다익스트라 알고리즘으로 SPT을 찾을 수 있다.  
+특징으로는 모든 정점을 들려야하며 다 돈다면 O(V²)의 시간복잡도를 가지며 구현시에는 우선순위 큐를 사용하면 쉽게 구현이 가능하다. 그리드 알고리즘에 속하며 음의 값을 가지면 안된다.  
+
+**벨만포드** 알고리즘 또한 모든 정점의 최단거리를 구하는 알고리즘이다. 하지만 다익스트라 알고리즘과의 차이점은 음의 값을 가질 수 있다는 점이 다르다. 그리고 시간 복잡도 또한 O(VE)로 다익스트라보다 긴 시간 복잡도를 가졌다.  
+1) 첫번째로 src로 부터 모든 정점의 거리를 무한대로 초기화 한다. 그리고 src의 거리는 0으로 초기화 한다. 정점의 개수만큼의 dist[] 배열을 만든다.  
+2) 다음으로 최단거리를 계산한다. |V|-1 번 만큼 아래 단계를 반복한다.  
+	a) dist[v] > dist[u] + 간선 uv의 가중치 라면 dist[v]를 dist[u]+ 간선 uv의 가중치로 갱신한다.  
+![Bellman-Ford1](https://cdncontribute.geeksforgeeks.org/wp-content/uploads/bellmanford1.png)  
+시작 정점은 0, 그외 모든 정점은 무한대로 초기화시킨다.  
+![Bellman-Ford2](https://cdncontribute.geeksforgeeks.org/wp-content/uploads/bellmanford2.png)  
+이후엔 방법대로 반복한다.  
+![Bellman-Ford3](https://cdncontribute.geeksforgeeks.org/wp-content/uploads/bellmanford3.png)  
+
+**플루이드 와샬** 알고리즘은 다익스트라와 벨만포드 알고리즘은 처음에 시작하는 정점을 정하는거와 달리 모든 정점들의 최단 거리를 구하는 알고리즘이다. 플루이드 와샬 알고리즘은 처음 배우고 아직도 기억에 남는 알고리즘이다.  
+첫번째로 그래프 메트릭스와 같은 솔루션 메트릭스를 초기화 한다. 그 다음 모든 정점을 중간 정점으로 고려하면서 솔루션 메트릭스를 갱신할 것이다. 이 알고리즘의 아이디어는 모든 정점을 하나하나 선택하여 모든 최단거리를 갱신하는 것인데, 선택된 정점을 중간 정점으로 포함하는 것이다. 정점 K를 중간 정점으로 선택한다면, 이미 {1,2,3, ... k-1}의 정점들은 중간 정점으로 구려된 후이다. 모든 정점의 쌍 (i, j)을 시작점과 끝점으로 여긴다면, 두가지 가능성이 있다.  
+1) K는 최단거리 (i, j)의 중간 정점이 아니기 때문에 d[i][j]를 그대로 유지한다.  
+2) K가 최단거리 (i, j)의 중간 정점에 포함된다. 때문에 만약 d[i][j]의 값이 d[i][k] + d[k][j] 값보다 크다면 d[i][j]의 값을 d[i][k] + d[k][j] 로 갱신해야한다.  
+![Floyd-Warshall](https://cdncontribute.geeksforgeeks.org/wp-content/uploads/dpFloyd-Warshall-.jpg)  
+```
+k = 거쳐가는 노드 i = 출발 노드 j = 도착노드 
+for (int k = 0; k< number; k++) {
+	for (int i=0; i < number; i++) {
+		for (int j=0; j < number; j++) {
+			if(d[i][k] + d[k][j] < d[i][j]) {
+				d[i][j] = d[i][k] + d[k][j];
+			}
+		}
+	}
+}
+```  
+와 같이 정리 될 수 있다.  
+(출처 : [다익스트라](https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/) [벨만포드](https://www.geeksforgeeks.org/bellman-ford-algorithm-dp-23/) [플루이드-와샬](https://www.geeksforgeeks.org/floyd-warshall-algorithm-dp-16/)  
 ---
