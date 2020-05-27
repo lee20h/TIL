@@ -355,6 +355,7 @@ k가 길이, i가 열, j가 행으로 잡고 길이가 k일때 (i,j)에서 시�
 1) K는 최단거리 (i, j)의 중간 정점이 아니기 때문에 d[i][j]를 그대로 유지한다.  
 2) K가 최단거리 (i, j)의 중간 정점에 포함된다. 때문에 만약 d[i][j]의 값이 d[i][k] + d[k][j] 값보다 크다면 d[i][j]의 값을 d[i][k] + d[k][j] 로 갱신해야한다.  
 ![Floyd-Warshall](https://cdncontribute.geeksforgeeks.org/wp-content/uploads/dpFloyd-Warshall-.jpg)  
+내가 문제를 풀이하면서 이해한 소스이다.  
 ```
 k = 거쳐가는 노드 i = 출발 노드 j = 도착노드 
 for (int k = 0; k< number; k++) {
@@ -367,6 +368,20 @@ for (int k = 0; k< number; k++) {
 	}
 }
 ```  
-와 같이 정리 될 수 있다.  
+
 (출처 : [다익스트라](https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/) [벨만포드](https://www.geeksforgeeks.org/bellman-ford-algorithm-dp-23/) [플루이드-와샬](https://www.geeksforgeeks.org/floyd-warshall-algorithm-dp-16/)  
+
 ---
+
+* 27日  
+오늘은 Compiler 과제를 진행하는 도중 아무리 생각해도 이전 내용을 잘 이해한거 같지 않아서 다시 복습을 진행했다.  
+[블로그](https://talkingaboutme.tistory.com/category/About%20Study/Compiler)에서 복습을 해보니 정말 정리를 잘하셨고 예제를 통해서 이해가 쏙쏙되었다. 모르고 놓치고 온 개념이 있을까봐 포스팅 처음부터 읽어보았는데 수업에서는 넘어갔던 부분도 있어서 LR Parser 구현에 도움이 되었다. 이 블로그에서 포스팅한 Top-Down, Bottom-Up parsing을 내가 이해한 방식대로 적어볼려 한다.  
+**Top-Down Parsing**은 Tree의 위에서부터 차례대로 Parsing을 한다는 의미로, 보기 쉽게 Tree 형식으로 만들어놓고 실제로 Parsing될 때는 왼쪽에서부터 오른쪽으로 String을 검색한다. 이러한 방식을 Left Recursive라고 하며, Top-Down Parsing을 Recursive Descent Parsing이라고 한다.  
+Parsing Tree를 그릴 때 결과물을 하나의 node로 표현한다. Terminal은 leaf node로, Nonterminal은 Derivation을 거친다. 알고리즘에서 흔히 말하는 백트래킹과 같이 탐색하면서 원하는 답을 구한다. 따라서 시간이 많이 걸린다.  
+백트래킹이 가진 약점을 보완하기 위해 **Predictive Parsing**이 있다. 한 단계 이후의 결과를 미리 예상하고 경로를 정하기 때문에 결과가 틀려서 백트래킹을 할 필요가 없어진다. 이러한 개념이 Lookahead이며, LR(k)로 k단계 앞을 본다고 표기한다.  
+**Bottom-up** parsing은 leave에서 root를 찾아가는 방식으로 Top-down에서 overhead가 많았던 점 때문에 대부분의 컴파일러는 Bottom-up 방식을 택한다. 주어진 입력부터 Reduction과 Shift을 통해서 최종 Root와 비교하는 방법이다. Reduction을 언제 할지 정해주는게 Handle이다. 이것은 Parsing할 때 초점을 맞춰주는 substring이라고 한다. Top-down에서는 production 된게 handdle이라면 Bottom-up에서는 reduction한게 handdle이라고 한다. Top-down에서 하는 방식대로 leftmost을 준수 할 필요 없이 grammar중에서 input과 일치하는게 있으면 reduction 하는 방식대로 이루어지는데 이것을 *Handle Pruning*이라고 한다.  
+LR Parser을 만들기 위해 복습을 철저히 하고 빨리 개발에 들어가야겠다.  
+
+---  
+
+
