@@ -384,4 +384,158 @@ LR Parser을 만들기 위해 복습을 철저히 하고 빨리 개발에 들어
 
 ---  
 
+* 28日  
+운영체제 수업에서 CPU동기화에 신경써야할 문제에 대해 배웠다.  
+1) Bounded-Buffer Problem  
+2) Readers-Writers Problem  
+3) Dining-Philosophers Problem  
+Bounded-Buffer Problem은  
+![Bounded-Buffer](./img/Bounded-Buffer.jpg)  
+이러한 그림으로 생산자와 소비자가 같은 버퍼를 점유할 때 일어나는 문제이다.  
+*Bounded-Buffer Problem Solution*  
+Empty : 버퍼 내에 저장할 공간이 있음을 표시, 생산자의 진입을 관리  
+Full : 버퍼 내에 소비할 아이템이 있음을 표시, 소비자의 진입을 관리  
+Mutex : 버퍼에 대한 접근을 관리, 생산자와 소비자가 empty, full 세마포어에 진입한 경우 버퍼의 상태 값을 변경하기위한 세마포어  
+세마포어 value의 초기값은 full = 0, empty = n, mutex = 1로 생산자와 소비자의 프로세스을 정리한다.  
+```
+생산자 프로세스					소비자 프로세스
+Do {						Do {
+	...						wait(full);
+	/* produce an item in next_produced */		wait(mutex);
+	...						...
+	wait(empty);					/* remove an item from buffe to next_consumed */
+	wait(mutex);					...
+	...						signal(mutex);
+	/* add next produced to the buffer */			signal(empty);
+	...						...
+	signal(mutex);					/* consume the item in next consumed */
+	siganl(full);					...
+} while(true);					} while(true);
+```  
 
+*Readers-Writers Problem*은  
+![Readers-Writers](./img/Readers-Writers.jpg)  
+- Readers : 공유 데이터를 읽는다.
+	+ 여러 Reader는 동시에 데이터를 접근할 수 있다.  
+- Writers : 공유 데이터에 쓴다.
+	+ Writer가 데이터를 수정할 때는 reader나 다른 writer가 접근하면 안된다.  
+```
+/* do while 생략 */
+1)  
+Writer						Reader
+wait(wrt);		//entry section			wait(mutex);
+		...				readcount++;
+writing is performed // critical section			if (readcount == 1)
+		...					wait(wrt);		//어떤 writer도 수행X
+signal(wrt);	//exit section			signal(mutex);
+							... reading is performed... // critical section
+						wait(mutex);
+						readcount--;
+						if (readcount == 0)	
+							signal(wrt);
+						signal(mutex);
+```  
+이때 Writer의 Starvation이 일어난다. 그 이유는 계속 Reader들이 진입하게되면 Writer는 Critical section에 진입할 수 없기 때문이다.  
+
+```
+2)
+Writer						Reader
+wait(wmutex); // Writer Process entry section		wait(read); // Reader Process entry section
+writedcount++;					signal(read);
+if (writecount == 1)				wait(rmutex);
+	wait(read);				readcount++;
+signal(wmutex);					if (readcount == 1)
+wait(wrt);							wait(wrt);
+...writing is performed... // critical section		signal(rmutex);
+signal(wrt); // Writer Process exit section		...reading is performed... // critical section
+wait(wmutex);					wait(rmutex); // Reader Process exit sectioin
+writecount--;					readcount--;
+if (writecount == 0)				if (readcount == 0)
+	signal(read);					signal(wrt);
+signal(wmutex);					signal(rmutex);
+```  
+`1)`의 Writer의 starvation을 해결하기 위해 짜여졌으나 `2)`에서는 Reader들이 오히려 starvation에 빠지게 된다.  
+Reader가 초기값으로 진입했다면 Reader들이 계속 진입하다가 Writer가 진입하게되면 진입한 Reader이 모두 수행하면 Writer가 수행된다. 이 때 Reader가 더 이상 진입하지 못하여 Starvation이 일어난다.  
+또, Writer가 초기값으로 진입해서 계속 Writer만 진입한다면 Reader가 Starvation에 빠지게 된다.  
+```
+3)
+Writer						Reader
+wait(mutex); // Writer Process entry section		wait(mutex); // Reader Process entry section
+if(rc>0 || wc>0 || rwc>0 || wwc>0) {			if(wc>0 || wwc>0) {
+	wwc++;						rwc++;
+	signal(mutex);					signal(mutex);
+	wait(wrt);						wait(read);
+	wait(mutex);					wait(mutex);
+	wwc--;						rwc--;
+}						}
+wc++;						rc++;
+signal(mutex);					signal(mutex);
+...writing is performed // critical section		...reading is performed // critical section
+wait(mutex); // Writer Process exit section		wait(mutex); // Reader Process exit section
+wc--;						rc--;
+if(rwc>0) {					if(rc == 0 && wwc>0)
+	for (i=0; i<rwc; i++)				signal(wrt);
+		signal(read);			signal(mutex);
+}
+else
+	if (wwc>0) signal(wrt);
+signal(mutex);
+```
+`3)`의 경우에는 모든 문제가 해결되어 동기화가 잘 이루어진다.  
+Writer는 작업이 수행되거나 대기중인 다른 reader, writer가 있다면 대기한다. 그리고 수행 후 대기중인 reader들을 모두 수행한다.  
+Reader는 writer가 기다리거나 작업중이라면 대기한다. Reader가 다 수행되면 대기 중인 writer을 수행한다.  
+
+*Dining-Philosophers Problem*은  
+![Dining-Philosopher](./img/Dining-Philosophers.jpg)  
+그림과 같이 젓가락이 5개가 있을 때 자신과 이웃한 젓가락만 들 수 있으며 젓가락을 2개 들었을 때 식사가 가능하다.  
+```
+1)
+do {
+		...
+		think
+		...
+	wait(chopstick[i])
+	wait(chopstick[(i+1) % 5])
+		...
+		eat
+		...
+	signal(chopstick[i])
+	signal(chopstick[(i+1) % 5])
+		...
+} while(1);
+```
+동시에 젓가락을 집으면 deadlock이 발생한다.
+```
+2)
+do {
+		...
+		think
+		...
+	take_chopsticks(i);
+		...
+		eat
+		...
+	put_chopsticks(i)
+		...
+} while(1);
+
+take_chopstics(int i) {				put_chopsticks(int i) {
+	wait(mutex);					wait(mutex);
+	state[i] = HUNGRY;					state[i] = THINK;
+	test(i);						test(LEFT);
+	signal(mutex);					test(RIGHT);
+	signal(self[i]);					signal(mutex);
+}						}
+
+test(int i) {
+	if (state[i] == HUNGRY && state[LEFT] != EATING && state[RIGHT] != EATING) {
+		state[i] = EATING;
+		signal(self[i]);
+	}
+}
+```  
+`2)`의 전략은 철학자들이 좌우 젓가락이 사용 가능할 때 critical section에 진입하여 deadlock과 starvation을 해결하였다.  
+
+오늘은 CPU 동기화 문제를 일으키는 부분을 3가지로 케이스로 나눠서 솔루션까지 공부해보았다.
+
+---
