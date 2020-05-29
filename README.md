@@ -319,7 +319,7 @@ k가 길이, i가 열, j가 행으로 잡고 길이가 k일때 (i,j)에서 시�
 
 ---
 
-* 26日
+* 26日  
 다익스트라, 벨만포드, 플루이드 워셜 알고리즘에 대해 공부해보았다.  
 먼저 **다익스트라** 알고리즘은 프림의 알고리즘와 같이 주어진 시작점을 루트로 한다. 그리고 루트로부터 최단 길이 트리(SPT)를 만든다. 알고리즘이 진행되면서 가장 짧고 포함되어지지 않은 정점을 찾아서 포함시킨다.  
 1) SPT에 포함되는 정점을 추적하기 위한 sptSet을 만든다. 즉 그 정점의 최단거리는 계산되어 결정되었다. 처음에 이 set은 비었다.  
@@ -390,7 +390,7 @@ LR Parser을 만들기 위해 복습을 철저히 하고 빨리 개발에 들어
 2) Readers-Writers Problem  
 3) Dining-Philosophers Problem  
 Bounded-Buffer Problem은  
-![Bounded-Buffer](./img/Bounded-Buffer.jpg)  
+![Bounded-Buffer](./img/Bounded-Buffer.JPG)  
 이러한 그림으로 생산자와 소비자가 같은 버퍼를 점유할 때 일어나는 문제이다.  
 *Bounded-Buffer Problem Solution*  
 Empty : 버퍼 내에 저장할 공간이 있음을 표시, 생산자의 진입을 관리  
@@ -414,7 +414,7 @@ Do {						Do {
 ```  
 
 *Readers-Writers Problem*은  
-![Readers-Writers](./img/Readers-Writers.jpg)  
+![Readers-Writers](./img/Readers-Writers.JPG)  
 - Readers : 공유 데이터를 읽는다.
 	+ 여러 Reader는 동시에 데이터를 접근할 수 있다.  
 - Writers : 공유 데이터에 쓴다.
@@ -486,7 +486,7 @@ Writer는 작업이 수행되거나 대기중인 다른 reader, writer가 있다
 Reader는 writer가 기다리거나 작업중이라면 대기한다. Reader가 다 수행되면 대기 중인 writer을 수행한다.  
 
 *Dining-Philosophers Problem*은  
-![Dining-Philosopher](./img/Dining-Philosophers.jpg)  
+![Dining-Philosopher](./img/Dining-Philosophers.JPG)  
 그림과 같이 젓가락이 5개가 있을 때 자신과 이웃한 젓가락만 들 수 있으며 젓가락을 2개 들었을 때 식사가 가능하다.  
 ```
 1)
@@ -537,5 +537,50 @@ test(int i) {
 `2)`의 전략은 철학자들이 좌우 젓가락이 사용 가능할 때 critical section에 진입하여 deadlock과 starvation을 해결하였다.  
 
 오늘은 CPU 동기화 문제를 일으키는 부분을 3가지로 케이스로 나눠서 솔루션까지 공부해보았다.
+
+---
+
+* 29日  
+오늘은 이전에 하던 컴파일러 공부를 이어서 하였다. LR Parser을 구현하기 위해서 필요한 Shift연산과 Reduce연산에 대해 제대로 공부했다. [참조](https://talkingaboutme.tistory.com/entry/Compiler-Shift-Reduce-Parsing?category=484576)  
+Reduce 동작은 Top-down에서 했던 Product을 반대로 행한다고 생각하면 된다.  
+```
+cD -> Z 문법이 있을 때 |은 구분자다.
+ABcD|efg ⇒ ABZ|efg (reduce)	ABZ|efg ⇒ ABZe|fg (shift)  
+```  
+이러한 동작이 왼쪽부터 오른쪽까지 left to right로 하게되면 LR Parsing이 되게 된다.  
+이것은 stack 자료구조의 push pop을 이용해서 보여줄 수 있는데 구분자가 현재 stack의 top이고 shift가 일어나면 stack에 push, reduction이 일어나면 stack에서 pop을 하는 것으로 보게되면 stack으로 이해할 수 있다. [참조](http://cons.mit.edu/sp13/ocw/L03.pdf)  
+하지만 문제점이 존재하는데 문법이 중복되어 A -> a, B -> a로 Reduction을 선택해야하는 문제, Shift를 할지 Reduction을 할지 골라야하는 문제 두 가지가 있다. 각각 **Reduce-Reduce Conflict**, **Shift-Reduce Conflict**라고 한다. 문제를 해결하기 위해 대부분에 책들이 선택하는 방법이 Lookahead을 사용한 방법이다. 이 방법은 LALR로 컴파일러 과제에서도 구현해야하는 방법 중 하나이다.  
+
+이어서 LR(0)에 대해 알아보았다. LR(0)은 LR Parser로 k가 0으로 즉, lookahead가 0으로 선행을 인식하지 않고 현재 상태에서 모든 item들을 뽑아 낼 수 있다.  
+```
+T -> T + E | (E)는
+T -> ㆍT + E
+T -> Tㆍ + E
+T -> T +ㆍ E
+T -> T + E ㆍ
+T -> ㆍ( E )
+T -> (ㆍ E )
+T -> ( E ㆍ)
+T -> ( E ) ㆍ
+```
+
+ㆍ이전까지 LR(0)로 인식했다고 볼 수 있다. 위의 구분자와 비슷하게 작동한다. T의 production이자 item이다.  
+`X -> ε 이면 X -> ㆍ` 라는 조건까지 붙이면 LR(0)에 대한 모든 item이 되며 Grammar라고 할 수 있다.  
+또 다른 예시를 보여주었는데, 
+```
+입력 : ( int * int )
+S` -> E // augmented Grammar
+E -> T + E | T
+T -> int * T | int | ( E )
+```
+stack내의 push와 pop으로 볼 때 stack 안에 들어있는 item으로 그 다음 item을 판단하고 shift나 reduce가 일어나게 된다.  
+```
+items on stack	meaning
+T -> (ㆍE)	seen "(" of T -> (E)  // T -> "(" E )
+E -> ㆍT		seen nothing of E -> T // E -> T
+T -> int * ㆍT	seen int * of T -> int * T // T -> int * T
+```
+이러한 방법을 모든 터미널 노드에 대해 시도하면 이러한 그림처럼 된다.  
+[!LR(0)](./img/LR(0).JPG)  
 
 ---
