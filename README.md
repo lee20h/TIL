@@ -130,11 +130,11 @@ Critical Section은 3가지 필요조건을 만족해야한다.
 // int turn = 0; bool flag[3]; flag[1] = flag[2] = false;
 //Process P₁			|	//Process P₂
 flag[1] = true;			|	flag[2] = true;
-turn = 1;				|	turn = 0;
+turn = 1;			|	turn = 0;
 while (flag[2] && (turn == 1));	|	while (flag[1] && (turn == 0));
-	critical section		|		critical section
-flag[1] = false;			|	flag[2] = false;
-	remainder section		|		remainder section
+	critical section	|		critical section
+flag[1] = false;		|	flag[2] = false;
+	remainder section	|		remainder section
 ```
 이러한 3가지 조건을 만족하는 해결법은 크게 소프트웨어적, 하드웨어적 해결법으로 나뉜다.  
 소프트웨어적 해결법은 test_and_set과 compare_and_swap 등이 있다.  
@@ -398,19 +398,19 @@ Full : 버퍼 내에 소비할 아이템이 있음을 표시, 소비자의 진�
 Mutex : 버퍼에 대한 접근을 관리, 생산자와 소비자가 empty, full 세마포어에 진입한 경우 버퍼의 상태 값을 변경하기위한 세마포어  
 세마포어 value의 초기값은 full = 0, empty = n, mutex = 1로 생산자와 소비자의 프로세스을 정리한다.  
 ```
-생산자 프로세스					소비자 프로세스
-Do {						Do {
-	...						wait(full);
-	/* produce an item in next_produced */		wait(mutex);
-	...						...
-	wait(empty);					/* remove an item from buffe to next_consumed */
-	wait(mutex);					...
-	...						signal(mutex);
-	/* add next produced to the buffer */			signal(empty);
-	...						...
-	signal(mutex);					/* consume the item in next consumed */
-	siganl(full);					...
-} while(true);					} while(true);
+생산자 프로세스					|소비자 프로세스
+Do {						|Do {
+	...					|	wait(full);
+	/* produce an item in next_produced */	|	wait(mutex);
+	...					|	...
+	wait(empty);				|	/* remove an item from buffe to next_consumed */
+	wait(mutex);				|	...
+	...					|	signal(mutex);
+	/* add next produced to the buffer */		|	signal(empty);
+	...					|	...
+	signal(mutex);				|	/* consume the item in next consumed */
+	siganl(full);				|	...
+} while(true);					|} while(true);
 ```  
 
 *Readers-Writers Problem*은  
@@ -439,47 +439,47 @@ signal(wrt);	//exit section			signal(mutex);
 
 ```
 2)
-Writer						Reader
-wait(wmutex); // Writer Process entry section		wait(read); // Reader Process entry section
-writedcount++;					signal(read);
-if (writecount == 1)				wait(rmutex);
-	wait(read);				readcount++;
-signal(wmutex);					if (readcount == 1)
-wait(wrt);							wait(wrt);
-...writing is performed... // critical section		signal(rmutex);
-signal(wrt); // Writer Process exit section		...reading is performed... // critical section
-wait(wmutex);					wait(rmutex); // Reader Process exit sectioin
-writecount--;					readcount--;
-if (writecount == 0)				if (readcount == 0)
-	signal(read);					signal(wrt);
-signal(wmutex);					signal(rmutex);
+Writer					|	Reader
+wait(wmutex); // Writer Process entry section	|	wait(read); // Reader Process entry section
+writedcount++;				|	signal(read);
+if (writecount == 1)			|	wait(rmutex);
+	wait(read);			|	readcount++;
+signal(wmutex);				|	if (readcount == 1)
+wait(wrt);					|		wait(wrt);
+...writing is performed... // critical section	|	signal(rmutex);
+signal(wrt); // Writer Process exit section	|	...reading is performed... // critical section
+wait(wmutex);				|	wait(rmutex); // Reader Process exit sectioin
+writecount--;				|	readcount--;
+if (writecount == 0)			|	if (readcount == 0)
+	signal(read);			|		signal(wrt);
+signal(wmutex);				|	signal(rmutex);
 ```  
 `1)`의 Writer의 starvation을 해결하기 위해 짜여졌으나 `2)`에서는 Reader들이 오히려 starvation에 빠지게 된다.  
 Reader가 초기값으로 진입했다면 Reader들이 계속 진입하다가 Writer가 진입하게되면 진입한 Reader이 모두 수행하면 Writer가 수행된다. 이 때 Reader가 더 이상 진입하지 못하여 Starvation이 일어난다.  
 또, Writer가 초기값으로 진입해서 계속 Writer만 진입한다면 Reader가 Starvation에 빠지게 된다.  
 ```
 3)
-Writer						Reader
-wait(mutex); // Writer Process entry section		wait(mutex); // Reader Process entry section
-if(rc>0 || wc>0 || rwc>0 || wwc>0) {			if(wc>0 || wwc>0) {
-	wwc++;						rwc++;
-	signal(mutex);					signal(mutex);
-	wait(wrt);						wait(read);
-	wait(mutex);					wait(mutex);
-	wwc--;						rwc--;
-}						}
-wc++;						rc++;
-signal(mutex);					signal(mutex);
-...writing is performed // critical section		...reading is performed // critical section
-wait(mutex); // Writer Process exit section		wait(mutex); // Reader Process exit section
-wc--;						rc--;
-if(rwc>0) {					if(rc == 0 && wwc>0)
-	for (i=0; i<rwc; i++)				signal(wrt);
-		signal(read);			signal(mutex);
-}
-else
-	if (wwc>0) signal(wrt);
-signal(mutex);
+Writer					|	Reader
+wait(mutex); // Writer Process entry section	|	wait(mutex); // Reader Process entry section
+if(rc>0 || wc>0 || rwc>0 || wwc>0) {		|	if(wc>0 || wwc>0) {
+	wwc++;				|		rwc++;
+	signal(mutex);			|		signal(mutex);
+	wait(wrt);				|		wait(read);
+	wait(mutex);			|		wait(mutex);
+	wwc--;				|		rwc--;
+}					|	}
+wc++;					|	rc++;
+signal(mutex);				|	signal(mutex);
+...writing is performed // critical section	|	...reading is performed // critical section
+wait(mutex); // Writer Process exit section	|	wait(mutex); // Reader Process exit section
+wc--;					|	rc--;
+if(rwc>0) {				|	if(rc == 0 && wwc>0)
+	for (i=0; i<rwc; i++)		|		signal(wrt);
+		signal(read);		|	signal(mutex);
+}					|
+else					|
+	if (wwc>0) signal(wrt);		|
+signal(mutex);				|
 ```
 `3)`의 경우에는 모든 문제가 해결되어 동기화가 잘 이루어진다.  
 Writer는 작업이 수행되거나 대기중인 다른 reader, writer가 있다면 대기한다. 그리고 수행 후 대기중인 reader들을 모두 수행한다.  
@@ -519,13 +519,13 @@ do {
 		...
 } while(1);
 
-take_chopstics(int i) {				put_chopsticks(int i) {
-	wait(mutex);					wait(mutex);
-	state[i] = HUNGRY;					state[i] = THINK;
-	test(i);						test(LEFT);
-	signal(mutex);					test(RIGHT);
-	signal(self[i]);					signal(mutex);
-}						}
+take_chopstics(int i) {		|		put_chopsticks(int i) {
+	wait(mutex);		|			wait(mutex);
+	state[i] = HUNGRY;		|			state[i] = THINK;
+	test(i);			|			test(LEFT);
+	signal(mutex);		|			test(RIGHT);
+	signal(self[i]);		|			signal(mutex);
+}				|		}
 
 test(int i) {
 	if (state[i] == HUNGRY && state[LEFT] != EATING && state[RIGHT] != EATING) {
@@ -581,6 +581,114 @@ E -> ㆍT		seen nothing of E -> T // E -> T
 T -> int * ㆍT	seen int * of T -> int * T // T -> int * T
 ```
 이러한 방법을 모든 터미널 노드에 대해 시도하면 이러한 그림처럼 된다.  
-[!LR(0)](./img/LR(0).JPG)  
+![LR(0)](./img/LR(0).JPG)  
+
+---
+
+* 30日  
+Parser을 구현하기 위해 First와 Follow을 구하는 부분을 공부해보았다.
+```
+void findfirst(char c, int q1, int q2) 
+{ 
+    // The case where we
+    // encounter a Terminal
+    if(!(isupper(c))) {
+        first[n++] = c;
+    } 
+    for(int j = 0; j < count; j++) {
+        if(production[j][0] == c) {
+            if(production[j][3] == '_') {
+                if(production[q1][q2] == '\0') 
+                    first[n++] = '_'; 
+                else if(production[q1][q2] != '\0'  && (q1 != 0 || q2 != 0)) {
+                    // Recursion to calculate First of New
+                    // Non-Terminal we encounter after epsilon
+                    findfirst(production[q1][q2], q1, (q2+1));
+                } 
+                else
+                    first[n++] = '_';
+            }
+            else if(!isupper(production[j][3])) {
+                first[n++] = production[j][3];
+            }
+            else {
+                // Recursion to calculate First of
+                // New Non-Terminal we encounter
+                // at the beginning
+                findfirst(production[j][3], j, 3);
+            } 
+        } 
+    }  
+}
+```
+First을 구하는 함수로 `_`을 Epsilon으로 뒀다. input grammar가 "E->TR" 일때 0번 인덱스를 1,2번째 인덱스를 사용하지 않고 인덱스 3부터 사용하며 논터미널이 나오게되면 재귀시켰다.
+```
+void follow(char c) {
+    // Adding "$" to the follow
+    // set of the start symbol
+    if(production[0][0] == c) {
+        f[m++] = '$';
+    } 
+    for(int i = 0; i < 10; i++) {
+        for(int j = 3; j < 10; j++) {
+            if(production[i][j] == c) {
+                if(production[i][j+1] != '\0') {
+                    // Calculate the first of the next
+                    // Non-Terminal in the production 
+                    followfirst(production[i][j+1], i, (j+2)); 
+                } 
+                  
+                if(production[i][j+1]=='\0' && c!=production[i][0]) { 
+                    // Calculate the follow of the Non-Terminal 
+                    // in the L.H.S. of the production 
+                    follow(production[i][0]); 
+                } 
+            }  
+        } 
+    } 
+} 
+
+void followfirst(char c, int c1, int c2) {       
+    // The case where we encounter 
+    // a Terminal 
+    if(!(isupper(c))) 
+        f[m++] = c; 
+    else{ 
+        int i = 0, j = 1;
+        for(i = 0; i < count; i++) { 
+            if(calc_first[i][0] == c) 
+                break; 
+        }
+        
+        //Including the First set of the 
+        // Non-Terminal in the Follow of 
+        // the original query 
+        while(calc_first[i][j] != '!') {
+            if(calc_first[i][j] != '_')  { 
+                f[m++] = calc_first[i][j]; 
+            } 
+            else { 
+                if(production[c1][c2] == '\0') 
+                { 
+                    // Case where we reach the 
+                    // end of a production 
+                    follow(production[c1][0]);
+                } 
+                else
+                {
+                    // Recursion to the next symbol
+                    // in case we encounter a "_"
+                    followfirst(production[c1][c2], c1, c2+1);
+                } 
+            } 
+            j++; 
+        } 
+    } 
+}
+```
+Follow는 start symbol로는 `$`으로 잡고 파라미터로 넘어온 c와 비교해서 inputgrammar을 null문자 전까지 재귀시켜서 찾는다.  
+FollowFirst에서는 calc_first 배열에 전부 !을 넣어 놓고 !이 아닌 즉, 문자가 다른게 들어간 배열을 follow에 넣어준다.  
+
+소스에 대해 가볍게 알아보았는데 이제 이걸 적용시켜서 LR Parser을 구현하는 데까지가 목표이다.  
 
 ---
