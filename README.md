@@ -581,12 +581,12 @@ E -> ㆍT		seen nothing of E -> T // E -> T
 T -> int * ㆍT	seen int * of T -> int * T // T -> int * T
 ```
 이러한 방법을 모든 터미널 노드에 대해 시도하면 이러한 그림처럼 된다.  
-![LR(0)](./img/LR(0).JPG)  
+![LR(0)](./img/LR(0).JPg)  
 
 ---
 
 * 30日  
-Parser을 구현하기 위해 First와 Follow을 구하는 부분을 공부해보았다.
+Parser을 구현하기 위해 First와 Follow을 구하는 부분을 공부해보았다. [참조](https://www.geeksforgeeks.org/program-calculate-first-follow-sets-given-grammar/)  
 ```
 void findfirst(char c, int q1, int q2) 
 { 
@@ -690,5 +690,50 @@ Follow는 start symbol로는 `$`으로 잡고 파라미터로 넘어온 c와 비
 FollowFirst에서는 calc_first 배열에 전부 !을 넣어 놓고 !이 아닌 즉, 문자가 다른게 들어간 배열을 follow에 넣어준다.  
 
 소스에 대해 가볍게 알아보았는데 이제 이걸 적용시켜서 LR Parser을 구현하는 데까지가 목표이다.  
+
+---
+
+* 31日  
+오늘은 5월을 마무리하는 날이다. 벌써 TIL을 시작한지 2주가량 지났다. 매일 공부한 것을 기록하게되면 확실히 복습도 되고 기억에 잘 남는다. 하지만 항상 매일 의미 있는 공부를 하기가 어렵다. 그런 생각과 함께 오늘도 컴파일러 과제를 하기 위해 공부하였다.  
+어제 참조한 소스에서 c++문법으로 바꾸면서 조금 더 효율적인 방법을 찾아보고 있는 와중에 웹 컴파일러로 컴파일한 결과와 PC에서 컴파일한 결과가 다르게 나와서 삽질이 길어졌다. First는 전부 잘 나오나, Follow 부분에서 맨 마지막 부분이 다르게 나왔다.  
+```
+input grammar
+E==>TR
+R==>+TR
+R==>_
+T==>FY
+Y==>*FY
+Y==>_
+F==>(E)
+F==>i
+```
+```
+First(E) = { ( i }
+First(R) = { + _ }
+First(T) = { ( i }
+First(Y) = { * _ }
+First(F) = { ( i }
+
+Follow(E) = { $ )  }
+Follow(R) = { $ )  }
+Follow(T) = { + $ )  }
+Follow(Y) = { + $ )  }
+Follow(F) = { * + $ )  }
+```
+`_`이 epsilon으로 대체해서 돌리면 웹 컴파일러에서는 원하는 결과를 얻을 수 있었으나, PC에 있는 컴파일러로 컴파일시에는  
+```
+First(E) = { ( i }
+First(R) = { + _ }
+First(T) = { ( i }
+First(Y) = { * _ }
+First(F) = { ( i }
+
+Follow(E) = { $ )  }
+Follow(R) = { $ )  }
+Follow(T) = { + $ )  }
+Follow(Y) = { + $ )  }
+Follow(+) = { * $ )  }
+```
+이러하게 마지막 Follow가 잘못 출력이 되어서 오늘이 가도록 해결하지 못했다. 그리곤 소스코드를 원하는 방향으로 고치고 있으나, 뚜렷한 결과물이 나오지 않고있다.😐  
 
 ---
