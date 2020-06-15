@@ -585,7 +585,7 @@ Demand paging을 제대로 사용할려면 Page fault가 적게 일어나야한�
 
 프로그래밍언어론 복습  
 
-- 1강  
+- 1강 Preliminaries  
 
 **언어를 평가하는 요소**  
 1) Readability (주관적일 수 있다)  
@@ -686,4 +686,186 @@ cpu와 메모리 사이에는 cache가 존재해서 극복한다.
 
 ---  
 
+* 15日  
 
+프로그램언어론  
+
+- 3강 Describing Syntax and Semantics  
+
+**구문과 의미**  
+- 구문 (syntax) : form 모양
+- 의미 (Semantics) : 표현의 의미  
+
+**Syntax**
+lexeme : 가장 하위의 구문 단위, 최소단위  
+token : lexeme의 범주, 종류  
+
+
+**BNF && CFG**  
+CFG (Context - Free - Grammar)  
+- 문맥자유언어 클래스 정의
+- 자연어 문법 기술함  
+
+BNF (Backus - Naur Form)  
+- 문맥 자유 문법에 속함
+- 구문 변수 = 논터미널
+- lexeme or token = 터미널
+
+left hand side, right hand side  
+-> 기준으로 왼쪽, 오른쪽
+
+시작 심볼은 문법의 논터미널  
+
+**Rules**(->)  
+RHS 한개 이상  
+재귀적으로 기술 가능  
+시작 심볼에서 시작 후 끝은 무조건 **터미널 심볼**로 끝나도록 **유도**(=>)되어야한다.  
+
+문장은 Sentential form  
+터미널심볼은 Sentence  
+
+Leftmost derivation  
+맨 왼쪽 논터미널심볼 가장먼저 유도(확장)
+
+파스트리 : 계층적으로 유도를 표현함  
+
+**Ambiguous**   
+하나의 문장에서 두개 이상의 파스트리 생성  
+
+
+Unambiguous   expression grammar  
+파스트리에 연산자의 **우선순위**를 주어줌  
+
+연산자의 Associativity  
+연산자가 동일한 우선순위을 가져 Ambiguous가 생기는 경우 left associativity, right associativity로 나눠서 왼쪽부터 or 오른족부터  
+
+**★ambiguous 해결★**
+1) 우선순위 부여  
+2) 우선순위 같은 경우 associativity 부여  
+
+`<expr> -> <expr> + <expr> | const` (ambiguous) 
+`<expr> -> <expr> + const | const` (unambiguous)  
+
+*Extended BNF*  
+BNF ≒ Extended BNF  
+**표현력은 같음**  
+Optional []  
+Alternative ()  
+Repetitions {}  
+
+요약 :  
+BNF와 CFG는 표현이 같다.  
+
+
+- 4강  Lexical and Syntax Analysis
+
+Regular grammar (정규 문법)은 Regular Expression (정규 표현)으로 표현 된다.  
+정규표현은 **Finite-state-Machines** (유한상태기계, FSM)으로 이행된다.  
+Context-free Grammar (문맥 자유문법)은 BNF와 표현할 수 있는 것이 같다.  
+BNF는 push-down automata로 이행된다.
+
+![FSM](./img/FSM.JPG)  
+FSM은 C언어의 enum으로 구현가능  
+
+
+- 5강 Names, Bindings, and Scopes  
+
+명령형언어는 폰노이만 아키텍쳐를 추상한다.  
+- 명령과 데이터는 메모리에 저장된다.  
+- cpu에 의해서 필요한 연산이 실행된다.  
+
+명령형의 언어 피연산자를 담당하는 memory cell이 variables(변수)다.  
+
+**변수의 여러 속성**
+- Name  
+변수의 이름, 함수의 이름, 매개변수 이름, 구조체  
+Identifier와 상호호환되게 사용  
+
+	- Length  
+		- 자유도 증가  
+		- 컴파일타임 ↓  
+		∵ Symbol table에 넣음
+		- 메모리 ↑  
+		∵ 런타임에 기록시 실행시간 ↓와 함께
+	- Form  
+		- underscore (`_`)을 대체해서 Camel notation 사용  
+		ScoreValue instead of score_value  
+		- PHP  
+		`$` 로 변수 선언  
+		e.g. $scoreValue  
+		- Perl  
+		Scalar $  
+		Array @  
+		Hash %  
+		변수 선언 
+	- Case sensitivity  
+		- C기반 언어는 대소문자 구별한다. 이것은 가독성을 떨어트린다고 하는데 사람마다 다르다.  
+	- Special words  
+		- 가독성을 높일 수 있지만 Reserved word(예약어)가 지정되있는 경우 피해야한다.  
+		- 예약어가 많으면 유저가 예약어를 피해서 변수를 써야하지만 부족하다면 불편하다.  
+	
+- Variables  
+	변수는 memory cell을 매핑한것이다.  
+	특성 : name, address, value, type, lifetime, scope  
+
+	- Name  
+		앞에서 정리한 것과 같다.  
+
+	- Address  
+		- C Pointer와 같이 변수와 연관된 메모리의 주소이다.  
+		- 변수가 함수 속에서 다른 주소를 가질 수 있다. (10강에서 계속)
+		- L-value(변수의 주소)와 같다.  
+		- Alias : 같은 주소에 다른 이름 (C 포인터 C++ 참조자) 가독성 저하  
+
+
+	- Type
+		- 변수 값의 범위와 어떤 연산을 쓸지 결정한다.  
+
+	- Value
+		- *Abstract memory cell* : 물리적 cell 이나 변수와 연관된 cell  
+		- l-value : address  
+		- r-value : value  
+		
+	- **Binding**  
+		권한과 속성 사이의 연관이다.  
+		- 변수의 type과 value, operation과 symbol  
+		binding time에 따라 static과 dynamic으로 나뉘어진다.  
+		Language design time, implementation time, compile time은 static binding time  
+		따라서, static binding은 
+			1) 런타임 전
+			2) 프로그램 실행 중 바뀌지 않으면  
+		
+		Load time과 Runtime, global은 dynamic binding time 은 dynamic binding time으로,  
+		1) 실행중에 처음 발생하거나  
+		2) 프로그램 실행 중에 바뀔 수 있으면
+		dynamic binding이다.  
+
+		Type Binding은 변수가 프로그램에 참조되기전에 자료형이 바운딩되어야한다. 만약 static binding인 경우 explicit 혹은 implicit 선언이 있어야한다.  
+
+		Static Type Binding  
+		- 명시적 선언  
+			- 프로그래머가 직접 명시해서 선언하는 경우
+		- 묵시적 선언  
+			- 컴파일러가 자동으로 타입을 찾아내는 묵시적 선언
+			- default convention  
+			지정하지 않으면 자동으로 default에 들어감
+				1) naming convention  
+			Fotran에서 사용, 타이핑시에 잘못 치는 경우 잘못된 자료형이 바인딩되어 에러가 일어날 수 있다.   
+				2) Using context  
+				타입을 추론하는 방식 ex) var 타입 초기화 값을 보고 추정함 (컴파일 시간에 결정되므로 static)  
+		
+		Dynamic Type Binding  
+		바인딩된 자료형 외의 다른 자료형으로 바뀌는 경우 (주소와 메모리셀이 바뀔 수 있음)
+
+		장점 : 프로그래밍 유연성 ↑  
+		type명시로 인한 재사용률 ↑  
+		단점 : 신뢰성 ↓  
+		변수들이 런타임에 새로운 자료형을 가질 수 있어서 메모리 ↑  
+		타입체크를 해야하므로 속도 ↓
+
+---
+
+
+
+		
+	
