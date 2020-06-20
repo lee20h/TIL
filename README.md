@@ -385,6 +385,7 @@ t1 = I[l].rh[j].find(temp2);
 
 어제 계속 컴파일러 SLR파싱 오류를 찾느라 시간 보내버렸다. 😥  
 오늘은 이번 주 강의를 들어, 정리할려고 한다.  
+# NP-완비  
 알고리즘에서 **NP-완비 이론**을 공부했다.  
 현실적인 시간으로 풀 수 있는 문제들은 n의 다항식으로 표시되는 시간복잡도를 가진 문제들을 `P`문제라고한다. 이때의 P는 Polynominal의 P이다.  
 이외의 비다항식 시간 즉 현실적인 시간으로 풀 수 없는 문제들의 예로는  
@@ -2067,7 +2068,7 @@ Activation record instance call할때마다 stack에 쌓이게 된다.
 이런 식으로 stack이 쌓인다.  
 
 | Memory | Simple subprogram |
-|:--------|--------:|  
+|:--------:|:--------:|  
 | Code | Code |
 | Data | Data |
 | Heap | Data |
@@ -2075,7 +2076,7 @@ Activation record instance call할때마다 stack에 쌓이게 된다.
 
 Typical Activation Record
 | Typical Activation Record |
-|:--------  
+|:--------|  
 | Local variables |
 | Parameters |
 | **Dynamic link** |
@@ -2100,7 +2101,7 @@ top을 기준으로 상대주소로 찾아 지역변수에 접근 할 수 있다
 
 재귀가 있을 때의 Activation record  
 | Activation Record for factorial|
-|:--------  
+|:--------|
 | Functional value |
 | Parameters |
 | **Dynamic link** |
@@ -2195,3 +2196,711 @@ Dynamic Scoping을 지원하는 프로그래밍 언어일 때 static link는 필
 Central Table이 이렇게 구현이된다.  
 
 --- 
+
+* 20日  
+
+알고리즘
+
+- 3강 점화식과 점근적 복잡도 분석  
+
+점화식 : 어떤 함수를 자신보다 더 작은 변수에 대한 함수와의 관계로 표현한 것  
+
+점근적 분석 방법  
+반복대치 : 더 작은 문제에 대한 함수로 반복해서 대치해 나가는 해법  
+추정 후 증명 : 견론을 추정하고 수학적 귀납법으로 이용하여 증명  
+마스터 정리 : 형식에 맞는 점화식의 복잡도를 바로 알 수 있는 방법  
+
+- 4강 정렬  
+
+대부분 O(n²)과 O(nlogn) 사이의 시간 복잡도를 가진다.  
+
+- 시간복잡도 Θ(n²)인 정렬  
+	- 선택 정렬  
+	```
+	selectionSort(A[], n) {
+		for last <- n downto 2 {
+			A배열 중 가장 큰 수 찾는다.
+			큰수 와 last와 swap
+		}
+	}
+	```
+	(n-1)+(n-2)+...+2+1 = Θ(n²) worst, average  
+
+	- 버블 정렬  
+	```
+	bubbleSort(A[], n) {
+		for last <- n downto 2
+			for i <- 1 to last - 1
+				if(A[i]>A[i+1]) then A[i], A[i+1] swap 
+	}
+	```
+	(n-1)+(n-2)+...+2+1 = Θ(n²) worst, average
+
+	- 삽입정렬  
+	```
+	insertionSort(A[], n) {
+		for i <- 2 to n
+			A[]배열의 적당한 자리에 A[i]을 삽입
+	}
+	```
+	Worst : 1+2+...+(n-2)+(n-1) : Θ(n²)  
+	Average : ½(1+2+...+(n-2)+(n-1)) : Θ(n²)  
+	Best : Θ(n) (이미 정렬 된 경우)  
+
+- 평균적으로 시간복잡도 Θ(nlogn)  
+	- 병합정렬
+	```
+	mergeSort(A[],p,r) {
+		if(p<r) then {
+			q <- |(p+r)/2|;
+			mergeSort(A,p,q);
+			mergeSort(A,q+1,r);
+			merge(A,p,q,r);
+		}
+	}
+	merge(A[],p,q,r) {
+		i = p; j = q+1; t= 1;
+		while(i<=q && j <= r) {
+			if(A[i]<=A[j]) then temp[t++] = A[i++];
+			else temp[t++] = A[j++];
+		}
+
+		while(i<=q) temp[t++] = A[i++];
+		while(i<=r) temp[t++] = A[j++];
+
+		i = p; t = 1;
+		while(i<=r) A[i++] = temp[t++];
+	}
+	```
+	merge : O(n)
+	mergeSort : O(logn)
+
+	- 퀵정렬  
+	```
+	quickSort(A[],p,r) {
+		if(p<r) then {
+			q = partion(A,p,r);
+			quickSort(A,p,q-1);
+			quickSort(A,q+1,r);
+		}
+	}
+	partition(A[],p,r) {
+		x = A[r];
+		i = p-1;
+		for j <- p to r-1
+			if(A[j]<=x) then swap(A[++i], A[i])
+		swap(A[i+1], A[r])
+		return i+1
+	}
+	```
+	average : Θ(nlogn)
+	worst : Θ(n²) (이미 정렬 된 경우)
+
+	- 힙정렬
+	```
+	heapSort(A[], n) {
+		buildHeap(A,n);
+		for i <- downto 2 {
+			swap(A[1], A[i]);
+			heapify(A,1,i-1)
+		}
+	}
+	buildHeap(A[],n) {
+		for i <- n/2 downto 1
+			heapify(A,i,n);
+	}
+	heapify(A[], k, n) {
+		left = 2k; right 2k+1;
+		if(right<=n) {
+			if(A[left] < A[right])
+				smaller = left;
+			else
+				smaller = right;
+
+		}
+		else if (left<=n) smaller = left;
+		else return;
+		if(A[smaller] < A[k]) {
+			swap(A[k],A[smaller]);
+			heapify(A, smaller, n);
+		}
+	}
+	```
+	worst : O(nlogn) buildHeap O(nlogn) heapify O(logn)
+
+- Θ(n) 정렬
+	하한선 Ω(nlogn)  
+	특수한 성질 만족하면 Θ(n)정렬 가능
+
+- 계수정렬(counting sort)  
+```
+countingSort(A,B,n) {
+	for i = 1 to k
+		C[i] = 0;
+	for j = 1 to n
+		C[A[j]]++;
+	for i = 2 to k
+		C[i] = C[i] + C[i-1];
+
+	for j = n downto 1 {
+		B[C[A[j]]] = A[j];
+		C[A[j]]--;
+	}
+}
+```
+
+
+- 기수정렬(Radix Sort)
+```
+void radixSort(int n, int t) {
+	queue<int> q[10];
+	
+	for (int i=1; i<=t; i++) {
+		for (int j=1; j<=n; j++) {
+			int d = digit(v[j], i);
+			q[d].push(v[j]);
+		}
+		int p = 1;
+		for (int j=0; j<=9; j++) {
+			while(!q[j].empty()) {
+				v[p++] = q[j].front();
+				q[j].pop();
+			}
+		}
+	}
+
+	for (int i=1; i<=n; i++) {
+		cout << v[i] << ' ';
+	}
+}
+```
+Θ(n)  
+
+- **효율성 비교**  
+
+|  Kind | Worst Case | Average Case |
+|-----:|--------:|-------:|
+| Selection Sort | n² | n² |
+| Bubble Sort | n² | n² |
+| Insertion Sort | n² | n² |
+| Merge Sort | nlogn | nlogn |
+| Quick Sort | n² | nlogn |
+| Counting Sort | n | n |
+| Radix Sort | n | n |
+| Heap Sort | nlogn | nlogn |
+Best Case인 경우 O(n)인 정렬 Insertion Sort, Counting Sort, Radix Sort  
+
+- 6장 검색트리  
+
+- 이진검색트리  
+각 노드에 키 값은 하나씩 갖는다. 각 노드의 키 값은 모두 달라야 한다.  
+최상위 레벨에 루트 노드가 있고, 각 노드는 최대 두개의 자식을 갖는다.  
+임의의 노드의 키값은 자신의 왼쪽 부분 트리의 모든 키값보다 크고, 오른쪽 부분 트리의 키값보다 작다.  
+탐색, 삽입, 삭제 시간복잡도 O(h)을 가진다.  
+경사 이진트리의 경우에는 
+검색의 시간복잡도는 O(n)이 된다.  
+```
+treeSearch(t, x) {
+	if (t == NULL || key[t] == x) return t;
+	if(x<key[t]) 
+		return treeSearch(left[t],x);
+	else
+		return treeSearch(right[t],x);
+}
+```
+
+삽입
+```
+treeInsert(t,x) {
+	if(t==NULL) {
+		key[r] = x;
+		left[r] = NULL;
+		right[r] = NULL;
+		return r;
+	}
+	if (x<key(t)) {
+		left[t] = treeInsert(left[t],x)
+		return t;
+	}
+	else {
+		right[t] = treeInsert(right[t],x);
+		return t;
+	}
+		
+}
+```
+삭제
+1) r이 리프 노드인 경우
+2) r의 자식 노드가 하나인 경우
+3) r의 자식 노드가 두 개인 경우  
+
+```
+treeDelete(t, r, p) {
+	if (r == t)
+		root = deleteNode(t);
+	else if(r == left[p])
+		left[p] = deleteNode(r);
+	else
+		right[p] = deleteNode(r);
+}
+
+deleteNode(r) {
+	if(left[r] == right[r] && right[r] == NULL) // 1)
+		return NULL;
+
+	else if(left[r] == NULL && right[r] != NULL) // 2-1)
+		return right[r];
+	else if(left[r] != NULL && right[r] == NULL) // 2-2)
+		return left[r];
+		
+	else { // 3)
+		whlie(left[s] != NULL) {
+			parent = s;
+			s = left[s];
+		}
+		key[r] = key[s];
+		if (s == right[r])
+			right[r] = right[s];
+		else
+			left[parent] = right[s];
+		
+		return r;
+	}
+}
+```
+
+- 레드블랙트리
+
+1) 루트는 블랙이다
+2) 모든 리프는 블랙이다
+3) 노드가 레드이면 그 노드의 자식은 반드시 블랙이다
+4) 루트 노드에서 임의의 리프 노드에 이르는 경로에서 만나는 블랙 노드의 수는 모두 같다  
+
+C++의 STL map이 이러한 레드블랙트리로 구현되어 있다.  
+
+치우쳐진 레드블랙트리라면 회전이 가능하다.  
+
+삽입  
+이진검색트리와의 삽입과 같지만 삽입 된 노드를 레드로 칠한다. 삽입된 노드의 색이 레드인 경우 문제가 생긴다.  
+2가지 경우로 나누게되는데 부모노드의 형제노드가 레드거나 블랙일 경우로 나뉘게 된다.  
+
+레드인 경우  
+![Redblack_insert1](./img/Redblack_insert1.JPG)  
+
+블랙이며, 삽입노드가 부모의 오른쪽 자식인 경우  
+![Redblack_insert2](./img/Redblack_insert2.JPG)  
+![Redblack_insert3](./img/Redblack_insert3.JPG)  
+
+삭제  
+삭제 노드의 자식이 없거나 1개만을 가진 노드로 제한  
+삭제 노드가 블랙이라면 문제가 있다. 유일한 자식이 레드라면 문제가 없으나, 반대라면 문제가 있다.  
+
+![Redblack_delete](./img/Redblack_delete.JPG)  
+5가지 경우로 나뉘어진다.  
+
+case 1)
+![Redblack_delete1](./img/Redblack_delete1.JPG)  
+
+case 2) 3)
+![Redblack_delete2](./img/Redblack_delete2.JPG)  
+
+case 4) 5)
+![Redblack_delete3](./img/Redblack_delete3.JPG)  
+
+- 8강 상호 배타적 집합의 처리  
+
+disjoint sets  
+연결리스트나 트리를 이용해서 표현 가능하다.  
+
+연결리스트의 경우
+| head link (a) | head link(a) | |
+|:---:|:---:|:---:
+| a |	b	| <-tail |
+| link |	link	|
+이런식으로 구현된다. head link에 대표 원소를 향해 연결이 되어있고 아래 link을 통해 다음 원소로 접근할 수 있다. 그리고 마지막 원소에 대해 tail포인터가 있어서 추가에 용이하게 사용될 수 있다.  
+합집합시에는 집합의 크기가 작은 집합을 큰 집합에 붙이면서 집합의 원소들의 헤드링크를 큰 집합의 헤드링크로 바꿔주면 된다.  
+
+수행시간  
+m번의 Make-Set, Union, Find-set 중 n번이 Make-set이라면 시간복잡도 O(m + nlogn)이다. Make-set의 연산 횟수만큼 원소의 갯수가 정해지기 때문이다. Make-set O(1) & Find-set O(1) = O(m) Union은 집합의 갯수가 작아서 다른 집합에 계속 합집합 된다고 가정시에 계속 크기만큼 포인터의 갱신을 수행하기 때문에 최대 logn 만큼 실행한다.  
+
+트리의 경우
+트리의 루트가 집합의 대표 원소이며, 자식 노드가 부모 노드를 가리킨다. 또한 루트는 자신을 가리킨다.  
+```
+// p == 해당 노드의 parent
+Make-set(node x) {
+	p[x] = x;
+}
+Union(node x, node y) {
+	p[Find-Set(y)] = Find-set(x);
+}
+Find-set(node x) {
+	if x(x == p[x])
+		return x;
+	else
+		Find-Set(p[x])
+}
+```
+make-set은 트리의 루트로 정하며, Union은 두 집합을 합칠 때 랭크를 따져서 랭크가 작은 집합의 루트를 큰 집합의 루트로 연결한다. 하지만 같은 랭크 값을 가지는 경우에는 큰 집합의 랭크 값이 1 증가해야한다.  
+```
+Make-set(node x){
+	p[x] = x;
+	rank[x] = 0;
+}
+Union(node x, node y) {
+	x_ = Find-Set(x);
+	y_ = Find-Set(y);
+	if(rank[x_] > rank[y_])
+		p[y_] = x_;
+	else {
+		p[x_] = y_;
+		if(rank[x_] == rank[y_])
+			rank[y_]++;
+	}
+		
+	
+}
+```
+또한 경로압축을 할 수 있는데 이것은 Find-set 진행 중에 만나는 모든 노드들을 직접 루트를 가리키도록 포인터를 수정해준다.  
+경로압축  
+```
+// p == 해당 노드의 parent
+Find-Set(node x) {
+	if(p[x] != x)
+		p[x] = Find-Set(p[x]);
+	return p[x];
+}
+```
+
+트리를 이용한 배타적 집합에서 랭크를 이용한 union과 경로압축을 이용한 Find-Set을 동시에 사용하면, Make-Set, Union, Find-Set 중 n번이 Make-set일 때 시간복잡도는 O(mlog*n) `log*n` = min{k:logloglog...logn<=1} 사실상 선형시간임 따라서 O(m)정도 된다.
+
+- 9장 동적 프로그래밍  
+
+동적 프로그래밍의 적용 요건
+- 최적 부분조건  
+큰 문제의 최적 솔루션에 작은 문제의 최적 솔루션이 포함됨  
+- 재귀호출시 중복  
+재귀적 해법으로 풀면 같은 문제에 대한 재귀호출이 심하게 중복됨  
+
+이 때 DP을 사용하면 해결된다.  
+
+예시1 : 행렬 경로 문제  
+```
+for (int i=1; i<m; i++) {
+	for (int j=0; j<=i; j++) {
+		dp[0][i] += v[0][j];
+	}
+}
+for (int i=1; i<n; i++) {
+	for (int j=0; j<=i; j++) {
+		dp[i][0] += v[j][0];
+	}
+}
+for (int i=1; i<n; i++) {
+	for (int j=1; j<m; j++) {
+		matrixPath(i,j);
+	}
+}
+
+matrixPath(int i, int j) {
+	int a = dp[n-1][m] + v[n][m];
+	int b = dp[n][m-1] + v[n][m];
+	dp[n][m] = min(a,b);
+}
+```
+시간복잡도 θ(n²)  
+
+
+예시2 : 조약돌 놓기  
+```
+void pebble(int n) {
+	for (int i=0; i<4; i++) {
+		if(i==3) dp[i][0] = v[0][0] + v[2][0];
+		else
+			dp[i][0] = v[i][0];
+	}
+	for (int i=1; i<n; i++) {
+		for (int j=0; j<4; j++) {
+			if (j==0) dp[0][i] = max(dp[1][i-1], dp[2][i-1]) + v[j][i];
+			else if (j==1) dp[1][i] = max(max(dp[0][i-1], dp[2][i-1]),dp[3][i-1]) + v[j][i];
+			else if (j==2) dp[2][i] = max(dp[0][i-1], dp[1][i-1]) + v[j][i];
+			else dp[3][i] = dp[1][i-1] + v[0][i] + v[2][i];
+		}
+	}
+}
+```
+시간복잡도 θ(n)
+
+예시3 : 행렬 곱셈 순서  
+```
+int MatrixMultiplication(int x, int y) {
+	if (x==y) return 0;
+	int& ref = dp[x][y];
+	if (ref != -1) return ref;
+	int temp = 987654321;
+	for (int k=x; k<y; k++) {
+		temp = min(temp, sol(x,k) + sol(k+1,y) + m[x].r * m[k].c * m[y].c);
+	}
+	return ref = temp;
+}
+```
+시간복잡도 θ(n³)
+
+예시4 : 최장 곹통 부분순서  
+```
+void lcs(int m, int n) {
+	for (int i=0; i<m; i++) {
+		dp[i][0] = 0;
+	}
+	for (int i=0; i<n; i++) {
+		dp[0][i] = 0;
+	}
+	for (int i=1; i<m; i++) {
+		for (int j=1; j<n; j++) {
+			if(a[i] == b[j]) dp[i][j] = dp[i-1][j-1] + 1;
+			else dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+		}
+	}
+}
+```
+시간복잡도 θ(mn)
+
+- 10강 그래프  
+
+그래프 표현1 : 인접행렬  
+NxN 행렬로 표현한다. 간선이 존재하면 행렬 원소를 가중치만큼 넣어준다. 방향이 존재한다면 [i][j] i->j라고 보면된다.  
+
+그래프 표현2 : 인접리스트  
+N개의 연결 리스트로 표현하며 i번째 리스트는 정점 i에 인접한 정점들을 리스트로 연결함.  
+가중치가 있다면 리스트에 가중치를 별도로 보관한다.  
+
+그래프 표현3 : 인접 배열  
+N개의 연결 배열로 표현하며 i번째 배열은 정점 i에 인접한 정점들의 집합  
+가중치가 있다면 리스트에 가중치를 별도로 보관한다.  
+인접리스트와 비슷하나 처음에 리스트에 연결된 정점의 갯수와 배열의 연결링크를 단다. 배열들은 인접 정점의 숫자들의 집합이다.  
+확장하자면 리스트의 연결된 정점의 갯수를 적는 것을 정점 목록의 끝자리를 적게 되면 인접배열을 하나의 배열로 구현하고 인덱싱을 편하게 할 수 있다.  
+
+모든 정점 방문  
+
+- 너비우선탐색  
+큐를 통해서 구현. 말그대로 너비 탐색을 진행.  
+시간복잡도 θ(|V|+|E|)
+- 깊이우선탐색  
+스택이나 재귀를 통해서 구현. 깊이로 들어가며, 백트래킹으로 확인.  
+시간복잡도 θ(|V|+|E|)  
+
+DFS와 BFS는 복습이 자주 되어서 생략.  
+
+- 최소신장트리(MST)  
+조건 : 무향 연결 그래프  
+트리는 싸이클이 없는 연결 그래프이며 간선은 n-1개 갖는다.  
+
+신장트리란 정점들과 간선들로만 구성된 트리이며, 최소신장트리는 간선의 합이 최소인 신장트리.  
+
+- Prim 알고리즘  
+
+그리디 알고리즘의 일종으로 최적해를 보장해준다.  
+시작 정점을 집합 S에 포함시킨 상태로 시작한다. S에서 V-S를 연결하는 간선 중 최소길이를 찾아서 해당 정점을 S에 포함시킨다.
+```
+Prim(G, r) 
+▷ G=(V, E): 주어진 그래프 
+▷ r: 시작으로 삼을 정점 
+{ 
+         S ← Ф ;                      ▷ S : 정점 집합 
+        for each u∈V 
+                 du ← ∞ ; 
+        dr ← 0 ; 
+        while (S≠V){              ▷ n회 순환된다 
+                 u ← extractMin(V-S, d) ;
+                 S ← S ∪{u}; 
+                for each v∈L(u) ▷ L(u) : u로부터 연결된 정점들의 집합 
+                        if (v∈V-S and wuv< dv) then dv ←  wuv ;  
+        } 
+} 
+
+extractMin(Q, d) 
+{ 
+        집합 Q에서 d값이 가장 작은 정점 u를 리턴한다 ;
+} 
+```
+힙을 사용하기 때문이다. 힙의 시간복잡도 O(|V|),프림 알고리즘의 시간복잡도 O(|E|log|V|) 
+
+- Kruskal 알고리즘 
+
+시작하면 각각을 전부 집합으로 구성한다. 그 이후 간선을 정렬한다. 가장 작은 간선을 찾아 정점들의 집합을 하나로 합치고 간선을 신장트리에 추가한다. 이것을 반복한다. 고려해야할 점은 사이클이 생성되면 안된다. 따라서 간선을 연결할 때 같은 집합에 속해있는지 확인해야한다. 반복 끝에 신장트리의 갯수가 n-1개가 된다면 끝낸다.  
+```
+Kruskal (G, r)
+{
+	1. T ← Ф ; ▷ T : 신장트리 
+	2. 단 하나의 정점만으로 이루어진 n 개의 집합을 초기화한다;
+	3. 간선 집합 Q(=E)를 가중치가 작은 순으로 정렬한다;
+	4. while (T의 간선수 < n-1) {
+		Q에서 최소비용 간선 (u, v)를 제거한다;
+		정점 u와 정점 v가 서로 다른 집합에 속하면 {		
+			두 집합을 하나로 합친다;
+			T ← T∪{(u, v)};
+		}
+	}
+}
+```
+시간복잡도 O(ElogV)  
+
+두 알고리즘의 안정성 정리  
+프림은 집합 S안에 신장트리가 구성되어 있는데 V-S을 잇는 간선 중 가장 작은 가중치를 가진 간선을 집합 S에 추가하는 알고리즘이다.  
+크루스칼 알고리즘은 현재 선택되지 않은 간선 중에 최소인 간선을 찾아 신장트리를 구성한다.  
+
+모순으로 증명할 수 있다. 최소신장트리를 해당 알고리즘으로 만들 수 없다고 가정하고 진행 하였을 때 만들어진 신장트리와 해당 알고리즘으로 만들어진 신장트리를 비교하여서 증명할 수 있다.  
+
+- 위상정렬  
+
+싸이클이 없는 유향 그래프이며, 모든 정점을 일렬로 나열하는데 순서가 있다면 순서가 유지되어야한다.  
+DFS로 끝까지가서 백트래킹으로 출력을 하면된다.
+
+```
+1)
+topologicalSort1(G, v)
+{ 
+        for ← 1 to n { 
+                진입간선이 없는 정점 u를 선택한다;      
+                 A[i] ← u; 
+                정점 u와, u의 진출간선을 모두 제거한다;  
+        } 
+        ▷ 이 시점에 배열 A[1…n]에는 정점들이 위상정렬되어 있다 
+} 
+2)
+topologicalSort2(G) 
+{ 
+        for each v∈V
+                  visited[v] ← NO; 
+        for each v∈V   ▷ 정점의 순서는 무관 
+                if (visited[v] = NO) then DFS-TS(v) ;                          
+} 
+DFS-TS(v)  
+{ 
+        visited[v] ← YES; 
+        for each x∈L(v)   ▷ L(v): v의 인접 리스트 
+                if (visited[x] = NO) then DFS-TS(x) ;  
+        연결 리스트 R의 맨 앞에 정점 v를 삽입한다;   
+} 
+
+```
+시간복잡도 θ(|V|+|E|)  
+
+최단경로  
+간선 가중치가 있는 유향 그래프  
+두 정점 사이의 최단경로를 찾는데에 있어 간선 가중치의 합이 음인 사이클이 있다면 문제가 정의되지 않는다. 돌 때마다 비용이 줄어들기 때문이다.  
+
+- dijkstra 알고리즘  
+
+prim 알고리즘과 90% 유사하다고 볼 수 있다. 거기에 모든 간선의 가중치는 음수가 아니여야한다. 왜냐하면 현재 가장 작은 가중치을 찾아가는데 음수 가중치가 있다면 진행 중에 돌아가는게 비용이 덜 드는 것처럼 보일 수 있기 때문이다.  
+```
+Dijkstra(G, r) 
+▷ G=(V, E): 주어진 그래프 
+▷ r: 시작으로 삼을 정점 
+{ 
+         S ← Ф ;                      	▷ S : 정점 집합 
+        for each u∈V 
+                 d[u] ← ∞ ; 
+        d[r] ← 0 ; 
+        while (S≠V){              	▷ n회 순환된다 
+                 u ← extractMin(V-S, d) ;
+                 S ← S ∪{u}; 
+                for each v∈L(u) 	▷ L(u) : u로부터 연결된 정점들의 집합 
+                        if (v∈V-S and d[u] +w[u, v] < d[v] ) then {
+			 d[v]  ←  d[u] + w[u, v];
+			  prev[v]  ←  u;  
+        } 
+} 
+
+extractMin(Q, d[]) 
+{ 
+        집합 Q에서 d값이 가장 작은 정점 u를 리턴한다 ;
+} 
+```
+시간복잡도 O(|E|log|V|)
+
+- Bellman-Ford 알고리즘  
+
+음의 가중치를 허용하는 최소 간선 알고리즘이다. 음의 사이클을 존재 여부는 한번 더 돌렸을 때 값이 줄어든다면 음의 사이클이 존재하는 것이다. 두 개의 간선을 통해서 이동했을 때의 최소인 값으로 이완시킨다.  
+
+```
+BellmanFord(G, r)
+{
+	for each u∈V 
+		 d[u]← ∞; 
+	d[r] ← 0;
+	for i ← 1 to |V|-1
+		for each (u, v) ∈E
+			if (d[u] + w[u, v] < d[v]v )  then {
+				d[v] ← d[u] + w[u, v] ;
+				prev[v] ← u;
+			}
+	▷ 음의 싸이클 존재 여부 확인
+	for each (u, v) ∈E
+		if (d[u] + w[u, v] < d[v]v )  output “해없음”;
+}
+```
+시간복잡도 θ(|E||V|)
+dp로 봤을 때 
+
+- floyd 알고리즘  
+
+```
+k = 거쳐가는 노드 i = 출발 노드 j = 도착노드 
+for (int k = 0; k< number; k++) {
+	for (int i=0; i < number; i++) {
+		for (int j=0; j < number; j++) {
+			if(d[i][k] + d[k][j] < d[i][j]) {
+				d[i][j] = d[i][k] + d[k][j];
+			}
+		}
+	}
+}
+```
+시간복잡도 θ(|V|³) 문제의 계산은 시간복잡도 θ(1)이다.  
+
+- 사이클이 없는 유향 그래프  
+
+DAG라고 하는데 이것의 최단경로는 선형시간에 구할 수 있다.  
+```
+DAG-ShortestPath(G, r) 
+{ 
+      for each u∈V                                        
+		  du ← ∞; 
+      dr  ← 0; 
+      G의 정점들을 위상정렬한다;           
+      for each u∈V (위상정렬 순서로)         
+      	for each v∈L(u) ▷ L(u) : 정점 u로부터 연결된 정점들의 집합
+			if (du + wu,v < dv ) then dv ← du + wu,v ;                    
+} 
+```
+시간복잡도 O(|E| + |V|)
+
+- 강연결요소 구하기  
+
+DFS수행해서 종료된 순서를 구한다. 그 다음 종료된 순서가 가장 느린 정점에서 DFS을 다시 수행한다. 집합이 생기는데 이 집합에서 어떠한 정점을 잡더라도 경로를 통해서 한 정점에서 다른 정점으로 갈 수 있는 경로가 있다.  
+
+```
+stronglyConnectedComponent(G) 
+{ 
+       1. 그래프 G에 대해 DFS를 수행하여 각 정점 v의 완료시간 f [v] 를 계산한다. 
+       2. G의  모든 간선들의 방향을 뒤집어 GR을 만든다. 
+       3. DFS(GR)를 수행하되 1행에서 시작점을 택할 때  1.에서 구한 f[v]가 가장 큰 정점으로 잡는다. 
+       4. 앞의 3에서 만들어진 분리된 트리들 각각을 강연결요소로 리턴한다.
+} 
+```
+시간복잡도 O(|E| + |V|)  
+
+증명 : 강연결요소에 있는 모든 두 정점은 같은 트리에 있어야한다.  
+
+1) 분리된 트리 안에는 강연결요소의 모든 정점이 포함된다. 
+2) 분리된 트리 내의 임의의 두 정점 사이에는 양방향 경로가 존재한다.  
+
+두 조건이 서로 필요충분조건으로 쓰이면서 증명의 근거로 충분하다.  
+
+- 13장 NP-완비  
+
+* NP-완비  
+
+[NP-완비](#NP-완비)
+
+---
