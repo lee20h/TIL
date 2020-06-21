@@ -171,6 +171,7 @@ for(int i=0;i<state_count;i++) {
 
 * 4日  
 
+# Main Memory
 OS 수업 중 Main Memory에 대해 공부를 하였다.  
 메모리에 프로세스를 할당할 때, 메모리를 관리하는 내용이라고 볼 수 있다.  
 ![Multiple-partition](./img/Multiple-partition.JPG)  
@@ -472,6 +473,8 @@ NP ⊂ P (?) 아직까지 밝혀진 바가 없다.
 * 12日  
 
 드디어 SLR Parsing Table을 완성하고 이제 운영체제를 공부하기 시작했다.  
+
+# Virtual Memory 1
 
 **Virtual Memory**  
 프로그램에서 필요한 메모리를 논리적 주소 공간에서 물리적 주소 공간으로 접근을 한다. 예전에는 논리적 주소 공간과 물리적 주소 공간의 크기를 같게 해야 프로그램이 꺼지지 않고 실행이 되었다. 가상 메모리가 도입 되고나서는 가상 메모리 공간에 물리 메모리 공간에서 조금만 가지고 유지하며, 논리적 주소 공간에서 요구 할 때 가상 메모리 공간에 없다면 물리 메모리 공간에 접근해서 가져온다.
@@ -2904,3 +2907,23 @@ stronglyConnectedComponent(G)
 [NP-완비](#NP-완비)
 
 ---
+
+* 21日  
+
+운영체제  
+
+* 9강 CPU Synchronization 1
+
+[CPU-Synchronization-1](./month/MAY#CPU-Synchronization-1)
+
+* 10강 CPU Synchronization 2  
+
+[CPU-Synchronization-2](./month/MAY#CPU-Synchronization-2)
+
+* 11~12강 Main Memory
+
+[Main-Memory](#Main-Memory)  
+
+* 13강 Virtual Memory 1  
+
+[Virtual-Memory-1](#Virtual-Memory-1)
