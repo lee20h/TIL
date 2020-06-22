@@ -226,7 +226,7 @@ Page 하나의 사이즈는 4KB이며,  32bit OS에서 한 프로세스의 Page 
 하루를 쉬고 다시 공부를 시작하였다. 오늘은 저번에 공부했던 OS시간에서의 Memory에 대해 더 공부하였다.  
 주로 공부한 부분은 `TLB`와 `Hierarchical Page Tables`이다. 어려운 개념이면서도 중요하니 다시 기록을 해볼려고 한다.  
 두 개념 다 `Paging`기법에서 문제점을 해결하기 위해 사용한다. 먼저 TLb는 Address Translation으로 인한 속도 저하 문제 즉, Performance 측면에서 해결하기 위해 사용되고, Hierarchical Page Tables는 Utilization 측면에서 Page table의 크기가 너무 커지는 문제를 해결하기 위해 사용된다.  
-먼저 TLB에 대해 알아보면, Translation Look-aside Buffers의 약자로 Cache의 일종으로 생각하면 이해하기 좋다. Paging에서의 Frame number와 Page number을 쌍으로 저장하여 Cache와 같은 역할을 하는 버퍼이다. Parallel Search을 하게 되어 도잇에 Page number, Frame number 쌍에 동시에 다 접근해서 원하는 Page Number을 통해 Frame Number을 접근하는데 이때, 어떤 number에 접근해도 O(1)으로 시간복잡도가 일정하다. 예전에 공부했던 Context Switch에서의 Overhead중 하나인 TLB Flush가 여기서 일어나게 되는데 프로세스 A의 Page, Frame number 쌍을 저장해놨다가 프로세스 B로 Context Switch한 경우 버퍼를 다 비우고 다시 채우게 된다. Cache 개념으로 처음에 채워지는 쌍들은 모두 Miss이기 때문에 Overhead가 따르게 된다.  이 부분을 생각해서 `Tagged TLB`개념이 나오는데 이 개념은 PID와 비슷한 ASID를 TLB에 둬서 각각의 숫자쌍이 어떤 프로세스의 것인지 표기하는 것이다. 이때는 TLB Flush을 하지 않아서 A -> B -> A로 Context Switch 되었을 때 버퍼에 A의 것이 하나라도 남아있다면 Hit을 해서 속도를 올리겠다는 개념이다. 하지만 버퍼에 공간을 하나 추가한다는 것은 돈이 많이 들어 사용하지 않는다고 하였다.  
+먼저 TLB에 대해 알아보면, Translation Look-aside Buffers의 약자로 Cache의 일종으로 생각하면 이해하기 좋다. Paging에서의 Frame number와 Page number을 쌍으로 저장하여 Cache와 같은 역할을 하는 버퍼이다. Parallel Search을 하게 되어 동시에 Page number, Frame number 쌍에 동시에 다 접근해서 원하는 Page Number을 통해 Frame Number을 접근하는데 이때, 어떤 number에 접근해도 O(1)으로 시간복잡도가 일정하다. 예전에 공부했던 Context Switch에서의 Overhead중 하나인 TLB Flush가 여기서 일어나게 되는데 프로세스 A의 Page, Frame number 쌍을 저장해놨다가 프로세스 B로 Context Switch한 경우 버퍼를 다 비우고 다시 채우게 된다. Cache 개념으로 처음에 채워지는 쌍들은 모두 Miss이기 때문에 Overhead가 따르게 된다.  이 부분을 생각해서 `Tagged TLB`개념이 나오는데 이 개념은 PID와 비슷한 ASID를 TLB에 둬서 각각의 숫자쌍이 어떤 프로세스의 것인지 표기하는 것이다. 이때는 TLB Flush을 하지 않아서 A -> B -> A로 Context Switch 되었을 때 버퍼에 A의 것이 하나라도 남아있다면 Hit을 해서 속도를 올리겠다는 개념이다. 하지만 버퍼에 공간을 하나 추가한다는 것은 돈이 많이 들어 사용하지 않는다고 하였다.  
 이러한 문제를 배우고 다른 특징을 또 배웠는데 그것은 Locality 즉 지역성이다. for loop에 의해서 계속 메모리를 참조하게 되면 근처 지역에서 벗어나지 않고 비슷한 공간을 계속 참조하는 특성을 가지고 있다. 따라서 Hit확률이 거의 90%라고 할 수 있다고 한다. 이러한 특징때문에 TLB는 아직도 사용하고 있으므로 중요하다고 한다. 다음으론 그림으로 설명을 도운다.  
 ![TLB](./img/TLB.JPG)  
 이러한 추상도를 그릴 수 있다. TLB는 MMU에 붙어있는 장치인데, 위 그림에서 TLB Hit되어 물리메모리의 접근하는 부분이 MMU의 역할이라고 볼 수 있다. 따라서 Hit가 이뤄질 경우 MMU안에서 다 해결이 된다는 말로 속도가 빠르다. 그리고 위에서 말한 것과 같이 TLB에 동시에 접근하는 것을 볼 수 있다. 중요한 것은 TLB miss와 TLB에 동시에 접근해서 TLB에 있으면 miss 부분을 버리고 TLB에 없으면 바로 miss부분에 진입해서 물리메모리에 접근한다는 것이 중요하다고 강조하셨다.  
@@ -240,7 +240,7 @@ contiguous했을 때 100ns로 접근한다고 했을 때 Paging에서 Hit ratio�
 
 이렇게 세 가지가 있으나 Hierarchical Paging을 제외하고는 단점이 존재해서 중심으로 다룰 것은 Hierarchical Paging이다.  
 개념은 Page Table들을 Paging해서 차지하는 공간을 드라마틱하게 줄인다는 것이다. 바로 수업에서 이해한 그림을 보게되면  
-![2-level P-T](./img/2-level P-T.JPG)  
+![2-level P-T](./img/2-level-P-T.JPG)  
 과정들을 다 생략하고 이해한 그림이다. Logical Address Space에서 0x0000 0000 중 0x0000 0|000으로 나뉘어서 앞의 5개는 Page number, 뒤에 3개는 Offset을 의미한다. 0x0000 0000은 Page Table의 0번의 0으로 indexing하여 접근하게 된다. Level 1의 Page table은 4KB을 차지하고 Frame number로 5000, 5001, 5002을 가지고 있다. 이 Frame number는 물리 주소공간에서 마지막에 연속적이지 않은 Page Table을 구성할 때 사용된다. 그리고 또 4 KB이므로 level 2로 연결 될 때 인덱싱해온 주소에 맞춰서 1024을 곱해서 찾아간다. Level 2에서는 마찬가지로 주어진 Number로 물리 주소공간에 연결을 한다.  
 이렇게 다 연결하고 보면 이전에는 4MB를 차지한 반면에 지금은 고작 3 + 3 + 1 page로 7page로 완성을 하였다. 드라마틱하게 공간이 줄어든 것을 볼 수 있었다.  
 
@@ -492,7 +492,7 @@ NP ⊂ P (?) 아직까지 밝혀진 바가 없다.
 ![vaild-invaild](/img/vaild-invaild.JPG)  
 Valid-Invalid Bit를 두고 운용한다. 실제로 Frame을 할당한 경우 Valid, 안한 경우에는 Invalid로 저장해놓은다. 이 때 Invalid한 Frame에 접근한 경우 `Page Fault`가 일어나게 된다.  
 
-![Page-Table](./img/Page-Table.JPG) 
+![Page-Table](./img/Page-Table.JPG)  
 위 사진과 같이 Invalid한 프레임에 접근하게 되면 Page Fault가 일어난다.  
 
 **Page Fault**  
@@ -2926,4 +2926,86 @@ stronglyConnectedComponent(G)
 
 * 13강 Virtual Memory 1  
 
-[Virtual-Memory-1](#Virtual-Memory-1)
+[Virtual-Memory-1](#Virtual-Memory-1)  
+
+--- 
+
+* 22日  
+
+운영체제
+
+오늘은 운영체제 이전 부분들을 다시 복습하고 가상 메모리를 이어서 공부했다.  
+
+* 14강 Vurtual Memory 2  
+
+Copy-on-Write  
+
+[그림]
+두 개의 프로세스가 하나의 페이지를 공유할 때(같은 데이터를 공유할 때) 사용한다. Shared Memory와 다른 차이점은 OS가 프레임을 아끼기 위해서 사용한 것이다. 예를 들어서 C Library는 물리 메모리 상 하나인데 여러 프로세스가 Shared Memory하듯이 모두가 자기 테이블 안에 C Library를 참조해서 가져다가 사용한다. 항상 Read-Only일 때만 이렇게 사용할 수 있다.  
+하지만 누가 수정을 해야하는 상황이 올 때 사용하는게 Copy-on-Write이다. 예를 들어서 Fork를 사용할 때 부모 프로세스와 자식 프로세스는 같은 데이터를 공유한다. Fork 당시에는 같은 데이터를 공유하므로 같은 물리 메모리를 링크하면서 프레임을 아끼다가, 자신 프로세스에서 해당 데이터 중 조금 수정한다면 아래의 그림과 같이 된다.  
+[그림]  
+
+따라서 목적은  
+1) 페이지 프레임 아끼기 위함  
+2) 카피를 안하기 위함 (메모리 접근을 최소화하기 위함 4B라고 가정시, 4B x 1024 x 2)  
+
+Write 작업을 하지 않는다면, 페이지 프레임을 아끼며(용량), 카피를 안하면서 카피의 오버헤드를 안 줘서 성능을 높게 유지할 수 있다.  
+
+Memory-Maapped Files
+mmap()이라는 시스템콜을 사용해서 구현했었다.  
+
+File을 사용하기 위해서는 OS의 File System을 거쳐서 하드웨어 (Storage)에 접근해서 사용하는 것이 일반적인 방법이다.  
+Page fault나 Swap할 때 Stroage에 접근했다. 이 때는 Memory management에서 직접 접근했다.  
+
+랜덤하게 접근과, Sequential하게 접근했을 때의 특징을 정리한다. 
+
+
+[그림]  
+
+mmap은
+편리성과 공유성에 의해서 사용된다.  
+
+Allocating Kernel Memory  
+커널 메모리는 물리적으로 Contiguous하게 될 필요가 있다. 그리고 다양한 크기의 구조체의 메모리를 필요로 한다.  
+물리적으로 연속적으로 되어야 하는 이유는 I/O장치 때문이다. DMA (Direct Memory Access)가 OS 대신 I/O처리를 해준다. 이 때 DMA는 Virtual Memory을 모르고 Physical Memory로만 접근을 하기 때문에 연속적이여야 한다. 커널에서 물리 메모리에 크기만큼 연속적으로 복사해서 DMA에 넘겨준다. 이러한 작업을 줄이기 위해서 연속적으로 유지한다.  
+
+Buddy System  
+메모리 공간을 효율적으로 이용하기 위함  
+[그림]  
+
+Slab Allocation  
+메모리 공간을 빠르게 이용하기 위함(PCB)  
+메모리를 매번 할당해서 사용하지 않고 미리 여러 공간을 할당하여 사용하는 방법(Pooling)  
+Slab Allocation은 Pooling을 이용한 방법  
+[그림]  
+
+Cache을 다 쓰기 전에 Cache의 크기를 조금씩 먼저 늘린다. 할당과 해지는 시간이 걸리기 때문에 빈번히 일어나는 소프트웨어의 경우 Kernel object을 먼저 할당 받아 놓고 사용하는게 overhead을 줄일 수 있는 방법이다.  
+
+추가적으로, 소프트웨어 시간이 많이 걸리는 구간  
+1) I/O
+2) Memory Copy  
+3) Dynamic Memory Allocation  
+
+추가적인 Issue  
+Program Structure  
+극단적인 예지만 쉽게 이해할 수 있는 예시다.  
+`int data [128][128]`일 때 두 가지 프로그램이 있다고 한다.  
+1) 
+```
+for (j = 0; j < 128; j++)
+	for (i = 0; i < 128; i++)
+		data[i][j] = 0;
+```
+128 x 128 = 16,384 page faults  
+2)  
+```
+for (i = 0; i < 128; i++)
+	for (j = 0; j < 128; j++)
+		data[i][j] = 0;
+```
+128 page faults  
+
+C Compiler가 Page을 수직으로 할당하기 떄문에 이차원 배열에 있어서 `2)`와 같이 접근하는게 훨씬 속도가 빠르다. 그러므로 C를 사용함에 있어서 `1)`과 사용할 때는 page fault가 일어나 속도가 느릴 수 있다.  
+
+---  
+

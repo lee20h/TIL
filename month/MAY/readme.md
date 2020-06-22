@@ -394,15 +394,15 @@ Mutex : 버퍼에 대한 접근을 관리, 생산자와 소비자가 empty, full
 세마포어 value의 초기값은 full = 0, empty = n, mutex = 1로 생산자와 소비자의 프로세스을 정리한다.  
 ```
 생산자 프로세스					|소비자 프로세스
-Do {							|Do {
-	...							|	wait(full);
+Do {					|Do {
+	...				|	wait(full);
 	/* produce an item in next_produced */	|	wait(mutex);
-	...							|	...
+	...				|	...
 	wait(empty);				|	/* remove an item from buffe to next_consumed */
-	wait(mutex);				|	...
+	wait(mutex);	|	...
 	...							|	signal(mutex);
-	/* add next produced to the buffer */		|	signal(empty);
-	...							|	...
+	/* add next produced to the buffer */	|	signal(empty);
+	...				|	...
 	signal(mutex);				|	/* consume the item in next consumed */
 	siganl(full);				|	...
 } while(true);					|} while(true);
@@ -436,18 +436,18 @@ signal(wrt);	//exit section			signal(mutex);
 2)
 Writer						|	Reader
 wait(wmutex); // Writer Process entry section	|	wait(read); // Reader Process entry section
-writedcount++;				|	signal(read);
-if (writecount == 1)		|	wait(rmutex);
+writedcount++;					|	signal(read);
+if (writecount == 1)				|	wait(rmutex);
 	wait(read);				|	readcount++;
-signal(wmutex);				|	if (readcount == 1)
+signal(wmutex);					|	if (readcount == 1)
 wait(wrt);					|		wait(wrt);
 ...writing is performed... // critical section	|	signal(rmutex);
 signal(wrt); // Writer Process exit section	|	...reading is performed... // critical section
-wait(wmutex);				|	wait(rmutex); // Reader Process exit sectioin
-writecount--;				|	readcount--;
-if (writecount == 0)		|	if (readcount == 0)
-	signal(read);			|		signal(wrt);
-signal(wmutex);				|	signal(rmutex);
+wait(wmutex);					|	wait(rmutex); // Reader Process exit sectioin
+writecount--;					|	readcount--;
+if (writecount == 0)				|	if (readcount == 0)
+	signal(read);				|		signal(wrt);
+signal(wmutex);					|	signal(rmutex);
 ```  
 `1)`의 Writer의 starvation을 해결하기 위해 짜여졌으나 `2)`에서는 Reader들이 오히려 starvation에 빠지게 된다.  
 Reader가 초기값으로 진입했다면 Reader들이 계속 진입하다가 Writer가 진입하게되면 진입한 Reader이 모두 수행하면 Writer가 수행된다. 이 때 Reader가 더 이상 진입하지 못하여 Starvation이 일어난다.  
