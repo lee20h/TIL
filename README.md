@@ -2940,10 +2940,10 @@ stronglyConnectedComponent(G)
 
 Copy-on-Write  
 
-[그림]
+![Copy-on-Write](./img/Copy-on-Write.JPG)
 두 개의 프로세스가 하나의 페이지를 공유할 때(같은 데이터를 공유할 때) 사용한다. Shared Memory와 다른 차이점은 OS가 프레임을 아끼기 위해서 사용한 것이다. 예를 들어서 C Library는 물리 메모리 상 하나인데 여러 프로세스가 Shared Memory하듯이 모두가 자기 테이블 안에 C Library를 참조해서 가져다가 사용한다. 항상 Read-Only일 때만 이렇게 사용할 수 있다.  
 하지만 누가 수정을 해야하는 상황이 올 때 사용하는게 Copy-on-Write이다. 예를 들어서 Fork를 사용할 때 부모 프로세스와 자식 프로세스는 같은 데이터를 공유한다. Fork 당시에는 같은 데이터를 공유하므로 같은 물리 메모리를 링크하면서 프레임을 아끼다가, 자신 프로세스에서 해당 데이터 중 조금 수정한다면 아래의 그림과 같이 된다.  
-[그림]  
+![Copy-on-Write2](./img/Copy-on-Write2.JPG)  
 
 따라서 목적은  
 1) 페이지 프레임 아끼기 위함  
@@ -2952,32 +2952,35 @@ Copy-on-Write
 Write 작업을 하지 않는다면, 페이지 프레임을 아끼며(용량), 카피를 안하면서 카피의 오버헤드를 안 줘서 성능을 높게 유지할 수 있다.  
 
 Memory-Maapped Files
-mmap()이라는 시스템콜을 사용해서 구현했었다.  
+유저가 File을 사용하기 위해서는 OS의 File System을 거쳐서 하드웨어 (Storage)에 접근해서 사용하는 것이 일반적인 방법이다.  
+Page fault나 Swapping할 때 Memory Management을 거쳐서 Stroage에 접근했다.  
 
-File을 사용하기 위해서는 OS의 File System을 거쳐서 하드웨어 (Storage)에 접근해서 사용하는 것이 일반적인 방법이다.  
-Page fault나 Swap할 때 Stroage에 접근했다. 이 때는 Memory management에서 직접 접근했다.  
+Stroage 장치는 Magnetic tape으로 되어있어서 Sequential하게 접근하는게 일반적인 방법이다. 하지만 가끔은 Random하게 접근할 때가 있다. Random하게 접근한 경우 성능이 제대로 나오지 않는다. Memory Management을 거쳐서 Storage에 접근할 때는 Random하게 접근하는게 성능이 더 잘 나올 수 있었다.  
 
-랜덤하게 접근과, Sequential하게 접근했을 때의 특징을 정리한다. 
+하지만 이러한 내용은 예전 이야기가 되어버렸다. 이제는 하드웨어의 발전으로 이러한 랜덤 액세스 때문에 Memory-Mapped을 사용한다는 것은 틀린 말이다.  
 
+사용하는 이유는 Shared Memory을 위해서 라고 생각하면 된다.  
 
-[그림]  
+![Memory-Mapped](./img/Memory-Mapped.JPG)    
 
-mmap은
-편리성과 공유성에 의해서 사용된다.  
+프로세스 A에서 고친 내용이 어느 순간이 disk file에 적용이 된다. 이때 오픈 대신에 mmap()으로 오픈하며, read, write가 아닌 값을 그냥 할당하거나 memset(), memcopy()로 메모리 값을 바꿀 수 있다.  
+따라서 여러 프로세스들이 같은 파일에 대해서 공유해서 작업을 할때 Memory Mapped Files을 사용하면 **편리**하다. 원래는 동시에 접근하게되면 한 쪽은 읽기전용이 되지만 이 경우에는 공동작업이 편리하게 가능하다.
 
 Allocating Kernel Memory  
 커널 메모리는 물리적으로 Contiguous하게 될 필요가 있다. 그리고 다양한 크기의 구조체의 메모리를 필요로 한다.  
 물리적으로 연속적으로 되어야 하는 이유는 I/O장치 때문이다. DMA (Direct Memory Access)가 OS 대신 I/O처리를 해준다. 이 때 DMA는 Virtual Memory을 모르고 Physical Memory로만 접근을 하기 때문에 연속적이여야 한다. 커널에서 물리 메모리에 크기만큼 연속적으로 복사해서 DMA에 넘겨준다. 이러한 작업을 줄이기 위해서 연속적으로 유지한다.  
 
 Buddy System  
-메모리 공간을 효율적으로 이용하기 위함  
-[그림]  
+물리적으로 연속된 페이지들을 효율적으로 할당하기 위해서 사용하는 시스템이다. 연속적인 공간을 필요로 할 때 필요 공간보다 큰 제일 작은 2의 제곱수로 분할하게 되면 트리가 구성되는데 맨 왼쪽의 리프노드에서 할당해주고 남은 노드들을 연속적으로 유지한다. 
+리눅스에서도 지금도 쓰이고 있다.  
+![Buddy-System](./img/Buddy-System.JPG)  
 
 Slab Allocation  
-메모리 공간을 빠르게 이용하기 위함(PCB)  
-메모리를 매번 할당해서 사용하지 않고 미리 여러 공간을 할당하여 사용하는 방법(Pooling)  
+메모리 공간을 빠르게 이용하기 위해서 사용하는 기법이다. 메모리를 매번 할당해서 사용하지 않고 미리 여러 공간을 할당하여 사용하는 방법(Pooling)  
+예시) PCB  
+
 Slab Allocation은 Pooling을 이용한 방법  
-[그림]  
+![Slab-Allocation](./img/Slab-Allocation.JPG)    
 
 Cache을 다 쓰기 전에 Cache의 크기를 조금씩 먼저 늘린다. 할당과 해지는 시간이 걸리기 때문에 빈번히 일어나는 소프트웨어의 경우 Kernel object을 먼저 할당 받아 놓고 사용하는게 overhead을 줄일 수 있는 방법이다.  
 
@@ -2989,7 +2992,9 @@ Cache을 다 쓰기 전에 Cache의 크기를 조금씩 먼저 늘린다. 할당
 추가적인 Issue  
 Program Structure  
 극단적인 예지만 쉽게 이해할 수 있는 예시다.  
-`int data [128][128]`일 때 두 가지 프로그램이 있다고 한다.  
+`int data [128][128]`이며, 각각의 row가 저장되는 한 페이지의 크기는 512B라고 가정 후 두 가지 프로그램이 있다고 한다.  
+![Program-Structure](./img/Program-Structure.JPG)  
+
 1) 
 ```
 for (j = 0; j < 128; j++)
@@ -2997,6 +3002,7 @@ for (j = 0; j < 128; j++)
 		data[i][j] = 0;
 ```
 128 x 128 = 16,384 page faults  
+페이지의 크기가 512이기 때문에 가로로 접근하며, 127개 적재 후 128번 째 다시 0번 col 적재할려하면 page replacement가 일어나서 page fault가 반복된다.  
 2)  
 ```
 for (i = 0; i < 128; i++)
