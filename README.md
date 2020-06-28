@@ -3038,3 +3038,348 @@ list_head는 Linux/include/linux/list.h 경로에 위치해서 정의 되어있�
 empty 확인 함수, list add 함수 두 가지와 list del 함수 두 가지를 크게 볼 수 있었다.  
 
 list_head을 가지고 FIFO을 직접 구현하기 위해 선행과제였던 부분을 가지고 Pick_next_task 함수와 Euqueue, Dequeue 하는 함수들을 확인하고 구현할 생각이다.  
+
+---  
+
+- 28日  
+
+운영체제 과제  
+list_head을 가지고 구현하는 RT 스케쥴러 중 FIFO을 구현해보았다. enqueue와 dequeue, pick_next_task 함수만을 고쳐서 구현하여 프로세스가 끝나야 다른 프로세스가 수행되도록 구현했다.  
+
+데이터통신  
+
+이번 학기는 주로 인터넷 5계층 중 1계층과 2계층인 Physical 계층과 Data Link계층에 집중적으로 배운다.  
+
+- 1장 Overview of Data Communcations and Networking  
+
+**데이터의 방향과 흐름**  
+- Simplex : 단방향  
+- Half-duplex : 반이중 통신  
+- Full-duplex : 전이중 통신  
+
+네트워크 물리적구조  
+연결 타입  
+- Point-to-point  
+![point-to-point](./img/point-to-point.JPG)  
+- Multipoint  
+![multi-pointer](./img/multi-pointer.JPG)  
+
+**토폴리지 종류**  
+- Mesh  
+![Mesh](./img/Mesh.JPG)  
+n(n-1)/2개의 물리적 채널을 갖는다.  
+장점 : Traffic 문제가 없으며 한 링크가 망가져도 통신 가능  
+단점 : Cost높음
+- Star  
+![Star](./img/Star.JPG)  
+HUB에 연결되서 사용됨  
+장점 : mesh에 비해 적은 비용, 상대적으로 안정적
+- Bus  
+![Bus](./img/Bus.JPG)  
+메인 케이블(Backbone)에 연결하는 MultiPoint 연결방식  
+장점 : 쉬운 설치  
+단점 : 문제 발생 시 수정 어려움  
+- Ring  
+![Ring](./img/Ring.JPG)  
+Point-to-Point방식 연결  
+
+토폴리지 방식들의 특징, 주요한 점만 파악하자  
+
+네트워크 카테고리  
+개념 이해 필요
+- LAN  캠퍼스, 사무실, 빌딩    
+이더넷으로 대체함  
+![Multiple-building-LAN](./img/Multiple-building-LAN.JPG)  
+multiple-building-LAN의 추상화  
+- MAN  도시  
+- WAN  지역  
+
+Protocol : 규칙의 집합  
+
+De jure standards : 기관에서 정함  
+De facto standards : 비중을 통해서 정함  
+
+- 2장 Network Models  
+
+각각의 Layer에서는 Low Layer에서 일어나는 일들에 관심이 없다.  
+
+- 5-Layer Internet model  
+
+|          |
+|-----------|
+| Application |
+| Transport |
+| Network |
+| Data link |
+| Physical |  
+![5-layer](./img/5-layer.JPG)  
+
+Peer-to-peer  
+![p2p](./img/p2p.JPG)  
+Physical Layer는 직접적으로 연결하며 데이터를 변환해서 사용한다.  
+
+![internet_model](./img/internet_model.JPG)  
+구체적인 통신의 표현  
+
+Layer 기능  
+
+Physical Layer : 이웃  node에게 Signal 전달  
+Bit-to-signal transformation  
+Bit-rate control  
+Bit-synchronization  
+Multiplexing  
+Switching  
+
+Data link Layer : **Next-hop delivery** - 한 노드에서 다음 노드로 Frame을 전달  
+Ethernet기반으로 흐름제어, 오류제어, 접근제어 존재  
+![Data-link](./img/Data-link.JPG)  
+![note-to-node](./img/note-to-node.JPG)  
+
+Network Layer : **end-to-end**(종단간 전송 Source to Destination) Ip -> Ip까지 전송함 따라서 global address 필요  
+![end-to-end](./img/end-to-end.JPG)  
+
+Transport Layer : **Process-to-process**이며, Port Addressing을 한다.  end-to-end에 있어서의 흐름제어와 오류제어를 한다.  
+![Reliable_process-to-process](./img/Reliable_process-to-process.JPG)  
+
+Application Layer : 전자우편, 파일 전송, 원격, WWW같은 유저에게 서비스를 제공하기위한 Layer  
+
+요약 :  
+![summary_5Layer](./img/summary_5Layer.JPG)  
+
+- 3강 Signals  
+
+Analog Signal : 무한한 숫자의 값을 가짐  
+주기적인 Signal을 사용  
+주기와 주파수는 역의 관계  
+사인파 그래프에서의 주기와 주파수 관계 알아보기  
+하나의 사인파 그래프는 유용하지 않다. 하지만 진폭이나 위상, 주파수를 바꾸면 유용해진다. 즉, 복합신호로 사용할 수 있다. Fourie analysis에 의하면 임의의 신호는 여러 사인파를 조합하면 구할 수 있다. 또, 반대로 분할이 가능하다.  
+
+Square wave : 여러 사인파(harmonic)를 합치게 되면 직사각형 신호와 비슷하게 나온다.  
+
+![Transmission_mediun](./img/Transmission_mediun.JPG)  
+**Bandwidth** : medium이 통과시킬 수 있는 주파수의 범위(signal의 절반이상을 통과 시키는 경우, highest - lowest)  
+medium의 bandwidth와 signal의 bandwidth가 일치 할 수록 데이터의 손실이 줄어든다.  
+
+Digital bandwidth (bps)  
+- Maximum bit rate  
+
+Annalog bandwidth (hz)  
+- range of frequencies  
+
+Digital Signal : 유한한 숫자의 값을 가짐  
+비주기적인 Signal을 사용  
+Bit interval : single bit을 보낼 때 시간  
+Bit rate : 1초간 bit interval 몇 개 나오는 정도  
+Wide-Bandwidth Medium을 사용해야함  
+
+bandwidth에 한계가 있을 때 bps의 숫자와 최소 필요 bandwidth가 만족되면 디지털 데이터를 보낼 수 있다.  
+**Nyquist Theorem** : 채널 오류 고려하지 않은 상태에서 이론적인 한계  
+**Shannon Capacity** : 오류(노이즈)를 고려한 한계  
+
+1개의 harmonic일 때의 bps와 필요한 BandWidth  
+최소한의 **bandwidth B = n/2이다.(Shannon capacity)**  
+여러개의 harmonic일 때의 bps와 필요한 Bandwidth  
+**bandwidth B >= n/2 or n <= 2B(Nyquist theorem)**  
+
+bit rate와 bandwidth는 서로 비례한다.  
+
+Low-pass : 일정 주파수 밑으로 다 통과시킴 (디지털 전송)  
+band-pass : 일정 주파수 범위만 통과 시킴 (아날로그 전송)  
+
+디지털 전송  
+low-pass channel이 필요하다. 선을 독점하거나 시간을 나눠서 독점하는 제한된 환경에서만 사용가능하다.  
+
+아날로그 전송  
+band-pass channel을 대부분 사용한다. low-pass channel은 제한적이며, low-pass channel을 band-pass channel로 나눠서 각각 사용할 수 있다.  
+
+**Data rate limits**  
+- the bandwidth available  
+- the levels of signals we can use  
+- the quality of the channel(the level of the noise)  
+noise 없으면 Nyquist 있으면 Shannon channel 사용  
+
+Nyquist bit rate  
+노이즈가 없는 채널에서 bps을 구하면 2 x bandwidth x log₂L (L : number of signal levels)  
+
+Shannon capacity bps  
+노이즈가 있는 채널에서 bps을 구하면 bandwidth x log₂(1 + SNR) (SNR = signal-to-noise ratio : signal의 power/noise의 power)  
+
+문제 중 B/W와 SNR이 주어졌을 때 bit rate와 signal level을 구하는 문제에 있어서 Shannon capacity로 bps을 구하고 Nyquist로 그 식으로 signal level을 구하되 오류를 고려해주기 위해 level을 1을 뺀다.  
+
+**Transmission Impairment** (전송 장애 3가지)
+Attenuation - 약화  
+저항에 의한 열 에너지로 변해서 손실난 부분을 amplifier(증폭기)를 통해 복구 dB = 10log(P₂/P₁)을 통해서 양수면 증폭, 음수면 약화  
+Decibel을 위의 식처럼 사용하는데 만약 Point-to-point에서 여러 point사이의 증픅과 약화를 알아 볼 수 있으며, dB계산이 쉽다.  
+
+Distortion - 왜곡  
+Composite signal(복합 시그널)에서 생길 수 있는 시그널의 모양이 변하는 것이다. 분해 후 Medium 통과 후 합성 하는 경우 왜곡 생김  
+
+Noise  
+온도, 유도, crosstalk (선 꼬기. 자기장 야기), 번개, 고압선 등에 의해서 생길 수 있다.
+
+- 4강 Digital Transimission  
+
+Line coding  
+Binary data를 Digital signal로 변환하는 과정  
+Signal level, data level  
+![signal,data-level](./img/signal,data-level.JPG)  
+
+Line coding schemes
+1) Unipolar  
+한극성을 이용하며 가장 간단하며 기초적이다. 하지만 요즘엔 사용하지 않는다.  
+voltage는 하나로, 1 : a voltage level, 0 : zero voltage level  
+두 가지 문제점이 존재한다. DC component가 있으며, 동기화가 부족하다.  
+
+2) Polar  
+양극성을 이용하며, 여전히 동기화 문제가 존재한다.  
+Polar가 4가지 종류로 나뉘어진다. 
+	1) NRZ (Nonreturn to Zero)  
+	zero voltage을 갖지 않으며 양 혹은 음의 수를 갖는다.  
+	- NRZ-L(Level)  
+		0 : positive  
+		1 : negative  
+		동기화 문제가 여전히 존재  
+	- NRZ-I(invert)  
+		1 : voltage level을 역으로 바꿈  
+		0 : voltage 변화 x  
+		NRZ-L보다는 동기화가 발전했다.  
+	![NRZ](./img/NRZ.JPG)  
+
+	2) RZ (Return to Zero)  
+	동기화 문제를 해결하기 위해 생긴 방법으로, 각 비트에 있어서 Signal change bit을 둔다. 3가지 value을 갖되 zero는 동기화를 위한 value이다.  
+	1 : positive-to-zero  
+	0 : negative-to-zero  
+	효율적인 동기화가 가능하나, 시간이 낭비된다.  
+
+	3) Manchester  
+	0 : positive-to-negative  
+	1 : negative-to-positive  
+	RZ와 비슷하나, value 중 zero가 없음  
+	![Manchester](./img/Manchester.JPG)  
+	4) Differential Manchester  
+	0 : additional transition  
+	1 : no transition  
+	![Differential-Manchester](./img/Differential-Manchester.JPG)  
+	장점 : 1이 들어오면 한번 바뀐다.  
+
+3) Bipolar  
+3 voltage level 사용한다.  
+0 : zero level  
+1 : alternating positve and negative voltages  
+AMI(alternate mark inversion)  
+많이 사용하는 bipolar encoding 방식으로 0이 들어오면 zero level을 사용하지만 1이면 처음엔 positive으로 시작해서 1이 들어올 때 마다negative 반복해서 바뀐다.  
+단점 : 0이 계속 들어오면 동기화에 문제가 생긴다.  
+
+pulse : symbol을 전송하는데 필요한 시간  
+pulse rate : 1초당 일어난 pulse  
+Bit rate = pulse rate * log₂L (L : number of data levels)  
+
+DC components  
+적합하지 않은 이유가 두 가지가 있다. 장비를 통과할 때 오류가 있을 수 있다. 부가적인 에너지로 쓸모가 없다.  
+
+Self-synchronization (동기화문제)  
+receiver의 bit interval이 정확하지 않으면 문제가 생길 수 있다.
+![lack_of_synchronization](./img/lack_of_synchronization.JPG)  
+동기 시스템은 sender와 receiver clock을 맞추고, 비동기 시스템은 signal에 해당 정보가 필요하다.  
+
+Block coding  
+line coding이 동기화 문제가 있거나 (NRZ에서 0이나 1이 연속된 경우) bandwidth가 절반만 쓰인다.(RZ 계속 0으로 바뀌어 B/W 절반쓰임)  
+이러한 문제를 해겷하기 위해 block으로 보낸다는 생각이다. 먼저 m bit 그룹들로 나눈다. 그 다음 m bit 그룹들을 n bit 그룹들로 또 나눈다. 이러한 방식들은 연속적인 1과 0을 없앤다. 그다음 line coding해서 전송한다.  
+대표적인 방법 4B/5B으로, 4bit을 5bit으로 바꿔줘야하는데 16개 중 32개에 매핑해주며, 안 쓰인 16개는 버린다. 매핑해주는 방법은 연속된 1이나 0이 3개 이상인 경우는 사용하지 않는다.  
+![block_coding](./img/block_coding.JPG)  
+4B/5B 방법은 시작 부분에 0으로 시작하고 끝 부분이 0이 두개 이상 나오는 경우가 Worst case이다. 따라서 0이 3개 초과해서 나오지 않는다.  NRZ-I가 이 방법을 사용하며, Bandwidth가 20% 더 필요하다는 단점이 있다. Fast Ethernet이 이 방법을 사용한다.  
+8B/10B느 방법은 4B/5B와 비슷하지만 오류가 더 적으므로 Gigabit Ethernet에서 쓰인다.  
+8B/6T 방법은 앞에서의 방법과는 달리 bandwidth를 낭비하지 않지만 level을 더 쓴다. 8 bit 그룹을 6 symbol code로 바꾼다. signal level이 3개로 2^8 -> 3^6개로 늘어난다.
+
+**Sampling**  
+analog data를 digital data로 바꿔서 digital전송을 한다.  
+PAM(Pulse Amplitude Modulation)  
+analog signal을 sampling하여 digital전송함  
+PCM(Pulse Code Modulation)  
+PAM을 기반으로 하나, Quantization(양자화 - 노이즈가 강해짐)를 통해서 Binary data로 바꾼다. PAM -> Quantization -> binary encoding -> line coding  
+Sign magnitude사용해서 Binar encoding 한다. Block coding 후 Line coding (NRZ-L)을 한다.  
+![PCM](./img/PCM.JPG)  
+
+Sampling rate : Nyquist theorem  
+**반드시 origianl signal의 가장 높은 주파수 두배 이상이 되어야한다.**  
+
+sample당 bit의 갯수는 Bit = ┌log₂N┐ N : level  
+
+bit rate = sampling rate * number of bits per sample  
+
+Parallel and serial 전송  
+Serial 방식은 동기(sender, reciver같은 clock), 비동기(다른 clock) 방식으로 나뉜다.  
+Parallel 전송은 속도가 빠르나 Cost(선 갯수)가 많이 들며, 거리가 짧다.(동시에 보내서 동시에 받으므로 동기화 문제 때문)  
+Parallel과 serial은 서로 변환 가능  
+Serial 전송은 먼저 conversion으로 데이터를 직렬화 시킨 후 전송하고 다시 conversion으로 데이터를 병렬화시킨다.  
+
+비동기화 전송은 공통된 시간을 사용하지 않으며 Sender와 Receiver사이의 약속이 있다. Start bit(0)와 Stop bit(1)으로 구별한다. Parallel와 동기 전송보다는 느리지만 가격이 싸고 효율적이다. 예로 키보드 연결할 때 쓰인다.  
+동기화 전송은 공통 시간을 맞춰야 한다. byte간의 gap이 없으므로 속도가 빠르다. 동기화의 타이밍을 맞추는 것이 가장 중요하다.  
+
+- 5강 Analog Transmission  
+
+Modulation of digital data  
+Binary data -> band-pass  
+low-pass analog signal -> analog signal  
+Analog signal 특징 3가지  
+진폭 주파수 위상  
+
+bit rate  
+1초에 전송되는 bits  
+Baud rate  
+1초당 Signal units, bit rate와 같거나 작다.  
+
+Carrier signal  
+아날로그 전송할 때 정보를 싣게 되는 기반이 되는 주파수 대역. Carrier signal을 진폭이나 주파수를 조절할지 고른다. 
+
+**ASK(Amplitude Shift Keying)**  
+Carrier signal의 amplitude을 올렸다가 내렸다 하므로, Noise에 약하다는 단점이 있다. Bandwidth = (1 + d) * N_baud (d : modulation preocess)  
+**baud rate == bit rate**  
+![ASK](./img/ASK.JPG)  
+진폭을 기준으로 한다.  
+![ASK_BW](./img/ASK_BW.JPG)  
+bandwidth = N_baud  
+
+**FSK (Frequency Shift Keying)**  
+Carrier signal의 주파수를 바꾸므로 Noise의 문제가 없다. 좋은 주파수 대역이 정해져 있다.  
+**baud rate == bit rate**  
+![FSK](./img/FSK.JPG)  
+![FSK_BW](./img/FSK_BW.JPG)
+Bandwidth = f_c1 - f_c0 + N_baud  
+Bandwidth가 많이 필요하다.  
+
+**PSK (Phase Shift Keying)**  
+Carrier signal의 위상을 바꾼다. 0 : zero 1 : inverse  
+![PSK](./img/PSK.JPG)  
+PSK의 특징은 noise에 강하며, Bandwidth가 많이 필요하지 않아 ASK랑 같다.  
+bit 수를 늘린 2-PSK는 ASK와 bit rate가 같지만 4-PSK, 8-PSK는 2bit, 3bit로 늘어난다.  
+bandwidth = N_baud (ASK의 Bandwidth와 같다.)
+4-PSK (Q-PSK)  
+![Q-PSK](./img/Q-PSK.JPG)  
+| Dibit | Phase |
+|-------|-------|
+| 00 | 0 |
+| 01 | 90 |
+| 10 | 180 |
+| 11 | 270 |  
+
+QAM (Quadraturer Amplitude modulation)  
+ASK와 PSK을 조합해서 사용한다. Bandwidth가 ASK와 PSK와 같다. 하지만 ASK에서 Noise 문제가 발생할 수 있다.  
+4-QAM, 8-QAM  
+![QAM](./img/QAM.JPG)  
+여러 방식이 가능하다. Bit rate는 Baud rate에 bit수를 곱해주면 된다.  
+| Modulation | Units | Bits/Baud | Baud rate | Bit Rate |
+|-------|-------|-------|-------|-------|
+| ASK,FSK,2-PSK | Bit | 1 | N | N |
+| 4-PSK,4-QAM | Dibit | 2 | N | 2N |
+| 8-PSK, 8-QAM | Tribit | 3 | N | 3N |  
+
+AM (Amplitude Modulation)  
+Bandwidth = Bandwidth(minimum)의 2배  
+주어진 Modulating singal을 Carrier frequency을 기준으로 Amplitude을 Modulation한다. 따라서 Noise에 약하다.  
+AM baud는 붙어서 할당되어 가끔 서로 겹치기도 한다.  
+FM (Frequency Modulation)  
+Bandwidth = AM의 Bandwidth의 5배 = Bandwidth(minimum)의 10배  
+AM와 같이 하되 Frequency을 Modulation하므로 Noise 문제가 생기지 않는다.  
+FM baud는 간섭을 막을려고 서로 띄어 놓는다.
+PM (Phase Modulation)  
