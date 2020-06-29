@@ -3124,16 +3124,23 @@ Physical Layer는 직접적으로 연결하며 데이터를 변환해서 사용�
 Layer 기능  
 
 Physical Layer : 이웃  node에게 Signal 전달  
+(**bit을 signal로 변환**해서 전달)  
 Bit-to-signal transformation  
 Bit-rate control  
 Bit-synchronization  
 Multiplexing  
 Switching  
 
-Data link Layer : **Next-hop delivery** - 한 노드에서 다음 노드로 Frame을 전달  
+Data link Layer : **Next-hop delivery** - **한 노드에서 다음 노드로 Frame을 전달**  
 Ethernet기반으로 흐름제어, 오류제어, 접근제어 존재  
 ![Data-link](./img/Data-link.JPG)  
 ![note-to-node](./img/note-to-node.JPG)  
+Packetizing  
+Media access control  
+Addressing  
+Flow control  
+Error control  
+
 
 Network Layer : **end-to-end**(종단간 전송 Source to Destination) Ip -> Ip까지 전송함 따라서 global address 필요  
 ![end-to-end](./img/end-to-end.JPG)  
@@ -3381,5 +3388,282 @@ AM baud는 붙어서 할당되어 가끔 서로 겹치기도 한다.
 FM (Frequency Modulation)  
 Bandwidth = AM의 Bandwidth의 5배 = Bandwidth(minimum)의 10배  
 AM와 같이 하되 Frequency을 Modulation하므로 Noise 문제가 생기지 않는다.  
-FM baud는 간섭을 막을려고 서로 띄어 놓는다.
-PM (Phase Modulation)  
+FM baud는 간섭을 막을려고 서로 띄어 놓는다.  
+
+--- 
+
+* 29日  
+
+데이터통신  
+
+- 6강 Multiplexing  
+
+**문제위주 보기**  
+Multiplexer(MUX) : 여러개의 선을 한 선으로 모아주는 것  
+Demultiplexer(DEMUX) : 한 선을 여러 개로 나눠주는 것  
+FDM(analog)  
+Carrier frequency을 기준으로 Analog multiplexing으로 signals을 compine한다.  
+Guard band : 사이사이 띄어놓기  
+
+WDM  
+FDM과 동일하되 빛의 파장을 이용해서 장비가 다르다.  
+
+TDM(Time Division multiplex, digital)  
+전체 대역폭을 각각에게 할당을 해주나, 시간마다 할당되는 선이 다르다. Wide band을 한 커넥션에 연결한다. FDM과 비교하면 FDM은 주파수를 쪼개서 사용하므로 작은 주파수 대역으로 전송한다.  
+Frame들의 크기는 다 동일하며, 전송 프레임들을 모은 것을 time slot(base time)이라 하며, 하나당 T sec가 필요하다고 한다.  
+link의 data rate는 시간 n만큼 빨라지며, unit의 duration은 시간 n만큼 짧아진다.  
+Interleaving은 개념적인 부분으로, 그림으로 이해를 한다. frame 간격을 벌려서 Sender와 Receiver가 동기화하여 돌아간다.  
+![Interleaving](./img/Interleaving.JPG)  
+
+동기화  
+동기 : clock 사용  
+비동기 : signal 사용  
+MUX와 DEMUX사이의 동기화는 비동기 방식으로 한다. 1-bit framing bit을 1과 0을 계속 바꿔가며 한다. 그러므로 frame 사이즈가 1늘어나야한다.  
+
+Inverse TDM  
+TDM을 반대로 여러 개의 라인을 하나의 빠른 속도의 라인으로 모아주는 것이다.  
+
+- 7강 Transmission Media  
+
+Guided Media
+Twisted-pair cable  
+꼬아놓은 한 쌍의 케이블로, Noise가 생기면 같이 꼬인 케이블이 동시에 생기므로 서로의 difference가 일정하여 Noise 문제에 대해 좋아진다.  
+UTP STP Metal shield의 차이로, 성능과 가격차이가 난다.  
+
+Coaxial cable (동축케이블)  
+Twisted-pair 보다 높은 주파수의 범위를 가진다. 케이블 TV에 이용  
+
+Unguided Media  
+주파수에 따라서 용도가 정해져있다.
+Ground propagation  
+지상을 통해서 반사시키며, 거리에 따라 세기가 다르다.  
+저주파에 쓰인다.
+Sky propagation  
+대기중을 통해서 반사시킨다. 넓은 거리에 약한 세기로 보낸다.  
+Ground보다 비교적 고주파에 쓰인다.  
+Line-of-sight propagation  
+시야에 보이는 쪽으로 직선으로 쏴서 초고주파에 사용한다. 안테나같이 사용한다.  
+
+Radio waves  
+3Khz to 1GHz band  
+Omnidirectional(전체방향)에 sky propagation으로 먼 거리에 보낸다.(multicast) 저속으로 대역폭이 낮아 벽을 통과할 수 있다. 예를 들어 AM, FM 라디오, TV, 삐삐 등에서 쓴다.  
+
+Microwaves
+1 to 300Ghz  
+Unidirectional(단방향)으로 지향성이므로 안테나를 사용한다. 먼 거리도 계속 연결하여 통신이 가능하다. 하지만 주파수가 높아 벽을 통과 할 수 없다. 사용 예시는 셀룰러 폰, 위성 네트워크, 무선 랜에서 사용한다.  
+
+Infrared  
+300Ghz to 400THz  
+너무 높은 고주파로 침투를 못한다. 태양빛이 있다면 사용할 수 없어서 고속의 근거리 통신에 사용된다. 키보드, 마우스, PC, printer, 리모컨같은데에서 사용된다.  
+
+- 8강 Circuit Switching and Telephone Network  
+
+Circuit Switching  
+![Circuit-Switching](./img/Circuit-Switching.JPG)  
+서킷 생성 후 통신하는 방식으로 
+N-by-M Switch(input N, output M)와 N-by-n folded Switch(input, output N) 입력과 출력의 차이를 두고 나뉘어진다. 이 때 두가지 기술이 있다. Space-division switch와 Time-division swtich가 있다.  
+
+Space-division switch  
+공간적으로 분리된 경로를 제공하는 방법이다. 아날로그와 디지털 네트워크에서 설계될 수 있다.  
+Crossbar Switch  
+Grid형식으로 만들어서 스위치 방식으로 원하는 목적지로 가게한다. 연결성은 가장 좋으나 효율이 떨어진다. 
+Blocking이 제일 좋다.  
+Multistage switch  
+예제를 통해서 모양과 작동만 이해하자  
+![Multistage_switch](./img/Multistage_switch.JPG)  
+single stage라면 15x15개가 필요하나, 위의 그림처럼 만들게 된다면 줄일 수 있다. 그리고 잘 구성한다면 Crossbar Switch만큼의 Blocking에 근사할 수 있다.  
+
+Time-division Switch  
+Time-divsiion multiplexing(TDM)  
+![TDM](./img/TDM.JPG)  
+TSI에서 1<->3, 2<->4으로 매칭해주며, RAM에서 저장 후 매칭하기 때문에 delay가 존재한다.  
+TDM bus  
+TDM과 TDM bus와는 구조차이만 있을 뿐 기능 차이는 별로 없다. 가운데 버스를 둬서 스위칭 개념으로 매칭한다.  
+
+Space and time-divsion switch 조합  
+Stage을 나눠서 조합할 수 있다. 두 개의 특징을 정리하면 Space-division은 지연이 없으며 비용이 많이 든다. Time-division은 지연이 있으나 비용이 덜 든다. 따라서 두 타입을 잘 조합하면 지연과 가격을 최소로 할 수 있다.  
+
+- 9강 High-Speed Digital Access: DSL, Cable Modem, and SONET  
+
+ADSL  
+전화선을 이용하며 거리 축소하며 속도가 증가한다. 길이에 따라 속도가 다르며 음성영역과 데이터 영역을 분리해서 동시 사용 가능하다. Downlink는 빠르지만 Uplink는 느리게 구현되어있다. 유저의 입장에서는 전화선은 그대로지만 DSLAM을 달아서 사용해야한다. void 0번 idle 1~5번 data 6~255번  
+
+SDSL 대칭적으로 uplink와 downlink에 제공  
+
+Cable modem  
+초기의 유선 TV망은 방송국에서 가정으로만 데이터를 보낼 수 있었다. (One-way Communication)  
+이후에는 장비를 바꿔서 HFC(Hybrid fiber-coaxial network) network로 바뀌었다. 이 때 양방향으로 통신이 가능하다 (Two-way Communication) 이론적 downstream의 속도는 30Mbps이다. upstream은 12Mbps이다. 쉐어링하므로 느려질 수 있다.  
+
+SONET  
+Backbone망에서 사용되는 망으로 광케이블 망이다. Fiber to the home(FTTH)로 요즘에 광케이블을 집으로 가지고 오는 방식을 추진하고 있다.  
+광섬유 케이블을 가지고 통신을 하며, TDM시스템으로 master clock을 가진 방식이다. 일정단위로 대역폭을 제공한다.  
+
+- 10강 **Error Detection and Correction**  
+
+Single-bit error  
+serial 전송에서 자주 일어나며, parallel에서도 가끔 일어난다.  
+Burst error  
+2개 이상 bit 오류, 연속일 필요가 없다. Length of burst : 처음 깨진 부분부터 마지막에 깨진 부분까지 전부  
+
+Redundancy  
+Parity check  
+홀짝체크하는 방법  
+모든 싱글에러를 체크 할 수 있으며, 버스트에러에서는 홀수개의 비트가 바뀐 경우만 체크할 수 있다.  
+2-D Partiy check  
+2차원으로 row와 column의 홀짝을 맞춰서 bit을 만들어준다. 1차원의 Partiy check에서 못 찾는 버스트 에러같은 부분을 찾을 수 있으나, 정확히 같은 위치에 에러가 난다면 찾지 못한다.  
+
+Cyclic redundancy check(CRC)  
+가장 강력하며, 널리 사용된다. 이진법을 나누기를 하여 사용한다.  
+Sender에서는 CRC generator가 있으며, Reciver에서는 CRC checker가 있다.  
+
+![CRC_Generator](./img/CRC_Generator.JPG)  
+
+![CRC_Checker](./img/CRC_Checker.JPG)  
+
+Polynomials는 2가지 조건을 만족해야한다. 1. **x로 나누어지면 안된다.**(모든 버스트 에러를 체크할 수 있다.) 2. **x+1로는 나누어져야한다.**(홀수갯수의 버스트 에러를 체크할 수 있다.)  
+이러한 조건을 만족할 때의 Performance는 모든 Burst Error에서 홀수개의 숫자가 바뀐 경우 다 찾아낸다. degree of polynomial보다 낮거나 같은 Burst Error들은 다 찾아낸다. 짝수의 Burst Error도 높은 확률로 찾아낸다.  
+
+CheckSum  
+CRC보다 속도가 빠르지만 검출 능력이 떨어진다. 하드웨어를 간단히 구현할 때 사용한다. n bit 단위로 쪼갠 다음 1의 보수로 합한다. 원본과 보수를 더했을 때 0이 나오면 정상, 아니면 오류가 난 것이다.  
+Parity < Checksum < CRC  
+
+Error Correction  
+Forward error correction (FEC)  
+해밍코드로 몇번째 bit가 깨졌는지 알아 낼 수 있다.  
+![hamming_code](./img/hamming_code.JPG)  
+
+- 11강 Data Link Control and Protocols  
+
+Flow Control  
+받는 사람의 buffer가 안 넘치게 함
+
+Error Contorl  
+오류시에 계속 재전송  
+
+Stop-and-Wait ARQ  
+Sender에서 Frame을 전송하고 Receiver는 받은 다음 ACK로 원하는 Frame을 요청하게 된다.Time-out을 둬서 답장이 안 오게 되면 재전송을 하며, 중복으로 받게되면 버리고 다시 ACK으로 요청하게 된다.  
+Piggybacking  
+Frame에 ACK bit을 둬서 overhead을 최소화 하는 방법이다. 
+
+Go-Back-N ARQ  
+n bit을 할당한 경우 Frame의 갯수는 0~2ⁿ-1  
+sender **window size < 2ⁿ** 여야 성립된다. receiver window size는 1이여야 한다.  
+
+Selective-Repeat ARQ  
+ACK와 NAK을 둘 다 사용하며 Receiver의 Window size가 달라진다. 두 Window Size가 2ⁿ/2가 된다.  
+
+- 12강 Point-to-Point Access: PPP  
+
+학술적으로 이야기할 것이 없다.  
+
+- 13강 Multiple Access  
+
+Random access  
+Node사이의 충돌을 허용하며, 충돌을 해결하기 위한 이슈가 있다.  
+Multiple access (MA)  
+ALOHA Protocol  
+충돌이 일어나면 **backoff**한다.  
+**Carrier-sense multiple access**(CSMA)  
+캐리어를 확인해서 전송 중이라면 기다린다. Packet 전송 전에 확인 후 전송하는 방식으로 충돌이 일어나기도 한다. 그 이유는 동시에 전송하거나 확인 할 때 delay가 존재 할 수 있기 때문이다. Persistence strategy을 사용해서 최대한 충돌을 줄인다.  
+Persistence strategies  
+앞의 상태가 뒤에 영향을 받는 것이다. p-persistent하면 p의 확률로 전송한다.  
+Nonpersistent  
+앞과 뒤가 독립적이라서 영향을 받지 않는다. Idle인 경우 즉시 보내고 Busy인 경우 랜덤한 시간을 기다린다.
+**CSMA/CD** (collision detection)  
+충돌 시에 전송을 취소한다. 충돌이 일어나지 않는다면 성공적인 전달이며, 충돌이 일어난다면 전송을 취소하고 재전송 할 때 **exponential backoff**을 통해서 충돌을 줄인다.(0~2ⁿ-1 중 하나의 시간을 골라서 진행)  
+실제로는 프로토콜로 관리하지만 충돌이 일어나지 않는다. (full-duplex스위칭 허브)  
+CSMA/CA (collision avoidance)  
+무선환경에서는 충돌을 발견 못하기 때문에 충돌을 회피할 방법을 찾는다. Persistence strategy을 사용한다. Idle line을 많이 넣어서 간격을 줘서 충돌을 피한다.  
+
+Channelization  
+공유 가능한 Bandwidth을 시간이나, 공간, 코드로 나누는 것이다.  
+FDMA  
+유저마다 주파수를 나눠져서 그 채널로 Multiple access 방법이다.  
+TDMA  
+채널은 한개로, time slot으로 나눈다.  
+**CDMA**  
+FDMA + TDMA로 한 채널에 동시에 전송이 가능하다. 주파수를 나누지 않고 대역폭을 자유롭게 사용할 수 있다.  
+encoding rule :  
+data bit 0 -> -1  
+data bit 1 -> +1
+silence -> 0  
+
+CDMA Multiplexer  
+![CDMA_MUX](./img/CDMA_MUX.JPG)  
+![CDMA_DEMUX](./img/CDMA_DEMUX.JPG)  
+
+
+* 14강 Local Area networks: Ethernet  
+
+Bridged Ethernet  
+이더넷을 공유해서 사용하면 충돌이 일어나지만 bridge을 둬서 collision을 나누게 되면 collision domain 끼리는 충돌이 일어나지 않는다.  
+
+Switched Ethernet : N-porr bridge를 부르는 말  
+Full-duplex Ethernet : 전송과 수신간의 Colilision이 일어나지 않는다.
+
+- 15강 Wireless LANs  
+
+IEEE 802.11  
+2가지 mode  
+ad hoc : 단말기 끼리 통신  
+AP : Access Pointer을 통해서 통신  
+ESS : AP와 AP두개이상  
+BSS : AP한개  
+
+CSMA/CA를 사용한다.  
+CSMA/CD을 사용하지 않는 이유  
+1) 데이터를 받고 보내고 동시에 일어날려면 cost가 더 든다.  
+2) hidden terminal의 존재로 항상 충돌을 찾지 못한다.  
+3) signal이 멀리 있으면 신호가 약해져서 끝이 충돌하는 것을 찾기 어려워진다.  
+
+Hidden terminal problem  
+장애물이 존재하는 경우 다른 signal을 찾지 못해서 충돌이 일어나는지 모르는 상황이 Hidden terminal이라고 한다.  
+
+CSMA/CA의 핵심  
+RTS CTS 컨트롤 패킷을 만들어서 RTS에 시간 정보를 담아서 보낸다. 받은 다른 노드들이 그 시간 동안 데이터를 보내지 않는다.(Network Allocation Vector) 따라서 충돌이 회피된다.  
+![CSMA/CA](./img/CSMACA.JPG)  
+
+Bluetooth  
+무선 LAN으로 고안되었으며, ad hoc network으로 구성되어있다. 2가지 타입으로 나눠진다.  
+Piconets  
+Master와 Slave관계로 사용된다. 최대 8개 ex) Pc와 주변기기들  
+Scatternet  
+Piconets을 연결한 방법. 연결된 한가지가 gateway 역할로 master이자 다른 Piconet의 Slave 역할을 할 수 있다.  
+
+- 16강 Connecting LANs, Backbone Networks, and Virtual LANs  
+
+장비와 장비를 연결할 때 사용하는 장비  
+Physical : Repeater or hub  
+Data link : Bridge or two-layer switch  
+Network : Router or three-layer switch  
+
+Repeater : 물리계층에서 신호 연장, 복원 역할하는 장비  
+
+Hub : dummy hub, switching hub  
+dummy hub : multi-port repeater 물리계층에서 사용됨  
+switching hub : 모양은 같으나, 내부구조가 완전 다름. Data link계층 장비이다.(Bridge)  
+  
+bridge : Data link 계층 장비로, repeater와는 달리 패킷을 읽어보고 정함  
+Transparent bridges  
+각 station이 bridge가 있는지 몰라도 됨  
+3가지 조건  
+1. 다른 station으로 forward됨  
+2. 자동으로 forwarding table이 만들어져야한다.  
+3. Loop가 형성되면 안된다.  
+
+Spanning tree를 만든다. 이것은 물리적으로 존재하는 loop를 없앨 수 있다.
+
+Virtual LANs  
+다른 LAN에 존재해도 가상 LAN을 구성하여 Broadcast시에 해당 V-LAN에만 보낼 수 있다.  
+
+- 17장 Cellular Telephone And Satellite Networks  
+
+Frequency Reuse Principle  
+Reuse factor of n  
+주파수를 n개로 나눔  
+n이 클수록 사용 가능한 주파수의 대역이 줄어들며, 주파수 n개로 나누어서 사용할 수 있다.  
+
+Satellite Network  
+GPS = 위성 3개로 찍어서 3개의 원의 접점 구함  
+
+---
