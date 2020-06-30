@@ -3667,3 +3667,8 @@ Satellite Network
 GPS = 위성 3개로 찍어서 3개의 원의 접점 구함  
 
 ---
+
+* 30日  
+
+시험이 다 마무리가 되고 오늘은 운영체제 과제 Simple linux cpu scheduler 즉, 간단한 리눅스 CPU 스케줄러를 만들고 알고리즘도 RT클래스 중에서 FIFO와 RR을 구현해보았다. 생각보다 긴 시간이 들고 학교에서 서비스하는 J-Cloud로 linux을 사용했는데 커널이 자주 멈춰서 커널 프로그래밍이나 LKM을 이용한 모듈 적재하는 커널 프로그래밍은 상당히 어렵다는 것을 느꼈다. 시간이 부족해서 WRR은 구현하지 못했지만 그래도 여러 알고리즘을 구현하면서 그 사이의 Context Switch overhead을 볼 수 있어서 꽤 큰 공부가 된거 같다. 6월의 마지막이자 학기의 끝으로, 이제 다시 알고리즘 문제들을 풀고 방학 간 현장실습과 독학으로 backend의 지식을 쌓고 DB 공부를 하려고 한다.  
+[OS_Simple-Linux-Cpu-Scheduler](https://github.com/lee20h/Operating-System/tree/master/simple%20linux%20cpu%20scheduler)
