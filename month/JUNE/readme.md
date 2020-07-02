@@ -61,7 +61,7 @@ file.close();
 
 두번째론 `라빈-카프` 알고리즘이 있다. 이 알고리즘은 해시를 이용하여 해시끼리 비교하는 알고리즘이다. 먼저 찾으려는 문자열의 해시값을 구하고 주어진 문자열에서 찾으려는 문자열의 크기만큼 잡고 해시값을 구해서 비교해가며 찾으면 된다. 하지만 문자열이 매우 커질 수록 충돌이 일어날 가능성이 커진다고 한다. (약 1억자리 이상)  
 그리고 반복되며 찾을 때마다 아래처럼 이용하면 된다. 시간복잡도는 평균적으로 O(n+m)이다.  
-![Rabin-Karp](./img/Rabin-Karp.JPG)  
+![Rabin-Karp](/img/Rabin-Karp.JPG)  
 
 세번째론 `KMP` 알고리즘이 있다. 이 알고리즘은 접두사와 접미사에 대해 알아야한다. 예를 들어서 ABCAB란 문장이 있다하자.  
 접두사는 A, AB, ABC, ABCB, ABCBA  
@@ -164,7 +164,7 @@ for(int i=0;i<state_count;i++) {
 # Main Memory
 OS 수업 중 Main Memory에 대해 공부를 하였다.  
 메모리에 프로세스를 할당할 때, 메모리를 관리하는 내용이라고 볼 수 있다.  
-![Multiple-partition](./img/Multiple-partition.JPG)  
+![Multiple-partition](/img/Multiple-partition.JPG)  
 처음에는 메모리에 연속되게 할당을 하였으나, 여러가지 이슈가 생기면서 새로운 방법을 찾아갔다.  
 Memory Management에 두 가지 Focus에 맞춰서 볼 예정이다.  
 1) Utilization : 물리 메모리를 얼마나 아껴쓰는지  
@@ -174,7 +174,7 @@ Memory Management에 두 가지 Focus에 맞춰서 볼 예정이다.
 2) Performance : 메모리 접근 속도가 얼마나 빠른지  
 	- Address translation (logical to physical), swapping  
 		+ `Swapping` : Memory -> Disk, Disk -> Memory로 적합한 순서로 재배열하는 기법이다.  
-![Swapping](./img/Swapping.JPG)  
+![Swapping](/img/Swapping.JPG)  
 
 
 메모리 관리 기법 또한, 두 가지로 나눠서 볼 수 있다.  
@@ -185,7 +185,7 @@ Memory Management에 두 가지 Focus에 맞춰서 볼 예정이다.
 Segmentation은 논리적주소로 이루어진 2개의 tuple로 구성되어 있다고 할 수 있는데 그 모양은 이렇다.  
 `<segment-number,offset>` segment-number에는 adress space 즉 주소공간을 의미하고 offset은 논리적 주소로 보았을 때 위치를 말한다.  
 또, Segment table을 갖는데 `base`와 `limit`을 갖게 된다 base는 물리메모리상에서 시작하는 주소고 limit은 segment의 길이라고 생각하면 된다. 예를 들어 [segment-number][2] 이러한 Segment table이 있다면 [0][0] -> limit, [0][1] -> base를 뜻한다.  
-![Segmentation](./img/Segmentation.JPG)  
+![Segmentation](/img/Segmentation.JPG)  
 구체적인 Segmentation의 모양을 그림으로 나타낸 것이다.  
 또 하나의 특징은 Segmentation은 프로그래머가 직접 정하므로 OS의 컨트롤 밖에 위치한다. 그래서 이러한 부분을 다 고려해서 코딩을 하는 프로그래머는 거의 없다고 하셨다.  
 
@@ -194,18 +194,18 @@ Focus를 맞췄던 Utilization과 Performance에 대해 이야기해보자.
 
 그 다음으론 *Paging*이다. Paging은 모든 메모리 공간을 page 단위로 쪼갠다고 생각하면 된다. 바로 Utilization과 Performance에 대한 결과를 보고 그 이유에 대해 알아보자.  
 page단위로 쪼개기 때문에 external Fragmentation은 아예 일어나지 않고 internal Fragmentation 또한 최소화 할 수 있다. 따라서 Utilization은 향상한다. 하지만 Segmentation과 같이 Performance에서는 Address translation은 떨어지고 Swapping은 좀 더 좋아 질 수 있다.  
-![Logical-Paging](./img/Logical-Paging.JPG)  
+![Logical-Paging](/img/Logical-Paging.JPG)  
 Paging의 논리적인 모델을 살펴보면 이러하다. 논리 메모리에서 page table을 거쳐 물리메모리로 매칭되는 방식이다.  
-![Paging](./img/Paging.JPG)  
+![Paging](/img/Paging.JPG)  
 Paging의 하드웨어를 그림으로 보여주고 있다. 이 그림과 같이 PTBR(Page-table base register)에 Page table이 존재해서 CPU가 Memory에 두 번 접근한다. 먼저 page table에 접근 후 물리 메모리에 접근을 한다. 그리고 Segment에는 limit이 존재했으나, Page에는 limit이 존재하지 않는다.  
 또 Free Frames에 대해 적어보면 이 List는 OS가 가지고 운영하며, 밑에 사진과 같다.  
-![Free-Frames](./img/Free-Frames.JPG)  
+![Free-Frames](/img/Free-Frames.JPG)  
 할당 해제시에는 `Free-Frame list` 아무데나 넣어준다. 왜냐하면 물리 메모리는 어느 곳에 어떻게 접근해도 성능과 특성이 같기 때문이다.  
 Swapping에 대해 잠깐 얘기하면 `Page-in`, `Page-out`에 대해 얘기하면  
 	+ Page in : Disk로 내려갔던 Page 하나를 물리 메모리 공간에 할당한다.  
 	+ Page out : 물리 메모리 공간 확보를 위해 Page Frame하나를 Disk에 Swap한다.  
 Page 하나의 사이즈는 4KB이며,  32bit OS에서 한 프로세스의 Page table의 크기는 4MB이다. Page Table을 그림으로 보았을 때 저렇게 생겼었지만 제대로 확인하게 되면 아래와 같다.  
-![Paging-table](./img/Paging-table.JPG)  
+![Paging-table](/img/Paging-table.JPG)  
 
 오늘은 절반만 공부했으나 다음에 전부 공부해볼 생각이다.  
 
@@ -218,7 +218,7 @@ Page 하나의 사이즈는 4KB이며,  32bit OS에서 한 프로세스의 Page 
 두 개념 다 `Paging`기법에서 문제점을 해결하기 위해 사용한다. 먼저 TLb는 Address Translation으로 인한 속도 저하 문제 즉, Performance 측면에서 해결하기 위해 사용되고, Hierarchical Page Tables는 Utilization 측면에서 Page table의 크기가 너무 커지는 문제를 해결하기 위해 사용된다.  
 먼저 TLB에 대해 알아보면, Translation Look-aside Buffers의 약자로 Cache의 일종으로 생각하면 이해하기 좋다. Paging에서의 Frame number와 Page number을 쌍으로 저장하여 Cache와 같은 역할을 하는 버퍼이다. Parallel Search을 하게 되어 동시에 Page number, Frame number 쌍에 동시에 다 접근해서 원하는 Page Number을 통해 Frame Number을 접근하는데 이때, 어떤 number에 접근해도 O(1)으로 시간복잡도가 일정하다. 예전에 공부했던 Context Switch에서의 Overhead중 하나인 TLB Flush가 여기서 일어나게 되는데 프로세스 A의 Page, Frame number 쌍을 저장해놨다가 프로세스 B로 Context Switch한 경우 버퍼를 다 비우고 다시 채우게 된다. Cache 개념으로 처음에 채워지는 쌍들은 모두 Miss이기 때문에 Overhead가 따르게 된다.  이 부분을 생각해서 `Tagged TLB`개념이 나오는데 이 개념은 PID와 비슷한 ASID를 TLB에 둬서 각각의 숫자쌍이 어떤 프로세스의 것인지 표기하는 것이다. 이때는 TLB Flush을 하지 않아서 A -> B -> A로 Context Switch 되었을 때 버퍼에 A의 것이 하나라도 남아있다면 Hit을 해서 속도를 올리겠다는 개념이다. 하지만 버퍼에 공간을 하나 추가한다는 것은 돈이 많이 들어 사용하지 않는다고 하였다.  
 이러한 문제를 배우고 다른 특징을 또 배웠는데 그것은 Locality 즉 지역성이다. for loop에 의해서 계속 메모리를 참조하게 되면 근처 지역에서 벗어나지 않고 비슷한 공간을 계속 참조하는 특성을 가지고 있다. 따라서 Hit확률이 거의 90%라고 할 수 있다고 한다. 이러한 특징때문에 TLB는 아직도 사용하고 있으므로 중요하다고 한다. 다음으론 그림으로 설명을 도운다.  
-![TLB](./img/TLB.JPG)  
+![TLB](/img/TLB.JPG)  
 이러한 추상도를 그릴 수 있다. TLB는 MMU에 붙어있는 장치인데, 위 그림에서 TLB Hit되어 물리메모리의 접근하는 부분이 MMU의 역할이라고 볼 수 있다. 따라서 Hit가 이뤄질 경우 MMU안에서 다 해결이 된다는 말로 속도가 빠르다. 그리고 위에서 말한 것과 같이 TLB에 동시에 접근하는 것을 볼 수 있다. 중요한 것은 TLB miss와 TLB에 동시에 접근해서 TLB에 있으면 miss 부분을 버리고 TLB에 없으면 바로 miss부분에 진입해서 물리메모리에 접근한다는 것이 중요하다고 강조하셨다.  
 Effective Access Time(EAT) = TLB access time + Hit case + Miss case (α = hit ratio, t = Access time for TLB, m = Access time for memory)  
 = t + α * m + 2 * m * (1-α)  이때의 2는 Page table과 Memory에 접근하는 시간이다.  
@@ -230,7 +230,7 @@ contiguous했을 때 100ns로 접근한다고 했을 때 Paging에서 Hit ratio�
 
 이렇게 세 가지가 있으나 Hierarchical Paging을 제외하고는 단점이 존재해서 중심으로 다룰 것은 Hierarchical Paging이다.  
 개념은 Page Table들을 Paging해서 차지하는 공간을 드라마틱하게 줄인다는 것이다. 바로 수업에서 이해한 그림을 보게되면  
-![2-level P-T](./img/2-level-P-T.JPG)  
+![2-level P-T](/img/2-level-P-T.JPG)  
 과정들을 다 생략하고 이해한 그림이다. Logical Address Space에서 0x0000 0000 중 0x0000 0|000으로 나뉘어서 앞의 5개는 Page number, 뒤에 3개는 Offset을 의미한다. 0x0000 0000은 Page Table의 0번의 0으로 indexing하여 접근하게 된다. Level 1의 Page table은 4KB을 차지하고 Frame number로 5000, 5001, 5002을 가지고 있다. 이 Frame number는 물리 주소공간에서 마지막에 연속적이지 않은 Page Table을 구성할 때 사용된다. 그리고 또 4 KB이므로 level 2로 연결 될 때 인덱싱해온 주소에 맞춰서 1024을 곱해서 찾아간다. Level 2에서는 마찬가지로 주어진 Number로 물리 주소공간에 연결을 한다.  
 이렇게 다 연결하고 보면 이전에는 4MB를 차지한 반면에 지금은 고작 3 + 3 + 1 page로 7page로 완성을 하였다. 드라마틱하게 공간이 줄어든 것을 볼 수 있었다.  
 
@@ -257,7 +257,7 @@ document.write("add 5 to 20: " + add5(20) + "<br />");
 을 통해서 `function (y) { return x + y ;}`이 Closure인 지 알게 되었다.  
 
 `Coroutine`은 그림으로 보면 확실히 이해가 되었다. quasi-concurrent execution으로 quasi 동시 실행 이라고 하는데 자세히는 모르겠다. 이 Coroutine을 Call하는 것은 `resume`이라고 부른다.  
-![Coroutine](./img/Coroutine.JPG)  
+![Coroutine](/img/Coroutine.JPG)  
 
 PL수업은 지금까지 배워온 프로그램밍 언어들을 왜 그렇게 써왔는가에 대해 배우는 것 같고 모르는 언어들의 특성들을 배우는 것을 재밌게 듣고 있다. 다른 수업들에 비해 부담감이 적어서 그런거 일지 모르겠지만 내용 정리와 이해가 잘 되고 있어서 좋다.  
 
@@ -403,7 +403,7 @@ ex) 그래프 G에서 길이가 가장 짧은 해밀토니안 경로는 얼마�
 2) 두 사례의 답은 일치한다.  
 
 알고리즘은 아래 사진과 같다.  
-![Polynominal Time Reduction](./img/Polynominal-Time-Reduction.JPG)  
+![Polynominal Time Reduction](/img/Polynominal-Time-Reduction.JPG)  
 
 1) 문제 A를 다항식 시간에 문제 B로 변환한다.  
 2) 변환된 문제 B를 푼다.  
@@ -423,12 +423,12 @@ ex) 그래프 G에서 길이가 가장 짧은 해밀토니안 경로는 얼마�
 + NP-하드 ⊂ NP-완비  
 
 예를 들어 이러한 예시가 있을 때
-![Polynominal Time Reduction](./img/Polynominal-Time-Reduction.JPG)  
+![Polynominal Time Reduction](/img/Polynominal-Time-Reduction.JPG)  
 알려진 임의의 NP-하드 문제 A로부터 문제 L로 다항식 시간에 변환가능하면 문제 L도 NP-하드이다.  
 
 **NP-하드의 증명**  
 해밀토니안 싸이클(그래프의 모든 정점을 단 한번씩 방문하고 돌아오는 경로)문제가 NP-하드임을 알고 있을 때 TSP(Traveling Salesman Problem)문제도 NP-하드임을 보인다.  
-![TSP](./img/TSP.JPG)  
+![TSP](/img/TSP.JPG)  
 `해밀토니안 싸이클을 갖는다 ⇔ 길이가 정점n 이하인 해밀토니안 싸이클을 갖는다.`  
 따라서 TSP는 NP-하드이다.  
 
@@ -443,7 +443,7 @@ NP-완비 문제의 예
 *최장경로 문제* : 주어진 그래프에서 정점 s에서 t로가는 길이 k 이상인 단순경로가 존재하는가?  
 *두 점 사이 해밀토니안 경로 문제* : 주어진 그래프에서 정점 s에서 t에 이르는 해밀토니안 경로가 존재하는가? (NP-완비)  
 해밀토니안 경로 문제를 이용해서 최장경로 문제를 해결해보자.  
-![Longest-Path](./img/Longest-Path.JPG)  
+![Longest-Path](/img/Longest-Path.JPG)  
 두 점 s와 t사이에 해밀토니안 경로를 갖는다 ⇔ 두 점 s와 t 사이에 길이가 4인 단순경로를 갖는다.  
 따라서 최장경로 문제는 NP-하드다.  
 
@@ -455,7 +455,7 @@ NP-완비 문제의 예
 P ⊂ NP (O)  
 NP ⊂ P (?) 아직까지 밝혀진 바가 없다.  
 
-![NP-Relation](./img/NP-Relation.JPG)   
+![NP-Relation](/img/NP-Relation.JPG)   
 지금까지 나온 내용 들의 포함관계는 이러하다.  
 
 ---
@@ -469,7 +469,7 @@ NP ⊂ P (?) 아직까지 밝혀진 바가 없다.
 **Virtual Memory**  
 프로그램에서 필요한 메모리를 논리적 주소 공간에서 물리적 주소 공간으로 접근을 한다. 예전에는 논리적 주소 공간과 물리적 주소 공간의 크기를 같게 해야 프로그램이 꺼지지 않고 실행이 되었다. 가상 메모리가 도입 되고나서는 가상 메모리 공간에 물리 메모리 공간에서 조금만 가지고 유지하며, 논리적 주소 공간에서 요구 할 때 가상 메모리 공간에 없다면 물리 메모리 공간에 접근해서 가져온다.
 
-![Virtual-Memory](./img/Virtual-Memory.JPG)  
+![Virtual-Memory](/img/Virtual-Memory.JPG)  
 그림과 같이 되어있을 때 맨 오른쪽 원통을 `Storage`라고 한다. Storage에 들어가는 메모리들은  
 1) 기존 프로그램 이미지에 있는 경우  
 2) SWAP영역(변경한 데이터 혹은 동적 할당한 데이터)에 있는 경우  
@@ -482,7 +482,7 @@ NP ⊂ P (?) 아직까지 밝혀진 바가 없다.
 ![vaild-invaild](/img/vaild-invaild.JPG)  
 Valid-Invalid Bit를 두고 운용한다. 실제로 Frame을 할당한 경우 Valid, 안한 경우에는 Invalid로 저장해놓은다. 이 때 Invalid한 Frame에 접근한 경우 `Page Fault`가 일어나게 된다.  
 
-![Page-Table](./img/Page-Table.JPG)  
+![Page-Table](/img/Page-Table.JPG)  
 위 사진과 같이 Invalid한 프레임에 접근하게 되면 Page Fault가 일어난다.  
 
 **Page Fault**  
@@ -521,16 +521,16 @@ EAT = (1-p) x 200 + p (8ms)  = 200 + p x 7,999,800
 위에서 한 내용으로 Page Replacement는 대략적으로 이해가 되었다. 이제 Page Replacement의 알고리즘에 대해 공부했다.  
 
 먼저, FIFO 알고리즘이다.  
-![Replace-FIFO](./img/Replace-FIFO.JPG)  
+![Replace-FIFO](/img/Replace-FIFO.JPG)  
 FIFO는 15번 Page Fault가 일어났다.  
 그림에서는 Frame을 3개만 할당했다. 직관적으로 Frame이 늘어나면 Page Fault가 줄어든다. 
 하지만 잘못 관리하면 늘어나게 되는데 이 부분을
 `Belady's Anomarly`라고 한다.  
 
-![Optimal-algorithm](./img/Optimal-algorithm.JPG)  
+![Optimal-algorithm](/img/Optimal-algorithm.JPG)  
 가장 이상적인 알고리즘은 앞으로의 미래를 예측해서 가장 늦게 쓰일 프레임을 대체하는 것이다. 하지만 우리는 미래를 예측할 수 없어서 이상적인 알고리즘으로만 남았다. 이 때는 9번 Page Fault가 일어났다.  
 
-![LRU-algorithm](./img/LRU-algorithm.JPG)  
+![LRU-algorithm](/img/LRU-algorithm.JPG)  
 현실적으로 접근해서 Least Recently Used 알고리즘으로 생각해보자. 
 전에 배운 LRU을 이용하는 거와 같다.  
 이 때는 12번 Page Fault가 일어났다. FIFO보다는 적지만 이상적인 알고리즘보다는 많이 일어났다.  
@@ -626,7 +626,7 @@ Demand paging을 제대로 사용할려면 Page fault가 적게 일어나야한�
 어휘분석은 토큰으로 나눠서 분석
 구문분석은 토큰들을 파스트리로 변환해서 분석  
 
-![Compilation](./img/Compilation.JPG)  
+![Compilation](/img/Compilation.JPG)  
 맨 윗칸이 Load Module로 exe와 같은 실행가능한 이미지들이다. 모듈이 메모리상에 프로그램을 순서대로 올려준다.  
 
 컴파일 순서  
@@ -758,7 +758,7 @@ Regular grammar (정규 문법)은 Regular Expression (정규 표현)으로 표�
 Context-free Grammar (문맥 자유문법)은 BNF와 표현할 수 있는 것이 같다.  
 BNF는 push-down automata로 이행된다.
 
-![FSM](./img/FSM.JPG)  
+![FSM](/img/FSM.JPG)  
 FSM은 C언어의 enum으로 구현가능  
 
 
@@ -1020,7 +1020,7 @@ C#은 readonly(동적으로 바운딩), const(컴파일 시간에 바운딩) 두
 Data type : 데이터의 모음과 미리 정의된 연산들의 모음  
 
 descriptor : 변수의 속성들의 모음  
-![descriptor](./img/descriptor.JPG)  
+![descriptor](/img/descriptor.JPG)  
 모든 속성들은 정적이라서 컴파일 시간까지만 필요하다.(Symbol table에 유지) 따라서 런타임에는 value만 유지한다.  
 
 object : 상속을 제외한 추상 데이터  
@@ -1184,7 +1184,7 @@ structured data type
 	- Heap-dynamic array (subscript range가 dynamic하다)  
 	장점 : 유연성  
 	단점 : 속도(할당 & 해지)  
-	![data](./img/data.JPG)  
+	![data](/img/data.JPG)  
 	Fixed는 생성시에 사이즈가 고정된다. Heap-dynamic을 제외하고 나머지 3가지는 subscript range가 스토리지에 할당 이후 lifetime 내내 바운딩 되어있다.  
 
 	- Array categories  
@@ -1383,7 +1383,7 @@ structured data type
 		end case;
 	end record;
 	```
-	![Ada_union](./img/Ada_union.JPG)  
+	![Ada_union](/img/Ada_union.JPG)  
 	각각의 상황에 따라 메모리가 할당되는게 다르다.  
 
 	Java나 C#에서는 union을 지원하지 않는다.  
@@ -1449,12 +1449,12 @@ structured data type
 
 	**Dangling Pointer Problem Solution**  
 	1) Tombstone  
-	![Tombstone](./img/Tombstone.JPG)  
+	![Tombstone](/img/Tombstone.JPG)  
 	Tombstone : heap-dynamic variable  
 	묘비 메모리 해지시 nil값으로 유지
 	메모리↑ 시간↑
 	2) Lock-and-keys  
-	![Lock-and-keys](./img/Lock-and-keys.JPG)  
+	![Lock-and-keys](/img/Lock-and-keys.JPG)  
 	Head-dynamic variable으로, Lock과 key가 같아야 접근이 가능하다.  
 	메모리↑ 시간↑
 
@@ -1470,7 +1470,7 @@ structured data type
 	단점 : 공간 낭비, counter 늘리고 줄이는 시간 필요  
 	2) Mark-sweep (lazy approach)  
 	마킹이 안된 것들을 한번에 정리  
-	![Mark-sweep](./img/Mark-sweep.JPG)  
+	![Mark-sweep](/img/Mark-sweep.JPG)  
 	메모리가 부족할 시에 Garbage Collection이 일어나고 root로 부터 dfs로 marking을 한다. Mark Phase가 끝나면 marking이 안된 것들을 해지하는 Sweep Phase가 일어난다.  
 	이 때, 프로그램 작동이 멈춘 다음 끝나고 작동이 재개한다.  
 	단점 : 지연 존재  
@@ -1850,7 +1850,7 @@ Semantics Model
 2) Out mode
 3) Inout mode  
 
-![Parameter-Passing](./img/Parameter-Passing.JPG)  
+![Parameter-Passing](/img/Parameter-Passing.JPG)  
 대부분은 명시해서 사용한다. int x out y inout z와 같이 명시한다. C언어에서는 In mode만 지원한다. 하지만 Pointer을 이용해서 극복한다.  
 
 **구현**  
@@ -1910,7 +1910,7 @@ swap(temp,value7,value9);
 ```  
 자유도가 증가하며 **Textual substitution**가 일어난다.  
 
-![Parameter-Passing-Methods](./img/Parameter-Passing-Methods.JPG)  
+![Parameter-Passing-Methods](/img/Parameter-Passing-Methods.JPG)  
 매개변수 전달할 때 방법의 개념도이다.  
 sub(w,x,y,z)을 호출했을 때 w는 value, x는 result, y는 value-result, z는 reference이다.  
 헷갈릴 수 있으므로 가볍게 보면 좋을거 같다.  
@@ -2025,10 +2025,10 @@ Caller와 Callee가 있을 때 subprogram은 호출 후 Callee가 끝나야 반�
 Quasi-concurrent execution이라며 동시실행한다고 보기도 한다.  
 
 Coroutine을 이용해서 가능한 실행 흐름
-![Coroutine](./img/Coroutine.JPG)  
+![Coroutine](/img/Coroutine.JPG)  
 이런 식으로 A -> B -> A 이런식으로 흘러갈 수 있다.  
 
-![Coroutine-Loop](./img/Coroutine-Loop.JPG)
+![Coroutine-Loop](/img/Coroutine-Loop.JPG)
 Loop가 있어도 똑같이 진행된다고 생각하면 된다.  
 
 - 10강 Implementing Subprograms  
@@ -2079,14 +2079,14 @@ Stack을 사용하는데에 있어 이전의 Stack의 Top의 위치를 저장할
 Activation record 사이즈가 dynamic하다. 
 Stack Pointer를 Environment Pointer라고도 한다.  
 C의 예제
-![Activation_record_c](./img/Activation_record_c.JPG)  
+![Activation_record_c](/img/Activation_record_c.JPG)  
 
 재귀 없이 ARI 그림(Activaiton record instance)  
 지역변수 괄호로 표시  
 main(p) calls fun1  
 fun1(s,t) calls fun2  
 fun2(y) calls fun3  
-![ARI](./img/ARI.JPG)  
+![ARI](/img/ARI.JPG)  
 그림에서 Dynamic Link가 아닌 파란색 선으로 다시 표시했다.  
 
 Dynamic Chain == Call Chain  
@@ -2102,10 +2102,10 @@ top을 기준으로 상대주소로 찾아 지역변수에 접근 할 수 있다
 
 재귀가 있을 때의 ARI 그림  
 Call  
-![ARI-Fact](./img/ARI-Fact.JPG)  
+![ARI-Fact](/img/ARI-Fact.JPG)  
 
 Return
-![ARI-Fact-ret](./img/ARI-Fact-ret.JPG)  
+![ARI-Fact-ret](/img/ARI-Fact-ret.JPG)  
 
 그림으로 보고 이해 해야한다. 그림에서 또한 Dynamic Link가 호출자의 Top을 가르키도록 해야한다.  
 
@@ -2151,7 +2151,7 @@ Sub2 calls Sub3
 Sub3 calls Sub1  
 이러한 순서로 이뤄져 있다.  
 
-![Static_chain](./img/Static_chain.JPG)
+![Static_chain](/img/Static_chain.JPG)
 그림과 같이 ARI가 쌓이게 된다.  
 
 지금까지 했던 내용에서 추가해야할 내용은 **Static Link**의 경우 자기를 감싸는 함수(ancestor)의 ARI의 시작부분을 가르켜야한다.  
@@ -2185,7 +2185,7 @@ Dynamic Scoping을 지원하는 프로그래밍 언어일 때 static link는 필
 이 때 구현 방법 2가지
 1) Deep Access : dynamic chain을 통해서 직접 검색함. 따라서 모든 ARI에 변수 이름을 저장할 공간을 가지고 있어야한다. 검색 시간도 오래걸린다 (worst : 전부 다 찾음)
 2) Shallow Access : 변수 마다 스택을 만들어서 쓰이는 함수들을 하나씩 쌓아놓는다. 스택의 탑에 위치한 함수가 현재 쓰이는 위치이다.  
-![Central-Table](./img/Central-Table.JPG)  
+![Central-Table](/img/Central-Table.JPG)  
 Central Table이 이렇게 구현이된다.  
 
 --- 
@@ -2478,27 +2478,27 @@ C++의 STL map이 이러한 레드블랙트리로 구현되어 있다.
 2가지 경우로 나누게되는데 부모노드의 형제노드가 레드거나 블랙일 경우로 나뉘게 된다.  
 
 레드인 경우  
-![Redblack_insert1](./img/Redblack_insert1.JPG)  
+![Redblack_insert1](/img/Redblack_insert1.JPG)  
 
 블랙이며, 삽입노드가 부모의 오른쪽 자식인 경우  
-![Redblack_insert2](./img/Redblack_insert2.JPG)  
-![Redblack_insert3](./img/Redblack_insert3.JPG)  
+![Redblack_insert2](/img/Redblack_insert2.JPG)  
+![Redblack_insert3](/img/Redblack_insert3.JPG)  
 
 삭제  
 삭제 노드의 자식이 없거나 1개만을 가진 노드로 제한  
 삭제 노드가 블랙이라면 문제가 있다. 유일한 자식이 레드라면 문제가 없으나, 반대라면 문제가 있다.  
 
-![Redblack_delete](./img/Redblack_delete.JPG)  
+![Redblack_delete](/img/Redblack_delete.JPG)  
 5가지 경우로 나뉘어진다.  
 
 case 1)
-![Redblack_delete1](./img/Redblack_delete1.JPG)  
+![Redblack_delete1](/img/Redblack_delete1.JPG)  
 
 case 2) 3)
-![Redblack_delete2](./img/Redblack_delete2.JPG)  
+![Redblack_delete2](/img/Redblack_delete2.JPG)  
 
 case 4) 5)
-![Redblack_delete3](./img/Redblack_delete3.JPG)  
+![Redblack_delete3](/img/Redblack_delete3.JPG)  
 
 - 8강 상호 배타적 집합의 처리  
 
@@ -2930,10 +2930,10 @@ stronglyConnectedComponent(G)
 
 Copy-on-Write  
 
-![Copy-on-Write](./img/Copy-on-Write.JPG)
+![Copy-on-Write](/img/Copy-on-Write.JPG)
 두 개의 프로세스가 하나의 페이지를 공유할 때(같은 데이터를 공유할 때) 사용한다. Shared Memory와 다른 차이점은 OS가 프레임을 아끼기 위해서 사용한 것이다. 예를 들어서 C Library는 물리 메모리 상 하나인데 여러 프로세스가 Shared Memory하듯이 모두가 자기 테이블 안에 C Library를 참조해서 가져다가 사용한다. 항상 Read-Only일 때만 이렇게 사용할 수 있다.  
 하지만 누가 수정을 해야하는 상황이 올 때 사용하는게 Copy-on-Write이다. 예를 들어서 Fork를 사용할 때 부모 프로세스와 자식 프로세스는 같은 데이터를 공유한다. Fork 당시에는 같은 데이터를 공유하므로 같은 물리 메모리를 링크하면서 프레임을 아끼다가, 자신 프로세스에서 해당 데이터 중 조금 수정한다면 아래의 그림과 같이 된다.  
-![Copy-on-Write2](./img/Copy-on-Write2.JPG)  
+![Copy-on-Write2](/img/Copy-on-Write2.JPG)  
 
 따라서 목적은  
 1) 페이지 프레임 아끼기 위함  
@@ -2951,7 +2951,7 @@ Stroage 장치는 Magnetic tape으로 되어있어서 Sequential하게 접근하
 
 사용하는 이유는 Shared Memory을 위해서 라고 생각하면 된다.  
 
-![Memory-Mapped](./img/Memory-Mapped.JPG)    
+![Memory-Mapped](/img/Memory-Mapped.JPG)    
 
 프로세스 A에서 고친 내용이 어느 순간이 disk file에 적용이 된다. 이때 오픈 대신에 mmap()으로 오픈하며, read, write가 아닌 값을 그냥 할당하거나 memset(), memcopy()로 메모리 값을 바꿀 수 있다.  
 따라서 여러 프로세스들이 같은 파일에 대해서 공유해서 작업을 할때 Memory Mapped Files을 사용하면 **편리**하다. 원래는 동시에 접근하게되면 한 쪽은 읽기전용이 되지만 이 경우에는 공동작업이 편리하게 가능하다.
@@ -2963,14 +2963,14 @@ Allocating Kernel Memory
 Buddy System  
 물리적으로 연속된 페이지들을 효율적으로 할당하기 위해서 사용하는 시스템이다. 연속적인 공간을 필요로 할 때 필요 공간보다 큰 제일 작은 2의 제곱수로 분할하게 되면 트리가 구성되는데 맨 왼쪽의 리프노드에서 할당해주고 남은 노드들을 연속적으로 유지한다. 
 리눅스에서도 지금도 쓰이고 있다.  
-![Buddy-System](./img/Buddy-System.JPG)  
+![Buddy-System](/img/Buddy-System.JPG)  
 
 Slab Allocation  
 메모리 공간을 빠르게 이용하기 위해서 사용하는 기법이다. 메모리를 매번 할당해서 사용하지 않고 미리 여러 공간을 할당하여 사용하는 방법(Pooling)  
 예시) PCB  
 
 Slab Allocation은 Pooling을 이용한 방법  
-![Slab-Allocation](./img/Slab-Allocation.JPG)    
+![Slab-Allocation](/img/Slab-Allocation.JPG)    
 
 Cache을 다 쓰기 전에 Cache의 크기를 조금씩 먼저 늘린다. 할당과 해지는 시간이 걸리기 때문에 빈번히 일어나는 소프트웨어의 경우 Kernel object을 먼저 할당 받아 놓고 사용하는게 overhead을 줄일 수 있는 방법이다.  
 
@@ -2983,7 +2983,7 @@ Cache을 다 쓰기 전에 Cache의 크기를 조금씩 먼저 늘린다. 할당
 Program Structure  
 극단적인 예지만 쉽게 이해할 수 있는 예시다.  
 `int data [128][128]`이며, 각각의 row가 저장되는 한 페이지의 크기는 512B라고 가정 후 두 가지 프로그램이 있다고 한다.  
-![Program-Structure](./img/Program-Structure.JPG)  
+![Program-Structure](/img/Program-Structure.JPG)  
 
 1) 
 ```
@@ -3018,9 +3018,9 @@ C Compiler가 Page을 수직으로 할당하기 떄문에 이차원 배열에 �
 
 운영체제 과제 : 리눅스 CPU 스케쥴러를 분석하고 만들어보기  
 리눅스 CPU 스케쥴러를 수정해보고 LKM을 이용하여 나만의 CPU 스케쥴러를 만들어서 사용도 해보았다. 이 내용에서 더하여 기존에 존재하는 FIFO, Round Robin, Weight Round Robin을 구현해야한다. 여기서 사용 되는 자료구조인 list에 대해 공부를 했다. 리눅스 커널에서는 list_head라는 구조체로 사용하고 있는데 여기에는 단지 double linked list라는 점을 가지는 변수 next와 prev밖에 없었다. 하지만 여러 자료구조에서 list_head을 사용하기 때문에 여러 방식으로 활용이 되는 다재다능한 자료구조였다.  
-![list_head](./img/list_head.JPG)  
+![list_head](/img/list_head.JPG)  
 이러한 방식은 많이 본 double linked list라서 쉽게 이해했다.  
-![list_head2](./img/list_head2.JPG)  
+![list_head2](/img/list_head2.JPG)  
 하지만 이렇게 object을 넣어서 사용하는 double linked list의 경우 처음 보는거라 이해할 시간이 필요 했다.  
 
 list_head는 Linux/include/linux/list.h 경로에 위치해서 정의 되어있다. 여러가지 함수를 사용하여 활용할 수 있는데, 그때 주로 사용하는 함수들이 static inline int list_empty(const struct list_head *head), static inline void list_add(struct list_head *new, struct list_head *head), static inline void list_add_tail(struct list_head *new, struct list_head *head), static inline void list_del(struct list_head *entry), static inline void list_del_init
@@ -3050,27 +3050,27 @@ list_head을 가지고 구현하는 RT 스케쥴러 중 FIFO을 구현해보았�
 네트워크 물리적구조  
 연결 타입  
 - Point-to-point  
-![point-to-point](./img/point-to-point.JPG)  
+![point-to-point](/img/point-to-point.JPG)  
 - Multipoint  
-![multi-pointer](./img/multi-pointer.JPG)  
+![multi-pointer](/img/multi-pointer.JPG)  
 
 **토폴리지 종류**  
 - Mesh  
-![Mesh](./img/Mesh.JPG)  
+![Mesh](/img/Mesh.JPG)  
 n(n-1)/2개의 물리적 채널을 갖는다.  
 장점 : Traffic 문제가 없으며 한 링크가 망가져도 통신 가능  
 단점 : Cost높음
 - Star  
-![Star](./img/Star.JPG)  
+![Star](/img/Star.JPG)  
 HUB에 연결되서 사용됨  
 장점 : mesh에 비해 적은 비용, 상대적으로 안정적
 - Bus  
-![Bus](./img/Bus.JPG)  
+![Bus](/img/Bus.JPG)  
 메인 케이블(Backbone)에 연결하는 MultiPoint 연결방식  
 장점 : 쉬운 설치  
 단점 : 문제 발생 시 수정 어려움  
 - Ring  
-![Ring](./img/Ring.JPG)  
+![Ring](/img/Ring.JPG)  
 Point-to-Point방식 연결  
 
 토폴리지 방식들의 특징, 주요한 점만 파악하자  
@@ -3079,7 +3079,7 @@ Point-to-Point방식 연결
 개념 이해 필요
 - LAN  캠퍼스, 사무실, 빌딩    
 이더넷으로 대체함  
-![Multiple-building-LAN](./img/Multiple-building-LAN.JPG)  
+![Multiple-building-LAN](/img/Multiple-building-LAN.JPG)  
 multiple-building-LAN의 추상화  
 - MAN  도시  
 - WAN  지역  
@@ -3102,13 +3102,13 @@ De facto standards : 비중을 통해서 정함
 | Network |
 | Data link |
 | Physical |  
-![5-layer](./img/5-layer.JPG)  
+![5-layer](/img/5-layer.JPG)  
 
 Peer-to-peer  
-![p2p](./img/p2p.JPG)  
+![p2p](/img/p2p.JPG)  
 Physical Layer는 직접적으로 연결하며 데이터를 변환해서 사용한다.  
 
-![internet_model](./img/internet_model.JPG)  
+![internet_model](/img/internet_model.JPG)  
 구체적인 통신의 표현  
 
 Layer 기능  
@@ -3123,8 +3123,8 @@ Switching
 
 Data link Layer : **Next-hop delivery** - **한 노드에서 다음 노드로 Frame을 전달**  
 Ethernet기반으로 흐름제어, 오류제어, 접근제어 존재  
-![Data-link](./img/Data-link.JPG)  
-![note-to-node](./img/note-to-node.JPG)  
+![Data-link](/img/Data-link.JPG)  
+![note-to-node](/img/note-to-node.JPG)  
 Packetizing  
 Media access control  
 Addressing  
@@ -3133,15 +3133,15 @@ Error control
 
 
 Network Layer : **end-to-end**(종단간 전송 Source to Destination) Ip -> Ip까지 전송함 따라서 global address 필요  
-![end-to-end](./img/end-to-end.JPG)  
+![end-to-end](/img/end-to-end.JPG)  
 
 Transport Layer : **Process-to-process**이며, Port Addressing을 한다.  end-to-end에 있어서의 흐름제어와 오류제어를 한다.  
-![Reliable_process-to-process](./img/Reliable_process-to-process.JPG)  
+![Reliable_process-to-process](/img/Reliable_process-to-process.JPG)  
 
 Application Layer : 전자우편, 파일 전송, 원격, WWW같은 유저에게 서비스를 제공하기위한 Layer  
 
 요약 :  
-![summary_5Layer](./img/summary_5Layer.JPG)  
+![summary_5Layer](/img/summary_5Layer.JPG)  
 
 - 3강 Signals  
 
@@ -3153,7 +3153,7 @@ Analog Signal : 무한한 숫자의 값을 가짐
 
 Square wave : 여러 사인파(harmonic)를 합치게 되면 직사각형 신호와 비슷하게 나온다.  
 
-![Transmission_mediun](./img/Transmission_mediun.JPG)  
+![Transmission_mediun](/img/Transmission_mediun.JPG)  
 **Bandwidth** : medium이 통과시킬 수 있는 주파수의 범위(signal의 절반이상을 통과 시키는 경우, highest - lowest)  
 medium의 bandwidth와 signal의 bandwidth가 일치 할 수록 데이터의 손실이 줄어든다.  
 
@@ -3219,7 +3219,7 @@ Noise
 Line coding  
 Binary data를 Digital signal로 변환하는 과정  
 Signal level, data level  
-![signal,data-level](./img/signal,data-level.JPG)  
+![signal,data-level](/img/signal,data-level.JPG)  
 
 Line coding schemes
 1) Unipolar  
@@ -3240,7 +3240,7 @@ Polar가 4가지 종류로 나뉘어진다.
 		1 : voltage level을 역으로 바꿈  
 		0 : voltage 변화 x  
 		NRZ-L보다는 동기화가 발전했다.  
-	![NRZ](./img/NRZ.JPG)  
+	![NRZ](/img/NRZ.JPG)  
 
 	2) RZ (Return to Zero)  
 	동기화 문제를 해결하기 위해 생긴 방법으로, 각 비트에 있어서 Signal change bit을 둔다. 3가지 value을 갖되 zero는 동기화를 위한 value이다.  
@@ -3252,11 +3252,11 @@ Polar가 4가지 종류로 나뉘어진다.
 	0 : positive-to-negative  
 	1 : negative-to-positive  
 	RZ와 비슷하나, value 중 zero가 없음  
-	![Manchester](./img/Manchester.JPG)  
+	![Manchester](/img/Manchester.JPG)  
 	4) Differential Manchester  
 	0 : additional transition  
 	1 : no transition  
-	![Differential-Manchester](./img/Differential-Manchester.JPG)  
+	![Differential-Manchester](/img/Differential-Manchester.JPG)  
 	장점 : 1이 들어오면 한번 바뀐다.  
 
 3) Bipolar  
@@ -3276,14 +3276,14 @@ DC components
 
 Self-synchronization (동기화문제)  
 receiver의 bit interval이 정확하지 않으면 문제가 생길 수 있다.
-![lack_of_synchronization](./img/lack_of_synchronization.JPG)  
+![lack_of_synchronization](/img/lack_of_synchronization.JPG)  
 동기 시스템은 sender와 receiver clock을 맞추고, 비동기 시스템은 signal에 해당 정보가 필요하다.  
 
 Block coding  
 line coding이 동기화 문제가 있거나 (NRZ에서 0이나 1이 연속된 경우) bandwidth가 절반만 쓰인다.(RZ 계속 0으로 바뀌어 B/W 절반쓰임)  
 이러한 문제를 해겷하기 위해 block으로 보낸다는 생각이다. 먼저 m bit 그룹들로 나눈다. 그 다음 m bit 그룹들을 n bit 그룹들로 또 나눈다. 이러한 방식들은 연속적인 1과 0을 없앤다. 그다음 line coding해서 전송한다.  
 대표적인 방법 4B/5B으로, 4bit을 5bit으로 바꿔줘야하는데 16개 중 32개에 매핑해주며, 안 쓰인 16개는 버린다. 매핑해주는 방법은 연속된 1이나 0이 3개 이상인 경우는 사용하지 않는다.  
-![block_coding](./img/block_coding.JPG)  
+![block_coding](/img/block_coding.JPG)  
 4B/5B 방법은 시작 부분에 0으로 시작하고 끝 부분이 0이 두개 이상 나오는 경우가 Worst case이다. 따라서 0이 3개 초과해서 나오지 않는다.  NRZ-I가 이 방법을 사용하며, Bandwidth가 20% 더 필요하다는 단점이 있다. Fast Ethernet이 이 방법을 사용한다.  
 8B/10B느 방법은 4B/5B와 비슷하지만 오류가 더 적으므로 Gigabit Ethernet에서 쓰인다.  
 8B/6T 방법은 앞에서의 방법과는 달리 bandwidth를 낭비하지 않지만 level을 더 쓴다. 8 bit 그룹을 6 symbol code로 바꾼다. signal level이 3개로 2^8 -> 3^6개로 늘어난다.
@@ -3295,7 +3295,7 @@ analog signal을 sampling하여 digital전송함
 PCM(Pulse Code Modulation)  
 PAM을 기반으로 하나, Quantization(양자화 - 노이즈가 강해짐)를 통해서 Binary data로 바꾼다. PAM -> Quantization -> binary encoding -> line coding  
 Sign magnitude사용해서 Binar encoding 한다. Block coding 후 Line coding (NRZ-L)을 한다.  
-![PCM](./img/PCM.JPG)  
+![PCM](/img/PCM.JPG)  
 
 Sampling rate : Nyquist theorem  
 **반드시 origianl signal의 가장 높은 주파수 두배 이상이 되어야한다.**  
@@ -3332,27 +3332,27 @@ Carrier signal
 **ASK(Amplitude Shift Keying)**  
 Carrier signal의 amplitude을 올렸다가 내렸다 하므로, Noise에 약하다는 단점이 있다. Bandwidth = (1 + d) * N_baud (d : modulation preocess)  
 **baud rate == bit rate**  
-![ASK](./img/ASK.JPG)  
+![ASK](/img/ASK.JPG)  
 진폭을 기준으로 한다.  
-![ASK_BW](./img/ASK_BW.JPG)  
+![ASK_BW](/img/ASK_BW.JPG)  
 bandwidth = N_baud  
 
 **FSK (Frequency Shift Keying)**  
 Carrier signal의 주파수를 바꾸므로 Noise의 문제가 없다. 좋은 주파수 대역이 정해져 있다.  
 **baud rate == bit rate**  
-![FSK](./img/FSK.JPG)  
-![FSK_BW](./img/FSK_BW.JPG)
+![FSK](/img/FSK.JPG)  
+![FSK_BW](/img/FSK_BW.JPG)
 Bandwidth = f_c1 - f_c0 + N_baud  
 Bandwidth가 많이 필요하다.  
 
 **PSK (Phase Shift Keying)**  
 Carrier signal의 위상을 바꾼다. 0 : zero 1 : inverse  
-![PSK](./img/PSK.JPG)  
+![PSK](/img/PSK.JPG)  
 PSK의 특징은 noise에 강하며, Bandwidth가 많이 필요하지 않아 ASK랑 같다.  
 bit 수를 늘린 2-PSK는 ASK와 bit rate가 같지만 4-PSK, 8-PSK는 2bit, 3bit로 늘어난다.  
 bandwidth = N_baud (ASK의 Bandwidth와 같다.)
 4-PSK (Q-PSK)  
-![Q-PSK](./img/Q-PSK.JPG)  
+![Q-PSK](/img/Q-PSK.JPG)  
 | Dibit | Phase |
 |-------|-------|
 | 00 | 0 |
@@ -3363,7 +3363,7 @@ bandwidth = N_baud (ASK의 Bandwidth와 같다.)
 QAM (Quadraturer Amplitude modulation)  
 ASK와 PSK을 조합해서 사용한다. Bandwidth가 ASK와 PSK와 같다. 하지만 ASK에서 Noise 문제가 발생할 수 있다.  
 4-QAM, 8-QAM  
-![QAM](./img/QAM.JPG)  
+![QAM](/img/QAM.JPG)  
 여러 방식이 가능하다. Bit rate는 Baud rate에 bit수를 곱해주면 된다.  
 | Modulation | Units | Bits/Baud | Baud rate | Bit Rate |
 |-------|-------|-------|-------|-------|
@@ -3403,7 +3403,7 @@ TDM(Time Division multiplex, digital)
 Frame들의 크기는 다 동일하며, 전송 프레임들을 모은 것을 time slot(base time)이라 하며, 하나당 T sec가 필요하다고 한다.  
 link의 data rate는 시간 n만큼 빨라지며, unit의 duration은 시간 n만큼 짧아진다.  
 Interleaving은 개념적인 부분으로, 그림으로 이해를 한다. frame 간격을 벌려서 Sender와 Receiver가 동기화하여 돌아간다.  
-![Interleaving](./img/Interleaving.JPG)  
+![Interleaving](/img/Interleaving.JPG)  
 
 동기화  
 동기 : clock 사용  
@@ -3449,7 +3449,7 @@ Infrared
 - 8강 Circuit Switching and Telephone Network  
 
 Circuit Switching  
-![Circuit-Switching](./img/Circuit-Switching.JPG)  
+![Circuit-Switching](/img/Circuit-Switching.JPG)  
 서킷 생성 후 통신하는 방식으로 
 N-by-M Switch(input N, output M)와 N-by-n folded Switch(input, output N) 입력과 출력의 차이를 두고 나뉘어진다. 이 때 두가지 기술이 있다. Space-division switch와 Time-division swtich가 있다.  
 
@@ -3460,12 +3460,12 @@ Grid형식으로 만들어서 스위치 방식으로 원하는 목적지로 가�
 Blocking이 제일 좋다.  
 Multistage switch  
 예제를 통해서 모양과 작동만 이해하자  
-![Multistage_switch](./img/Multistage_switch.JPG)  
+![Multistage_switch](/img/Multistage_switch.JPG)  
 single stage라면 15x15개가 필요하나, 위의 그림처럼 만들게 된다면 줄일 수 있다. 그리고 잘 구성한다면 Crossbar Switch만큼의 Blocking에 근사할 수 있다.  
 
 Time-division Switch  
 Time-divsiion multiplexing(TDM)  
-![TDM](./img/TDM.JPG)  
+![TDM](/img/TDM.JPG)  
 TSI에서 1<->3, 2<->4으로 매칭해주며, RAM에서 저장 후 매칭하기 때문에 delay가 존재한다.  
 TDM bus  
 TDM과 TDM bus와는 구조차이만 있을 뿐 기능 차이는 별로 없다. 가운데 버스를 둬서 스위칭 개념으로 매칭한다.  
@@ -3506,9 +3506,9 @@ Cyclic redundancy check(CRC)
 가장 강력하며, 널리 사용된다. 이진법을 나누기를 하여 사용한다.  
 Sender에서는 CRC generator가 있으며, Reciver에서는 CRC checker가 있다.  
 
-![CRC_Generator](./img/CRC_Generator.JPG)  
+![CRC_Generator](/img/CRC_Generator.JPG)  
 
-![CRC_Checker](./img/CRC_Checker.JPG)  
+![CRC_Checker](/img/CRC_Checker.JPG)  
 
 Polynomials는 2가지 조건을 만족해야한다. 1. **x로 나누어지면 안된다.**(모든 버스트 에러를 체크할 수 있다.) 2. **x+1로는 나누어져야한다.**(홀수갯수의 버스트 에러를 체크할 수 있다.)  
 이러한 조건을 만족할 때의 Performance는 모든 Burst Error에서 홀수개의 숫자가 바뀐 경우 다 찾아낸다. degree of polynomial보다 낮거나 같은 Burst Error들은 다 찾아낸다. 짝수의 Burst Error도 높은 확률로 찾아낸다.  
@@ -3520,7 +3520,7 @@ Parity < Checksum < CRC
 Error Correction  
 Forward error correction (FEC)  
 해밍코드로 몇번째 bit가 깨졌는지 알아 낼 수 있다.  
-![hamming_code](./img/hamming_code.JPG)  
+![hamming_code](/img/hamming_code.JPG)  
 
 - 11강 Data Link Control and Protocols  
 
@@ -3579,8 +3579,8 @@ data bit 1 -> +1
 silence -> 0  
 
 CDMA Multiplexer  
-![CDMA_MUX](./img/CDMA_MUX.JPG)  
-![CDMA_DEMUX](./img/CDMA_DEMUX.JPG)  
+![CDMA_MUX](/img/CDMA_MUX.JPG)  
+![CDMA_DEMUX](/img/CDMA_DEMUX.JPG)  
 
 
 * 14강 Local Area networks: Ethernet  
@@ -3611,7 +3611,7 @@ Hidden terminal problem
 
 CSMA/CA의 핵심  
 RTS CTS 컨트롤 패킷을 만들어서 RTS에 시간 정보를 담아서 보낸다. 받은 다른 노드들이 그 시간 동안 데이터를 보내지 않는다.(Network Allocation Vector) 따라서 충돌이 회피된다.  
-![CSMA/CA](./img/CSMACA.JPG)  
+![CSMA/CA](/img/CSMACA.JPG)  
 
 Bluetooth  
 무선 LAN으로 고안되었으며, ad hoc network으로 구성되어있다. 2가지 타입으로 나눠진다.  
