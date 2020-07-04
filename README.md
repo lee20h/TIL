@@ -325,3 +325,39 @@ SELECT 열
 추가적으로 재정렬 기준 열에 두개 이상의 열을 기입하게 된다면, 왼쪽 키부터 사용하여 정렬을 하되 키의 값이 같은 경우 두번째 키를 비교하여 정렬하게 된다. 또한 NULL이 들어가있는 경우에는 제일 앞 혹은 제일 뒤에 모아서 표시된다. 이 부분은 정해져있지 않으며 DBMS마다 지정 가능할 수 있다.  
 
 ---
+
+- 4日  
+
+오늘은 SQL을 공부한 것으로 구름IDE에서 직접 실습하면서 공부를 해보았다. 확실히 글로만 보고 공부하던 것과 달리 처음엔 어색해서 어려웠다. 여기서 기술되어 있는 내용을 보고 공부하고 실습하는 RDBMS는 MariaDB이다. 따라서 조금은 문법이 달랐지만 아직 공부한 거라곤 별로 없기에 차이를 크게 못 느꼈다.  
+![DB_ALTER](./img/DB_ALTER.JPG)  
+```
+ALTER TABLE DWELLERS ADD PET VARCHAR(10) AFTER NAME;
+ALTER TABLE DWELLERS ADD GENDER CHAR(1) NOT NULL FIRST;
+ALTER TABLE DWELLERS CHANGE MV_NOTI NOTICE VARCHAR(20);
+ALTER TABLE DWELLERS DROP HV_CAR;
+DESC DWELLERS;
+```
+문제를 제대로 읽지 않아 GENDER의 옵션을 보지 못해서 오래걸렸다. 
+
+1) TEMP 데이터베이스를 만든 뒤 삭제하는 과정을 SHOW 명령어로 확인합니다. SHOW는 두 번 사용하지만 TEMP는 한 번만 나와야 합니다.  
+```
+CREATE TABLE TEMP(
+ID		INT(10)		NOT NULL,
+NAME	VARCHAR(20)	NOT NULL
+);
+SHOW TABLES;
+DROP TABLE TEMP;
+SHOW TABLES;
+```
+이어서 TRUNCATE에 대해서 공부를 이어갔다. 실습예제에서 TABLE EMP의 레코드만 지우라는 에제가 있어서 `TRUNCATE TABLE EMP;`와 같이 사용하였지만 계속 오답이 나온다. 테이블을 출력을 했으나 출력이 나오지 않는 것을 보아 확실히 삭제된 것을 알 수 있었으나 오답으로 나왔다.
+추가적으로 DEFALUT 키워드를 봤다. 테이블을 생성할 때 사용하면 C언어에서 사용한 DEFAULT 매개변수와 같이 값을 지정하지 않은 경우 해당하는 값이 들어가는 옵션이다.  
+```
+CREATE TABLE STUDENTS(
+NO		INT(10)			NOT NULL,
+NAME	VARCHAR(20)	NOT NULL,
+ENT		DATE		NOT NULL,
+GRADE	INT(1)		NOT NULL,
+CLUB	INT(1)		NOT NULL DEFAULT 'X'
+)
+```
+이런식으로 사용하면 된다. 책에선 공부했으나 구름에서 보는 SQL강의는 아직 키와 제약 조건에 들어가지 않았으므로 프로그래머스에서 SQL문제를 더 풀도록 한다.
