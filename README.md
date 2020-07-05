@@ -329,7 +329,7 @@ SELECT 열
 - 4日  
 
 오늘은 SQL을 공부한 것으로 구름IDE에서 직접 실습하면서 공부를 해보았다. 확실히 글로만 보고 공부하던 것과 달리 처음엔 어색해서 어려웠다. 여기서 기술되어 있는 내용을 보고 공부하고 실습하는 RDBMS는 MariaDB이다. 따라서 조금은 문법이 달랐지만 아직 공부한 거라곤 별로 없기에 차이를 크게 못 느꼈다.  
-![DB_ALTER](./img/DB_ALTER.JPG)  
+![DB_ALTER](../img/DB_ALTER.JPG)  
 ```
 ALTER TABLE DWELLERS ADD PET VARCHAR(10) AFTER NAME;
 ALTER TABLE DWELLERS ADD GENDER CHAR(1) NOT NULL FIRST;
@@ -360,4 +360,42 @@ GRADE	INT(1)		NOT NULL,
 CLUB	INT(1)		NOT NULL DEFAULT 'X'
 )
 ```
-이런식으로 사용하면 된다. 책에선 공부했으나 구름에서 보는 SQL강의는 아직 키와 제약 조건에 들어가지 않았으므로 프로그래머스에서 SQL문제를 더 풀도록 한다.
+이런식으로 사용하면 된다. 책에선 공부했으나 구름에서 보는 SQL강의는 아직 키와 제약 조건에 들어가지 않았으므로 프로그래머스에서 SQL문제를 더 풀도록 한다.  
+
+--- 
+
+- 5日  
+
+주로 프로그래머스에서 SQL문제를 풀어보았다. 어제 SELECT문제를 전부 풀어보며 느껴본 점으론 생각보다 익숙하지 않다는 점이였다. SQL을 공부한지 4일이 지났지만 아직 공부할 것들은 많이 남아있으며 어렵다는 것이였다. 코딩테스트에서도 자주 출제한다니 공부를 해서 나쁠 건 없다고 생각이 들었다.  
+
+MySQL에서 그냥 사용하는 SELECT문에 경우는 눈에 익었다. 이제 MAX MIN SUM AVG을 공부해야한다. 따라서 여러 문제들을 풀어보았는데 그 중 최솟값, 최댓값, 중복제거, 카운트하기이다.  
+
+```
+SELECT MAX(DATETIME) AS '시간'
+FROM ANIMAL_INS
+```
+동물 보호소에 가장 늦게 들어온 동물을 찾는 쿼리이다.
+
+```
+SELECT MIN(DATETIME) AS '시간'
+FROM ANIMAL_INS
+```
+마찬 가지로 동물 보호소에 가장 먼저 들어온 동물을 찾는 쿼리이다.  
+
+```
+SELECT COUNT(ANIMAL_ID) AS COUNT
+FROM ANIMAL_INS
+```
+동물의 각각 ID(기본키)를 세서 동물 테이블의 카운트를 세보는 쿼리이다.
+
+```
+SELECT COUNT(DISTINCT NAME) AS count
+FROM ANIMAL_INS
+WHERE NOT NAME IS NULL
+```
+마지막으로는 NULL과 중복되는 이름을 제외하고 동물의 이름 수를 구하는 쿼리이다. 실행시에 count라는 컬럼에 이름 갯수가 나와야해서 COUNT에 DISTINCT 키워드를 통해 중복을 제거하며 WHERE문에서 NAME이 NULL이 아닌 경우만 SELECT하게 짜보았다.  
+
+문제를 풀어본 다음에는 구름에서 '한 눈에 끝내는 SQL'강의로 책으로 본 부분을 복솝을 진행하였다. 항상 집필한 사람마다 공부 순서가 다르기 때문에 여러 책, 강의를 보면 도움이 된다. 그 다음 카테고리 문제에선 꽤나 막혀서 복습이 필요하다는 것을 느껴 복습을 계속 하였다.  
+
+---
+
