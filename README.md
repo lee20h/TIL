@@ -329,7 +329,7 @@ SELECT 열
 - 4日  
 
 오늘은 SQL을 공부한 것으로 구름IDE에서 직접 실습하면서 공부를 해보았다. 확실히 글로만 보고 공부하던 것과 달리 처음엔 어색해서 어려웠다. 여기서 기술되어 있는 내용을 보고 공부하고 실습하는 RDBMS는 MariaDB이다. 따라서 조금은 문법이 달랐지만 아직 공부한 거라곤 별로 없기에 차이를 크게 못 느꼈다.  
-![DB_ALTER](../img/DB_ALTER.JPG)  
+![DB_ALTER](./img/DB_ALTER.JPG)  
 ```
 ALTER TABLE DWELLERS ADD PET VARCHAR(10) AFTER NAME;
 ALTER TABLE DWELLERS ADD GENDER CHAR(1) NOT NULL FIRST;
@@ -399,3 +399,47 @@ WHERE NOT NAME IS NULL
 
 ---
 
+- 6日  
+
+SQL 문제 풀면서 새로운 것을 많이 알게 되었다. 먼저, IFNULL(A,B)는 A가 NULL이라면 B로 대체하고 A가 NOT NULL이라면 A를 그대로 사용한다. DATETIME형에서 많은 시간들이 있지만 시간들을 7~21 HOUR로 나눠서 SELECT하는 문제가 있었다. DATTIME에서 HOUR(DATETIME)을 사용하게 되면 DATETIME에서 시간만 뽑아서 SELECT할 수 있게 된다.  
+
+기본키는 NOT NULL이며, 기본 키는 다른 값들과 다르게 한 컬럼으로 구분이 되는 값이다. 그리고 외래키란 다른 테이블의 기본키를 참조하는 속성이다. 따라서 테이블 사이에 물리적인 연결이 생성된다. 외래키를 언제 사용하는지 살펴보자.  
+| EMP_ID | EMP_NAME | EMP_REGDATE |
+|-------|--------|---------|
+| 1001 | 홍길동 | 2019-03-17 |
+| 1002 | 김구름 | 2019-05-22 |
+| 1003 | 나미녀 | 2020-01-01 |
+
+| ORD_ID | EMP_ID | ORD_NAME | ORD_DATE |
+|--------|-------|--------|---------|
+| 2000 | 1001 | 커피 | 2019-08-11 |
+| 2001 | 1002 | 오렌지쥬스 | | 2002 2019-08-12 |
+| 2002 | 1001 | 유자차 | 2019-08-12 |
+| 2003 | 1003 | 커피 | 2019-08-14 |  
+
+여기서 EMP_ORDER 테이블의 EMP_ID 필드가 EMP 테이블의 EMP_ID를 참조하고 있다. 이 때 사번 1001인 사원을 EMP 테이블에서 삭제하게되면 EMP_ORDER 테이블의 1001번 사원이 주문 명세는 그대로 남게 된다. 따라서 모순이 발생하게 된다. 이것을 **참조 무결성 위반**이라고 한다. **참조 무결성**이란 기본키와 외래키의 관계가 항상 유지되는 것이다. 외래키 무결성이라고도 한다. 외래키를 설정하기 위해서는  
+```
+ALTER TABLE <테이블 명> ADD CONSTRAINT <제약 조건 명> FOREIGN KEY (칼럼 명) REFERENCES <부모 테이블> (부모 테이블의 기본키 필드명);
+```
+
+위의 예시와 엮게되면  
+```
+ALTER TABLE EMP_ORDER ADD CONSTRAINT FK_ORDER_EMP_ID FOREIGN KEY(EMP_ID) REFERENCES EMP(EMP_ID);
+```
+이렇게 사용하게 되면 EMP_ORDER 테이블의 EMP_ID 필드는 EMP 테이블의 EMP_ID 필드를 참조하게 된다.  
+
+```
+SELECT * FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE TABLE_NAME='EMP_ORDER';
+```
+이와 같은 쿼리를 통해서 외래키와 기본키를 확인 할 수 있다.  
+
+ON 키워드  
+외래키가 참조하는 테이블의 데이터를 갱신하거나 삭제할 때 참조 무결성을 유지하기 어렵다. 따라서 MySQL에서 ON 키워드를 통해 여러 가지 제약 조건을 부여하여 참조 무결성을 유지하게 한다. ON UPDATE/ON DELETE로 사용하는데 이때 제약 조건은 NO ACTION, RESTRICT, CASCADE, SET NULL이 있다.  
+```
+ALTER TABLE <테이블 명> ADD CONSTRAINT <제약 조건 명> FOREIGN KEY (칼럼 명) REFERENCES <부모 테이블> (부모 테이블의 기본키 필드명)
+ON UPDATE SET <UPDATE 제약 조건>
+ON DELETE SET <DELETE 제약 조건>;
+```
+만약에 ON 키워드 설정이 생략되었다면 ON UPDATE/DELETE SET NO ACTION이 기본 설정된다. 이 옵션은 외래키가 참조하는 테이블에서 레코드의 기본키 값을 수정하거나 레코드를 삭제하는 행위를 방지해준다. MySQL에서는 RESTRICT와 NO ACTION은 같은 의미이다.  
+ON UPDATE SET NULL이 실행될 경우에는 외래키가 참조하는 기본키 값이 변경되었을 때 해당 외래키 값이 NULL로 변경된다.  
+ON DELETE SET NULL이 실행될 경우에는 외래키가 참조하는 기본키 값이 삭제되었을 때 해당 외래키 값이 NULL로 변경된다. 이 때는 해당 외래키가 NULL을 허용해야지 실행이 된다. NOT NULL인 경우에는 오류가 발생한다.  
