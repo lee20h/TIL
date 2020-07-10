@@ -787,3 +787,197 @@ CREATE OR REPLACE PROCEDURE InsertBook(
 EXEC InsertBook(13, '스포츠과학', '마당과학서적', 25000);
 SELECT * FROM BOOK;
 ```
+
+자바스크립트 공부가 필요해서 잠시 미루고 이어서 할려한다.  
+
+---
+
+- 10日  
+
+## 모던 자바스크립트  
+[참고자료](https://yamoo9.github.io/next-javascript/)  
+
+### 블록 영역
+변수를 저장하기 위한 `var`외에 `let`과 `const`가 추가 되었다. `var`와 다르게 `let`은 선언 이전에 접근 할 수 없다. (`var`의 경우 선언, 초기화 과정이 동시에 이루어짐.)  
+
+`let`은 블록 유효 범위를 갖는 지역 변수를 선언하며, `const`선언은 읽기 전용 참조를 생성한다. 이것은 담긴 값의 불변이 아니라, 변수 식별자가 다른 데이터로 재 할당이 불가능 하다는 뜻이다.  
+
+### 문자  
+Template Literal을 사용하면 명시적인 문자열 이스케이프를 사용하지 않아도 특수문자를 포함한 문자열을 구축 할 수 있다. 예를 들어 \`\`이러한 백틱을 이용하면 특수문자를 쉽게 사용할 수 있으며 문자열을 접합 시킬 때도 `+`연산이 아닌 `${표현식}`을 통해서 가독성을 높일 수 있다. 또한, 템플릿 코드 작성에 있어 ES6는 개행이 보존되어 더 깔끔하게 코드 작성이 가능하다.  
+
+### 함수
+- `Arrow Function`  
+
+화살표 함수 식은 `function` 표현에 비해 구문이 짧고 자신의 `this`, `arguments`, `super` 또는 `new.target`을 바인딩 하지 않아서 항상 `익명함수`이다. 이 함수 표현은 메소드 함수가 아닌 곳에 적합하고, 생성자로는 적합하지 않다. 따라서 `this`의 컨텍스트를 보존해야할 경우 화살표 함수를 사용해야한다.  
+
+```
+function Person(name) {
+  this.name = name;
+}
+
+Person.prototype.prefixName = function (arr) {
+  return arr.map(character => {
+    // this 컨텍스트는 Person 객체입니다.
+    return this.name + character;
+  });
+};
+```
+익명 함수를 사용하듯이 간단한 값을 리턴하는 함수나 함수 표현식이 필요할 때 사용하면 간결해진다.  
+```
+const arr = [1,2,3,4,5];
+const squares = arr.map(function (x) return { return x * x});
+-->
+const squares = arr.map(x => { return x * x});  
+or
+const squares = arr.map(x => x * x);
+```
+따라서 ES6+ 일때 가능하면 사용하는게 간결하며 가독성을 증가시킬 수 있다.  
+
+- Default Parameter  
+
+기본 매개 변수를 자바스크립트에서 처리하는 방법은 C++에서 처리했던 방법과 같이 ES6부턴 바뀌었다.  
+```
+function add(x=0, y=0) {
+	return x + y;
+}
+```
+
+- Rest Parameter  
+
+나머지 매개 변수에 대해서  
+```
+function logArguments(...args) {
+	args.forEach(arg => console.log(arg))
+}
+```
+
+배열 구조 분해 할당을 통해서 이름이 있는 매개변수을 손쉽게 구현할 수 있다. 하지만 함수의 인자를 전달하지 않으면 `null`이 전달되어 오류가 발생하기 때문에 기본 매개 변수를 설정하면 해결할 수 있다.
+```
+function initializeCanvas({ height=720, width=480, lineStroke='#122122'}) {
+  console.log(`height = ${height}`);
+  console.log(`width = ${width}`);
+  console.log(`lineStroke = ${lineStroke}`);
+}
+
+initializeCanvas({
+  lineStroke: '#786e51'
+});
+```
+
+- Spread Operator 
+ 
+전개 연산자를 사용할 수 있는데 이 연산자는 `...`을 통해서 매개변수로 배열을 보내거나, 배열을 합치거나, 객체 리터럴을 합칠 수 있다. 하지만 중첩된 데이터를 포함한 객체를 복사할 때는 전개 연산자가 아닌 JSON 객체의 `stringify`나 `parse`을 사용 해야한다. 만약 중첩된 데이터를 포함한 객체를 복사할 때 전개 연산자를 사용하게 되면 값 복사가 아닌 값 참조가 일어나서 심각한 오류를 발생 시킬 수 있다.  
+
+## 객체  
+### Shorthand Properties  
+객체는 `new Object()`, `Object.create()` 또는 리터럴 표기법으로 초기화 할 수 있다. 자바스크립트에서는 속기형 속성 작성법을 통해서 객체의 속성 정의를 편리하게 `[]`와 `{}`을 통해 배열과 객체 속성을 정의할 수 있다. 여기에 추가적으로 객체의 속성과 값의 이름이 동일한 경우에는 다음과 같이 작성하면 간결하다.  
+```
+const favorites = { animations, movies, music};
+```  
+
+### Object Enhancements
+
+간추린 메소드 표기법과 계산된 속성 이름 동적 설정을 통해 향상된 객체 표기법을 사용한다. 먼저 간추린 메소드 표기법은 아래와 같다.  
+```
+let name  = 'SM7',
+    maker = 'Samsung',
+    boost = 'powerUp';
+
+const car = {
+  // 간추린 메서드 표기법
+  go() {},
+  stop() {},
+  boost() {}
+};
+
+console.dir(car);
+// Object
+//  ↳ go: ƒ go()
+//  ↳ stop: ƒ stop()
+//  ↳ boost: ƒ boost()
+//  ↳ __proto__: Object
+```  
+이런 식으로 메소드들을 function을 명시하지 않고 표기할 수 있다. 계산된 속성 이름 동적 설정은 변수나 자바스크립트 식에 의해 계산된 속성 이름을 동적으로 설정할 수 있다.
+```
+let name  = 'SM7',
+    maker = 'Samsung',
+    boost = 'powerUp',
+    dynamicMethod = 'Satisfactory';
+
+const car = {
+  go() {},
+  ['stop']() {},
+  [boost]() {}, // 변수를 받아 계산된 속성 이름 적용 가능
+  [`${dynamicMethod.replace(/s/ig, 'S')}`]() {} // JavaScript 식을 계산하여 동적으로 속성 이름 적용 가능
+};
+
+console.dir(car);
+// Object
+//  ↳ go: ƒ go()
+//  ↳ powerUp: ƒ [boost]()
+//  ↳ stop: ƒ ['stop']()
+//  ↳ SatiSfactory: ƒ [`${dynamicMethod.replace(/s/ig, 'S')}`]()
+//  ↳ __proto__: Object
+```
+
+또 `getter/setter`을 사용할 수 있어서 `get`과 `set`을 사용하여 접근할 수 있다. 자바스크립트에서는 비공개(private) 접근 제어자를 제공하지 않아서 관습적으로 `_`을 이름 앞에 붙여 사용하지만 접근은 가능하다. 비공개 접근 제어자 대신에 외부와 단절된 블록 영역과 `Symbol`을 사용한 고유 식별자로 접근 불가능한 속성을 사용할 수 있다.
+```
+{
+
+  // 심볼(Symbol) 등록
+  // - 고유하고 수정 불가능한 데이터 타입이며
+  // 주로 객체 속성(object property)들의 식별자로 사용된다.
+  let _wheel = Symbol('wheel');
+
+  global.car = {
+    // 등록된 심볼을 계산된 속성으로 사용
+    [_wheel]: 4,
+    get wheel() {
+      return this[_wheel]; // 심볼 반환
+    },
+    set wheel(new_wheel) {
+      if ( typeof new_wheel !== 'number' ) {
+        throw new Error('전달 인자 유형은 숫자여야 합니다.');
+      }
+      // 계산된 값을 심볼에 할당
+      this[_wheel] = new_wheel > 4 ? new_wheel : 4;
+    }
+  };
+
+}
+```
+
+- Destructuring Assignment
+
+구조 분해 할당은 위에서 한번 언급했으므로 가볍게 적어본다. ES5에서는 객체 선언 후 객체 속성 하나하나를 직접 할당하는 표현식을 짰어야했으나, ES6+부터는 객체를 구조 분해하여 각 변수에 속성이나 멤버들을 직접 바로 할당할 수 있다.  
+
+### 심볼
+Symbol 데이터 타입은 고유한 기본 값으로 수정이 불가능하며 클래스나 객체 내부에서만 접근할 수 있는 비공개 키로 사용된다.  
+```
+{
+  // 블록 스코프 내에서만 접근 가능한 심볼
+  const _privateKey = Symbol();
+
+  // 글로벌에 공개된 클래스
+  window.FileReader = class {
+    constructor() {
+      this[_privateKey]();
+    }
+    [_privateKey]() {
+      console.log('비공개 멤버로 클래스 FileReader 만 접근하여 사용 가능');
+    }
+  }
+}
+
+const fileReader = new FileReader(); // '비공개 멤버로 클래스 FileReader 만 접근하여 사용 가능'
+
+fileReader[_privateKey](); // Uncaught ReferenceError: _privateKey is not defined
+```
+
+- Symbol()  
+
+`Symbol()` 또는 `Symbol([description])`이 실행되어 반환되는 모든 심볼 값은 고유하여 심볼 값이 객체 속성에 대한 식별자로 사용될 수 있다. 그리고 new Symbol()이 제공되지 않는다.  
+
+---
+
+
