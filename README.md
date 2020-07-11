@@ -980,4 +980,207 @@ fileReader[_privateKey](); // Uncaught ReferenceError: _privateKey is not define
 
 ---
 
+- 11日  
 
+### 배열  
+Array Additions  
+배열 객체에 추가된 클래스나, 스태틱, 인스턴스 메소드  
+`Array.from()`  
+유사 배열을 배열화할 수 있다.  
+```
+// DOM 객체 수집(Collection) = NodeList
+// lis 변수에 참조된 값은 length 속성을 가진 유사 배열 객체
+var lis = document.querySelectorAll('ul.demo li');
+
+// Array.from() 네이티브 Array 메서드를 사용하여 lis 유사 배열을 배열로 변경
+Array.from(lis).forEach(li => console.log(li)); // <li> 순환
+```
+전개 연산자를 사용하여 유사 배열 객체를 배열화 할 수 있다.  
+```
+const lisHTML = [...lis].map(li => li.innerHTML);
+```
+
+Array.of()  
+Array 객체를 생성할 때 new 키워드를 사용하여 만들며, 숫자를 배열의 인자로 전달하는 경우 애매모호한 문법으로 배열의 크기가 선언된다. 이러한 문제를 마주치지 않기 위해 배열 리터럴을 선언하며 할당을 해주었다. Array.of()구문을 사용하면 첫번째 인자가 숫자라도 애매모호한 문법을 해결할 수 있다.  
+
+Array.prototype.keys()  
+for문과 foreach문을 넘어서 `for .. of`문을 통해서 데이터를 순환 처리할 수 있다. 여기에서 데이터 값이 아닌 인덱스 키를 출력하고자하면 객체의 `.key()`메소드를 사용하게 되면 인덱스 키를 추출할 수 있다. 마찬가지로 `.value()`로 데이터를 추출하며, 둘 다 필요한 경우에는 `.entry()`를 사용하면 된다. 추가적으로 `find()`와 `findIndex()`을 통해서 원하는 값과 인덱스를 찾을 수 있다.
+
+배열 객체를 사용할 때 쓰면 유용한 메소드는 `Array.isArray()`와 `Array.foreach`(for문과 for..of문도 가능), `Array.map()`, `Array.filter()`, `Array.sort()`  
+map의 경우에는 새로운 배열로 반환한다 점을 기억해야한다.  
+
+### 클래스
+C++와 같이 클래스를 선언하고 사용할 수 있으나 생성자의 경우 직접 명시해서 사용해줘야한다.  
+```
+class Person {
+  constructor(name, age, gender) {
+    this.name   = name;
+    this.age    = age;
+    this.gender = gender;
+  }
+  incrementAge() {
+    this.age += 1;
+  }
+}
+```  
+그리고 상속도 존재하는데 상속은 `extend` 키워드로 상속을 하면 된다.  
+
+### 모듈  
+`import` `export`를 사용하여 외부 모듈이나 다른 스크립트로 보내고 받아서 사용할 수 있다.  
+간단하게 `export` 키워드를 가지고 내보내기가 쉽게 가능하다. 또한 객체를 이용한 리스트 내보내기도 가능하다.  
+```
+function sumTwo(a,b) {
+	return a + b;
+}
+function sumThree(a,b,c) {
+	return a + b + c;
+}
+let api = {
+	sumTwo,
+	sumThree
+};
+export default api;
+```
+모듈을 내보낼 때 이렇게 사용하며 항상 `export default` 메소드는 모듈 코드의 마지막에 위치해야 한다.  
+`import`또한 키워드를 통해서 쉽게 받아올 수 있다. 하지만 전체를 불러오면 그 파일의 모든 코드가 실행되므로 파이썬과 유사하게 지정 불러오기를 사용할 수 있다. 다음과 같이 사용한다.  
+```
+import { sumTwo, sumThree} from 'math/addition';
+or
+import {
+	sumTwo as addTwoNumbers,
+	sumThree as sumThreeNumbers
+} from 'math/addition';
+```
+
+디폴트 모듈에 경우에는 다음과 같다.
+```
+import api from 'math/addition';
+or
+import { default as api} from 'math/addition';
+```
+추가적으로 react에 경우는 이렇게 사용한다.
+```
+import React from 'react';
+const { Component, PropTypes } = React;
+or
+impor React, { Component, PropTypes } from 'react';
+```
+
+import되는 값은 참조되서 사용하는게 아니라 바인딩되서 사용하므로 값이 모듈 외부에서 바뀔 일은 없다.  
+
+### 비동기 프로그래밍  
+- Promise  
+
+`Promise`는 비동기 조작의 최종 완료 또는 실패를 나타내는 객체이다. 또한 `Fetch API`를 이용하여 요청, 응답과 같은 HTTP의 파이프라인 요소를 조작하는 것이 가능하다.  
+
+```
+func1(function (value1) {
+  func2(value1, function (value2) {
+    func3(value2, function (value3) {
+      func4(value3, function (value4) {
+        func5(value4, function (value5) {
+          // ...
+        });
+      });
+    });
+  });
+});
+```
+--->
+```
+func1(value1)
+  .then(func2)
+  .then(func3)
+  .then(func4)
+  .then(func5, value5 => {
+    // ...
+  });
+```
+
+프로미스를 사용하는 예제
+```
+const promise = new Promise((resolve, reject) => {
+  if ( true ) {
+    resolve();
+  } else {
+    reject();
+  }
+});
+
+promise
+  .then(() => {
+    // ...
+  })
+  .catch(error => {
+    console.error(error.message);
+  })
+```
+Promise의 추가적인 메소드를 살펴보면 먼저 `.all()`을 사용하게 되면 비동기 처리가 요구되는 API배열에서 Promise를 병렬 처리 할 수 있다. `.race()`을 사용하면 여러 Promise중 가장 먼저 도착된 것을 실행한다.  
+
+- Async/Await  
+
+Async 함수는 function 키워드 앞에 Async를 붙이면 된다. 이 함수는 암묵적으로 Promise를 반환하므로 `.then()` 또는 `.catch()` 메솓르르 사용해 실행이나 거절을 처리할 수 있다.  
+
+- Await  
+
+Await 키워드는 데이터가 응답 반환 될때까지 실행흐름을 중단 시킨다.  
+```
+const getData = () => {
+  let timeout = Math.floor(Math.random() * 2000);
+  return new Promise(resolve => {
+    window.setTimeout(() => resolve(['지연', '된', '데이', '터', '전송']), timeout);
+  });
+};
+
+async function asyncFn() {
+  const data = await getData(); // 데이터 응답까지 대기
+  console.log(data); // 응답 받은 후 데이터 출력
+}
+```
+getdata가 돌아올 때까지 실행 흐름을 멈춰놓고 돌아오면 진행된다.  
+`await`키워드는 Async 함수 내부에서만 사용이 가능하다.  
+
+Async/Await 코드르 사용하면 Promise 코드를 조금 더 간결하게 표현할 수 있다.  
+
+```
+Promise 코드
+const api = 'https://jsonplaceholder.typicode.com';
+
+function asyncCallDatas() {
+  let todo, photo;
+  Promise.all([
+    fetch(`${api}/todos/9`)
+      .then(response => response.json())
+      .then(data => todo = data),
+    fetch(`${api}/photos/7`)
+      .then(response => response.json())
+      .then(data => photo = data)
+  ])
+  .then(results => console.log(todo, photo));
+}
+
+asyncCallDatas();
+```
+Async/Await 코드
+```
+const api = 'https://jsonplaceholder.typicode.com';
+
+async function asyncCallDatas() {
+  let todo = await (await fetch(`${api}/todos/9`)).json();
+  let photo = await (await fetch(`${api}/photos/7`)).json();
+  console.log(todo, photo);
+}
+
+asyncCallDatas();
+
+해당 코드를 Promise.all()와 구조 분해 할당으로 더 간결하게 처리할 수 있다.
+async function asyncCallDatas() {
+  let [ todo, photo ] = await Promise.all([
+    (await fetch(`${api}/todos/9`)).json(),
+    (await fetch(`${api}/photos/7`)).json()
+  ]);
+  console.log(todo, photo);
+}
+```  
+
+---
