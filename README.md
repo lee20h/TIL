@@ -1184,3 +1184,474 @@ async function asyncCallDatas() {
 ```  
 
 ---
+
+- 12日  
+
+### 이터레이션  
+- for.. of  
+
+for ..of 문은 반복 가능한 객체(Array, Map, Set, String, TypedArray, arguments 객체 등을 포함)에서 반복하고 각 개별 속성 값에 대해 실행되는 문이 있는 사용자 정의 반복 후크를 호출하는 루프를 생성한다.  
+
+배열 순환
+```
+const iterable = [9, 19, 109];
+
+for (let item of iterable) {
+  console.log(item);
+  // 9
+  // 19
+  // 109
+}
+
+for (let [index, item] of iterable.entries()) {
+  console.log(index, item);
+  // 0, 9
+  // 1. 19
+  // 2. 109
+}
+```
+
+문자 순환
+```
+const iterable = 'yamoo9';
+
+for (let char of iterable) {
+  console.log(char);
+  // 'y'
+  // 'a'
+  // 'm'
+  // 'o'
+  // 'o'
+  // '9'
+}
+```
+
+Set 순환
+```
+const iterable = new Set([9, 19, 109, 19, 9]);
+
+for (let number of iterable) {
+  console.log(number);
+  // 9
+  // 19
+  // 109
+}
+```
+
+Map 순환
+```
+const iterable = new Map([['name', 'yamoo9'], ['job', '강사']]);
+
+for (let info of iterable) {
+  console.log(info);
+  // ['name', 'yamoo9']
+  // ['job', '강사']
+}
+
+for (let [key, value] of iterable) {
+  console.log(`key => ${key}`);
+  console.log(`value => ${value}`);
+  // key => name
+  // value => yamoo9
+  // key => job
+  // value => 강사
+}
+```
+
+NodeList 순환
+```
+const buttons = document.querySelectorAll('button');
+
+for (let button of [...buttons]) {
+  button.classList.add('button');
+}
+```
+
+Generator 순환
+```
+function* fibonacci() {
+  let [prev, curr] = [1, 1];
+  while (true) {
+    [prev, curr] = [curr, prev + curr];
+    yield curr;
+  }
+}
+
+for (let n of fibonacci()) {
+  console.log(n);
+  if (n >= 1000) { break; }
+}
+```  
+
+`for..in문`과 `for..of문`의 차이점  
+for..in문은 객체의 열거 가능한(enumerable) 모든 속성을 순환한다.  
+for...of문은 컬렉션 전용이며, [Symbol.iterator] 속성이 있는 모든 컬렉션을 순환한다.  
+
+```
+// Object, Array 프로토타입 확장
+Object.prototype.addCustom = function () {};
+Array.prototype.createCustom = function () {};
+
+// 배열 객체를 정의하고, 임의의 속성을 추가
+let iterable = ['스트레칭', '다이어트'];
+iterable.interval = '항상';
+
+// for..in문 순환
+for (let key in iterable) {
+  let value = iterable[key];
+  console.log(value);
+  // '스트레칭'
+  // '다이어트'
+  // '항상'
+  // function () {}
+  // function () {}
+}
+
+for (let value of iterable) {
+  console.log(value);
+  // '스트레칭'
+  // '다이어트'
+}
+```  
+
+- Iterable 프로토콜  
+
+조건 : [Symbol.iterator] 메서드를 소유해야 한다.  
+Iterator 프로토콜에 준하는 객체를 반환해야 한다.  
+
+```
+const star4 = {
+  [Symbol.iterator]() {
+    let _star = Symbol('_star');
+    return {
+      [_star]: '',
+      next() {
+        if ( this[_star].length < 4 ) {
+          this[_star] += '*';
+          return {
+            value: this[_star],
+            done: false
+          };
+        } else {
+          return { done: true };
+        }
+      }
+    }
+  }
+};
+
+/* -----------------------------------
+// 검토
+------------------------------------ */
+
+star4[Symbol.iterator]();
+// 출력: {next: ƒ, Symbol(_star): ""}
+
+[...star4];
+// 출력: ["*", "**", "***", "****"]
+
+for (let star of star4) {
+  console.log(star);
+}
+// 출력:
+// *
+// **
+// ***
+// ****
+```
+
+- Iterator 프로토콜  
+
+조건 : 인자를 받지 않는 next() 메서드를 소유해야 한다.  
+next() 메서드의 반환 값은 객체로 value, done 속성을 소유해야 한다.  
+done은 반복이 종료될 경우 true, 종료되지 않을 경우 false 여야 한다.  
+value는 JavaScript의 모든 데이터 타입 설정이 가능하다.  
+
+```
+function iteratorMaker(array) {
+  let index = 0;
+  return {
+    next() {
+      if (index < array.length) {
+        return { done: false, value: array[index++] };
+      } else {
+        return { done: true };
+      }
+    }
+  }
+}
+
+/* -----------------------------------
+// 검토
+------------------------------------ */
+
+const protocols = iteratorMaker(['iteration', 'iterable', 'iterator']);
+// 출력: {next: ƒ}
+
+protocols.next(); // {done: false, value: 'iteration'}
+protocols.next(); // {done: false, value: 'iterable'}
+protocols.next(); // {done: false, value: 'iterator'}
+protocols.next(); // {done: true, value: undefined}
+```
+
+- Iteration Object  
+
+객체를 순환 처리하는 경우 `for..in문`외에도 `for..of`문을 사용할 수 있다.  
+
+Object.keys() : 객체의 속성을 배열 객체로 반환
+```
+const picture_keys = Object.keys(picture);
+// 출력: ['large', 'medium', 'thumbnail']
+
+for (let key of picture_keys) {
+  console.log(key);
+}
+```
+
+Object.values() : 객체의 값을 Iterable 프로토콜에 준하는 객체로 반환
+```
+const picture_values = Object.values(picture);
+// 출력: ['https://...', 'https://...', 'https://...']
+
+for (let value of picture_values) {
+  console.log(value);
+}
+```
+
+Object.entires() : 객체의 속성, 값을 쌍으로 하는 배열을 묶은 배열을 반환  
+```
+const picture_entries = Object.entries(picture);
+// 출력:  
+// [
+//   ['large', 'https://...' ],
+//   ['medium', 'https://...'],
+//   ['thumbnail', 'https://...']
+// ]
+
+for (let [key, value] of picture_entries) {
+  console.log(key, value);
+}
+```
+
+추가적으로 배열 객체 메소드를 사용하여 순환하는 것도 가능하다.  
+```
+// 속성 순환
+Object.keys(picture).forEach(key => console.log(key));
+
+// 값 순환
+Object.values(picture).forEach(value => console.log(value));
+
+// 속성, 값 순환
+Object.entries(picture).forEach(entry => {
+  const [key, value] = entry;
+  console.log(key, value);
+});
+```
+
+### 제너레이터  
+Generator 객체는 제너레이터 함수 `function* () {}`로부터 반환된 값이며, 이터레이션 프로토콜을 준수한다.  
+
+피보나치
+```
+function* fibonacci(n=1) {
+  let [ current, next ] = [1, 1];
+  while(n--) {
+    yield current;
+    [ current, next ] = [ next, current + next ];
+  }
+}
+
+let fibo10 = fibonacci(10);
+
+[...fibo10]; // [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
+```
+
+간단한 ID 생성
+```
+function* idMaker(id=10000, prefix="id") {
+  while(true) {
+    yield `${prefix}-${Math.floor(Math.random() * id)}`;
+  }
+}
+
+const ids = idMaker();
+
+ids.next().value; // "id-743"
+ids.next().value; // "id-985"
+ids.next().value; // "id-5198"
+```
+
+고유키 생성
+```
+function* uniqueIdMaker(count=5, limit=10) {
+  const keys = 'abcdefghijklmnopqrstuvwxyz!@#1234567890'.split('');
+  function _uid(count){
+    let randomKey = '';
+    while(count--) {
+      randomKey += keys[Math.floor(Math.random() * keys.length)];
+    }
+    return randomKey;
+  }
+  while(limit--) {
+    yield _uid(count);
+  }
+}
+
+const uid = uniqueIdMaker(10, 3);
+
+console.log([...uid]); // ["1rk#8p57ji", "#qwhk6wuwx", "wg5fc06i0e"]
+```
+
+### 컬렉션
+- set  
+
+C++ STL의 set과 동일하게 사용할 수 있다. 배열과 같이 사용하되, 중복을 허용하지 않으며 메소드로는 `.size`, `.add()`, `.has()`, `.delete()`, `.clear()`가 있따. 또, Set 객체를 순환하는 메소드는 `forEach()`, `.entries()`, `.values()`, `.keys()`
+이 있다. 위에서 이미 살펴본 메소드들 이므로, 예제는 생략한다.  
+
+합집합, 교집합, 차집합, 부분집합을 처리할 수 있는데 정의 방법을 살펴보자.
+```
+class y9Set extends Set {
+
+  // 합집합
+  union(x){ return new Set([...this, ...x]) }
+
+  // 교집합
+  intersect(x){return new Set([...this].filter(y => x.has(y)))}
+
+  // 차집합
+  diff(x){return new Set([...this].filter(y => !x.has(y)))}
+
+  // 상위 집합 유무 확인
+  isSuperset(x){
+    for (let y of x) {
+      if (!this.has(y)) { return false; }
+    }
+    return true;
+  }
+```
+
+- map  
+
+map 또한 C++ STL의 map과 동일하며 key/value를 가지는 자료구조이다. 메소드는 `get`, `set`, `has` 등을 제공한다. 키 값을 문자열만 사용하지 않아도 되며, 어떤 타입을 전달해도 문자열로 형변환 하지 않는다. 마지막으로 `.entires()`을 사용하면 쉽게 순환 시킬 수 있다.  
+
+- WeakSet  
+
+WeakSet은 Set과 유사하다. set과 달리 객체만 수집할 수 있으며, 약한 참조가 이루어져 메모리 누수를 예방할 수 있다.  
+특징으로는 size 속성을 가지지 않으며, 객체 타입만 `.add()`하거나 `.delete()`할 수 있다. 또한 `forEach`문과 `for..in`문으로 순환 할 수 없다. 마지막으로는 약한 참조로 메모리 누수 관리에 효과적이다.  
+
+Set과 WeakSet의 차이
+```
+// 데이터(객체)
+let arr = [1, 3, 5, 7],
+    obj = {key: 'value'};
+
+// Set 객체 생성
+let set = new Set();
+
+// WeakSet 객체 생성
+let wset = new WeakSet();
+
+// 아이템 추가
+set.add(arr).add(obj);
+wset.add(arr).add(obj);
+
+// 아이템 사이즈
+console.log(set.size);  // 2
+console.log(wset.size); // undefined
+
+// 객체가 아닌 데이터 추가
+set.add(true);
+wset.add(true); // 오류 발생: Invalid value used in weak set
+
+// 아이템 소유 여부 확인
+set.has(obj);  // true
+wset.has(obj); // true
+
+// 아이템 제거
+set.delete(arr);  // true
+wset.delete(arr); // true
+
+// 세트 순환
+set.forEach(item => console.log(item));  // 참조된 데이터에 접근 및 사용 가능
+wset.forEach(item => console.log(item)); // 오류 발생: wset.forEach is not a function
+
+// 메모리 참조
+let set  = new Set();
+let wset = new WeakSet();
+
+(() => {
+
+  let o1 = {a: 1}; // 메모리
+  let o2 = {a: 2}; // 가비지 컬렉터에 의해 메모리 삭제
+
+  set.add(o1);
+  wset.add(o2);
+
+});
+```
+
+추천 사용법은  
+```
+// WeakSet 객체 생성
+let ownClass = new WeakSet();
+
+// 클래스 OffCanvasMenu 정의
+class OffCanvasMenu {
+
+  constructor() {
+    // 클래스 자신을 ownClass에 추가
+    ownClass.add(this);
+    // ...
+  }
+
+  toggle() {
+    // OffCanvasMenu 객체가 아닌,
+    // 다른 객체가 toggle() 메서드를 사용하려 할 경우 오류 출력
+    if ( !ownClass.has(this) ) {
+      throw new TypeError('toggle() 메서드는 OffCanvasMenu 객체만 사용 가능합니다!');
+    }
+  }
+}
+```
+
+- WeakMap  
+
+WeakMap은 WeakSet과 동일하게 Map과 달리 객체만 수집하며, 약한 참조로 메모리 누수를 예방한다.  
+
+```
+let _age = new WeakMap();
+
+class Person {
+  constructor(age) {
+    _age.set(this, age);
+  }
+  incrementAge() {
+    let age = _age.get(this) + 1;
+    _age.set(this, age);
+    if (age > 50) {
+      console.log('반 백년을 살았구나!~');
+    }
+  }
+}
+```
+이런식으로 사용하는데 비공개 데이터를 저장하기 위해서 사용하게 되면 `Reflect.ownKeys()`을 통해서도 멤버 이름이 드러나지 않는다는 점이 특징이다. 따라서 DOM요소 자체를 훼손시키지 않고 DOM 요소에 연관 데이터를 저장하게 되면 가비지 컬렉션에 의해 제거된 DOM 객체에 약한 참조된 WeakMap이 자동으로 제거되어 메모리 관리가 수월해진다. 예시는 다음과 같다.  
+```
+let map = new WeakMap();
+
+let someEl = document.querySelector('#some');
+
+// 요소에 대한 약한 참조(weak reference)를 저장
+map.set(el, '참조');
+
+// 요소의 값에 접근
+let value = map.get(el); // '참조'
+
+// DOM 요소 제거 시, 자동으로 map 참조 제거
+el.parentNode.removeChild(el);
+el = null;
+
+value = map.get(el); // undefined
+```
+
+---
+
