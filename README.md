@@ -1660,12 +1660,14 @@ value = map.get(el); // undefined
 SQL문제를 [HackerRank](https://www.hackerrank.com/domains/sql)에서 몇 개 풀어보았다. 대부분 기본적인 SELECT문으로 쉽게 해결할 수 있었다. 그 중 헷갈린 문제를 가져와봤다.  
 
 ```
+Weather Observation Station 4
 SELECT COUNT(CITY) - COUNT(DISTINCT CITY)
 FROM STATION;
 ```
 많이 풀어보았으면 바로 풀었을텐데 이상하게 고전한 문제이다. 이 문제는 주어진 데이터베이스에서 CITY 컬럼의 갯수와 중복된 CITY 컬럽의 갯수를 제외한 CITY 컬럼의 갯수 차이를 구하는 문제였다. 일단 문제가 영어라서 익숙치 않았으며, 프로그래머스에서 풀었던 문제와 달리 테이블을 출력하기보단, 특정 값을 출력하게 하는 문제가 많아서 당황스러웠다. WHERE 절을 통해서 풀려고 하니 생각보다 오래 걸렸으나, 혹시나해서 SELECT 절에 COUNT끼리 뺄셈을 하니 문제가 풀렸다.  
 
 ```
+Weather Observation Station 5
 SELECT CITY, LENGTH(CITY)
 FROM STATION
 ORDER BY 2 , 1
@@ -1679,6 +1681,7 @@ LIMIT 1;
 이 문제도 생각보다 오래걸렸다. CITY 컬럼의 적힌 도시의 이름들의 길이 중 가장 작은것을 출력하고 그 다음 가장 긴 것을 출력하는 문제였다. 그리고 가장 길거나 짧은 것에 겹치는 도시가 있다면 알파벳순으로 출력해야 한다. 이 문제를 한 쿼리에 다 넣어서 작성할려고 하는게 가장 큰 패인이였다. 문제를 다시 천천히 읽어본 결과 쿼리를 따로 작성해도 된다고 하여 쿼리를 나누었다. 그 이후 계속 MAX와 MIN을 사용하여 SELECT에 접근하는 생각을 가진 채 작성하니 계속 오류나 원치않은 답이 나왔다. 그 예로 공백을 포함하지 않아서 MAX의 값이 10이 나오곤 하였다. 이후 생각한 결과 ORDER BY 절에서 우선순위를 둬 먼저 LENGTH을 기준으로 정렬한 뒤 CITY의 알파벳순으로 정렬하도록 숫자를 통해 컬럼을 지정했다. 처음에는 컬럼명을 그대로 사용했으나, 뜻대로 되지 않아서 숫자를 통해 컬럼을 지정했다.  
 
 ```
+Weather Observation Station 6
 SELECT DISTINCT CITY
 FROM STATION
 WHERE CITY LIKE ('a%') or CITY LIKE ('e%') or CITY LIKE ('i%') or CITY LIKE ('o%') or CITY LIKE ('u%')
@@ -1686,5 +1689,53 @@ WHERE CITY LIKE ('a%') or CITY LIKE ('e%') or CITY LIKE ('i%') or CITY LIKE ('o%
 이 문제는 CITY 컬럼에서 도시의 이름이 모음으로 시작하며 겹치지 않아야하는 단순한 문제였다. 만약 LIKE 구를 기억하지 못했다면 상당히 오래걸렸을 문제이다. 조건을 전부 나열하여 문제를 해결하였는데 이러한 쿼리말고 좀 더 효율적인 쿼리가 있는 지 찾아봐야겠다.  
 
 프로그래머스 문제보다 양이 많고 난이도가 생각보다 있으며, 영어로 문제가 제시되어 나에겐 상당히 까다로웠다. 아직 여러 문제가 남아 있으므로 꾸준히 풀어서 업데이트 하도록 해야겠다.  
+
+---
+
+- 14日  
+
+HackerRank SQL Basic Select을 다 풀어보았다.  
+
+```
+Higher Than 75 Marks
+SELECT NAME
+FROM STUDENTS
+WHERE Marks > 75
+ORDER BY SUBSTR(NAME, -3), ID 
+```
+MySQL에서는 substr에서 `-`인 음수로 사용하게 되면 문자열에 대하여 끝에서부터 숫자만큼 뜯어가게된다. 따라서 STUDENTS 테이블에서 NAME Column 중 Marks값은 75보다 큰 것을 먼저 NAME에서 뒤 3개의 문자로 정렬하고 만약 같다면 2순위로 ID로 정렬하라는 쿼리를 짰다.  
+
+이후에는 Advanced Select를 조금 풀어보았는데 난이도가 확 달라졌다.  
+```
+Type of Triangle
+SELECT CASE 
+WHEN A = B AND B = C THEN 'Equilateral'
+WHEN A + B <= C OR B + C <= A OR A + C <= B THEN 'Not A Triangle'
+WHEN A = B OR B = C OR A = C THEN 'Isosceles'
+ELSE 'Scalene'
+END
+FROM TRIANGLES
+```
+삼각형을 판별하는 문제로 각 변의 길이가 컬럼으로 주어지면 나눠서 각각 케이스마다 출력하는 쿼리를 짰다. 이때 CASE WHEN THEN END문을 통해서 ifelse문과 같이 짜서 생각보다 쉽게 짤 수 있었다.  
+
+```
+Occupations
+SET @r1=0, @r2=0, @r3=0, @r4=0;
+SELECT MIN(DOCTOR), MIN(PROFESSOR), MIN(SINGER), MIN(ACTOR)
+FROM (SELECT 
+			CASE WHEN OCCUPATION = 'Doctor' THEN (@r1:=@r1+1)
+                 WHEN OCCUPATION = 'Professor' THEN (@r2:=@r2+1)
+                 WHEN OCCUPATION = 'Singer' THEN (@r3:=@r3+1)
+                 WHEN OCCUPATION = 'Actor' THEN (@r4:=@r4+1)
+                 END AS RowNumber,
+            CASE WHEN OCCUPATION = 'Doctor' THEN NAME END AS Doctor,
+            CASE WHEN OCCUPATION = 'Professor' THEN NAME END AS Professor,
+            CASE WHEN OCCUPATION = 'Singer' THEN NAME END AS Singer,
+            CASE WHEN OCCUPATION = 'Actor' THEN NAME END AS Actor
+	 FROM OCCUPATIONS
+	 ORDER BY NAME) TEMP
+GROUP BY RowNumber;
+```
+오늘 푼 문제 중 가장 어려웠으며, 가장 긴 시간 동안 풀이를 했다. 주어진 결과 값은 테이블로 이루어져있으며 각각의 컬럼이 Doctor, Professor, Singer, Actor로 구성되어 있어서 이름 순서대로 정렬되어 각각 컬럼에 들어간 순서대로 위에서부터 채워져간다. 또한 사람이 부족한 경우에는 NULL로 표시한다. 처음에 컬럼이 주어진 테이블에서 찾는게 아니라 테이블 속 컬럼의 값들을 컬럼으로 빼야하는 쿼리를 생각하기 매우 어려웠다. SELECT절에 CASE WHEN THEN 문을 여러개 사용하여 뽑으며, GROUP BY 절을 넣어 생각해보았지만 여러 시도에도 풀리지 않았다. 서브쿼리르 짤려고 했으나 너무 막막하여 시도하지 않은 채로 다른 경우만 생각했던 것이 가장 큰 패인인 것 같다. 결국에는 잘 정리해둔 [블로그](https://towardsdatascience.com/sql-hackerrank-solutions-516666f9eb8c)를 통해서 다른 사람의 풀이를 확인했는데, 생각지도 못한 변수 설정에 놀랐다. 컬럼을 못 정하면 만드면 되는 것이였는데 공부를 더 해야하는 부분을 깨달았다.  
 
 ---
