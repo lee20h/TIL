@@ -1739,3 +1739,24 @@ GROUP BY RowNumber;
 오늘 푼 문제 중 가장 어려웠으며, 가장 긴 시간 동안 풀이를 했다. 주어진 결과 값은 테이블로 이루어져있으며 각각의 컬럼이 Doctor, Professor, Singer, Actor로 구성되어 있어서 이름 순서대로 정렬되어 각각 컬럼에 들어간 순서대로 위에서부터 채워져간다. 또한 사람이 부족한 경우에는 NULL로 표시한다. 처음에 컬럼이 주어진 테이블에서 찾는게 아니라 테이블 속 컬럼의 값들을 컬럼으로 빼야하는 쿼리를 생각하기 매우 어려웠다. SELECT절에 CASE WHEN THEN 문을 여러개 사용하여 뽑으며, GROUP BY 절을 넣어 생각해보았지만 여러 시도에도 풀리지 않았다. 서브쿼리르 짤려고 했으나 너무 막막하여 시도하지 않은 채로 다른 경우만 생각했던 것이 가장 큰 패인인 것 같다. 결국에는 잘 정리해둔 [블로그](https://towardsdatascience.com/sql-hackerrank-solutions-516666f9eb8c)를 통해서 다른 사람의 풀이를 확인했는데, 생각지도 못한 변수 설정에 놀랐다. 컬럼을 못 정하면 만드면 되는 것이였는데 공부를 더 해야하는 부분을 깨달았다.  
 
 ---
+
+- 15日  
+
+SQL Advanced Select를 풀어보았다.
+```
+Binary Tree Nodes
+SELECT N, (CASE WHEN P IS NULL THEN 'Root'
+                WHEN N NOT IN (SELECT DISTINCT P
+                              FROM BST
+                              WHERE P IS NOT NULL) THEN 'Leaf'
+            ELSE 'Inner'
+           END)
+FROM BST
+ORDER BY N;
+```
+이진검색트리 테이블에 N 컬럼에 해당 노드 번호가 있고 P 컬러멩 노드 번호에 해당하는 Parent가 있다. 따라서 Parent가 없는 노드는 Root, Parent에 하나도 번호가 없는 노드는 Leaf, 그 외 나머지를 Inner 노드라고 생각하고 풀었다. 하지만 생각과는 다르게 `SELECT 이후 N, (SELECT 절)`을 생각하고 짜서 계속 꼬였었다. 긴 시간 동안 괄호 속에 SELECT 절을 넣어야 된다고 생각했지만 결국에는 값 하나만 CASE WHEN문으로 뽑으면 되므로 SELECT를 고집할 필요가 없었다. 따라서 CASE WHEN 에서 P컬럼이 NULL인 경우 ROOT로 잡아주고 P에서 NULL이 아닌 부분에 N이 안 들어가는 부분 즉 P 컬럼에 N의 값이 없는 경우 LEAF로 해준다. 이후 나머지들은 INNER로 명명한 뒤 정렬을 해주었다. 생각보다 오래걸린 문제였고 서브쿼리를 짜는게 관건인 문제였으나 아직도 서브쿼리를 잘 짜지 못하는 거 같다. 공부가 더 필요한 부분이다.  
+
+JSP에서 Ajax와 Jquery로 짜여진 코드를 필요한 부분만 뜯어서 공부 중이다. DB와 연동하여 쿼리문을 어떻게 쓰고 해당 데이터를 받아오는지 공부하고 있다.
+
+---
+
