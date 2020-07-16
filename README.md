@@ -1760,3 +1760,78 @@ JSP에서 Ajax와 Jquery로 짜여진 코드를 필요한 부분만 뜯어서 �
 
 ---
 
+- 16日  
+
+JSP에서 데이터 전송하는 방법과 데이터베이스와 통신할 때 방법을 공부했다. 먼저 Ajax를 사용하는 방법인데 이것은 통신 방법이다.  
+[참고블로그](https://rimkongs.tistory.com/4)를 통해서 본 방법은 여러가지였다. 순수 자바스크립트를 이용하는 방법과, Jquery을 이용하여 구현하는 방법, GET 혹은 POST로 보내는 방법, JSON으로 보내는 방법이 있다.  
+주로 공부하며 리뷰한 코드는 Jquery속 Ajax을 이용하여 Ajax을 구현한 방법이다.  
+```
+$(function(){
+		
+		$("#sendButton").click(function() {
+			
+			var params = "subject=" + $("#subject").val() + 
+				"&content=" + $("#content").val(); //쿼리임 데이터만 넘길 것!
+				
+			$.ajax({
+				type:"POST",				//전송방식
+				url:"test2_ok.jsp",	//주소
+				data:params,			//전송데이터
+				dataType:"xml", // 받을 때 데이터 타입
+				success:function(args){ // 이 xml 형태의 데이터를 args로 받음 (바깥으로부터 들어옴)
+															// xml 형태니깐 parsing 작업을 해서 받아야함
+					$(args).find("status").each(function(){	//status 해당 태그 검색. eaxh는 반복문
+						
+						alert($(this).text()); // this의 text 형태로 출력해라 
+						
+					});
+				
+					var str = "";
+					$(args).find("record").each(function(){	// each : 반복문 => record를 다 찾아내라
+						
+						var id = $(this).attr("id"); // attribute 넣어라
+						var subject = $(this).find("subject").text();
+						var content = $(this).find("content").text();
+						
+						str += "id=" + id +
+							", subject=" + subject +
+							", content=" + content + "<br/>";
+					});
+					
+					// 반복문으로 만들어낸 데이터를 html로 바꿔서 str을 출력해라
+					$("#resultDiv").html(str); 
+					// javascript 방식에서 out.innerHTML = data; 이거랑 같은 코딩
+				
+				
+				},
+				
+				beforeSend:showRequest,
+				// 보내기 전에!  showRequest가서 검사 (showRequest는 사용자정의)
+				//beforeSend는 true값을 받아야만, 위 ajax부분을 통해 서버로 데이터를 보냄
+				error:function(e){
+					// 에러가 나면 e: 에러메서지가 여기 들어와 있을것임	
+					alert(e.responseText); // error msg는 String이기 때문에 responseText
+					//xml을 받을때는 e.responseXml
+				}
+			});
+		});
+	});
+```
+위와 같이 사용하는데 보낼 데이터와 타입과 전송 방식, 주소를 지정해준 다음 보내고 나서 성공했을 때와 실패했을 때 나눠서 코딩을 해준다.  
+
+데이터베이스와 연결할때는 RowSet을 사용한다. [참고자료](https://technet.tmaxsoft.com/upload/download/online/tibero/pver-20160406-000002/tibero_jdbc/ch07.html)  
+Row Set이란 문자 그대로 로우 데이터의 집합을 포함하는 객체이다. javax.sql.RowSet 인터페이스 메소드를 통해 접근할 수 있다. 그 중 Cached Row Set을 사용하는데 모든 열을 캐시에 저장해, 데이터베이스와의 연결을 유지하지 않도록 구현된 Row Set이다. Row Set에서 열 데이터 탐색하는 방법은 아래와 같다.
+```
+rowset.beforeFirst();
+while (rowset.next()) {
+    System.out.println(rowset.getString(1));
+}
+
+rowset.afterLast();
+while (rowset.previous()) {
+    System.out.println(rowset.getString(1));
+}
+```
+`.next` 혹은 `.previous()`을 통해서 움직이며, 여러 열 중 고르게 되면 `get(자료형)(순서)`을 통해서 열 데이터에 접근 할 수 있다. 따라서 `getString(1)` 다음 `getInt(2)`이런 식으로 접근하여 데이터를 뽑아서 사용한다. 그러므로 먼저 StringBuffer로 SQL을 짠 다음, String 형태로 만들고 마지막으로 CachedRowSet 변수에 넣어주면 된다. 이때, `javax.sql.rowset.RowSetProvider.newFactory().createCachedRowSet();` 이러한 함수를 통해서 열을 뽑을 수 있는 CachedRowSet으로 만들어준 다음 열 마다 뽑아서 사용하면 된다.  
+
+---
