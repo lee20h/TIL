@@ -1835,3 +1835,79 @@ while (rowset.previous()) {
 `.next` 혹은 `.previous()`을 통해서 움직이며, 여러 열 중 고르게 되면 `get(자료형)(순서)`을 통해서 열 데이터에 접근 할 수 있다. 따라서 `getString(1)` 다음 `getInt(2)`이런 식으로 접근하여 데이터를 뽑아서 사용한다. 그러므로 먼저 StringBuffer로 SQL을 짠 다음, String 형태로 만들고 마지막으로 CachedRowSet 변수에 넣어주면 된다. 이때, `javax.sql.rowset.RowSetProvider.newFactory().createCachedRowSet();` 이러한 함수를 통해서 열을 뽑을 수 있는 CachedRowSet으로 만들어준 다음 열 마다 뽑아서 사용하면 된다.  
 
 ---
+
+- 17日 
+
+HackerRank SQL 문제
+```
+New Companies
+SELECT C.company_code, C.founder,
+(SELECT COUNT(DISTINCT lead_manager_code) FROM Lead_Manager WHERE company_code=C.company_code),
+(SELECT COUNT(DISTINCT senior_manager_code) FROM Senior_Manager WHERE company_code=C.company_code),
+(SELECT COUNT(DISTINCT manager_code) FROM Manager WHERE company_code=C.company_code),
+(SELECT COUNT(DISTINCT employee_code) FROM Employee WHERE company_code=C.company_code)
+FROM Company C
+ORDER BY company_code;
+```
+외래키가 아니지만 같은 컬럼을 다른 테이블에서 유지하며, 주어진 테이블에서 회사코드에 맞는 lead_manager, senior_manager, manager, employee의 숫자를 세기 위하여 중복되지 않게 카운트를 셌다. 가장 헷갈렸던 부분은 첫 SELECT 절에서 Company를 명시를 해야하나 가장 고민이였지만 둘 다 상관없었다. 그 외에는 직관적으로 쿼리문을 짤 수 있다.
+
+ALPS 여름방학 스터디 이번주 주제인 큐를 풀면서 여러 가지 신선한 점과 기억하면 좋은 것들을 기록해본다.
+```
+BOJ 1655. 가운데를 말해요
+for (int i=0; i<n; i++) {
+		cin >> m;
+		if(max_q.size() == min_q.size())
+			min_q.push(m);
+		else
+			max_q.push(m);
+			
+		
+		if(!max_q.empty() && !min_q.empty())
+			while(max_q.top() > min_q.top()) {
+				int max = max_q.top();
+				int min = min_q.top();
+				max_q.pop();
+				min_q.pop();
+				max_q.push(min);
+				min_q.push(max);
+			}
+		if(i%2 ==0)
+			cout << min_q.top() << '\n';
+		else
+			cout << max_q.top() << '\n';
+	}
+```
+값이 들어오면 홀수번째 일때는 값 들어온 것들을 정렬했을 때 가운데 것을 출력하고 짝수번째 일때는 정렬했을 때 가운데 두개 중 작은 것을 출력하면 되는 문제이다. 이 문제를 보고 가장 당황스러웠던 점이 어떤 자료구조를 사용할 지 감이 안 잡힌 것이였다. 자료구조도 감이 안 잡힌 상태에서 벡터를 이용했으나 대부분이 시간초과가 나왔다. 이후 우선순위큐를 사용하기 위해 최대힙으로 생각해보았는데 문제가 갈피가 안 잡혀 친구가 준 힌트를 통해서 풀어보았다. 최소힙과 최대힙을 동시에 유지하면서 최대힙에는 작은 값들을 최소힙에는 큰 값들을 넣어 각자의 탑을 살펴보았을 때 그 값들은 중앙 값이 된다는 것이 힌트였다. 이 점을 고안하여 while문을 통해 max힙과 min힙의 탑이 max힙이 더 크다면 바로 바꿔주는 동작을 계속하며 처음에 min힙에 값을 넣어주기 때문에 홀수 번째는 항상 min힙이 한개가 더 많다 그러므로 중간 값은 min힙의 탑을 취하고 짝수 번재는 설명과 같이 max힙의 탑을 잡아서 해결하였다.  
+
+```
+BOJ 2075. N번째 큰 수
+for (int i=0; i<n*n; i++) {
+		cin >> num;
+		
+		if(q.size() < n) q.push(-num);
+		else {
+			if(-q.top() < num) {
+				q.pop();
+				q.push(-num);
+			}
+		}
+	}
+	cout << -q.top();
+```
+n*n 배열에 값들을 넣되, 밑 원소는 위 원소보다 항상 크다는 성질이 있다. 따라서 해당 배열에서 n번째 큰 원소를 찾기 위해 우선순위 큐 즉 최대힙을 이용하되, 작은 원소는 버리면서 큰 것들을 구하기 위해 negative연산을 이용하여 구했다.
+
+마지막으로는 JSP관련해서 공부한 점을 적어볼려고 한다. 어제에 이어서 Ajax와 Rowset을 공부한 것치고는 그 바탕이 되는 부분들을 확실하게 안다고 자신할 수 없기 떄문에 다시 공부를 해보았다. Ajax의 경우에는 어제 썼던 형식대로 쓰는데 확인하는 방법에 대해 배웠다. 실습을 진행하면서 코드 분석 중에 통신하는 것을 확인하는 방법에 대해 배울 수 있었다. 크롬 환경에서 개발자도구 -> network 탭에서 post통신이 일어난 경우 넘어간 인자들과 통신이 일어난 jsp들을 보여줘서 조금 더 코드 분석이 수월해졌다.  
+
+추가적으로 Java에서는 정규표현식을 Pattern 클래스와 Matcher 클래스를 이용해서 사용한다. 정규 표현식에 대상 문자열을 검증하는 기능은 java.util.rege.Pattern 클래스의 matches()메소드를 활용하여 검증할 수 있다. matches() 메서드의 첫번째 매개값은 정규표현식이고 두번째 매개값은 검증 대상 문자열이다. 검증 후 대상문자열이 정규표현식과 일치하면 true, 그렇지 않다면 false값을 리턴한다.  
+
+Matcher 클래스는 대상 문자열의 패턴을 해석하고 주어진 패턴과 일치하는지 판별할 때 주로 사용된다. Matcher 클래스의 입력값으로는 CharSequence라는 새로운 인터페이스가 사용되는데 이를 통해 다양한 형태의 입력 데이터로부터 문자 단위의 매칭 기능을 지원 받을 수 있다. Matcher객체는 Pattern객체의 matcher() 메소드를 호출하여 받아올 수 있다. 
+```
+String pattern = "^[0-9]*$"; //숫자만
+String val = "123456789"; //대상문자열
+
+boolean regex = Pattern.matches(pattern, val);
+Matcher matcher = pattern.matcher(val);
+```
+
+---
+
