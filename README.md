@@ -2117,3 +2117,190 @@ Matcher matcher = pattern.matcher(val);
 - 보안관리가 어렵다
 - 데이터 **무결성 관리가 어렵다**
 - 데이터베이스 **설계가 복잡하다**
+
+---
+
+- 19日  
+
+## SQL 기본
+### 관계형 데이터베이스
+- 릴레이션에 데이터 저장, 관리
+- 릴레이션을 사용해서 집합 연산과 관계 연산 가능
+
+집합 연산
+- 합집합(Union)
+- 차집합(Difference)
+- 교집합(Intersection)
+- 곱집합(Cartesian product)
+
+관계 연산
+- 선택 연산(Selection)
+- 투영 연산(Projection)
+- 결합 연산(Join)
+- 나누기 연산(Division)
+
+테이블의 구조
+- 기본키 : 하나의 테이블에서 유일성, 최소성 Not Null 만족하며 테이블을 대표
+- 행 : 하나의 테이블에 저장되는 값, 튜플
+- 칼럼 : 어떤 데이터를 저장하기 위한 필드, 속성
+- 외래키 : 다른 테이블의 기본키를 참조(조인)하는 칼럼, Join을 하기 위해 사용
+
+### SQL의 종류
+- DDL(Data Definition Language) : 관계형 데이터베이스의 구조 정의 언어 (Create, Alter, Drop, Rename)
+- DML(Date Manipulation Language) : 테이블에서 데이터를 입력, 수정 조회 (Insert, Update, Delete, Select)
+- DCL(Data Control Language) : 데이터베이스 사용자에게 권한을 부여하거나 회수 (Grant, Revoke, Trumcate)
+- TCL(Transaction Control Language) : 트랜젝션을 제어하는 명령어 (Commit, Rollback, Savepoint)
+
+트랜잭션의 특성  
+- 원자성 : 데이터베이스 연산의 전부가 실행되거나 전혀 실행되야함 (트랜잭션의 처리가 끝나지 않은 경우 실행되지 않은 상태와 동일해야함)
+- 일관성 : 트랜잭션 실행 결과로 데이터베이스의 상태가 모순되지 않아야 함
+- 고립성 : 트랜잭션 실행 중 생성하는 연산의 중간결과는 다른 트랜잭션이 접근할 수 없음
+- 영속성 : 트랜잭션이 실행을 완료하면 그 결과는 영구적 보장
+
+SQL문의 실행 순서  
+1) 파싱 : SQL문의 문법 확인 후 구문 분석
+2) 실행 : 옵티마이저가 수립한 실행 계획에 따라 SQL 실행
+3) 인출 : 데이터 읽어서 전송
+
+### DDL
+- Create Table : 테이블 생성, 기본키, 외래키, 제약사항 등 설정
+- Alter Table : 테이블 변경, 칼럼 추가 변경 삭제, 기본키나 외래키 설정
+- Drop Table : 해당 테이블 삭제 (구조와 저장된 데이터 삭제)
+
+**테이블 생성**  
+```
+Create Table EMP
+(
+  empno number(10) primary key,
+  ename varchar2(20),
+  sal   number(6)
+)
+```
+칼럼 이름과 데이터 타입을 입력한다. 칼럼 이름은 영문, 한글, 숫자 모두 가능하다.  
+varchar은 가변 길이 문자열, char은 고정 길이 문자열이다.  
+
+제약조건 사용  
+기본키, 외래키, 기본값, not null 등 테이블 생성시에 지정 가능하다.  
+`constraint`을 사용하여 기본키와 기본키의 이름을 지정하며, 외래키 지정 가능
+```
+constraint depttk foreign key (deptno)
+    references dept(deptno)
+```
+`default`을 이용하여 기본 값을 지정  
+`sysdate`로 오늘 날짜 시분초를 지정  
+`CASCADE`옵션을 외래 키 설정 후 지정할 수 있다. 예로 ON DELETE CASCADE를 통해서 기본키가 사라지면 외래키도 사라지게 하여 **참조 무결성**을 지킬 수 있다.  
+
+**테이블 변경**
+- 테이블명 변경  
+`ALTER TABLE ~ RENAME TO`문 사용  
+- 칼럼 추가  
+`ALTER TABLE ~ ADD`문 사용
+- 칼럼 변경  
+`ALTER TABLE ~ MODIFY`문 사용  
+- 칼럼 삭제  
+`ALTER TABLE ~ DROP COLUMN`문 사용
+- 칼럼명 변경  
+`ALTER TABLE ~ RENAME COLUMN ~ TO`문 사용
+
+**테이블 삭제**  
+`DROP TABLE`을 통해서 다 삭제 할 수 있으며, `CASCADE CONSTRAINT`옵션을 사용할 수 있다. 해당 참조된 제약사항까지 모두 삭제하는 옵션이다.  
+
+**뷰(VIEW) 생성과 삭제**  
+뷰란 테이블로부터 유도된 가상의 테이블로 실제 데이터는 가지고 있지 않지만 테이블을 참조해서 원하는 칼럼만을 조회할 수 있게한다. 따라서 SQL문 형태로 저장되어 실행 시에 참조 된다.  
+
+뷰의 특징
+- 참조한 테이블 변경 시 뷰도 변경
+- 뷰에 대한 입력, 수정, 삭제에 제약
+- 특정 칼럼만 조회시켜 보안성 향상
+- 뷰 변경이 불가하여 재생성 해야함
+- ALTER문 사용 불가
+
+뷰의 장점
+- 보안 기능
+- 데이터 관리 간단
+- SELECT문 간단
+- 한 테이블에 여러 뷰 가능
+
+뷰의 단점
+- 독자적인 인덱스 불가
+- 삽입, 수정, 삭제 연산 제약
+- 데이터 구조 변경 불가
+
+### DML
+**INSERT**
+1) INSERT문 사용
+```
+INSERT INTO table (column1, column2, ...) VALUES (expression1, expression2, ...);
+```
+테이블명, 칼럼명, 데이터 순으로 입력  
+
+2) SELECT문 사용
+
+```
+INSERT INTO DEPT_TEST
+  SELECT * FROM DEPT;
+```
+
+3) Nologging 사용
+
+데이터베이스에 데이터 입력받을 때 check point 이벤트가 발생하면 로그파일의 데이터를 데이터 파일에 저장한다. 이 때 기록을 최소화 시켜서 입력 시 성능을 향상하는 방법이 Nologging옵션이다. 이 옵션은 Buffer Cache 메모리 영역을 생략하고 기록한다.  
+
+**UPDATE**  
+값을 수정하기 위해서 사용
+```
+UPDATE EMP
+  SET ENAME = '조조'
+WHERE EMPNO = 100;
+```
+조건문을 입력하지 않으면 모든 데이터가 수정되므로 유의!  
+
+**DELETE**  
+값을 삭제하기 위해서 사용
+```
+DELETE FROM EMP
+WHERE EMPNO = 100;
+```
+조건문을 입력하지 않으면 모든 데이터가 삭제되며, 데이터가 삭제되어도 테이블의 용량이 초기화되지 않는다.  
+
+TRUNCATE  
+`DELETE`와 다르게 삭제시에 테이블의 용량이 초기화된다.
+```
+TRUNCATE TABLE 테이블명;
+```
+
+**SELECT**  
+특정 칼럼을 조회한다.
+```
+SELECT *
+FROM EMP
+WHERE 사원번호 = 1000;
+```
+
+문법
+- SELECT * : 모든 칼럼 출력
+- FROM EMP : FROM절에서 테이블 명 기입
+- WHERE 사원번호 = 1000 : 조건문 지정
+
+ORDER BY
+- SELECT 문에서 정렬 가능
+- 오름차순 내림차순 가능 ASC, DESC
+- 정렬시점은 모든 실행이 끝난 뒤 데이터 출력 바로 직전
+- 데이터베이스 메모리 사용. 따라서 정렬로 인한 성능 저하 발생가능  
+
+**INDEX를 사용한 정렬 회피**
+정렬은 데이터베이스에 부하를 주므로 인덱스를 사용하여 `ORDER BY`를 피할 수 있다.  
+기본 키를 기준으로 오름차순으로 정렬된다.  
+또한 INDEX 힌트를 줄 수 있다.
+```
+SELECT /*+ INDEX_DESC(A) */
+FROM EMP A;
+```
+기본 키를 기준으로 먼저 인덱스가 생성이 되고 그 인덱스에서 테이블로 매핑되는 방식인데 이때, 인덱스를 오름차순이나 내림차순으로 정렬할 수 있다.  
+
+DISTINCT와 ALIAS  
+1) DISTINCT  
+중복데이터 제거
+2) ALIAS  
+`AS`키워드를 통해서 별칭을 지정해줄 수 있다.  
+
+---
