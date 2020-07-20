@@ -2304,3 +2304,234 @@ DISTINCT와 ALIAS
 `AS`키워드를 통해서 별칭을 지정해줄 수 있다.  
 
 ---
+
+- 20日  
+
+### WHERE문  
+비교 연산자
+- `=`
+- `<`
+- `<=`
+- `>`
+- `>=`
+
+부정 연산자
+- `!=`
+- `^=`
+- `<>`
+- `NOT 칼럼 =`
+- `NOT 칼럼 >`
+
+논리 연산자
+- `AND`
+- `OR`
+- `NOT`
+
+SQL 연산자
+- `LIKE '%비교 문자열%'` (%, _)
+- `BETWEEN A AND B`
+- `IN (list)`
+- `IS NULL`
+- `NOT BETWEEN A AND B`
+- `NOT IN 'list;`
+- `IS NOT NULL`
+
+NULL의 특징
+- 모르는 값
+- 값의 부재
+- NULL과 숫자, 날짜 연산 = NULL
+- NULL과 값 비교 = 알 수 없음
+
+NULL 값 조회  
+IS NULL, IS NOT NULL 사용  
+
+NULL 관련 함수
+- NVL 함수 : NULL이면 다른 값으로 바꾼다. `NVL(MGR,0)`
+- NVL2 함수 : NVL 함수와 DECODE 함수를 하나로 만듬. `NVL2(MGR,1,0)`
+- NULLIF 함수 : 두 개의 값이 같으면 NULL, 아니면 첫 번째 값 반환. `NULLIF(EXP1, EXP2)`
+- COALESCE : NULL이 아닌 최초의 값 반환. `COALESCE(EXP1, EXP2, EXP3, ...)`  
+
+### GROUP BY  
+테이블에서 소규모 행을 그룹화하여 합계, 평균, 최댓값, 최솟값 등 계산하는 집계함수 사용 가능하다.  
+
+HAVING문  
+WHERE절과 비슷하나, HAVING문은 GROUP BY의 조건절이다. WHERE절을 사용하게 되면 GROUP BY대상에서 제외되는 데이터가 생길 수 있다.  
+
+집계 함수  
+- COUNT()
+- SUM()
+- AVG()
+- MAX(), MIN()
+- STDEEV()
+- VARIAN()
+
+### SELECT문 실행 순서
+1) FROM
+2) WHERE
+3) GROUP BY
+4) HAVING
+5) SELECT
+6) ORDER BY
+
+### 형변환
+명시적 형변환 함수
+- TO_NUMBER(문자열) : 문자열 -> 숫자
+- TO_CHAR(숫자 혹은 날짜, [FORMAT]) : 숫자 혹은 날짜 -> FORMAT 문자
+- TO_DATE(문자열, FORMAT) : 문자열 -> FORMAT의 날짜형  
+
+### 내장형 함수(BUILT-IN FUNCTION)
+DUAL TABLE : Oracle 데이터베이스에 의해서 자동으로 생성되는 임시 테이블로, 내장형 함수를 실행할 때 사용 가능하다.  
+
+내장 함수 종류
+- ASCII
+- CHAR
+- SUBSTR
+- CONCAT
+- LOWER
+- UPPER
+- LENGTH OR LEN
+- LTRIM
+- RTRIM
+- TRIM
+- SYSDATE
+- EXTRACT('YEAR'|'MONTH'|'DAT' FROM DUAL)
+- ABS
+- SIGN
+- MOD
+- CEIL/CEILING
+- FLOOR
+- ROUND
+- TRUNC
+
+### DECODE, CASE
+DECODE  
+IF문과 같이 조건이 참이면 A, 거짓이면 B  
+```
+DECODE (EMPNO, 1000, 'TRUE', 'FALSE')
+```
+
+CASE  
+IFELSE문과 같이 조건을 나열하여 해당하면 실행하며, 다 거짓인 경우 ELSE문 실행  
+```
+CASE [EXPRESSION]
+  WHEN CONDITION_1 THEN RESULT_1
+  WHEN CONDITION_2 THEN RESULT_2
+   ...
+  WHEN CONDITHION_N THEN RESULT_N
+  ELSE RESULT
+END
+```
+
+### ROWNUM, ROWID
+ROWNUM  
+Oracle 데이터베이스의 SELECT문 결과에 논리적 일련번호 부여한다. 따라서 조회되는 행 수를 제한할 때 많이 사용된다. 페이지 단위 출력을 하기 위해선 인라인 뷰(FROM절 서브쿼리)를 사용한다.  
+
+LIMIT과 같이 사용할 수 있다.
+```
+SELECT *
+FROM ( SELECT ROWNUM list, ENAME
+    FROM EMP)
+WHERE list <= 5;
+```
+
+페이지 단위 출력의 인라인 뷰는 아래와 같다.
+```
+SELECT *
+FROM (SELECT ROWNUM list, ENAME
+    FROM EMP)
+WHERE list BETWEEN 5 AND 10;
+```
+
+ROWID  
+Oracle 데이터베이스 내에서 데이터를 구분할 수 있는 유일한 값이다. ROWID를 통해서 데이터가 어떤 데이터 파일, 어느 블록에 저장되어 있는지 알 수 있다.  
+```
+SELECT ROWID, EMPNO
+FROM EMP
+```
+
+ROWID 구조
+- 오브젝트 번호 : 1~6, 오브젝트 별로 유일한 값으로 속한 오브젝트 값
+- 상대 파일 번호 : 7~9, 데이블스페이스에 속한 데이터 파일에 대한 상대 파일번호
+- 블록 번호 : 10~15, 데이터 파일 내부에 블록 데이터 위치번호
+- 데이터 번호 : 16~18, 데이터 블록에 데이터가 저장된 순서
+
+### WITH
+서브쿼리를 사용해서 임시 테이블이나 뷰처럼 사용할 수 있는 구문으로, 서브쿼리 블록에 별칭을 지정한다. 옵티마이저는 SQL을 인라인 뷰나 임시 테이블로 판단한다.  
+```
+WITH viewData AS
+  (SELECT * FROM EMP
+    UNION ALL
+  SELECT * FROM EMP)
+SELECT * FROM viewData WHERE EMPNO=1000;
+```
+
+### DCL(Data Control Language)
+GRANT  
+데이터베이스 사용자에게 권한(연결, 입력, 수정, 삭제, 조회)을 부여
+```
+GRANT privileges ON object TO user;
+// privileges 권한 대입, object 테이블명, user DB사용자 지정
+```
+Privileges(권한)
+- SELECT : 조회
+- INSERT : 삽입
+- UPDATE : 수정
+- DELETE : 삭제
+- REFERENCES : 참조하는 제약조건
+- ALTER : 수정
+- INDEX : 인덱스 생성
+- ALL : 모든 권한
+
+```
+GRANT SELECT, INSERT, UPDATE, DELETE
+  ON EMP
+  TO LIMBEST;
+```
+
+WITH GRANT OPTION
+- 특정 사용자에게 권한을 부여할 수 있는 권한 부여
+- 권한 A -> B, B -> C 부여한 후 권한 취소하면 모든 권한이 회수
+
+WITH ADMIN OPTION
+- 테이블에 대한 모든 권한 부여
+- 권한 A -> B, B -> C 부여한 후 권한 취소하면 B 사용자 권한만 취소
+
+```
+GRANT SELECT, INSERT, UPDATE, DELETE
+  ON EMP
+  TO LIMBEST WITH GRANT OPTION;
+```
+
+REVOKE
+권한 회수
+```
+REVOKE privileges ON object FROM user;
+```
+
+### TCL(Transaction Control Language)
+COMMIT
+- INSERT, UPDATE, DELETE문으로 변경된 데이터를 데이터베이스에 반영
+- COMMIT하면 덮어씌워 이전 데이터 소실
+- 다른 모든 데이터베이스 사용자는 변경된 데이터 볼 수 있다.
+- COMMIT 완료되면 데이터베이스 변경으로 인한 LOCK 해제
+- COMMIT이 완료되면 다른 모든 데이터베이스 사용자는 변경된 데이터 조작 가능
+- COMMIT을 실행하면 하나의 트랜잭션 과정 종료
+
+AUTO COMMIT  
+SQL *PLUS 정상 종료시 AUTO COMMIT  
+DDL 및 DCL 사용시 AUTO COMMIT  
+SQL *PLUS에서 `set autocommit on;` 실행시 AUTO COMMIT  
+
+ROLLBACK  
+- 실행시 변경 사항 모두 취소 후 트랜잭션 종료
+- INSERT, UPDATE, DELETE문 작업 취소. 단, 이전 COMMIT한 곳까지 복구
+- ROLLBACK 실행시 LCOK 해제되어 다른 사용자 데이터베이스 조작 가능
+
+SAVEPOINT
+- 트랜잭션을 작게 분할하여 관리. 지정된 위치 이후의 트랜잭션만 ROLLBACK 가능
+- `SAVEPOINT <SAVEPOINT명>`
+- 데이터 변경 취소 `ROLLBACK TO <SAVEPOINT명>`
+- ROLLBACK 실행시 SAVEPOINT와 관계없이 데이터의 모든 변경사항을 저장하지 않는다.
+
+---
+  
