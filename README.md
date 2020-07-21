@@ -4,14 +4,15 @@
 * markdown으로 작성  
   
 ---  
-[5월](./month/MAY)  
-[6월](./month/JUNE)  
+
+| [5월](./month/MAY) | [6월](./month/JUNE) |
+|----|-----|
 
 ---  
 
 * 1日  
 
-Database : 정보를 데이터로 저장하고 컴퓨털르 사용해서 효율적으로 접근하도록 가공한 것  
+Database : 정보를 데이터로 저장하고 컴퓨터를 사용해서 효율적으로 접근하도록 가공한 것  
 Database Management System(DBMS) : 데이터베이스를 관리하는 시스템  
 DBMS의 필요성  
 - 다수에게 데이터 공유  
@@ -2535,3 +2536,129 @@ SAVEPOINT
 
 ---
   
+- 21日  
+
+## SQL 활용
+### 조인(Join)
+EQUI(등가) 조인(교집합)  
+- 조인은 여러 개의 릴레이션을 사용해서 새로운 릴레이션을 만드는 과정
+- 가장 기본은 교집합
+- 두 개의 테이블 간에 일치하는 것을 조인
+
+INNER JOIN  
+- EQUI조인과 같으며, 표준SQL이다.
+- ON문을 이용해서 조인 조건을 서술한다.  
+
+HASH JOIN  
+- 선행 테이블을 결정 후 선행 테이블에서 주어진 조건(WHERE구)에 해당하는 행 선택
+- 행 선택 후 조인 키를 기준으로 해시 함수를 사용해서 해시 테이블을 메인 메모리에 생성하고 후행 테이블에서 주어진 조건에 만족하는 행 찾기
+- 후행 테이블의 조인 키를 사용해서 해시 함수를 적용하여 해당 버킷 검색
+
+INTERSECT 연산
+- 두 개의 테이블에서 교집합 조회
+
+NON-EQUI(비등가) 조인  
+정확하게 일치하지 않는 것을 조인 (`=`을 제외한 `>` `<` `<=` `>=`)  
+
+OUTER JOIN  
+- 두 개의 테이블 간에 교집합을 조회하고 한쪽 테이블에만 있는 데이터도 포함시켜서 조회
+- 왼쪽 테이블에만 있는 행 포함시 `LEFT OUTER JOIN`
+- 오른쪽 테이블에만 있는 행 포함시 `RIGHT OUTER JOIN`
+- 두 테이블 전부 포함시 `FULL OUTER JOIN`
+- ORACLE 데이터베이스에서는 `(+)` 기호 사용
+
+CROSS JOIN  
+- 조인 조건구 없이 2개의 테이블을 하나로 조인
+- 조인구가 없기 때문에 카테시안 곱 발생(A x B)  
+
+UNION을 사용한 합집합 구현  
+UNION
+- 두 개의 테이블을 하나로 만드는 연산
+- 두 개의 테이블의 칼럼 수, 칼럼의 데이터 형식 모두가 일치 해야한다.  
+- 중복 데이터 제거하며, 정렬과정 발생
+
+UNION ALL  
+- 두 개의 테이블을 하나로 합치되, 중복과 정렬 유발X
+
+차집합을 만드는 MINUS  
+- MINUS 연산은 두 개의 테이블에서 차집합 조회  
+- MS-SQL에서는 EXCEPT
+
+### 계층형 조회(CONNECT BY)
+ORACLE 데이터베이스에서 지원하며, 계층형으로 데이터 조회  
+```
+CREATE TABLE EMP(
+  EMPNO NUMBER(10) PRIMARY KEY,
+  ENAME VARCHAR2(20),
+  DEPTNO NUMBER(10),
+  MGR NUMBER(10),
+  JOB VARCHAR2(20),
+  SAL NUMBER(10)
+)
+
+INSERT INTO EMP VALUES(1000, 'TEST1', 20, NULL, 'CLERK', 800);
+INSERT INTO EMP VALUES(1001, 'TEST2', 30, 1000, 'SALESMAN', 1600);
+INSERT INTO EMP VALUES(1002, 'TEST3', 30, 1000, 'SALESMAN', 1250);
+INSERT INTO EMP VALUES(1003, 'TEST4', 20, 1000, 'MANAGER', 2975);
+INSERT INTO EMP VALUES(1004, 'TEST5', 30, 1000, 'SALESMAN', 1250);
+INSERT INTO EMP VALUES(1005, 'TEST6', 30, 1001, 'MANAGER', 2850);
+INSERT INTO EMP VALUES(1006, 'TEST7', 10, 1001, 'MANAGER', 2450);
+INSERT INTO EMP VALUES(1007, 'TEST8', 20, 1006, 'ANALYST', 3000)
+INSERT INTO EMP VALUES(1008, 30, 1006, 'PRESIDENT', 5000);
+INSERT INTO EMP VALUES(1009, 'TEST10', 30, 1002, 'SALESMAN', 1500);
+INSERT INTO EMP VALUES(1010, 'TEST11', 20, 1002, 'CLERK', 1100);
+INSERT INTO EMP VALUES(1011, 'TEST12', 30, 1001, 'CLERK', 950);
+INSERT INTO EMP VALUES(1012, 'TEST13', 20, 1000, 'ANALYST', 3000);
+INSERT INTO EMP VALUES(1013, 'TEST14', 10, 1000, 'CLERK', 1300);
+
+COMMIT
+```
+- CONNECT BY는 트리 형태의 구조로 질의 수행
+- START WITH구는 시작 조건을 의미, CONNECT BY PRIOR는 조인 조건
+- ROOT로부터 하위 노드의 질의 실행
+- 계층형 조회에서 MAX(LEVEL)사용시 최대 계층 수
+```
+SELECT MAX(LEVEL)
+FROM LIMBEST.EMP
+START WITH MGR IS NULL
+CONNECT BY PRIOR EMPNO = MGR;
+```
+
+LPAD 함수를 이용해 계층형 조회 결과를 명확히 볼 수 있다.
+```
+SELECT LEVEL, LPAD(' ', 4 * (LEVEL -1) ) || EMPNO, MGR, CONNECT_BY_ISLEAF
+FROM EMP
+START WITH MGR IS NULL
+CONNECT BY PRIOR EMPNO = MGR;
+```
+
+CONNECT BY 키워드
+- LEVEL : 검색 항목의 깊이
+- CONNECT_BY_ROOT : 계층구조에서 가장 최상위 값
+- CONNECT_BY_ISLEAF : 계층구조에서 가장 최하위 값
+- SYS_CONNECT_BY_PATH : 계층구조의 전체 전개 경로
+- NOCYCLE : 순환구조가 발생지점까지만 전개
+- CONNECT_BY_ISCYCLE : 순환구조 발생 지점 표시
+
+### 서브쿼리
+- SELECT문에 SELECT문 사용시 스칼라 서브쿼리
+- FROM문에 SELECT문 사용시 인라인 뷰
+- WHERE구에 SELECT문 사용시 서브쿼리
+
+서브쿼리 종류
+- 단일 행 서브쿼리 : 반환하는 행 수 하나 (`=` `<` `<=` `>` `>=` `<>` 사용)
+- 다중행 서브쿼리 : 반환하는 행 수 여러 개 (`IN` `ANY` `ALL` `EXIST` 사용)
+
+다중 행 서브쿼리
+- IN : MAIN QUERY의 비교조건이 SUBQUERY의 결과 중 하나만 동일하면 된다.(OR조건)
+- ALL : MAIN QUERY와 SUB QUERY의 결과가 모두 동일하면 참, `< ALL` : 최솟값 반환, `> ALL` : 최댓값 반환
+- ANY : MAIN QUERY의 비교조건이 SUB QUERY의 결과 중 하나 이상 동일하면 참, `< ANY` : 하나라도 크게 되면 참, `> ANY` : 하나라도 작게 되면 참
+- EXIST : MAIN QUERY와 SUB QUERY의 결과가 하나라도 존재하면 참
+
+스칼라 서브쿼리  
+반드시 한 행과 한 컬럼만 반환하는 서브쿼리로, 여러 행 반환 시 오류가 발생한다.  
+
+연관 SUBQUERY  
+연관 서브쿼리는 서브쿼리 내에서 메인 쿼리 내의 칼럼을 사용하는 것을 의미
+
+---
