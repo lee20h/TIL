@@ -2854,3 +2854,127 @@ check라는 변수는 계속 8배를 하고 뺌으로써 해당 v[i]의 first �
 
 ---
 
+- 24日  
+
+백트래킹을 이용한 순열 문제를 복습차원에서 해보았다.  
+N과 M (8,9,12) 세 가지 문제로 백 트래킹을 이용해서 순열 구현했다.  
+```
+N과 M (8)
+void sol(int len) {
+	if(vec.size() == m) {
+		for (int i=0; i<vec.size(); i++) {
+			cout << vec[i] << ' ';
+		}
+		cout << '\n';
+		return;
+	}
+	
+	for (int i=len; i<v.size(); i++) {
+		vec.push_back(v[i]);
+		sol(i);
+		vec.pop_back();
+	}
+}
+
+int main() {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cin >> n >> m;
+	for (int i=0; i<n; i++) {
+		int temp;
+		cin >> temp;
+		v.push_back(temp);
+	}
+	sort(v.begin(),v.end());
+	
+	sol(0);
+}
+```
+먼저 sort을 통한 오름차순으로 정렬을 한 뒤 해당 dfs하는 함수에 넣어주었다. 그리고나서는 기저 조건이 m과 벡터 사이즈가 같아진 경우로 잡아놓고 그 때 출력하도록 하였다. 다른 문제와 다른 점은 for문에서 초기화를 넘겨온 len이라는 매개변수로 해서 정렬된 인덱스보다 낮은 숫자는 나오지 않게 하였다.  
+
+```
+N과 M(9)
+void sol(int len) {
+	if(vec.size() == m) {
+		s.insert(vec);
+		return;
+	}
+	
+	for (int i=0; i<v.size(); i++) {
+		if(!visited[i]) {
+			visited[i] = true;
+			vec.push_back(v[i]);
+			sol(i+1);
+			vec.pop_back();
+			visited[i] = false;
+		}
+	}
+}
+
+int main() {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cin >> n >> m;
+	for (int i=0; i<n; i++) {
+		int temp;
+		cin >> temp;
+		v.push_back(temp);
+	}
+	
+	sort(v.begin(),v.end());
+	sol(0);
+	
+	set<vector<int>>::iterator it;
+	for (it =s.begin(); it!=s.end(); it++) {
+		for (int i=0; i<it->size(); i++) {
+			cout << it->at(i) << ' ';
+		}
+		cout << '\n';
+	}
+}
+```
+N과 M(8)과는 달리 for문의 초기화가 0으로 시작하지만 중복된 숫자를 제거하기 위해 stl::set을 사용하였다. set에 vector<int>을 넣어서 같은 벡터가 들어온 경우 자동을 지워지게 했으며, 내부적으로 set은 오름차순 정렬이기 때문에 iterator을 통한 반복자로 호출하여도 원하는 값이 나올 수 있었다.  
+
+```
+N과 M (12)
+void sol(int len) {
+	if(vec.size() == m) {
+		s.insert(vec);
+		return;
+	}
+	
+	for (int i=len; i<v.size(); i++) {
+		vec.push_back(v[i]);
+		sol(i);
+		vec.pop_back();
+	}
+}
+
+int main() {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cin >> n >> m;
+	for (int i=0; i<n; i++) {
+		int temp;
+		cin >> temp;
+		v.push_back(temp);
+	}
+	
+	
+	sort(v.begin(),v.end());
+	sol(0);
+	
+	set<vector<int>>::iterator it;
+	for (it =s.begin(); it!=s.end(); it++) {
+		for (int i=0; i<it->size(); i++) {
+			cout << it->at(i) << ' ';
+		}
+		cout << '\n';
+	}
+}
+```
+N과 M (12)는 8과 9을 섞어서 한다고 생각하면 된다. bool visited 배열과 sort, 그리고 set 자료구조를 이용하여 중복을 제거하며, 처음부터 나올 수 있게 만들었다.  
+
+오늘은 이렇게 BOJ 사이트에서 PS을 복습을 하는 시간을 가졌다. 외에도 자료구조 트리에 관련해서 순회, 부모 찾기, 후위순회를 전위순회로 바꾸는 문제를 복습하는 차원에서 풀어보았다.
+
+---
