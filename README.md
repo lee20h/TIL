@@ -3090,3 +3090,64 @@ INDEX SCAN(SYS_C007959) -> INDEX SCAN(DEPT TABLE : Outer Table) -> TABSLE ACCESS
 먼저 조회되는 테이블이 Outer Table, 그 다음 조회되는 테이블이 Inner Table이다.
 
 ---
+
+- 26日  
+
+알고리즘 중 `Knapsack`과 `N-Queen` 알고리즘을 공부했다. Knapsack 알고리즘의 경우 무게와 가치가 주어진 물건들을 어느 제한된 무게만큼 가져갈 때 최대의 가치를 얻을 때 필요한 알고리즘이다. 무게를 쪼갤 수 있으면 탐욕법(Greedy)을 통해서 해결이 가능하며, 쪼갤 수 없으면 동적계획법(Dp)를 통해서 해결해야한다.  
+N-Queen 알고리즘은 백트래킹의 대표적인 예로 NxN 테이블의 N개의 체스 말 여왕을 둬서 서로 공격을 하지 않는 좌표에 두는 방법을 세는 알고리즘이다.  
+
+BOJ 문제 [평범한 배낭](https://www.acmicpc.net/problem/12865), [N-Queen](https://www.acmicpc.net/problem/9663)  
+평범한 배낭  
+```
+	int n, k;
+	cin >> n >> k;
+	for (int i=1; i<=n; i++) {
+		cin >> w[i] >> v[i];
+	}
+	
+	for (int i=1; i<=n; i++) {
+		for (int j=1; j<=k; j++) {
+			dp[i][j] = dp[i-1][j];
+			if(j >= w[i]) {
+				dp[i][j] = max(dp[i][j], dp[i-1][j - w[i]] + v[i]);
+			}
+		}
+	}
+	cout << dp[n][k];
+}
+```
+w가 무게, v가 가치를 뜻하는 배열로 입력 받은 뒤 dp라는 이차원 배열을 이중포문에서 할당하기 시작한다. dp는 이차원 배열로 i는 i번째 물건을 뜻하고 j만큼의 무게를 가져갔을 때 획득한 가치의 최대치를 뜻한다. 두 가지 경우가 있는데,
+1) i번째 보석을 가져간 경우 : i-1까지 보석을 탐색한 경우의 무게는 j에서 i번째 보석의 무게를 빼야한다.  
+`dp[i][j] = dp[i-1][j-w[i]] + v[i]`
+2) i번째 보석을 가져가지 않은 경우 : i-1까지 탐색한 경우 i번째 보석을 가져가지 않았으므로 무게도 그대로다.  
+`dp[i][j] = dp[i-1][j]`
+
+따라서 이중 포문에서 `dp[i][j] = max(dp[i][j], dp[i-1][j-w[i]] + v[i])`을 통해서 최종적으로 dp가 완성이 된다.  
+
+N-Queen
+```
+bool check(int q) {
+	int temp = 1;
+	while(temp < q) {
+		if(v[q] == v[temp] || abs(v[q] - v[temp]) == q - temp)
+			return false;
+		temp++;
+	}
+	return true;
+}
+
+void nqueens(int q) {
+	if(check(q)) {
+		if(q == n) ans++;
+		else {
+			for (int i=1; i<=n; i++) {
+				v[q+1] = i;
+				nqueens(q+1);
+			}
+		}
+	}
+}
+```
+n 값이 주어졌을 때 main에서 `nqueens(0)`을 호출해서 사용한다. 매개변수를 0을 보내는 이유는 함수 내의 for문이 n번 반복되기 때문이다. 먼저 여왕이 갈 수 있는 공간을 찾아야한다. 여기서는 v라는 배열이 주어지는데 이 배열은 NxN 테이블에서 세로라고 생각하면 된다. 여왕을 줄마다 하나씩 둔다고 가정하고 시작하는 것이다. 따라서 배열 인덱스가 열, 값이 행이라고 볼 수 있다. check함수에서는 여왕이 갈 수 있는 곳을 체크해주는데, 이 때 같은 열인지 체크하는 `v[q] == v[temp]`와 대각선을 체크해주는 `v[q] - v[temp] == q - temp`부분이다.  nqueens함수에서 check 함수로 열과 대각선을 체크해준 뒤 매개변수 q와 주어진 n과 같다면 그 방법이 유효하기 때문에 ans값을 늘려주고 for문에서 먼저 열을 먼저 늘려서 위에서 아래로 여왕을 둘 수 있는 자리를 찾는다.  
+
+---
