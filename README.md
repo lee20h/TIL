@@ -1,8 +1,10 @@
 # 📙 Today I Learned  
 ## 규칙  
-* 기억에 남는 내용 기록  
-* markdown으로 작성  
-  
+* 기억에 남는 내용 기록
+* 쓸데없는 Commit 지양
+* markdown으로 작성
+* 1일 1문제(PS, SQL) 해결
+
 ---  
 
 | [5월](./month/MAY) | [6월](./month/JUNE) |
@@ -3149,5 +3151,53 @@ void nqueens(int q) {
 }
 ```
 n 값이 주어졌을 때 main에서 `nqueens(0)`을 호출해서 사용한다. 매개변수를 0을 보내는 이유는 함수 내의 for문이 n번 반복되기 때문이다. 먼저 여왕이 갈 수 있는 공간을 찾아야한다. 여기서는 v라는 배열이 주어지는데 이 배열은 NxN 테이블에서 세로라고 생각하면 된다. 여왕을 줄마다 하나씩 둔다고 가정하고 시작하는 것이다. 따라서 배열 인덱스가 열, 값이 행이라고 볼 수 있다. check함수에서는 여왕이 갈 수 있는 곳을 체크해주는데, 이 때 같은 열인지 체크하는 `v[q] == v[temp]`와 대각선을 체크해주는 `v[q] - v[temp] == q - temp`부분이다.  nqueens함수에서 check 함수로 열과 대각선을 체크해준 뒤 매개변수 q와 주어진 n과 같다면 그 방법이 유효하기 때문에 ans값을 늘려주고 for문에서 먼저 열을 먼저 늘려서 위에서 아래로 여왕을 둘 수 있는 자리를 찾는다.  
+
+---
+
+- 27日  
+
+### 옵티마이저 조인(Optimizer Join)
+**Nested Loop 조인**  
+- 하나의 테이블에서 데이터를 먼저 찾고 그 다음 테이블을 조인하는 방식으로 실행
+- 먼저 조회되는 테이블이 외부 테이블(Outer Table), 그 다음 조회되는 테이블이 내부 테이블(Inner Table)
+- 외부 테이블(선행 테이블)의 크기가 작은 것을 먼저 찾는 것이 중요하다. 왜냐 데이터가 스캔되는 범위를 줄이기 위해서이다.
+- Random Access가 발생하는데 이것은 성능 지연을 발생시킨다. 따라서 Nested Loop 조인은 Random Access의 양을 줄여야 성능이 향상
+
+```
+SELECT /*+ ordered use_nl (b) */ * -- use_nl힌트는 Nested Loop 조인을 실행하게 함.
+FROM EMP a, DEPT b
+WHERE a.DEPTNO = b.DEPTNO
+  AND a.DEPTNO = 10;
+```
+- `use_nl` 힌트는 의도적 Nested Loop 조인 실행
+- EMP 테이블 FULL SCAN 후 DEPT 테이블 FULL SCAN하여 Nested Loop 조인
+- `ordered` 힌트는 FROM절에 나오는 테이블 순서대로 조인. ordered 힌트는 혼자 사용하지 않고, `use_nl`, `use_merge`, `use_hash` 힌트와 같이 사용
+
+**Sort Merge** 조인  
+- 두 개의 테이블을 SORT_AREA라는 메모리 공간에 모두 로딩하고 SORT를 수행
+- 두 개의 테이블에 대해서 SORT가 완료되면 MERGE함
+- 정렬이 발생하기 때문에 데이터양이 많아지면 성능이 떨어짐
+- 정렬 데이터양이 너무 많으면 정렬은 임시 영역에서 수행되는데 이때, 임시 영역은 디스크에 있어서 성능이 떨어진다.
+
+```
+SELECT /*+ ordered use merge(b) */ *
+FROM EMP a, DEPT b
+WHERE a.DEPTNO = b.DEPTNO
+  AND a.DEPTNO = 10;
+```
+- use_merge 힌트를 사용해서 의도적으로 SORT MERGE을 하였으며, Ordered은 앞서 말한 것과 같이 FROM절 뒤에 나오는 테이블을 순서대로 조인하게한다.
+- use_merge 힌트는 항상 ordered 힌트와 같이 사용되어야 한다.
+
+**Hash 조인**
+- 두 개의 테이블 중에서 작은 테이블을 HASH 메모리에 로딩하고 두 개의 테이블의 조인 키를 사용해서 해시 테이블을 생성한다.
+- 해시 함수를 사용해서 주소를 계산하고 해당 주소를 사용해서 테이블을 조인하기 떄문에 CPU 연산을 많이 한다.
+- 선행 테이블이 충분히 메모리에 로딩되는 크기여야 한다.
+
+```
+SELECT /*+ ordered use_hash(b) */ *
+FROM EMP a, DEPT b
+WHERE a.DEPTNO = b.DEPTNO
+  AND a.DEPTNO = 10;
+```
 
 ---
