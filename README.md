@@ -3201,3 +3201,620 @@ WHERE a.DEPTNO = b.DEPTNO
 ```
 
 ---
+
+- 29日  
+
+PS중 헷갈리거나 막힌 문제 기술
+```
+1062. 가르침
+const int MAX = 50 + 1;
+int n, k, ans;
+string s[MAX];
+char temp[5] = {'a','c','i','n','t'};
+bool visited[26];
+
+void sol(int alpha, int cnt) {
+	if(cnt == k) {
+		int temp = 0;
+		for (int i=0; i<n; i++) {
+			bool flag = true;
+			for (int j=0; j<s[i].length(); j++) {
+				if(!visited[s[i][j] - 'a']) {
+					flag = false;
+					break;
+				}
+			}
+			if(flag) temp++;
+		}
+		ans = max(ans, temp);
+		return;
+	}
+	
+	for (int c = alpha; c<26; c++) {
+		if(!visited[c]) {
+			visited[c] = true;
+			sol(c, cnt+1);
+			visited[c] = false;
+		}
+	}
+}
+
+int main() {
+	cin >> n >> k;
+	if(k < 5){
+		cout << 0;
+		return 0;
+	}
+	else if (k == 26) {
+		cout << n;
+		return 0;
+	}
+	k -= 5;
+	
+	for (int i=0; i<n; i++) {
+		cin >> s[i];
+		s[i] = s[i].substr(4);
+		for (int j=0; j<4; j++)
+			s[i].pop_back();
+	}
+	for (int i=0; i<5; i++) {
+		visited[temp[i] - 'a'] = true;
+	}
+	sol(0,0);
+	cout << ans;
+} 
+```
+문제를 잘못 이해해서 긴 시간이 걸렸다. 단어마다 얼마나의 알파벳이 필요하냐는 문제로 오해해 긴 시간이 걸렸다. 문제의 의도는 갯수만큼의 알파벳이 무작위로 주어질 때 주어진 단어들을 최대한으로 만들 수 있는 갯수를 구하는 문제였다. 따라서 접두사와 접미사 부분은 무조건 들어간다고 가정하여 떼어내고 안에 있는 단어들을 가지고 헤쳐나갔다. 이후엔 접두사와 접미사에 알파벳 5개를 제외하고 모든 알파벳을 대입하여 단어가 있는지 없는지 백트래킹을 통해서 전부 해보는 식으로 나갔다.  
+
+```
+1865. 웜홀
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int TC;
+	cin >> TC;
+	while(TC--) {
+		int n, m, w;
+		cin >> n >> m >> w;
+
+		for (int i=1; i<=n; i++)
+			v[i].clear();
+
+
+		for (int i=0; i<m; i++) {
+			int v1, v2, cost;
+			cin >> v1 >> v2 >> cost;
+			v[v1].push_back({v2, cost});
+			v[v2].push_back({v1, cost});
+		}
+		for (int i=0; i<w; i++) {
+			int v1, v2, cost;
+			cin >> v1 >> v2 >> cost;
+			v[v1].push_back({v2,-cost});
+		}
+
+		int dist[501] = {INF,};
+		dist[1] = 0;
+		bool check = false;
+		for(int q=0; q<n; q++) {
+			check = false;
+			for (int i=1; i<=n; i++){
+				for (int j=0; j<v[i].size(); j++) {
+					int edge = v[i][j].first;
+					int cost = v[i][j].second;
+
+					if(dist[edge] > dist[i] + cost) {
+						dist[edge] = dist[i] + cost;
+						check = true;
+					}
+				}
+			}
+			if(!check) {
+				cout << "NO\n";
+				break;
+			}
+		}
+		if(check) cout << "YES\n";
+	}
+}
+```
+정점마다 이어진 길과 시간이 주어진다. 이때 길은 양방향이나, 웜홀은 단방향이다. 웜홀은 단방향으로, 시간을 돌아갈 수 있다. 따라서 웜홀의 시간은 음의 값으로 넣고 길의 시간은 양의 값으로 유지를 하였다.  
+이후 벨만포드 알고리즘을 쓰면 된다는 생각이 들었으나, 벨만포드 알고리즘이 기억이 안나서 한참을 해맸다. 다익스트라 알고리즘은 우선순위큐를 통해서 풀 수 있으나 벨만포드 알고리즘은 음의 값을 넣어야 한다는 생각에 새로운 방법이라고 치부한 잘못이 컸다.  
+모든 정점에서 이어지는 시간을 저장하되 길을 갔으나, 시간이 전의 정점보다 떨어지게되면 웜홀이 작동한다고 보고 이때, check변수를 통해서 주어진 지도가 웜홀이 작동 유무를 확인 할 수 있었다.  
+
+```
+2206. 벽 부수고 이동하기
+int sol() {
+	queue<pair<pair<int,int>, int>> q;
+	q.push({{1,1},1});
+	cache[1][1][1] = 1;
+	while(!q.empty()) {
+		int ypos = q.front().first.first;
+		int xpos = q.front().first.second;
+		int block = q.front().second;
+		q.pop();
+		if(ypos == n && xpos == m) {
+			return cache[ypos][xpos][block];
+		}
+		for (int i=0; i<4; i++) {
+			int y = ypos + moveY[i];
+			int x = xpos + moveX[i];
+
+			if(x < 1 || y < 1 || x > m || y > n) continue;
+
+			if(table[y][x] == 1 && block) { // 벽을 만났는데 뚫을 수 있음 
+				cache[y][x][block-1] = cache[ypos][xpos][block] + 1;
+				q.push({{y,x},block-1});
+			}
+			else if(table[y][x] == 0 && cache[y][x][block] == 0) { // 벽이 없고 방문하지 않음 
+				cache[y][x][block] = cache[ypos][xpos][block] + 1;
+				q.push({{y,x}, block});
+			}
+		}
+	}
+	return -1;
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cin >> n >> m;
+	queue<pair<int,int>> q;
+	for (int i=1; i<=n; i++) {
+		for (int j=1; j<=m; j++){
+			char temp;
+			cin >> temp;
+			table[i][j] = temp - '0';
+		}
+	}
+	cout << sol();
+}
+```
+이 문제 또한, 상당히 시간이 걸렸다. 제일 먼저 보자마자 생각이 든 해결법은 먼저 벽이 있는 좌표를 받아서 별도에 자료구조에 넣고 벽을 하나씩 부수고 BFS를 행한 다음 다시 벽을 세우고 다음 벽을 부수는 방식으로 생각을 하였다. 이런 생각을 하게 된 이유가 최근에 푼 문제 중 벽을 세워서 바이러스를 전염되지 못하게 막는 문제가 있었는데, 그 문제는 벽을 총 3개를 세우므로, 벽을 하나씩 세우는 것을 백트래킹을 통해서 세우고 나서 바이러스들을 BFS로 전염시켜서 안전 구역을 찾는 문제였다.  
+이와 비슷하게 구상이 떠올라서 해본 방법이지만 너무 많은 경우의 수를 담으므로 시간초과로 오답을 받았다.  
+또 그 이후 많은 생각이 필요했지만 직관적으로 큐를 통한 BFS을 돌되 벽을 부순 경우와 아직 안 부순 경우를 나누면 될거 같았다. 그래서 이차원 배열인 좌표에 삼차원 배열로 2가지 경우를 두고 해당 배열 값은 지금까지 걸어온 거리 값을 넣어서 유지했다.  
+이 삼차원 배열 생각은 여러 블로그를 통해서 알게되어서 큰 공부가 되었다. 아마 처음에 이러한 발상이 떠올랐다면 삼차원 배열이 아닌 같은 이차원 배열을 만들어서 check을 하는 식으로 하게 되었을텐데 삼차원 배열을 통해서 더 간결한 코딩을 할 수 있었다.  
+
+---
+
+- 29日  
+
+## JQuery  
+자바스크립트 언어를 간편하게 사용할 수 있도록 단순화시킨 오픈 소스 기반의 자바스크립트 라이브러리로 문서 객체 모델(DOM)과 이벤트에 관한 처리를 손쉽게 구현할 수 있으며, Ajax 응용 프로그램 및 플러그인도 제이쿼리를 활용하여 빠르게 개발할 수 있다.
+
+장점
+- 주요 웹 브라우저의 구버전을 포함한 대부분의 브라우저에서 지원된다.
+- HTML DOM을 손쉽게 조작할 수 있으며, CSS 스타일도 간단히 적용할 수 있다.
+- 애니메이션 효과나 대화형 처리를 간단하게 적용 해준다.
+- 같은 동작을 하는 프로그램을 더욱 짧은 코드로 구현할 수 있다.
+- 다양한 플러그인과 참고할 수 있는 문서가 많이 존재한다.
+- 오픈 라이선스를 적용하여 누구나 자유롭게 사용할 수 있다.
+
+문법은 `$(선택자).동작함수();`이라고 생각하면 좋다. `$`기호가 JQuery을 의미하고 접근하게 해주는 식별자 역할이다. 선택자를 이용하여 원하는 HTML 요소를 선택하고 동작 함수를 정의하여 선택된 요소에 원하는 동작을 설정한다.  
+
+### $() 함수  
+$() 함수의 인수로는 HTML 태그 이름뿐만 아니라, CSS 선택자를 전달하여 특정 HTML 요소를 선택할 수 있으며, 이를 통해 생성된 요소를 제이쿼리 객체(JQuery Object)라고 한다. 제이쿼리 객체의 메소드를 사용하여 여러 동작을 설정할 수 있다.
+
+### Document 객체의 ready() 메소드  
+자바스크립트 코드는 웹 브라우저가 문서의 모든 요소를 로드한 뒤에 실행되어야 오류가 발생하지 않는다. 왜냐하면 순서에 따라 오류가 발생할 수 있기 때문이다. 예를 들어  
+
+- 아직 생성되지 않은 HTML 요소에 속성을 추가하려고 할 경우
+- 아직 로드되지 않은 이미지의 크기를 얻으려고 할 경우
+
+오류가 발생할 수 있다.  
+```
+function func() {
+    addAttribute();  // 아이디가 "para"인 HTML 요소에 속성을 추가함.
+    createElement(); // 아이디가 "para"인 HTML 요소를 생성함.
+}
+
+function createElement() {
+    var criteriaNode = document.getElementById("text");
+    var newNode = document.createElement("p") newNode.innerHTML = "새로운 단락입니다.";
+    newNode.setAttribute("id", "para");
+    document.body.insertBefore(newNode, criteriaNode);
+}
+
+function addAttribute() {
+    document.getElementById("para").setAttribute("style", "color: red");
+}
+```
+`func()`에서 HTML 요소를 생성하고 속성을 추가하는 경우 오류가 없으나, 그 반대의 경우 즉, 코드와 같은 경우에는 오류가 발생한다. 존재하지 않은 HTML 요소에 속성을 추가하려하므로 오류가 발생한다. 이 때는 간단히 순서만 바꿔주면 되지만, 다른 경우에는 복잡해질 수 있다.  
+
+이러한 오류를 없애기 위해 자바스크립트에서는 Window 객체의 `onload()` 메소드를 통해 문서가 모두 로드 된 뒤 코드를 실행하는 방법을 이용하고 있다.
+```
+window.onload = function() {
+	JavaScript Code;
+}
+```
+
+JQuery에서 다음과 같이 차용한다.
+```
+$(document).ready(function() {
+    JQuery Code;
+```
+});
+혹은 JQuery Team에서는 이렇게 사용한다.  
+```
+$(function() {
+	JQuery Code;
+});
+```
+
+JQuery에서도 window 객체와 document 객체를 사용하는 방법이 있는데, 두 객체가 로드되는 시간이 서로 다르다는 것을 알 수 있다.
+```
+$(document).ready( function() {
+    $("#doc").text("문서가 전부 로드됐어요!");
+});
+
+$(window).load( function() {
+    $("#win").text("창이 모두 로드됐어요!");
+});
+```
+
+### 요소 선택
+JQuery을 사용하면 쉽게 HTLM 요소를 선택하여 특정 동작을 설정할 수 있다. 따라서 요소를 선택하기 위해서 대부분의 CSS 선택자뿐 아니라 몇몇 비표준 선택자까지 제공한다.
+
+**CSS 선택자를 이용한 선택**
+태그 이름을 사용하여 같은 태그 이름을 가지는 HTML 요소를 모두 선택 할 수 있다. 자바스크립트의 `getElementsByTagName()` 메소드와 같은 동작을 한다.  
+```
+$(function() {
+
+    $("p").on("click", function() {        // <p>요소를 모두 선택함.
+
+        $("span").css("fontSize", "28px"); // <span>요소를 모두 선택함.
+
+    });
+
+});
+```
+이 때 `$()` 함수에 전달되는 인수는 **반드시** `""`큰 따옴표를 이용한 문자열 형태로 전달되어야 한다.  
+
+마찬가지로 tag외의 id와 class, attribute을 사용해서 HTML 요소를 선택할 수 있다. 각각의 예제를 살펴보자.  
+```
+$(function() {
+
+    $("p").on("click", function() {
+
+        $("#jq").css("border", "2px solid orange"); // 아이디가 "jq"인 요소를 선택함.
+
+    });
+
+});
+```
+```
+$(function() {
+
+    $("p").on("click", function() {
+
+        $(".jq").css("backgroundColor", "lightgray"); // 클래스가 "jq"인 요소를 모두 선택함.
+
+    });
+
+});
+```
+```
+$(function() {
+
+    $("button").on("click", function() { // <img>요소 중에서 alt 속성값이 "flower"인 요소를 모두 선택함.
+
+        $("img[alt='flower']").attr("src", "/examples/images/img_monalisa.png");
+
+    });
+
+});
+```
+
+**JQuery 선택자**  
+JQuery에서는 선택한 요소들을 변수에 저장하여 사용할 수 있다.  
+```
+$(function() {
+    var items = $("li"); // <li>요소를 모두 선택하여 변수 items에 저장함.
+    $("button").on("click", function() {
+        $("#len").text("저장된 <li>요소의 총 개수는 " + items.length + "개 입니다.");
+    });
+```
+문서 내의 모든 `<li>`요소를 선택하여 변수에 저장 후, 사용하는 예제로, 이렇게 저장된 요소들은 변수에 저장될 당시의 요소들만 저장되므로, 그 이후에 추가된 문서나 요소는 갱신되지 않는다.  
+
+**선택한 요소의 필터링**  
+선택한 요소 중에서 더욱 세분화된 선택을 하기 위한 필터링 진행이 가능하다.
+```
+$(function() {
+    $("button").on("click", function() {
+        $("li:has(span)").text("<span>요소를 가지고 있는 아이템이에요!");
+    });
+});
+```
+문서 내의 모든 `<li>`요소 중 `<span>`요소를 가지고 있는 요소만을 선택하는 예제이다.  
+
+필터링 선택자 테이블  
+| 선택자 | 설명 |
+|:------:|:----|
+| :eq(n) | 선택한 요소 중에서 인덱스가 n인 요소를 선택함.
+  |
+| :gt(n) |  선택한 요소 중에서 인덱스가 n보다 큰 요소를 모두 선택함.
+ |
+| :lt(n) | 선택한 요소 중에서 인덱스가 n보다 작은 요소를 모두 선택함.
+  |
+| :even  | 선택한 요소 중에서 인덱스가 짝수인 요소를 모두 선택함.
+  |
+| :odd   | 선택한 요소 중에서 인덱스가 홀수인 요소를 모두 선택함.
+  |
+| :first |  선택한 요소 중에서 첫 번째 요소를 선택함.
+ |
+| :last  | 선택한 요소 중에서 마지막 요소를 선택함.
+  |
+| :animated |  선택한 요소 중에서 애니메이션 효과가 실행 중인 요소를 모두 선택함.
+ |
+| :header | 선택한 요소 중에서 h1부터 h6까지의 요소를 모두 선택함.
+  |
+| :lang(언어) | 선택한 요소 중에서 지정한 언어의 요소를 모두 선택함.
+  |
+| :not(선택자) | 선택한 요소 중에서 지정한 선택자와 일치하지 않는 요소를 모두 선택함.
+  |
+| :root | 선택한 요소 중에서 최상위 루트 요소를 선택함.
+  |
+| :target | 선택한 요소 중에서 웹 페이지 URI의 fragment 식별자와 일치하는 요소를 모두 선택함.
+  |
+| :contains(텍스트) | 선택한 요소 중에서 지정한 텍스트를 포함하는 요소를 모두 선택함.
+  | 
+| :has(선택자) |  선택한 요소 중에서 지정한 선택자와 일치하는 자손 요소를 갖는 요소를 모두 선택함.
+ |
+| :empty | 선택한 요소 중에서 자식 요소를 가지고 있지 않은 요소를 모두 선택함.
+  |
+| :parent | 선택한 요소 중에서 자식 요소를 가지고 있는 요소를 모두 선택함.  |
+
+**input 요소의 선택**  
+JQuery에서 입력 양식에 관련된 특정 요소를 손쉽게 선택할 수 있다.  
+```
+$(function() {
+    $("button").on("click", function() {
+        // 체크되어 있는 요소를 모두 선택함.
+        $(":checked").next().text("체크되어 있는 요소는 이 요소입니다.");
+    });
+});
+```
+
+특정 `<input>`요소를 선택하는 선택자
+| 선택자 | 설명 |
+|:------:|:----|
+| :button | type 속성값이 "button"인 요소를 모두 선택함.|
+| :checkbox | type 속성값이 "checkbox"인 요소를 모두 선택함.|
+| :file |  type 속성값이 "file"인 요소를 모두 선택함.|
+| :image | type 속성값이 "image"인 요소를 모두 선택함.|
+| :password | type 속성값이 "password"인 요소를 모두 선택함.|
+| :radio |  type 속성값이 "radio"인 요소를 모두 선택함.|
+| :reset |  type 속성값이 "reset"인 요소를 모두 선택함.|
+| :submit |   type 속성값이 "submit"인 요소를 모두 선택함.|
+| :text |  type 속성값이 "submit"인 요소를 모두 선택함.|
+| :input |  `<input>`, `<textarea>`, `<select>`, `<button>`요소를 모두 선택함.|
+| :checked |  type 속성값이 "checkbox" 또는 "radio"인 요소 중에서 체크되어 있는 요소를 모두 선택함.|
+| :selected | `<option>`요소 중에서 선택된 요소를 모두 선택함|
+| :focus | 현재 포커스가 가지고 있는 요소를 선택함.|
+| :disabled | 비활성화되어있는 요소를 모두 선택함. |
+| :enabled | 활성화되어있는 요소를 모두 선택함. |
+
+### 요소의 조작
+**요소의 추가**  
+
+기존 요소의 내부에 추가
+1) .append()
+```
+$(function() {
+    $("button").on("click", function() {
+        $("#list").append("<li>새로 추가된 아이템이에요!</li>");
+    });
+});
+```
+2) .prepend()
+```
+$(function() {
+    $("button").on("click", function() {
+        $("li").prepend("새로 추가된 콘텐츠에요!");
+    });
+});
+```
+3) .appendTo()
+```
+$(function() {
+    $("#firstBtn").on("click", function() {
+        // id가 "list"인 요소의 맨 마지막에 id가 "firstItem"인 요소를 추가함.
+        $("#firstItem").appendTo("#list");
+    });
+});
+```
+4) .prependTo()
+```
+$(function() {
+    $("button").on("click", function() {
+        $("<b>새로 추가된 콘텐츠에요!</b>").prependTo(".item");
+    });
+});
+```
+
+| 메소드 | 설명 |
+|:------:|:----:|
+| .append() | 선택한 요소의 마지막에 새로운 요소나 콘텐츠를 추가함. |
+| .prepend() | 선택한 요소의 처음에 새로운 요소나 콘텐츠를 추가함.|
+| .appendTo() | 선택한 요소를 해당 요소의 마지막에 삽입함.|
+| .prependTo() | 선택한 요소를 해당 요소의 처음에 삽입함.|
+| .html() | 해당 요소의 HTML 콘텐츠를 반환하거나 설정함.|
+| .text() | 해당 요소의 텍스트 콘텐츠를 반환하거나 설정함. |
+
+기존 요소의 외부에 추가  
+
+1) .before()
+```
+$(function() {
+    $("button").on("click", function() {
+        // id가 "firstRow"인 요소의 바로 앞에 새로운 <tr>요소를 추가함.
+        $("#firstRow").before("<tr><td>새로운 행이에요!</td></tr>");
+    });
+});
+```
+2) .after()
+```
+$(function() {
+    $("button").on("click", function() {
+        // id가 "firstRow"인 요소의 바로 뒤에 새로운 <tr>요소를 추가함.
+        $("#firstRow").after("<tr><td>새로운 행이에요!</td></tr>");
+    });
+});
+```
+3) .insertBefore()
+```
+$(function() {
+    $("button").on("click", function() {
+        // id가 "secondColumn"인 요소의 바로 앞에 새로운 <td>요소를 추가함.
+        $("<td>새로운 셀이에요!</td>").insertBefore("#secondColumn");
+    });
+});
+```
+4) .insertAfter()
+```
+예제
+$(function() {
+    $("button").on("click", function() {
+        // id가 "secondColumn"인 요소의 바로 뒤에 새로운 <td>요소를 추가함.
+        $("<td>새로운 셀이에요!</td>").insertAfter("#secondColumn");
+    });
+});
+```
+
+| 메소드 | 설명 |
+|:---:|:---:|
+| .before() | 선택한 요소의 바로 앞에 새로운 요소나 콘텐츠를 추가함.  |
+| .after() |  선택한 요소의 바로 뒤에 새로운 요소나 콘텐츠를 추가함. |
+| .insertBefore() | 선택한 요소를 해당 요소의 앞에 삽입함.  |
+| .insertAfter() | 선택한 요소를 해당 요소의 뒤에 삽입함. | 
+
+기존 요소를 포함한 요소의 추가
+1) .wrap()
+```
+$(function() {
+    $("button").on("click", function() {
+        // class가 "content"인 각 요소를 포함하는 새로운 요소를 추가함.
+        $(".content").wrap("<div class='wrapper'></div>");
+    });
+});
+```
+2) .wrapAll()
+```
+$(function() {
+    $("button").on("click", function() {
+        // class가 "content"인 모든 요소를 포함하는 새로운 요소를 추가함.
+        $(".content").wrapAll("<div class='wrapper'></div>");
+    });
+});
+```
+3) .wrapInner()
+```
+$(function() {
+    $("button").on("click", function() {
+        // class가 "content"인 각 요소에 포함되는 새로운 요소를 추가함.
+        $(".content").wrapInner("<div class='wrapper'></div>");
+    });
+});
+```
+
+| 메소드 | 설명 |
+|:---:|:---:|
+| .wrap() | 선택한 요소를 포함하는 새로운 요소를 추가함.  |
+| .wrapAll() | 선택한 모든 요소를 포함하는 새로운 요소를 추가함. |
+| .wrapInner() | 선택한 요소에 포함되는 새로운 요소를 추가함. |
+
+### 요소 복사 및 삭제
+**요소 복사**
+`.clone()` 메소드
+```
+$(function() {
+    $("button").on("click", function() {
+        // id가 "firstItem"인 요소를 복사하여 id가 "list"인 요소에 추가함.
+        $("#firstItem").clone().appendTo("#list");
+    });
+});
+```
+
+`.clone()` 메소드는 기존의 HTML요소를 복사하여 새로운 HTML 요소를 생성하므로 반드시 .append()나 .appendTo() 메소드를 통해서 요소를 추가해줘야 한다.  
+
+**요소의 대체** 
+`.repalceAll()` 메소드  
+```
+$(function() {
+    $("button").on("click", function() {
+        // class가 "item"인 각 요소를 id가 "firstItme"인 요소로 대체함.
+        $("#firstItem").replaceAll(".item");
+    });
+});
+```
+선택한 요소를 지정된 요소로 대체합니다. 이 메소드의 인수로 선택자나 JQuery 객체, HTML DOM 요소, 배열 등을 전달받을 수 있다.  
+
+`.replaceWith()` 메소드  
+```
+$(function() {
+    $("button").on("click", function() {
+        // class가 "item"인 모든 요소를 id가 "firstItme"인 요소로 대체함.
+        $(".item").replaceWith($("#firstItem"));
+    });
+});
+```
+선택한 요소를 지정된 요소로 대체한다. 메소드의 인수로는 HTML 코드 형식의 문자열이나 JQuery 객체, HTML DOM 요소, 배열 등을 전달 받을 수 있다. 또한, 선택한 요소를 대체할 수 있는 컨텐츠를 반환하는 함수를 인수로 전달 받을 수 있다.  
+
+`.replaceAll()`와 비슷하지만, 소스와 타겟의 위치가 서로 반대이다. 그리고 `.replaceWith()` 메소드는 지정된 요소로 대체되어 제거된 기존 요소를 반환한다. (`.replaceAll()`메소드는 제거된 요소와 관련된 모든 데이터와 이벤트 핸들러도 같이 제거함)  
+
+**요소의 삭제**  
+1) .remove()
+```
+$(function() {
+    $("button").on("click", function() {
+        // class가 "content"인 요소 중에서 class가 각각 "first", "second"인 요소를 모두 삭제함.
+        $(".content").remove(".first, .second");
+    });
+});
+```
+
+선택한 요소를 DOM 트리에서 삭제함. (삭제된 요소와 연관된 제이쿼리 데이터나 이벤트도 같이 삭제됨)
+	
+2) .detach()
+```
+$(function() {
+    var data;
+    $("#detachBtn").on("click", function() {
+        data = $(".content").detach(); // class가 "content"인 요소를 모두 삭제함.
+
+    });
+    $("#restoreBtn").on("click", function() {
+        $("#container").append(data);  // detach() 메소드로 삭제되었던 모든 요소를 다시 추가함.
+    });
+});
+```
+
+선택한 요소를 DOM 트리에서 삭제함. (삭제된 요소와 연관된 제이쿼리 데이터나 이벤트는 유지됨)
+
+
+3) .empty()
+```
+$(function() {
+    $("button").on("click", function() {
+        $("#container").empty(); // id가 "container"인 요소의 자식 요소를 모두 삭제함.
+    });
+});
+```
+선택한 요소의 자식 요소를 모두 삭제함.
+
+
+4. .unwrap()
+```
+$(function() {
+    $("button").on("click", function() {
+        $("span").unwrap(); // 모든 <span>요소의 부모 요소를 삭제함.
+    });
+});
+```
+선택한 요소의 부모 요소를 삭제함.
+
+
+---
+
+
+
