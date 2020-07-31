@@ -4182,3 +4182,176 @@ $(function() {
 ```
 
 ---
+
+- 31日  
+
+## AJAX [참고](http://tcpschool.com/ajax/intro)  
+Asynchronous JavaScript and XML으로, 웹 페이지 전체를 다시 로딩하지 않고도, 웹 페이지의 일부분만을 갱신할 수 있다.  
+즉 Ajax를 이용하면 백그라운드 영역에서 서버와 통신하여, 그 결과를 웹 페이지의 일부분에만 표시할 수 있다.
+
+Ajax의 장점
+- 웹 페이지 전체를 다시 로딩하지 않고도, 웹 페이지의 일부분만을 갱신할 수 있습니다.
+
+- 웹 페이지가 로드된 후에 서버로 데이터 요청을 보낼 수 있습니다.
+
+- 웹 페이지가 로드된 후에 서버로부터 데이터를 받을 수 있습니다.
+
+- 백그라운드 영역에서 서버로 데이터를 보낼 수 있습니다.  
+
+Ajax의 한계
+- Ajax는 클라이언트가 서버에 데이터를 요청하는 클라이언트 풀링 방식을 사용하므로, 서버 푸시 방식의 실시간 서비스는 만들 수 없습니다.
+
+- Ajax로는 바이너리 데이터를 보내거나 받을 수 없습니다.
+
+- Ajax 스크립트가 포함된 서버가 아닌 다른 서버로 Ajax 요청을 보낼 수는 없습니다.
+
+- 클라이언트의 PC로 Ajax 요청을 보낼 수는 없습니다.
+
+클라이언트 풀링이란 사용자가 직접 원하는 정보를 서버에게 요청하여 얻는 방식이다. 반대로 서버 푸쉬란 사용자가 요청하지 않아도 서버가 알아서 자동으로 특정 정보를 제공하는 것을 의미한다.  
+
+Ajax 구성과 동작
+ - 웹 페이지의 표현을 위한 HTML과 CSS
+
+ - 데이터에 접근하거나 화면 구성을 동적으로 조작하기 위해 사용되는 DOM 모델
+
+ - 데이터의 교환을 위한 JSON이나 XML
+
+ - 웹 서버와의 비동기식 통신을 위한 XMLHttpRequest 객체
+
+ - 위에서 언급한 모든 기술을 결합하여 사용자의 작업 흐름을 제어하는 데 사용되는 자바스크립트
+
+ 이러한 기술들로 구성되어 있으며, 동작은 해당 참고자료에 있는 그림으로 대체한다.  
+
+![img_ajax_other_application](./img/img_ajax_other_application.jpg)   
+
+![img_ajax_ajax_application](./img/img_ajax_ajax_application.jpg)  
+
+위 그림과 같이 자바스크립트가 사용자 UI와 웹 서버 사이에서 조정을 해주며 해당 갱신이 필요한 부분만 로딩을 하여 전체 웹 페이지를 로딩하지 않고 원하는 HTML이나 CSS를 삽입, 수정, 삭제가 가능하므로 상당히 매력적이다고 볼 수 있다.  
+
+### DOM
+DOM(Document Object Model)은 HTML , XML 문서에 접근하기 위한 일종의 인터페이스로 트리 구조로 되어 있다. 최상단에 Document가 존재하며 밑으로 루트 요소인 `<html>`이 있고 아래로 `<head>` `<body>`로 내려가서 각각 요소를 Ajax에서 변경할 수 있다.  
+
+DOM 요소 선택
+- 태그 이름(tag name)을 이용한 선택
+
+- 아이디(id)를 이용한 선택
+
+- 클래스(class)를 이용한 선택
+
+- CSS 선택자(selector)를 이용한 선택
+
+- HTML 객체 집합(object collection)을 이용한 선택  
+
+이러한 요소들을 노드라고 불러서 트리 구조를 노드 트리라고 한다. 노드 간의 관계를 보여주며, 노드의 접근은 흔히 사용하는 `getElementsByTagName()` 메소드나 노드 간의 관계를 이용하여 접근 할 수 있다. 노드 간의 관계는 자식, 부모, 형제 노드들의 관계를 가지고 해당 속성으로 속성 값으로 반환하는 노드 리스트 구조를 사용해서 얻어낸다.  
+
+DOM API
+- appendChild() : 새로운 노드를 해당 노드의 자식 노드 리스트에 맨 마지막 노드로 추가함.
+
+- insertBefore() : 새로운 노드를 특정 노드 바로 앞에 추가함.
+
+- insertData() : 텍스트 노드의 텍스트 데이터에 새로운 텍스트를 추가함.
+
+- createElement() : 새로운 요소 노드를 생성함.
+
+- createAttribute() : 새로운 속성 노드를 생성함.
+
+- createTextNode() : 새로운 텍스트 노드를 생성함.
+
+- removeChild() : 기존의 노드 리스트에서 특정 노드를 제거함.
+
+- removeAttribute() : 속성의 이름을 이용하여 특정 속성 노드를 제거함.
+
+- cloneNode() : 특정 노드를 복제
+
+- setAttribute() : 속성 노드 값 변경 (nodeValue 프로퍼티로도 변경 가능)
+
+- replaceChild() : 특정 노드를 다른 노드로 변경
+
+### XMLHttpRequest 객체
+XMLHttpRequest 객체는 웹 브라우저가 서버와 데이터를 교환할 때 사용하며 이 객체로 인해 서버와 통신이 계속적으로 이루어질 수 있다.  
+
+- XMLHttpRequest 객체를 이용한 방법 : 익스플로러 7 이상과 다른 브라우저 대부분
+
+- ActiveXObject 객체를 이용한 방법 : 익스플로러 5과 6 그 이하 버전
+
+따라서 XMLHttpRequest 객체를 이용하는 방법만 숙지해도 되므로 사용법을 봐보자.
+```
+var 변수이름 = new XMLHttpRequest();
+```
+이러한 객체를 생성 후 사용하면 된다. 이 객체로 두 가지 메소드를 통해 서버에 요청을 보낼 수 있다.  
+1) open() : 서버로 보낼 Ajax 요청의 형식 설정
+```
+open(전달방식, URL주소, 동기여부);
+```
+이 때 전달 방식은 GET과 POST중 하나를 선택해야 하며 URL 주소는 요청을 처리할 서버의 파일 주소를 전달한다. 마지막으로 동기 여부는 동기식과 비동기식 중 고른다.
+2) send() : 작성된 Ajax 요청을 서버로 전달한다. 인수를 가질수도 안 가질수도 있다.  
+```
+send();       // GET 방식
+send(문자열); // POST 방식
+```
+
+### GET방식과 POST 방식  
+GET 방식은 주소에 데이터를 추가하여 전달하는 방식으로, HTTP 요청을 브라우저에 의해 캐시되어 저장된다. 쿼리 문자열에 포함되어 전송되므로 길이에 제한이 있고, URL에 노출되므로 보안상 취약점이 존재한다.  
+
+```
+httpRequest.open("GET", "/examples/media/request_ajax.php?city=Seoul&zipcode=06141", true);
+httpRequest.send();
+```
+
+POST 방식은 데이터를 별도로 첨부하여 전달하는 방식으로, HTTP 요청이 브라우저에 의해 캐시되지 않으므로, 브라우저 히스토리에도 남지 않습니다. POST 방식의 HTTP 요청에 의한 데이터는 쿼리 문자열과는 별도로 전송되므로 길이의 제한도 없고 외부로 노출이 되지않아 보안성이 높다. 주로 Ajax에서는 POST방식을 사용하여 요청을 전송한다.  
+
+```
+// POST 방식의 요청은 데이터를 Http 헤더에 포함시켜 전송함.
+httpRequest.open("POST", "/examples/media/request_ajax.php", true);
+httpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+httpRequest.send("city=Seoul&zipcode=06141");
+```
+
+### 서버로부터의 응답
+ - readyState 프로퍼티 : XMLHttpRequest 객체의 현재 상태
+     1. UNSENT (숫자 0) : XMLHttpRequest 객체가 생성됨.
+
+    2. OPENED (숫자 1) : open() 메소드가 성공적으로 실행됨.
+
+    3. HEADERS_RECEIVED (숫자 2) : 모든 요청에 대한 응답이 도착함.
+
+    4. LOADING (숫자 3) : 요청한 데이터를 처리 중임.
+
+    5. DONE (숫자 4) : 요청한 데이터의 처리가 완료되어 응답할 준비가 완료됨.
+ - status 프로퍼티 : 서버의 문서 상태
+    - 200 : 서버에 문서가 존재함.
+
+    - 404 : 서버에 문서가 존재하지 않음.
+
+ - onreadystatechange 프로퍼티 : XMLHttpRequest 객체의 readyState 프로퍼티 값이 변할때마다 자동으로 호출되는 함수 설정
+ ```
+switch (httpRequest.readyState) {
+    case XMLHttpRequest.UNSET:
+        currentState += "현재 XMLHttpRequest 객체의 상태는 UNSET 입니다.<br>";
+        break;
+
+    case XMLHttpRequest.OPENED:
+        currentState += "현재 XMLHttpRequest 객체의 상태는 OPENED 입니다.<br>";
+        break;
+
+    case XMLHttpRequest.HEADERS_RECIEVED:
+        currentState += "현재 XMLHttpRequest 객체의 상태는 HEADERS_RECEIVED 입니다.<br>";
+        break;
+
+    case XMLHttpRequest.LOADING:
+        currentState += "현재 XMLHttpRequest 객체의 상태는 LOADING 입니다.<br>";
+        break;
+
+    case XMLHttpRequest.DONE:
+        currentState += "현재 XMLHttpRequest 객체의 상태는 DONE 입니다.<br>";
+        break;
+}
+document.getElementById("status").innerHTML = currentState;
+if (httpRequest.readyState == XMLHttpRequest.DONE && httpRequest.status == 200 ) {
+    document.getElementById("text").innerHTML = httpRequest.responseText;
+}
+
+ ```
+
+ ---
+ 
