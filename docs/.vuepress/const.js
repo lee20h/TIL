@@ -10,18 +10,18 @@ exports.AlgorithmList = [
 ]
 
 exports.OSList = [
-    'Operating System/CPU Synchronization.md',
-    'Operating System/Main Memory.md',
-    'Operating System/Virtual Memory.md'
+    'OS/CPU Synchronization.md',
+    'OS/Main Memory.md',
+    'OS/Virtual Memory.md'
 ]
 
 exports.PLlist = [
-    'Program_Language/Preliminaries.md',
-    'Program_Language/Describing Syntax and Semantics.md',
-    'Program_Language/Names, Bindings, and Scopes.md',
-    'Program_Language/Data Types.md',
-    'Program_Language/Expressions and Assignment Statements.md',
-    'Program_Language/Statement-Level Control Structure.md',
-    'Program_Language/Subprograms.md',
-    'Program_Language/Implementing Subprograms.md'
-]
+    "PL/Preliminaries.md",
+    "PL/Describing Syntax and Semantics.md",
+    "PL/Names, Bindings, and Scopes.md",
+    "PL/Data Types.md",
+    "PL/Expressions and Assignment Statements.md",
+    "PL/Statement-Level Control Structure.md",
+    "PL/Subprograms.md",
+    "PL/Implementing Subprograms.md",
+];

@@ -19,7 +19,7 @@ module.exports = {
                 children: CONST.OSList
             },
             {
-                title: 'Program_Language',
+                title: 'Program Language',
                 children: CONST.PLlist
             }
         ],
@@ -31,11 +31,4 @@ module.exports = {
           ]
         },
     plugins: ['@vuepress/back-to-top'],
-    configureWebpack: {
-        resolve: {
-            alias: {
-                '@algorithm': 'public/img/algorithm'
-            }
-        }
-    }
 }
