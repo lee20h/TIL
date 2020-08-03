@@ -1,4 +1,4 @@
-## 5월  
+# 5월  
 
 | 날짜 | 공부 내용 |
 |------|----------|
@@ -403,7 +403,7 @@ LR Parser을 만들기 위해 복습을 철저히 하고 빨리 개발에 들어
 2) Readers-Writers Problem  
 3) Dining-Philosophers Problem  
 Bounded-Buffer Problem은  
-![Bounded-Buffer](./img/Bounded-Buffer.JPG)  
+![Bounded-Buffer](../img/OS/Bounded-Buffer.JPG)  
 이러한 그림으로 생산자와 소비자가 같은 버퍼를 점유할 때 일어나는 문제이다.  
 *Bounded-Buffer Problem Solution*  
 Empty : 버퍼 내에 저장할 공간이 있음을 표시, 생산자의 진입을 관리  
@@ -427,7 +427,7 @@ Do {					|Do {
 ```  
 
 *Readers-Writers Problem*은  
-![Readers-Writers](./img/Readers-Writers.JPG)  
+![Readers-Writers](..img/OS/Readers-Writers.JPG)  
 - Readers : 공유 데이터를 읽는다.
 	+ 여러 Reader는 동시에 데이터를 접근할 수 있다.  
 - Writers : 공유 데이터에 쓴다.
@@ -499,7 +499,7 @@ Writer는 작업이 수행되거나 대기중인 다른 reader, writer가 있다
 Reader는 writer가 기다리거나 작업중이라면 대기한다. Reader가 다 수행되면 대기 중인 writer을 수행한다.  
 
 *Dining-Philosophers Problem*은  
-![Dining-Philosopher](./img/Dining-Philosophers.JPG)  
+![Dining-Philosopher](../img/OS/Dining-Philosophers.JPG)  
 그림과 같이 젓가락이 5개가 있을 때 자신과 이웃한 젓가락만 들 수 있으며 젓가락을 2개 들었을 때 식사가 가능하다.  
 ```
 1)
@@ -594,7 +594,7 @@ E -> ㆍT		seen nothing of E -> T // E -> T
 T -> int * ㆍT	seen int * of T -> int * T // T -> int * T
 ```
 이러한 방법을 모든 터미널 노드에 대해 시도하면 이러한 그림처럼 된다.  
-![LR(0)](./img/LR(0).JPg)  
+![LR(0)](../img/Compiler/LR(0).JPg)  
 
 ---
 

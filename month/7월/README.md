@@ -354,7 +354,7 @@ SELECT 열
 - 4日  
 
 오늘은 SQL을 공부한 것으로 구름IDE에서 직접 실습하면서 공부를 해보았다. 확실히 글로만 보고 공부하던 것과 달리 처음엔 어색해서 어려웠다. 여기서 기술되어 있는 내용을 보고 공부하고 실습하는 RDBMS는 MariaDB이다. 따라서 조금은 문법이 달랐지만 아직 공부한 거라곤 별로 없기에 차이를 크게 못 느꼈다.  
-![DB_ALTER](./img/DB_ALTER.JPG)  
+![DB_ALTER](../img/DB/DB_ALTER.JPG)  
 ```
 ALTER TABLE DWELLERS ADD PET VARCHAR(10) AFTER NAME;
 ALTER TABLE DWELLERS ADD GENDER CHAR(1) NOT NULL FIRST;
@@ -4244,9 +4244,9 @@ Ajax 구성과 동작
 
  이러한 기술들로 구성되어 있으며, 동작은 해당 참고자료에 있는 그림으로 대체한다.  
 
-![img_ajax_other_application](./img/img_ajax_other_application.jpg)   
+![img_ajax_other_application](../img/Ajax/img_ajax_other_application.jpg)   
 
-![img_ajax_ajax_application](./img/img_ajax_ajax_application.jpg)  
+![img_ajax_ajax_application](../img/Ajax/img_ajax_ajax_application.jpg)  
 
 위 그림과 같이 자바스크립트가 사용자 UI와 웹 서버 사이에서 조정을 해주며 해당 갱신이 필요한 부분만 로딩을 하여 전체 웹 페이지를 로딩하지 않고 원하는 HTML이나 CSS를 삽입, 수정, 삭제가 가능하므로 상당히 매력적이다고 볼 수 있다.  
 
