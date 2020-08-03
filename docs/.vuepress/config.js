@@ -13,6 +13,14 @@ module.exports = {
             {
                 title: 'Algorithm',
                 children: CONST.AlgorithmList
+            },
+            {
+                title: 'Operating System',
+                children: CONST.OSList
+            },
+            {
+                title: 'Program_Language',
+                children: CONST.PLlist
             }
         ],
 
@@ -20,7 +28,8 @@ module.exports = {
               text: 'GitHub',
               link: 'https://github.com/lee20h/'
             }
-          ]},
+          ]
+        },
     plugins: ['@vuepress/back-to-top'],
     configureWebpack: {
         resolve: {
