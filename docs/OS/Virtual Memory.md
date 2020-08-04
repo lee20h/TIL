@@ -5,6 +5,7 @@ sidebar: auto
 
 프로그램에서 필요한 메모리를 논리적 주소 공간에서 물리적 주소 공간으로 접근을 한다. 예전에는 논리적 주소 공간과 물리적 주소 공간의 크기를 같게 해야 프로그램이 꺼지지 않고 실행이 되었다. 가상 메모리가 도입 되고나서는 가상 메모리 공간에 물리 메모리 공간에서 조금만 가지고 유지하며, 논리적 주소 공간에서 요구 할 때 가상 메모리 공간에 없다면 물리 메모리 공간에 접근해서 가져온다.
 
+![Virtual-Memory](/images/OS/Virtual-Memory.JPG)  
 Storage에 들어가는 메모리들은  
 1) 기존 프로그램 이미지에 있는 경우  
 2) SWAP영역(변경한 데이터 혹은 동적 할당한 데이터)에 있는 경우  
@@ -15,11 +16,14 @@ Storage에 들어가는 메모리들은
 
 프로세스가 해당 페이지를 접근 하는 순간에 Paging해서 제공하는 것이다.  
 
+![vaild-invaild](/images/OS/vaild-invaild.JPG)  
 Valid-Invalid Bit를 두고 운용한다. 실제로 Frame을 할당한 경우 Valid, 안한 경우에는 Invalid로 저장해놓은다. 이 때 Invalid한 Frame에 접근한 경우 `Page Fault`가 일어나게 된다.  
 
+![Page-Table](/images/OS/Page-Table.JPG)  
 Invalid한 프레임에 접근하게 되면 Page Fault가 일어난다.  
 
 **Page Fault**  
+![Page-Fault](/images/OS/Page-Fault.JPG)  
 1) CPU에서 요청한 메모리에 접근할 때 MMU가 Page table에서 Valid, Invalid을 체크한다.  
 2) Invalid일 때 Trap(SoftWare Interrupt)가 일어나게 된다. [대표적인 Software Interrput인 Page Fault] 이 때 System Call 처리한 것과 같이 User mode라면 Kernel mode로 변경하고 Page Fault Handler를 찾는다.  
 3) Page Fault Handler가 Free Framelist에서 연산에 맞게 빈 공간이나 맞는 공간을 찾아서 해당 Page table에 넣어주고 Valid bit을 Valid로 바꿔 준다.  
@@ -54,14 +58,17 @@ EAT = (1-p) x 200 + p (8ms)  = 200 + p x 7,999,800
 ## Page Replacement
 
 ### FIFO 알고리즘
-그림에서는 Frame을 3개만 할당했다. 직관적으로 Frame이 늘어나면 Page Fault가 줄어든다. 
+![Replace-FIFO](/images/OS/Replace-FIFO.JPG)  
+FIFO는 15번 Page Fault가 일어났다. 그림에서는 Frame을 3개만 할당했다. 직관적으로 Frame이 늘어나면 Page Fault가 줄어든다. 
 하지만 잘못 관리하면 늘어나게 되는데 이 부분을
 `Belady's Anomarly`라고 한다.  
 
 ### Optimal 알고리즘
+![Optimal-algorithm](/images/OS/Optimal-algorithm.JPG)  
 가장 이상적인 알고리즘은 앞으로의 미래를 예측해서 가장 늦게 쓰일 프레임을 대체하는 것이다. 하지만 우리는 미래를 예측할 수 없어서 이상적인 알고리즘으로만 남았다.
 
 ### LRU 알고리즘 
+![LRU-algorithm](/images/OS/LRU-algorithm.JPG)  
 현실적으로 접근해서 Least Recently Used 알고리즘으로 생각해보자. 
 전에 배운 LRU을 이용하는 거와 같다. FIFO보다는 적지만 이상적인 알고리즘보다는 많이 일어났다.  
 
@@ -86,8 +93,10 @@ Reference bit은 초기에 0으로 두고 page가 reference될 때 bit을 1로 �
 
 ## Copy-on-Write  
 
+![Copy-on-Write](/images/OS/Copy-on-Write.JPG)
 두 개의 프로세스가 하나의 페이지를 공유할 때(같은 데이터를 공유할 때) 사용한다. Shared Memory와 다른 차이점은 OS가 프레임을 아끼기 위해서 사용한 것이다. 예를 들어서 C Library는 물리 메모리 상 하나인데 여러 프로세스가 Shared Memory하듯이 모두가 자기 테이블 안에 C Library를 참조해서 가져다가 사용한다. 항상 Read-Only일 때만 이렇게 사용할 수 있다.  
 하지만 누가 수정을 해야하는 상황이 올 때 사용하는게 Copy-on-Write이다. 예를 들어서 Fork를 사용할 때 부모 프로세스와 자식 프로세스는 같은 데이터를 공유한다. Fork 당시에는 같은 데이터를 공유하므로 같은 물리 메모리를 링크하면서 프레임을 아끼다가, 자신 프로세스에서 해당 데이터 중 조금 수정한다. 
+![Copy-on-Write2](/images/OS/Copy-on-Write2.JPG)  
 
 따라서 목적은  
 1) 페이지 프레임 아끼기 위함  
@@ -105,6 +114,8 @@ Stroage 장치는 Magnetic tape으로 되어있어서 Sequential하게 접근하
 
 사용하는 이유는 Shared Memory을 위해서 라고 생각하면 된다.    
 
+![Memory-Mapped](/images/OS/Memory-Mapped.JPG)    
+
 프로세스 A에서 고친 내용이 어느 순간이 disk file에 적용이 된다. 이때 오픈 대신에 mmap()으로 오픈하며, read, write가 아닌 값을 그냥 할당하거나 memset(), memcopy()로 메모리 값을 바꿀 수 있다.  
 따라서 여러 프로세스들이 같은 파일에 대해서 공유해서 작업을 할때 Memory Mapped Files을 사용하면 **편리**하다. 원래는 동시에 접근하게되면 한 쪽은 읽기전용이 되지만 이 경우에는 공동작업이 편리하게 가능하다.
 
@@ -115,10 +126,14 @@ Stroage 장치는 Magnetic tape으로 되어있어서 Sequential하게 접근하
 ### Buddy System  
 물리적으로 연속된 페이지들을 효율적으로 할당하기 위해서 사용하는 시스템이다. 연속적인 공간을 필요로 할 때 필요 공간보다 큰 제일 작은 2의 제곱수로 분할하게 되면 트리가 구성되는데 맨 왼쪽의 리프노드에서 할당해주고 남은 노드들을 연속적으로 유지한다. 
 리눅스에서도 지금도 쓰이고 있다.  
+![Buddy-System](/images/OS/Buddy-System.JPG)  
 
 ### Slab Allocation  
 메모리 공간을 빠르게 이용하기 위해서 사용하는 기법이다. 메모리를 매번 할당해서 사용하지 않고 미리 여러 공간을 할당하여 사용하는 방법(Pooling)  
 예시) PCB  
+
+Slab Allocation은 Polling을 이용한 방법  
+![Slab-Allocation](/images/OS/Slab-Allocation.JPG)  
 
 Cache을 다 쓰기 전에 Cache의 크기를 조금씩 먼저 늘린다. 할당과 해지는 시간이 걸리기 때문에 빈번히 일어나는 소프트웨어의 경우 Kernel object을 먼저 할당 받아 놓고 사용하는게 overhead을 줄일 수 있는 방법이다.  
 
@@ -146,6 +161,7 @@ Demand paging을 제대로 사용할려면 Page fault가 적게 일어나야한�
 Program Structure  
 극단적인 예지만 쉽게 이해할 수 있는 예시다.  
 `int data [128][128]`이며, 각각의 row가 저장되는 한 페이지의 크기는 512B라고 가정 후 두 가지 프로그램이 있다고 한다.  
+![Program-Structure](/images/OS/Program-Structure.JPG)  
 
 1) 
 ```

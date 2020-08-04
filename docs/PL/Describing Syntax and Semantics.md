@@ -50,7 +50,7 @@ Unambiguous   expression grammar
 연산자의 Associativity  
 연산자가 동일한 우선순위을 가져 Ambiguous가 생기는 경우 left associativity, right associativity로 나눠서 왼쪽부터 or 오른족부터  
 
-**★ambiguous 해결★**
+**ambiguous 해결**
 1) 우선순위 부여  
 2) 우선순위 같은 경우 associativity 부여  
 

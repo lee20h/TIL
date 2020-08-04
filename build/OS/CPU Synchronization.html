@@ -7,7 +7,7 @@
     <meta name="generator" content="VuePress 1.5.2">
     
     <meta name="description" content="Today I Learned">
-    <link rel="preload" href="/TIL/assets/css/0.styles.f9c21fbc.css" as="style"><link rel="preload" href="/TIL/assets/js/app.023881f9.js" as="script"><link rel="preload" href="/TIL/assets/js/2.5e371023.js" as="script"><link rel="preload" href="/TIL/assets/js/14.3141b341.js" as="script"><link rel="prefetch" href="/TIL/assets/js/10.3f780f5d.js"><link rel="prefetch" href="/TIL/assets/js/11.61deb296.js"><link rel="prefetch" href="/TIL/assets/js/12.8f5792e9.js"><link rel="prefetch" href="/TIL/assets/js/13.a4d8b86d.js"><link rel="prefetch" href="/TIL/assets/js/15.456c9aa4.js"><link rel="prefetch" href="/TIL/assets/js/16.d15408d0.js"><link rel="prefetch" href="/TIL/assets/js/17.f2f7033c.js"><link rel="prefetch" href="/TIL/assets/js/18.d3ca7e9c.js"><link rel="prefetch" href="/TIL/assets/js/19.3460a969.js"><link rel="prefetch" href="/TIL/assets/js/20.e048387d.js"><link rel="prefetch" href="/TIL/assets/js/21.fe90ea5a.js"><link rel="prefetch" href="/TIL/assets/js/22.4d2c2356.js"><link rel="prefetch" href="/TIL/assets/js/23.a9257da5.js"><link rel="prefetch" href="/TIL/assets/js/24.5a632101.js"><link rel="prefetch" href="/TIL/assets/js/25.0bda93d0.js"><link rel="prefetch" href="/TIL/assets/js/3.19c023e1.js"><link rel="prefetch" href="/TIL/assets/js/4.1d324b29.js"><link rel="prefetch" href="/TIL/assets/js/5.d60f48c3.js"><link rel="prefetch" href="/TIL/assets/js/6.4b5555ee.js"><link rel="prefetch" href="/TIL/assets/js/7.62d02473.js"><link rel="prefetch" href="/TIL/assets/js/8.64a73cfc.js"><link rel="prefetch" href="/TIL/assets/js/9.0a74ec9e.js">
+    <link rel="preload" href="/TIL/assets/css/0.styles.f9c21fbc.css" as="style"><link rel="preload" href="/TIL/assets/js/app.30710a52.js" as="script"><link rel="preload" href="/TIL/assets/js/2.5e371023.js" as="script"><link rel="preload" href="/TIL/assets/js/19.47410111.js" as="script"><link rel="prefetch" href="/TIL/assets/js/10.de71ead9.js"><link rel="prefetch" href="/TIL/assets/js/11.b6dbdb05.js"><link rel="prefetch" href="/TIL/assets/js/12.3d811d17.js"><link rel="prefetch" href="/TIL/assets/js/13.58f77890.js"><link rel="prefetch" href="/TIL/assets/js/14.75d16e65.js"><link rel="prefetch" href="/TIL/assets/js/15.e2013ae5.js"><link rel="prefetch" href="/TIL/assets/js/16.7d37f6e5.js"><link rel="prefetch" href="/TIL/assets/js/17.badd1712.js"><link rel="prefetch" href="/TIL/assets/js/18.ba75afc9.js"><link rel="prefetch" href="/TIL/assets/js/20.74b007e3.js"><link rel="prefetch" href="/TIL/assets/js/21.a41e82c8.js"><link rel="prefetch" href="/TIL/assets/js/22.d42518a4.js"><link rel="prefetch" href="/TIL/assets/js/23.d4217736.js"><link rel="prefetch" href="/TIL/assets/js/24.078a5a36.js"><link rel="prefetch" href="/TIL/assets/js/25.a9604b67.js"><link rel="prefetch" href="/TIL/assets/js/26.f4c362e9.js"><link rel="prefetch" href="/TIL/assets/js/27.c7f6a8a3.js"><link rel="prefetch" href="/TIL/assets/js/28.9d63dfcb.js"><link rel="prefetch" href="/TIL/assets/js/29.c1755c1f.js"><link rel="prefetch" href="/TIL/assets/js/3.19c023e1.js"><link rel="prefetch" href="/TIL/assets/js/30.30047879.js"><link rel="prefetch" href="/TIL/assets/js/4.ea0cffe1.js"><link rel="prefetch" href="/TIL/assets/js/5.d60f48c3.js"><link rel="prefetch" href="/TIL/assets/js/6.f92cd4ca.js"><link rel="prefetch" href="/TIL/assets/js/7.e99ba390.js"><link rel="prefetch" href="/TIL/assets/js/8.7659ef59.js"><link rel="prefetch" href="/TIL/assets/js/9.8995e469.js">
     <link rel="stylesheet" href="/TIL/assets/css/0.styles.f9c21fbc.css">
   </head>
   <body>
@@ -82,7 +82,7 @@ do {
 </code></pre></div><h3 id="하드웨어적-해결법"><a href="#하드웨어적-해결법" class="header-anchor">#</a> 하드웨어적 해결법</h3> <p>하드웨어적 해결법은 3가지가 있다.<br> <strong>1. Mutex lock (spinlock)</strong> - 가장 기본적인 형태의 방법이다. acquire()와 release()로 잠금과 잠금해제를 한다. 잠그면 CS에 접근할 수 없다. test__and_set과 비슷하나, busy wait을 사용하므로 cpu를 계속 사용한다. 빠른 진입이 가능하나, CPU가 낭비된다. 따라서 CPU을 낭비 안할 때나, 금방 이용가능 할 때, Critical Section이 짧은 경우 사용되면 좋다.<br> <strong>2. Semaphore</strong> - Binary와 Counting으로 나뉘어서 spinlock과 비슷하게 P() == wait()과 V() == signal()을 사용한다. Counting Semaphore는 Critical Section에 들어갈 수 있는 프로세스 갯수를 S 변수에 넣어 여러개로 관리가 가능하다. Binary Semaphore은 Mutex Lock와 같다. Busy wait을 사용유무로 종류가 네 가지가 나온다. 그 중에 일반적인 세마포어는 Counting하며, Non-busy wait을 사용하는 세마포어이다. 따라서 context switch 시간보다 길고 연산외에 시스템콜이나 예측불가한 작업시에는 세마포어를 사용하고 Critical Section 진입이 시간이 짧다면 스핀 락을 사용하는게 맞다.<br> <em>3. Monitor</em> - 가장 high-level부분으로 가장 사용하기 편한 방법이라고 하나 크게 다루지 않았다.<br>
 추가적으로 Deadlock과 Starvation이 있는데<br>
 먼저 Deadlock은 여러 프로세스들이 수행될 때 프로세스 전부 wait상태에 빠진 경우다.<br>
-Starvation은 특정 프로세스의 우선순위가 낮아서 자원 할당을 받지 못하는 경우이다.</p> <h2 id="cpu동기화에-신경써야할-문제-3가지"><a href="#cpu동기화에-신경써야할-문제-3가지" class="header-anchor">#</a> CPU동기화에 신경써야할 문제 3가지</h2> <h3 id="_1-bounded-buffer-problem"><a href="#_1-bounded-buffer-problem" class="header-anchor">#</a> 1) Bounded-Buffer Problem</h3> <p>Bounded-Buffer Problem은 생산자와 소비자가 같은 버퍼를 점유할 때 일어나는 문제이다.<br> <em>Bounded-Buffer Problem Solution</em><br>
+Starvation은 특정 프로세스의 우선순위가 낮아서 자원 할당을 받지 못하는 경우이다.</p> <h2 id="cpu동기화에-신경써야할-문제-3가지"><a href="#cpu동기화에-신경써야할-문제-3가지" class="header-anchor">#</a> CPU동기화에 신경써야할 문제 3가지</h2> <h3 id="_1-bounded-buffer-problem"><a href="#_1-bounded-buffer-problem" class="header-anchor">#</a> 1) Bounded-Buffer Problem</h3> <p>Bounded-Buffer Problem은 생산자와 소비자가 같은 버퍼를 점유할 때 일어나는 문제이다.<br> <img src="/img/OS/Bounded-Buffer.JPG" alt="Bounded-Buffer"> <em>Bounded-Buffer Problem Solution</em><br>
 Empty : 버퍼 내에 저장할 공간이 있음을 표시, 생산자의 진입을 관리<br>
 Full : 버퍼 내에 소비할 아이템이 있음을 표시, 소비자의 진입을 관리<br>
 Mutex : 버퍼에 대한 접근을 관리, 생산자와 소비자가 empty, full 세마포어에 진입한 경우 버퍼의 상태 값을 변경하기위한 세마포어<br>
@@ -99,7 +99,7 @@ Mutex : 버퍼에 대한 접근을 관리, 생산자와 소비자가 empty, full
 	signal(mutex);		            		|	/* consume the item in next consumed */
 	siganl(full);	            			|	...
 } while(true);				            	|} while(true);
-</code></pre></div><h3 id="_2-readers-writers-problem"><a href="#_2-readers-writers-problem" class="header-anchor">#</a> 2) Readers-Writers Problem</h3> <p><em>Readers-Writers Problem</em>은</p> <ul><li>Readers : 공유 데이터를 읽는다.
+</code></pre></div><h3 id="_2-readers-writers-problem"><a href="#_2-readers-writers-problem" class="header-anchor">#</a> 2) Readers-Writers Problem</h3> <p><em>Readers-Writers Problem</em>은<br> <img src="/img/OS/Readers-Writers.JPG" alt="Readers-Writers"></p> <ul><li>Readers : 공유 데이터를 읽는다.
 <ul><li>여러 Reader는 동시에 데이터를 접근할 수 있다.</li></ul></li> <li>Writers : 공유 데이터에 쓴다.
 <ul><li>Writer가 데이터를 수정할 때는 reader나 다른 writer가 접근하면 안된다.</li></ul></li></ul> <div class="language- extra-class"><pre class="language-text"><code>/* do while 생략 */
 1)  
@@ -156,7 +156,7 @@ else						                	|
 signal(mutex);				                	|
 </code></pre></div><p><code>3)</code>의 경우에는 모든 문제가 해결되어 동기화가 잘 이루어진다.<br>
 Writer는 작업이 수행되거나 대기중인 다른 reader, writer가 있다면 대기한다. 그리고 수행 후 대기중인 reader들을 모두 수행한다.<br>
-Reader는 writer가 기다리거나 작업중이라면 대기한다. Reader가 다 수행되면 대기 중인 writer을 수행한다.</p> <h3 id="_3-dining-philosophers-problem"><a href="#_3-dining-philosophers-problem" class="header-anchor">#</a> 3) Dining-Philosophers Problem</h3> <p><em>Dining-Philosophers Problem</em>은 젓가락이 5개가 있을 때 자신과 이웃한 젓가락만 들 수 있으며 젓가락을 2개 들었을 때 식사가 가능하다.</p> <div class="language- extra-class"><pre class="language-text"><code>1)
+Reader는 writer가 기다리거나 작업중이라면 대기한다. Reader가 다 수행되면 대기 중인 writer을 수행한다.</p> <h3 id="_3-dining-philosophers-problem"><a href="#_3-dining-philosophers-problem" class="header-anchor">#</a> 3) Dining-Philosophers Problem</h3> <p><img src="/img/OS/Dining-Philosophers.JPG" alt="Dining-Philosopher"><br> <em>Dining-Philosophers Problem</em>은 젓가락이 5개가 있을 때 자신과 이웃한 젓가락만 들 수 있으며 젓가락을 2개 들었을 때 식사가 가능하다.</p> <div class="language- extra-class"><pre class="language-text"><code>1)
 do {
 		...
 		think
@@ -198,6 +198,6 @@ test(int i) {
 	}
 }
 </code></pre></div><p><code>2)</code>의 전략은 철학자들이 좌우 젓가락이 사용 가능할 때 critical section에 진입하여 deadlock과 starvation을 해결하였다.</p></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
-    <script src="/TIL/assets/js/app.023881f9.js" defer></script><script src="/TIL/assets/js/2.5e371023.js" defer></script><script src="/TIL/assets/js/14.3141b341.js" defer></script>
+    <script src="/TIL/assets/js/app.30710a52.js" defer></script><script src="/TIL/assets/js/2.5e371023.js" defer></script><script src="/TIL/assets/js/19.47410111.js" defer></script>
   </body>
 </html>

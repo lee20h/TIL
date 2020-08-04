@@ -9,13 +9,13 @@ exports.AlgorithmList = [
     'Algorithm/연속합.md'
 ]
 
-exports.OSList = [
+exports.OS_List = [
     'OS/CPU Synchronization.md',
     'OS/Main Memory.md',
     'OS/Virtual Memory.md'
 ]
 
-exports.PLlist = [
+exports.PL_list = [
     'PL/Preliminaries.md',
     'PL/Describing Syntax and Semantics.md',
     'PL/Names Bindings and Scopes.md',
@@ -24,4 +24,12 @@ exports.PLlist = [
     'PL/Statement Level Control Structure.md',
     'PL/Subprograms.md',
     'PL/Implementing Subprograms.md',
+]
+
+exports.DC_list = [
+    'DC/Overview of Data Communications and Networking.md',
+    'DC/Network Models.md',
+    'DC/Signals.md',
+    'DC/Digital Transimission.md',
+    'DC/Analog Transmission.md'
 ]

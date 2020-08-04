@@ -11,6 +11,7 @@ sidebar: auto
 Data type : 데이터의 모음과 미리 정의된 연산들의 모음  
 
 descriptor : 변수의 속성들의 모음  
+![descriptor](/images/Program_Language/descriptor.JPG)  
 모든 속성들은 정적이라서 컴파일 시간까지만 필요하다.(Symbol table에 유지) 따라서 런타임에는 value만 유지한다.  
 
 object : 상속을 제외한 추상 데이터  
@@ -169,6 +170,7 @@ Perl은 array는 `@`을 붙여서 선언, `$`을 붙이고 인덱싱하여 접�
 - Heap-dynamic array (subscript range가 dynamic하다)  
 장점 : 유연성  
 단점 : 속도(할당 & 해지)  
+![data](/images/Program_Language/data.JPG)  
 Fixed는 생성시에 사이즈가 고정된다. Heap-dynamic을 제외하고 나머지 3가지는 subscript range가 스토리지에 할당 이후 lifetime 내내 바운딩 되어있다.  
 
 - Array categories  
@@ -367,6 +369,7 @@ type Figure (Form: Shape) is record
     end case;
 end record;
 ```
+![Ada_union](/images/Program_Language/Ada_union.JPG)  
 각각의 상황에 따라 메모리가 할당되는게 다르다.  
 
 Java나 C#에서는 union을 지원하지 않는다.  
@@ -432,14 +435,16 @@ C#은 C++와 Java 두개 다 제공.
 
 **Dangling Pointer Problem Solution**  
 1) Tombstone  
+![Tombstone](/images/Program_Language/Tombstone.JPG)  
 Tombstone : heap-dynamic variable  
 묘비 메모리 해지시 nil값으로 유지
 메모리↑ 시간↑
-2) Lock-and-keys  
+2) Lock-and-keys  	
+![Lock-and-keys](/images/Program_Language/Lock-and-keys.JPG)  
 Head-dynamic variable으로, Lock과 key가 같아야 접근이 가능하다.  
 메모리↑ 시간↑
 
-### Heap Management  
+## Heap Management  
 매우 복잡한 런타임 프로세스이다.  
 Single-size cells vs variable-size cells (고정 vs 가변)  
 single-size cell은 간단하지만 variable-size cell은 복잡해진다.
@@ -451,6 +456,7 @@ counter을 garbage들을 갯수만큼 유지한다. 꾸준히 정리한다.
 단점 : 공간 낭비, counter 늘리고 줄이는 시간 필요  
 2) Mark-sweep (lazy approach)  
 마킹이 안된 것들을 한번에 정리  
+![Mark-sweep](/images/Program_Language/Mark-sweep.JPG)  
 메모리가 부족할 시에 Garbage Collection이 일어나고 root로 부터 dfs로 marking을 한다. Mark Phase가 끝나면 marking이 안된 것들을 해지하는 Sweep Phase가 일어난다.  
 이 때, 프로그램 작동이 멈춘 다음 끝나고 작동이 재개한다.  
 단점 : 지연 존재  

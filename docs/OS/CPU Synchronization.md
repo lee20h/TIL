@@ -103,6 +103,7 @@ Starvation은 특정 프로세스의 우선순위가 낮아서 자원 할당을 
 ### 1) Bounded-Buffer Problem  
 
 Bounded-Buffer Problem은 생산자와 소비자가 같은 버퍼를 점유할 때 일어나는 문제이다.  
+![Bounded-Buffer](/img/OS/Bounded-Buffer.JPG)
 *Bounded-Buffer Problem Solution*  
 Empty : 버퍼 내에 저장할 공간이 있음을 표시, 생산자의 진입을 관리  
 Full : 버퍼 내에 소비할 아이템이 있음을 표시, 소비자의 진입을 관리  
@@ -127,6 +128,7 @@ Mutex : 버퍼에 대한 접근을 관리, 생산자와 소비자가 empty, full
 ### 2) Readers-Writers Problem  
 
 *Readers-Writers Problem*은  
+![Readers-Writers](/img/OS/Readers-Writers.JPG)
 - Readers : 공유 데이터를 읽는다.
 	+ 여러 Reader는 동시에 데이터를 접근할 수 있다.  
 - Writers : 공유 데이터에 쓴다.
@@ -198,7 +200,7 @@ Writer는 작업이 수행되거나 대기중인 다른 reader, writer가 있다
 Reader는 writer가 기다리거나 작업중이라면 대기한다. Reader가 다 수행되면 대기 중인 writer을 수행한다.  
 
 ### 3) Dining-Philosophers Problem  
-
+![Dining-Philosopher](/img/OS/Dining-Philosophers.JPG)  
 *Dining-Philosophers Problem*은 젓가락이 5개가 있을 때 자신과 이웃한 젓가락만 들 수 있으며 젓가락을 2개 들었을 때 식사가 가능하다.  
 ```
 1)

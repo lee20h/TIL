@@ -4,6 +4,7 @@
     "build": "vuepress build docs"
   },
   "devDependencies": {
-    "@vuepress/plugin-back-to-top": "^1.0.0-rc.1"
+    "@vuepress/plugin-back-to-top": "^1.0.0-rc.1",
+    "vuepress-plugin-image": "^1.0.4"
   }
 }

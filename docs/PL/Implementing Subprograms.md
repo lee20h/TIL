@@ -49,11 +49,16 @@ Stack을 사용하는데에 있어 이전의 Stack의 Top의 위치를 저장할
 
 Activation record 사이즈가 dynamic하다. 
 Stack Pointer를 Environment Pointer라고도 한다.  
+C의 예제
+![Activation_record_c](/images/Program_Language/Activation_record_c.JPG)  
 
+재귀 없이 ARI 그림(Activaiton record instance)  
 지역변수 괄호로 표시  
 main(p) calls fun1  
 fun1(s,t) calls fun2  
 fun2(y) calls fun3  
+![ARI](/images/Program_Language/ARI.JPG)  
+그림에서 Dynamic Link가 아닌 파란색 선으로 다시 표시했다.  
 
 Dynamic Chain == Call Chain  
 top을 기준으로 상대주소로 찾아 지역변수에 접근 할 수 있다. 지역변수의 상대위치는 컴파일 타임에 컴파일러에 의해 정해진다.  
@@ -65,6 +70,15 @@ top을 기준으로 상대주소로 찾아 지역변수에 접근 할 수 있다
 | Parameters |
 | **Dynamic link** |
 | Return address |
+
+재귀가 있을 때의 ARI 그림  
+Call  
+![ARI-Fact](/images/Program_Language/ARI-Fact.JPG)  
+
+Return
+![ARI-Fact-ret](/images/Program_Language/ARI-Fact-ret.JPG)  
+
+그림으로 보고 이해 해야한다. 그림에서 또한 Dynamic Link가 호출자의 Top을 가르키도록 해야한다.  
 
 C언어는 Nested subprogram이 지원하지 않아서 이전까지의 설명으로 충분하지만 다른 언어(FORTAN 95+, Ada, Python, JavaScript, Ruby, Lua)에서는 허용되므로 봐보자.  
 변수의 이름이 같은 경우 먼저 맞는 ARI를 찾고 ARI에서의 Offset을 찾아야한다.  
@@ -142,3 +156,5 @@ Dynamic Scoping을 지원하는 프로그래밍 언어일 때 static link는 필
 이 때 구현 방법 2가지
 1) Deep Access : dynamic chain을 통해서 직접 검색함. 따라서 모든 ARI에 변수 이름을 저장할 공간을 가지고 있어야한다. 검색 시간도 오래걸린다 (worst : 전부 다 찾음)
 2) Shallow Access : 변수 마다 스택을 만들어서 쓰이는 함수들을 하나씩 쌓아놓는다. 스택의 탑에 위치한 함수가 현재 쓰이는 위치이다.  
+![Central-Table](/images/Program_Language/Central-Table.JPG)  
+Central Table이 이렇게 구현이된다.  
