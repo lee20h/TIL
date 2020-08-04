@@ -23,8 +23,8 @@ module.exports = {
                 children: CONST.PLlist
             }
         ],
-
-          nav: [{
+          nav: [
+            {
               text: 'GitHub',
               link: 'https://github.com/lee20h/'
             }

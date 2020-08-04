@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Implementing Subprograms | Today 20h Learned</title>
+    <meta name="generator" content="VuePress 1.5.2">
+    
+    <meta name="description" content="Today I Learned">
+    <link rel="preload" href="/TIL/assets/css/0.styles.f9c21fbc.css" as="style"><link rel="preload" href="/TIL/assets/js/app.023881f9.js" as="script"><link rel="preload" href="/TIL/assets/js/2.5e371023.js" as="script"><link rel="preload" href="/TIL/assets/js/20.e048387d.js" as="script"><link rel="prefetch" href="/TIL/assets/js/10.3f780f5d.js"><link rel="prefetch" href="/TIL/assets/js/11.61deb296.js"><link rel="prefetch" href="/TIL/assets/js/12.8f5792e9.js"><link rel="prefetch" href="/TIL/assets/js/13.a4d8b86d.js"><link rel="prefetch" href="/TIL/assets/js/14.3141b341.js"><link rel="prefetch" href="/TIL/assets/js/15.456c9aa4.js"><link rel="prefetch" href="/TIL/assets/js/16.d15408d0.js"><link rel="prefetch" href="/TIL/assets/js/17.f2f7033c.js"><link rel="prefetch" href="/TIL/assets/js/18.d3ca7e9c.js"><link rel="prefetch" href="/TIL/assets/js/19.3460a969.js"><link rel="prefetch" href="/TIL/assets/js/21.fe90ea5a.js"><link rel="prefetch" href="/TIL/assets/js/22.4d2c2356.js"><link rel="prefetch" href="/TIL/assets/js/23.a9257da5.js"><link rel="prefetch" href="/TIL/assets/js/24.5a632101.js"><link rel="prefetch" href="/TIL/assets/js/25.0bda93d0.js"><link rel="prefetch" href="/TIL/assets/js/3.19c023e1.js"><link rel="prefetch" href="/TIL/assets/js/4.1d324b29.js"><link rel="prefetch" href="/TIL/assets/js/5.d60f48c3.js"><link rel="prefetch" href="/TIL/assets/js/6.4b5555ee.js"><link rel="prefetch" href="/TIL/assets/js/7.62d02473.js"><link rel="prefetch" href="/TIL/assets/js/8.64a73cfc.js"><link rel="prefetch" href="/TIL/assets/js/9.0a74ec9e.js">
+    <link rel="stylesheet" href="/TIL/assets/css/0.styles.f9c21fbc.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/TIL/" class="home-link router-link-active"><!----> <span class="site-name">Today 20h Learned</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="https://github.com/lee20h/" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GitHub
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="https://github.com/lee20h/" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GitHub
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>Implementing Subprograms</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/TIL/PL/Implementing%20Subprograms%20.html#simple-subprogram" class="sidebar-link">Simple Subprogram</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/TIL/PL/Implementing%20Subprograms%20.html#call-sematics" class="sidebar-link">Call Sematics</a></li><li class="sidebar-sub-header"><a href="/TIL/PL/Implementing%20Subprograms%20.html#return-sematics" class="sidebar-link">Return Sematics</a></li><li class="sidebar-sub-header"><a href="/TIL/PL/Implementing%20Subprograms%20.html#typical-activation-record" class="sidebar-link">Typical Activation Record</a></li><li class="sidebar-sub-header"><a href="/TIL/PL/Implementing%20Subprograms%20.html#재귀가-있을-때의-activation-record" class="sidebar-link">재귀가 있을 때의 Activation record</a></li></ul></li><li><a href="/TIL/PL/Implementing%20Subprograms%20.html#static-scoping" class="sidebar-link">Static Scoping</a><ul class="sidebar-sub-headers"></ul></li><li><a href="/TIL/PL/Implementing%20Subprograms%20.html#dynamic-scoping" class="sidebar-link">Dynamic Scoping</a><ul class="sidebar-sub-headers"></ul></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="implementing-subprograms"><a href="#implementing-subprograms" class="header-anchor">#</a> Implementing Subprograms</h1> <p>Call을 하게 되면 context switch에서 PCB에 저장해서 다시 복원하듯이 런타임 스택에 저장(push) 후 끝나면 다음 주소값으로 return(pop)하게 된다.</p> <h2 id="simple-subprogram"><a href="#simple-subprogram" class="header-anchor">#</a> Simple Subprogram</h2> <p>Local 변수가 없고, nested가 없는 Subprogram이다.</p> <h3 id="call-sematics"><a href="#call-sematics" class="header-anchor">#</a> Call Sematics</h3> <ol><li>현재 실행상태를 스택에 저장</li> <li>매개변수 전달</li> <li>리턴값을 전달</li> <li>이동</li></ol> <h3 id="return-sematics"><a href="#return-sematics" class="header-anchor">#</a> Return Sematics</h3> <ol><li>Out mode라면 현재의 값을 actual parameter로 복사</li> <li>리턴이 함수라면 함수값이 리턴</li> <li>스택에 저장된 실행상태 복원</li> <li>이동</li></ol> <p>필요한 저장소<br>
+상태 정보, 매개변수, 리턴주소, 리턴 값이나 함수, 임시변수 - Stack에 저장. 따라서 재귀 가능</p> <p>Actual code와 non-code(data) 두 파트로 나눠져있다. 여기서는 <strong>activation record</strong>(non-code)에 대해서만 주로 다룬다.<br>
+Activation record instance call할때마다 stack에 쌓이게 된다.</p> <table><thead><tr><th style="text-align:left;">Simple subprogram</th></tr></thead> <tbody><tr><td style="text-align:left;">Local variables</td></tr> <tr><td style="text-align:left;">Parameters</td></tr> <tr><td style="text-align:left;">Return address</td></tr></tbody></table> <p>이런 식으로 stack이 쌓인다.</p> <table><thead><tr><th style="text-align:center;">Memory</th> <th style="text-align:center;">Simple subprogram</th></tr></thead> <tbody><tr><td style="text-align:center;">Code</td> <td style="text-align:center;">Code</td></tr> <tr><td style="text-align:center;">Data</td> <td style="text-align:center;">Data</td></tr> <tr><td style="text-align:center;">Heap</td> <td style="text-align:center;">Data</td></tr> <tr><td style="text-align:center;">Stack</td> <td style="text-align:center;">Data</td></tr></tbody></table> <h3 id="typical-activation-record"><a href="#typical-activation-record" class="header-anchor">#</a> Typical Activation Record</h3> <table><thead><tr><th style="text-align:left;">Typical Activation Record</th></tr></thead> <tbody><tr><td style="text-align:left;">Local variables</td></tr> <tr><td style="text-align:left;">Parameters</td></tr> <tr><td style="text-align:left;"><strong>Dynamic link</strong></td></tr> <tr><td style="text-align:left;">Return address</td></tr></tbody></table> <p>Stack을 사용하는데에 있어 이전의 Stack의 Top의 위치를 저장할 필요가 있어서 Dynamic link에 저장한다.</p> <p>Activation record 사이즈가 dynamic하다.
+Stack Pointer를 Environment Pointer라고도 한다.</p> <p>지역변수 괄호로 표시<br>
+main(p) calls fun1<br>
+fun1(s,t) calls fun2<br>
+fun2(y) calls fun3</p> <p>Dynamic Chain == Call Chain<br>
+top을 기준으로 상대주소로 찾아 지역변수에 접근 할 수 있다. 지역변수의 상대위치는 컴파일 타임에 컴파일러에 의해 정해진다.</p> <h3 id="재귀가-있을-때의-activation-record"><a href="#재귀가-있을-때의-activation-record" class="header-anchor">#</a> 재귀가 있을 때의 Activation record</h3> <table><thead><tr><th style="text-align:left;">Activation Record for factorial</th></tr></thead> <tbody><tr><td style="text-align:left;">Functional value</td></tr> <tr><td style="text-align:left;">Parameters</td></tr> <tr><td style="text-align:left;"><strong>Dynamic link</strong></td></tr> <tr><td style="text-align:left;">Return address</td></tr></tbody></table> <p>C언어는 Nested subprogram이 지원하지 않아서 이전까지의 설명으로 충분하지만 다른 언어(FORTAN 95+, Ada, Python, JavaScript, Ruby, Lua)에서는 허용되므로 봐보자.<br>
+변수의 이름이 같은 경우 먼저 맞는 ARI를 찾고 ARI에서의 Offset을 찾아야한다.<br>
+Static-scope일 때는 이미 정해져있기 때문에 offset을 찾기 쉽다. 맞는 ARI를 찾기 위해서 Static-Scope에서 정한 방법은 Static link를 ARI에 가지고 부모 함수의 Top에 연결해준다. Static_depth가 the depth of nesting이다.<br>
+Chain_offset or nesting_depth란 static_link을 몇번 따라갔는가이다. pair로 정의하면 (chain_offset, local_offset)으로 정의하면 된다.</p> <p>Ada의 예시</p> <div class="language- extra-class"><pre class="language-text"><code>procedure Main_2 is
+  X : Integer;
+  procedure Bigsub is
+    A, B, C : Integer;
+    procedure Sub1 is
+      A, D : Integer;
+      begin -- of Sub1
+      A := B + C;  &lt;-----------------------1
+    end;  -- of Sub1
+    procedure Sub2(X : Integer) is
+      B, E : Integer;
+      procedure Sub3 is
+        C, E : Integer;
+        begin -- of Sub3
+        Sub1;
+        E := B + A:   &lt;--------------------2
+        end; -- of Sub3
+      begin -- of Sub2
+      Sub3;
+      A := D + E;  &lt;-----------------------3
+      end; -- of Sub2 }
+    begin -- of Bigsub
+    Sub2(7);
+    end; -- of Bigsub
+  begin
+  Bigsub;
+end; of Main_2 }
+</code></pre></div><p>Call sequence for Main_2<br>
+Main_2 calls Bigsub<br>
+Bigsub calls Sub2<br>
+Sub2 calls Sub3<br>
+Sub3 calls Sub1<br>
+이러한 순서로 이뤄져 있다.</p> <p>지금까지 했던 내용에서 추가해야할 내용은 <strong>Static Link</strong>의 경우 자기를 감싸는 함수(ancestor)의 ARI의 시작부분을 가르켜야한다.</p> <h2 id="static-scoping"><a href="#static-scoping" class="header-anchor">#</a> Static Scoping</h2> <p>dynamic link는 전에 스택의 top pointer<br>
+static link는 가장 가까운 static parent의 ARI의 시작부분이다.</p> <p>static parent을 찾는 두가지의 방법</p> <ol><li>dynamic chain으로 전부 찾아보기</li> <li>static depth을 이미 컴파일 타임에 알기 때문에 그 차이를 가지고 구한다.</li></ol> <p>Static chain의 문제점<br>
+non-local 변수에 대해 접근할려고 할 때 속도가 느려질 수 있다. 따라서 C언어에서는 non-local 변수는 글로벌 변수만 허용하며, nesting을 허용하지 않아서 속도를 저하시킬 요인을 없앴다.</p> <p>Block<br>
+example C</p> <div class="language- extra-class"><pre class="language-text"><code>void f() {
+	{int temp;
+	temp = list[upper];
+	list[upper]
+ = list[lower];
+	list[lower] = temp;
+	}	
+}
+
+</code></pre></div><p>stack에 block을 더 쌓게 된다. 가독성은 증가할 수 있으나 실행속도에서는 저하한다. (컴파일러가 똑똑하면 가려줘서 해결이 되기도 함)</p> <h2 id="dynamic-scoping"><a href="#dynamic-scoping" class="header-anchor">#</a> Dynamic Scoping</h2> <p>Dynamic Scoping을 지원하는 프로그래밍 언어일 때 static link는 필요없다.<br>
+이 때 구현 방법 2가지</p> <ol><li>Deep Access : dynamic chain을 통해서 직접 검색함. 따라서 모든 ARI에 변수 이름을 저장할 공간을 가지고 있어야한다. 검색 시간도 오래걸린다 (worst : 전부 다 찾음)</li> <li>Shallow Access : 변수 마다 스택을 만들어서 쓰이는 함수들을 하나씩 쌓아놓는다. 스택의 탑에 위치한 함수가 현재 쓰이는 위치이다.</li></ol></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/TIL/assets/js/app.023881f9.js" defer></script><script src="/TIL/assets/js/2.5e371023.js" defer></script><script src="/TIL/assets/js/20.e048387d.js" defer></script>
+  </body>
+</html>

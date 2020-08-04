@@ -16,12 +16,12 @@ exports.OSList = [
 ]
 
 exports.PLlist = [
-    "PL/Preliminaries.md",
-    "PL/Describing Syntax and Semantics.md",
-    "PL/Names, Bindings, and Scopes.md",
-    "PL/Data Types.md",
-    "PL/Expressions and Assignment Statements.md",
-    "PL/Statement-Level Control Structure.md",
-    "PL/Subprograms.md",
-    "PL/Implementing Subprograms.md",
-];
+    'PL/Preliminaries.md',
+    'PL/Describing Syntax and Semantics.md',
+    'PL/Names Bindings and Scopes.md',
+    'PL/Data Types.md',
+    'PL/Expressions and Assignment Statements.md',
+    'PL/Statement Level Control Structure.md',
+    'PL/Subprograms.md',
+    'PL/Implementing Subprograms.md',
+]

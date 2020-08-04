@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Expressions and Assignment Statements | Today 20h Learned</title>
+    <meta name="generator" content="VuePress 1.5.2">
+    
+    <meta name="description" content="Today I Learned">
+    <link rel="preload" href="/TIL/assets/css/0.styles.f9c21fbc.css" as="style"><link rel="preload" href="/TIL/assets/js/app.023881f9.js" as="script"><link rel="preload" href="/TIL/assets/js/2.5e371023.js" as="script"><link rel="preload" href="/TIL/assets/js/19.3460a969.js" as="script"><link rel="prefetch" href="/TIL/assets/js/10.3f780f5d.js"><link rel="prefetch" href="/TIL/assets/js/11.61deb296.js"><link rel="prefetch" href="/TIL/assets/js/12.8f5792e9.js"><link rel="prefetch" href="/TIL/assets/js/13.a4d8b86d.js"><link rel="prefetch" href="/TIL/assets/js/14.3141b341.js"><link rel="prefetch" href="/TIL/assets/js/15.456c9aa4.js"><link rel="prefetch" href="/TIL/assets/js/16.d15408d0.js"><link rel="prefetch" href="/TIL/assets/js/17.f2f7033c.js"><link rel="prefetch" href="/TIL/assets/js/18.d3ca7e9c.js"><link rel="prefetch" href="/TIL/assets/js/20.e048387d.js"><link rel="prefetch" href="/TIL/assets/js/21.fe90ea5a.js"><link rel="prefetch" href="/TIL/assets/js/22.4d2c2356.js"><link rel="prefetch" href="/TIL/assets/js/23.a9257da5.js"><link rel="prefetch" href="/TIL/assets/js/24.5a632101.js"><link rel="prefetch" href="/TIL/assets/js/25.0bda93d0.js"><link rel="prefetch" href="/TIL/assets/js/3.19c023e1.js"><link rel="prefetch" href="/TIL/assets/js/4.1d324b29.js"><link rel="prefetch" href="/TIL/assets/js/5.d60f48c3.js"><link rel="prefetch" href="/TIL/assets/js/6.4b5555ee.js"><link rel="prefetch" href="/TIL/assets/js/7.62d02473.js"><link rel="prefetch" href="/TIL/assets/js/8.64a73cfc.js"><link rel="prefetch" href="/TIL/assets/js/9.0a74ec9e.js">
+    <link rel="stylesheet" href="/TIL/assets/css/0.styles.f9c21fbc.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/TIL/" class="home-link router-link-active"><!----> <span class="site-name">Today 20h Learned</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="https://github.com/lee20h/" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GitHub
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="https://github.com/lee20h/" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GitHub
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>Expressions and Assignment Statements</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/TIL/PL/Expressions%20and%20Assignment%20Statements.html#side-effect" class="sidebar-link">Side Effect</a><ul class="sidebar-sub-headers"></ul></li><li><a href="/TIL/PL/Expressions%20and%20Assignment%20Statements.html#arithmetic-expression" class="sidebar-link">Arithmetic Expression</a><ul class="sidebar-sub-headers"></ul></li><li><a href="/TIL/PL/Expressions%20and%20Assignment%20Statements.html#arithmetic-operator-evalation-order" class="sidebar-link">Arithmetic Operator Evalation Order</a><ul class="sidebar-sub-headers"></ul></li><li><a href="/TIL/PL/Expressions%20and%20Assignment%20Statements.html#operator-overloading" class="sidebar-link">Operator Overloading</a><ul class="sidebar-sub-headers"></ul></li><li><a href="/TIL/PL/Expressions%20and%20Assignment%20Statements.html#narrowing-conversion" class="sidebar-link">Narrowing conversion</a><ul class="sidebar-sub-headers"></ul></li><li><a href="/TIL/PL/Expressions%20and%20Assignment%20Statements.html#assignment" class="sidebar-link">Assignment</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/TIL/PL/Expressions%20and%20Assignment%20Statements.html#general-syntax" class="sidebar-link">general syntax</a></li><li class="sidebar-sub-header"><a href="/TIL/PL/Expressions%20and%20Assignment%20Statements.html#assignment-as-an-expreesion" class="sidebar-link">Assignment as an Expreesion</a></li><li class="sidebar-sub-header"><a href="/TIL/PL/Expressions%20and%20Assignment%20Statements.html#함수형-언어에서의-할당" class="sidebar-link">함수형 언어에서의 할당</a></li></ul></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="expressions-and-assignment-statements"><a href="#expressions-and-assignment-statements" class="header-anchor">#</a> Expressions and Assignment Statements</h1> <p>들어가기 앞서, 명령형 언어는 assignment가 제일 중요하다. 하지만 이로인해 Side effect가 발생한다.</p> <h2 id="side-effect"><a href="#side-effect" class="header-anchor">#</a> Side Effect</h2> <p><strong>Side effect</strong>란 함수가 자신이 선언된 범위 밖의 변수의 값을 변경시키는 것.<br>
+ex)</p> <div class="language- extra-class"><pre class="language-text"><code>int gCount;
+int square(int a) {
+	gCount++;
+	return a*a;
+}
+</code></pre></div><p>함수형 언어는 Side effect가 없다. 왜냐 <strong>assignment</strong>가 없기 때문이다.</p> <h2 id="arithmetic-expression"><a href="#arithmetic-expression" class="header-anchor">#</a> Arithmetic Expression</h2> <p>산술이 프로그래밍 언어 개발의 첫번째 동기라고 할 수 있다.<br>
+연산자는 피연산자의 갯수로 분류할 수 있다.</p> <ol><li>Unary : -a</li> <li>Binary : a+b</li> <li>Ternary : a&gt;b?a:b</li></ol> <p>위치에 따라 분류할 수도 있다.</p> <ol><li>Prefix : 괄호 없이 산술이 가능하다.</li> <li>Infix : 대부분 프로그래밍언어에서는 사람이 코딩하므로 infix을 주로 사용한다.</li> <li>Postfix : stack이용하면 편하다.</li></ol> <h2 id="arithmetic-operator-evalation-order"><a href="#arithmetic-operator-evalation-order" class="header-anchor">#</a> Arithmetic Operator Evalation Order</h2> <ol><li>연산자 우선순위</li> <li>associativity rule</li></ol> <p>전형적인 우선순위는
+괄호 -&gt; unary operator -&gt; 제곱 -&gt; *,/ -&gt; +,-이다.<br>
+보통 왼쪽에서 오른쪽으로 진행되나 제곱은 오른쪽에서 왼쪽으로 진행하면 된다.<br>
+우선순위를 잘 모르겠으면 괄호로 묶으면 된다.</p> <p>조건연산은 C나 C++의 경우에는 삼항연산을 이용한다.</p> <p>피연산자 순서<br>
+변수나 상수는 순서가 크게 상관이 없다.<br>
+괄호가 있거나 함수호출이 있는 경우에는 결과 값을 피연산자로 들어가야하기 때문에 먼저 결과 값을 얻어야한다.</p> <p>만약에, a*b에 side effect가 존재한다면 순서가 달라진다.<br>
+Functional side effect는 함수 안에서 전역 변수나 매개변수의 값을 바꿀 때 side effect가 있다고 한다.<br>
+a = 10; b = a + func(a);<br>
+왼쪽을 먼저하면 변수 b에 20이 할당되지만, 오른쪽을 먼저하면 변수 b에 30이 할당된다.</p> <div class="language- extra-class"><pre class="language-text"><code>int a = 5;
+itn fun1() {
+	a = 17;
+	return 3;
+}
+void main() {
+	a = a + fun1();
+}
+</code></pre></div><p>C언어의 경우에는 정의되어 있지 않다. 따라서 fun1을 먼저 하면 a = 20이 되고 왼쪽을 먼저 시작하면 8이 된다. 따라서 C언어에서 구현할 때는 피해야한다.</p> <p><strong>Referential Transparency</strong>의 특징이란 Side effect가 없어야한다.<br>
+예를 들어 <code>result1 = (fun(a) + b) / (fun(a) - c);</code><br> <code>temp = fun(a); result2 = (temp + b) / (temp -c);</code><br>
+이때, result1과 result2가 같다면 Referential Transparency를 가지고 있다고 할 수 있다.<br>
+이러한 특징을 보면 Assignment가 없는 pure functional language는 항상 Referential Transparency를 갖는다.<br>
+장점 : 프로그램을 이해하기 쉬워진다.</p> <h2 id="operator-overloading"><a href="#operator-overloading" class="header-anchor">#</a> Operator Overloading</h2> <p>자료형 별로 연산을 다르게 정의해놓았다. 이 부분을 오버로딩했다고 할 수 있다. 프로그래머 입장에서는 익숙한 기호로 사용할 수 있다는 장점이 있다.<br>
+하지만 C와 C++에서 <code>&amp;, -, *</code>은 뜻이 애매해서 컴파일러가 오류를 검출하는데 있어서 문제가 생길 수 있다. 추가적으로 가독성에도 문제가 있을 수 있다.<br>
+예를 들어서 x = &amp;y인 경우 프로그래머의 실수로 x = x &amp; y을 잘못 기입한 경우 오류를 탐지하지 못하는 문제가 생길 수 있다는 것이다.<br>
+C++과 C#, F#에서 user-defined overloaded operator을 만들 수 있다.<br>
+예를 들어 A * B + C * D(MatrixAdd(MatrixMult(A, B), MatrixMult(C, D))와 같이 배열 자료형끼리의 연산을 오버로딩하면 이러하게 편하게 코딩이 가능하며, 가독성이 증가한다.<br>
+하지만 잠재적인 문제로 사용자가 센스없이 오버로딩하게 된다면 가독성도 떨어질 수 있다.</p> <ul><li><strong>Type Conversions</strong><br>
+만약 컴파일러가 자동으로 해준다면 <code>Coercion</code>이라고 한다.</li></ul> <h2 id="narrowing-conversion"><a href="#narrowing-conversion" class="header-anchor">#</a> Narrowing conversion</h2> <p>원본의 값을 변환 시 잃어버리는 값이 있으면 Narrowing conversion이라고 한다. ex) 1.2 -&gt; 1 (float -&gt; int)<br>
+Widening conversion<br>
+원본이 값을 변환 시 그대로 다 갖고 더 크게 변환 해주는 것이다.<br>
+따라서 안정적이며, Coercion을 허용한다.<br>
+ex) 1 -&gt; 1.0 (int -&gt; float)</p> <p>Mixed Mode operation일 경우 coercion이 묵시적으로 일어나게 된다. coercion이 일어나게 되면 컴파일러가 <em>타입 오류</em>를 탐지 못하는 경우가 있을 수 있다.</p> <div class="language- extra-class"><pre class="language-text"><code>int a;
+float b, c, d;
+...
+d = b * a; // (c를 써야하나 실수 한 경우)
+</code></pre></div><p>추가적으로 C언어나 Java에서 integer보다 작은 타입의 경우에는 integer로 coercion하고 연산을 한뒤 다시 값에 coercion해준다.</p> <p>C언어에서 프로그래머가 명시적으로 형변환하는 경우에는 변수 앞에 적어준다.</p> <p>예외처리가 필요한 표현이 있다.<br>
+divison by zero<br>
+overflow</p> <p>관계식<br> <code>&lt; &gt; &lt;= &gt;= == != /= ~=</code>등 사용된다.<br>
+Javascript와 PHP에서의 <code>==</code>와 <code>===</code>의 차이를 보자<br> <code>==</code>은 coerced가 일어난 뒤 비교를 한다. 하지만 <code>===</code>은 coerced가 일어나지 않는다.</p> <p>Boolean<br>
+C에서는 0이 거짓, 0이 아니면 참이다. 잘못된 표현중 하나는 <code>if(a&lt;b&lt;c)</code>이다. <code>a&lt;b</code>을 먼저 실행한다음 1 혹은 0이랑 c를 비교한 값을 if 조건문에 넣게 된다.<br>
+고치게되면 <code>if(a&lt;b &amp;&amp; b&lt;c)</code>로 고쳐야한다.</p> <p><strong>Short Circuit Evaluation</strong><br>
+전체를 evaluation을 하지 않고도 일부분을 evaluation을 해도 값을 얻을 수 있는 경우를 Short Circuit Evaluation이라고 한다.<br>
+ex) (13 * a) * (b / 13 - 1)<br>
+만약 a가 0이라면 (b / 13 - 1)하면 된다.<br>
+지원하지 않는 경우 일어나는 문제</p> <div class="language- extra-class"><pre class="language-text"><code>index = 0;
+while (index &lt; length&gt; &amp;&amp; (LIST[index] != value))
+	index++;
+</code></pre></div><p>만약 길이가 length와 같아진 경우 false가 반환되나, 뒤에도 evaluation을 해야하므로 LIST[length]가 들어가게 되어 세그먼트 폴트가 일어날 수 있다.<br>
+e.g (a &gt; b) || (b++ / 3)<br>
+여기서는 선조건인 (a&gt;b)가 false여야 뒷조건을 실행하므로 b++가 무조건 일어나지는 않는다. 하지만 이렇게 side effect가 있도록 코딩하지 않도록 해야한다.</p> <h2 id="assignment"><a href="#assignment" class="header-anchor">#</a> Assignment</h2> <h3 id="general-syntax"><a href="#general-syntax" class="header-anchor">#</a> general syntax</h3> <p><code>&lt;target_var&gt; &lt;assign_operator&gt; &lt;expression&gt;</code><br>
+assign_opeartor는 FOTRAN, BASIC, C기반 언어는 <code>=</code>을 사용한다. Ada같은 경우에는 <code>:=</code>을 사용한다.</p> <p>compound assignment operator<br> <code>a = a + b</code> ==&gt; <code>a += b</code></p> <p>Unary assignment operator<br> <code>sum = ++count</code> // count 연산 먼저<br> <code>sum = count++</code> // 할당 먼저
+<code>count++</code><br> <code>-count++</code>// count 연산 후 -붙인다.</p> <p>Perl의 조건 할당<br> <code>($flag ? $total : $subtotal) = 0</code><br>
+이것은 밑에 코드와 같다.</p> <div class="language- extra-class"><pre class="language-text"><code>if ($flag)
+	$total = 0
+else
+	$subtotal = 0
+</code></pre></div><h3 id="assignment-as-an-expreesion"><a href="#assignment-as-an-expreesion" class="header-anchor">#</a> Assignment as an Expreesion</h3> <p><code>whlie((ch = getchar()) != EOF)</code>
+상수랑 assignment statement와 비교하는 경우이다.<br>
+side effect가 일어날 수 있다. 그로 인해 가독성이 떨어질 수 있다.<br>
+E.g <code>a = b + (c = d / b) -1</code><br>
+변수 c에 d/b 값을 할당 후 b + c - 1을 계산하여 변수 a에 할당한다.</p> <p>Multiple Assignments<br>
+Perl, Ruby, Lua에서 Tuple을 사용하면 ($first, $second, $third) = (20, 30, 40);</p> <h3 id="함수형-언어에서의-할당"><a href="#함수형-언어에서의-할당" class="header-anchor">#</a> 함수형 언어에서의 할당</h3> <p>ML에서 <code>val fruit = apples + oranges;</code><br>
+을 사용하게되면 fruit에 apples + oranges의 값이 바인딩되어 수정이 불가능하다. 따라서 변수들의 재사용이 불가능하다. 매번 변수들을 선언해서 사용해야 하므로 Cache을 사용하지 못하게된다. 따라서 속도가 느릴 수 밖에 없다.</p></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/TIL/assets/js/app.023881f9.js" defer></script><script src="/TIL/assets/js/2.5e371023.js" defer></script><script src="/TIL/assets/js/19.3460a969.js" defer></script>
+  </body>
+</html>
