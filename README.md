@@ -395,3 +395,56 @@ while (left <= right) {
 상자번호를 기준으로 잡고 주어진 규칙의 B상자번호와 기준값을 비교해서 작은 값보다 A상자번호가 같거나 작은 경우에 해당 값과 A상자번호 값을 뺀 후 C개로 나누어준 뒤 0번째도 도토리를 넣으므로 1을 더해주게 된다. 이렇게 하면 해당 기준 값일 때의 i번째 규칙의 도토리 갯수를 셀 수 있게된다. 해당 도토리 갯수를 전부 다 더한 다음 주어진 도토리 갯수를 조건으로 둬서 이분탐색을 하면 된다.  
 
 ---
+
+- 5日  
+
+PS을 하면서 막힌 부분과 기억해야 하는 부분을 기록해볼 것이다.  
+
+18119. 단어 암기  
+처음에 모든 알파벳을 기억하고 있되, 밑의 연산에 따라서 잊거나 기억할 수 있다. 이 때의 주어진 단어를 몇 개 기억하는지 출력하라.
+```
+vector<bitset<26>> check;
+vector<bitset<26>> copy_check;
+if(cmd == 1) {
+	for (int j=0; j<n; j++) {
+		if(copy_check[j][x - 'a'] == true)
+			check[j][x - 'a'] = false;
+	}
+}
+	
+else {
+	for (int j=0; j<n; j++) {
+		if(copy_check[j][x - 'a'] == true)
+			check[j][x - 'a'] = true;
+	}
+}
+	
+for (int j=0; j<n; j++) {
+	if(copy_check[j] == check[j]) cnt++;
+}
+cout << cnt << '\n';
+```
+bitset을 알파벳 수인 26개로 잡아놓고 문자열마다 해당 알파벳 부분을 true로 잡아놓은다. 그리고 그 bitset벡터를 복사한 뒤 연산에서 해당 알파벳이 나온다면 복사된 벡터에 존재한다면 그 알파벳을 true 혹은 false로 조정해준다. 이렇게 하여 bitset을 전체 비교해서 같은 카운트를 세준다.  
+
+10830. 행렬 제곱  
+최대 5x5 행렬을 최대 천억만큼 거듭 제곱한 결과를 구해야한다.  
+```
+vector<vector<ll>> power(vector<vector<ll>> mat, ll num) {
+	vector<vector<ll>> ret(n, vector<ll>(n));
+	for (int i=0; i<n; i++) {
+		ret[i][i] = 1;
+	} 
+	
+	while(num > 0) {
+		if (num % 2) {
+			ret = mul(ret, mat);
+		}
+		num /= 2;
+		mat = mul(mat, mat);
+	}
+	return ret;
+}
+```
+핵심 함수는 다음과 같다. 분할 정복의 거듭 제곱과 비슷하게 하되, 그것을 행렬로 하면 된다는 생각을 하였다. 따라서 단위행렬을 만들고 횟수가 홀수, 짝수를 나눠서 시도하되, 행렬의 곱을 만들어주기 위해 함수로 구현을 하였다. 행렬의 곱셈도 함수로 구현하여 답을 구했다.
+
+---

@@ -1,2 +1,3 @@
-build/
-node_modules/
+build
+deploy.sh
+node_modules
