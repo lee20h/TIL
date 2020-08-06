@@ -448,3 +448,137 @@ vector<vector<ll>> power(vector<vector<ll>> mat, ll num) {
 핵심 함수는 다음과 같다. 분할 정복의 거듭 제곱과 비슷하게 하되, 그것을 행렬로 하면 된다는 생각을 하였다. 따라서 단위행렬을 만들고 횟수가 홀수, 짝수를 나눠서 시도하되, 행렬의 곱을 만들어주기 위해 함수로 구현을 하였다. 행렬의 곱셈도 함수로 구현하여 답을 구했다.
 
 ---
+
+- 6日  
+
+이분 탐색 정리  
+
+이분 탐색은 오름차순으로 정렬된 리스트에서 특정한 값의 위치를 찾는 알고리즘이다. 처음 중간의 값을 임의의 값으로 선택하여, 그 값과 찾고자 하는 값의 크고 작음을 비교하는 방식을 채택하고 있다. 처음 선택한 중앙값이 만약 찾는 값보다 크면 그 값은 새로운 최고값이 되며, 작으면 그 값은 새로운 최하값이 된다. 검색 원리상 정렬된 리스트에만 사용할 수 있다는 단점이 있지만, 검색이 반복될 때마다 목표값을 찾을 확률은 두 배가 되므로 속도가 빠르다는 장점이 있다. 이분 탐색은 분할 정복 알고리즘의 한 예이다.
+
+이분 탐색의 과정
+
+1. 배열의 중간을 먼저 탐색한다.
+2. 중간값이 탐색값이면 중단.
+3. 중간값이 탐색값이 아니라면 중간값과 탐색값의 크기를 비교한다.
+4. 중간값 > 탐색값 - 중간값의 오른쪽 인덱스들은 제외
+5. 중간값 < 탐색값 - 중간값의 왼쪽 인덱스들은 제외
+
+데이터가 정렬되어 있으면 위의 과정을 반복해서 절반씩 나눠서 걸러낸다.
+
+STL algorithm에서 `upper_bound`와 `lower_bound`함수를 살펴보면 이분탐색을 기반으로 한 탐색 방법이다. 이분탐색이므로, 배열이나 리스트가 정렬이 되어 있어야 한다. `lower_bound`의 결과는 key값이 없으면 key값보다 큰 가장 작은 정수 값을 찾는다. 같은 원소가 여러 개 있어도 상관 없으며, 항상 유일한 해를 구할 수 있다. 예를 들어 `[begin, end]` 배열이 있을 때, 중간위치의 인덱스를 mid라고 하면 `arr[mid] < key` 이면서 `arr[mid] >= key`인 최소의 m 값을 찾으면 된다. `upper_bound`는 반대로 생각하면 된다.  
+
+반환형은 Iterator이므로 vector를 사용하게 되면 벡터의 begin()을 빼게 되면 인자의 순서를 구할 수 있고, 배열이라면 첫 번쨰 주소를 빼면 인자의 순서를 알 수 있다.  
+
+시간 복잡도는 O(log(last - first))으로, 전체 원소 개수에 로그에 비례한다.  
+
+LCS 알고리즘
+
+LCS는 두 가지로 나뉘어진다. 
+
+`최장 공통 부분 문자열(Longest Common Substring)`과 `최장 공통 부분 수열(Longest Common Subsequence)` 두 가지로 나뉘는데 비슷하나 차이점이 뚜렷하다. 그 차이점은 해당 부분의 연속 여부이다. 아래 예시를 봐보자.  
+
+A**BCD**FEF  A**BCD**F**EF**  
+**BCD**EF	 **BCDEF**  
+
+해당 두 개의 문자열이 있다고 가정해보자. 먼저, 최장 공통 부분 문자열의 경우에는 `BCD` 3개를 갖고, 최장 공통 부분 수열의 경우에는 `BCDEF` 5개를 갖게 된다.  
+
+최장 공통 부분 문자열  
+![LCS](https://wikimedia.org/api/rest_v1/media/math/render/svg/83ccdb67e41ba0b5043a8eb2a67ca0d7a6908ad2)
+
+
+```
+for (int i=1; i<=A.length; i++) {
+	for (int j=1; j<=B.length; j++) {
+		if(A[i-1] == B[j-1]) {
+			LCS[i][j] = LCS[i-1][j-1]+1
+			if(ans < LCS[i][j])
+				ans = LCS[i][j]
+		}
+	}
+}
+```
+
+최장 공통 부분 수열  
+![LCS2](https://wikimedia.org/api/rest_v1/media/math/render/svg/a40feb09ada8db5fb1fb6fe0c31b2ee25b7c9835)  
+X와 Y는 비교할 각 문자열, i와 j는 문자열의 각 인덱스이다. 구현에 있어 3가지가 필요하다.
+
+1. 처음엔 편의를 위해서 빈 수열로 채워준다.  
+          
+|   | 0 | A | G | C | A | T |
+|---|---|---|---|---|---|---|
+| 0 | Ø | Ø | Ø | Ø | Ø | Ø |
+| G | Ø |   |   |   |   |   |
+| A | Ø |   |   |   |   |   |
+| C | Ø |   |   |   |   |   |
+
+2. X와 Y의 문자가 같은 경우이다. 이때 예시를 보자.  
+```
+stirng a = "ABCD"
+string b = "AEBD"
+LCS("ABCD", "AEBD") = 1 + LCS("ABC", "AEB")
+```
+`(ABCD와 AEBD의 길이) = (ABC, AEB를 비교했을 때의 길이 + 1)`
+
+3. X와 Y의 문자가 다를 경우
+```
+LCS("ABC", "AEB") = MAX(LCS("AB", "AEB"), LCS("ABC", "AE"))
+```
+(AB, AEB 길이)와 (ABC,AE 길이) 중 큰 값을 (ABC, AEB 길이)에 대입한다.  
+
+이러한 3가지를 코드로 나타내면
+```
+for(int i=1;i<=A.length;i++) { 
+	for(int j=1;j<=B.length;j++) { 
+		if (A[i-1] == B[j-1]) { 
+			LCS[i][j] = LCS[i-1][j-1] + 1; 
+		} 
+		else { 
+			LCS[i][j] = Math.max(LCS[i][j-1], LCS[i-1][j]); 
+		}
+	}
+}
+```
+
+두 문자열의 각 문자를 비교하지 않고 선행 문자를 끼고 문자열로써 비교를 하는 것이다. 따라서 LCS 배열 마지막에는 LCS의 길이를 볼 수 있게 된다.  
+
+추가적으로, LCS에 해당하는 부분 수열을 알고 싶다면 표로 생각해보자. LCS에서 DP와 같이 전의 값을 이용해서 값을 찾아낸다. 이 때 값이 변하는 구간은 항상 대각선으로 변하게 된다. 따라서, 대각선인 시점을 체크해서 그 전까지는 같은 수열을 갖다가 대각선 이후로 수열이 바뀌는 것을 볼 수 있다. 이것을 코드로 봐보자.
+
+```
+for (int i = 1; i <= A.length; i++) {
+    for (int j = 1; j <= B.length; j++) {
+        if (A[i - 1] == B[j - 1]) {
+            LCS[i][j] = LCS[i - 1][j - 1] + 1;
+            solution[i][j] = "diagonal";
+        }
+		else {
+            LCS[i][j] = Math.max(LCS[i][j - 1], LCS[i - 1][j]);
+
+            if (LCS[i][j] == LCS[i - 1][j]) 
+                solution[i][j] = "top";
+            else 
+                solution[i][j] = "left";
+            
+        }
+    }
+}
+
+int a = A.length;
+int b = B.length;
+
+while(solution[a][b] != null) {
+    if (solution[a][b] == "diagonal") {
+        sb.append(A[a-1]);
+        a--;
+        b--;
+	}
+    else if (solution[a][b] == "top") 
+        a--;
+    else if (solution[a][b] == "left") 
+        b--;
+}
+sb.reverse.toString(); // 최장 공통 부분 수열 리스트
+```
+
+여기서 여러 개의 문자열을 비교할려면 배열을 늘려주자.
+
+---
