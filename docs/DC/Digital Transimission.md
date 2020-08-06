@@ -5,7 +5,7 @@ sidebar: auto
 ## Line coding  
 Binary data를 Digital signal로 변환하는 과정  
 Signal level, data level  
-![signal,data-level](/images/Data_Communication/signal,data-level.JPG)  
+![signal,data-level](/TIL/images/Data_Communication/signal,data-level.JPG)  
 
 Line coding schemes
 ### Unipolar  
@@ -26,7 +26,7 @@ Polar가 4가지 종류로 나뉘어진다.
 		1 : voltage level을 역으로 바꿈  
 		0 : voltage 변화 x  
 		NRZ-L보다는 동기화가 발전했다.  
-![NRZ](/images/Data_Communication/NRZ.JPG)  
+![NRZ](/TIL/images/Data_Communication/NRZ.JPG)  
 
 	2) RZ (Return to Zero)  
 	동기화 문제를 해결하기 위해 생긴 방법으로, 각 비트에 있어서 Signal change bit을 둔다. 3가지 value을 갖되 zero는 동기화를 위한 value이다.  
@@ -38,11 +38,11 @@ Polar가 4가지 종류로 나뉘어진다.
 	0 : positive-to-negative  
 	1 : negative-to-positive  
 	RZ와 비슷하나, value 중 zero가 없음  
-![Manchester](/images/Data_Communication/Manchester.JPG)  
+![Manchester](/TIL/images/Data_Communication/Manchester.JPG)  
 	4) Differential Manchester  
 	0 : additional transition  
 	1 : no transition  
-![Differential-Manchester](/images/Data_Communication/Differential-Manchester.JPG)  
+![Differential-Manchester](/TIL/images/Data_Communication/Differential-Manchester.JPG)  
 	장점 : 1이 들어오면 한번 바뀐다.  
 
 ### Bipolar  
@@ -62,14 +62,14 @@ DC components
 
 ### Self-synchronization (동기화문제)  
 receiver의 bit interval이 정확하지 않으면 문제가 생길 수 있다.
-![lack_of_synchronization](/images/Data_Communication/lack_of_synchronization.JPG)  
+![lack_of_synchronization](/TIL/images/Data_Communication/lack_of_synchronization.JPG)  
 동기 시스템은 sender와 receiver clock을 맞추고, 비동기 시스템은 signal에 해당 정보가 필요하다.  
 
 ## Block coding  
 line coding이 동기화 문제가 있거나 (NRZ에서 0이나 1이 연속된 경우) bandwidth가 절반만 쓰인다.(RZ 계속 0으로 바뀌어 B/W 절반쓰임)  
 이러한 문제를 해겷하기 위해 block으로 보낸다는 생각이다. 먼저 m bit 그룹들로 나눈다. 그 다음 m bit 그룹들을 n bit 그룹들로 또 나눈다. 이러한 방식들은 연속적인 1과 0을 없앤다. 그다음 line coding해서 전송한다.  
 대표적인 방법 4B/5B으로, 4bit을 5bit으로 바꿔줘야하는데 16개 중 32개에 매핑해주며, 안 쓰인 16개는 버린다. 매핑해주는 방법은 연속된 1이나 0이 3개 이상인 경우는 사용하지 않는다.  
-![block_coding](/images/Data_Communication/block_coding.JPG)  
+![block_coding](/TIL/images/Data_Communication/block_coding.JPG)  
 4B/5B 방법은 시작 부분에 0으로 시작하고 끝 부분이 0이 두개 이상 나오는 경우가 Worst case이다. 따라서 0이 3개 초과해서 나오지 않는다.  NRZ-I가 이 방법을 사용하며, Bandwidth가 20% 더 필요하다는 단점이 있다. Fast Ethernet이 이 방법을 사용한다.  
 8B/10B느 방법은 4B/5B와 비슷하지만 오류가 더 적으므로 Gigabit Ethernet에서 쓰인다.  
 8B/6T 방법은 앞에서의 방법과는 달리 bandwidth를 낭비하지 않지만 level을 더 쓴다. 8 bit 그룹을 6 symbol code로 바꾼다. signal level이 3개로 2^8 -> 3^6개로 늘어난다.
@@ -81,7 +81,7 @@ analog signal을 sampling하여 digital전송함
 PCM(Pulse Code Modulation)  
 PAM을 기반으로 하나, Quantization(양자화 - 노이즈가 강해짐)를 통해서 Binary data로 바꾼다. PAM -> Quantization -> binary encoding -> line coding  
 Sign magnitude사용해서 Binar encoding 한다. Block coding 후 Line coding (NRZ-L)을 한다.  
-![PCM](/images/Data_Communication/PCM.JPG)  
+![PCM](/TIL/images/Data_Communication/PCM.JPG)  
 
 Sampling rate : Nyquist theorem  
 **반드시 origianl signal의 가장 높은 주파수 두배 이상이 되어야한다.**  
