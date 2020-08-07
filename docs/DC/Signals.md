@@ -10,7 +10,7 @@ sidebar: auto
 
 Square wave : 여러 사인파(harmonic)를 합치게 되면 직사각형 신호와 비슷하게 나온다.  
 
-![Transmission_mediun](./images/Data_Communication/Transmission_mediun.JPG)  
+![Transmission_mediun](/image/Data_Communication/Transmission_mediun.JPG)  
 **Bandwidth** : medium이 통과시킬 수 있는 주파수의 범위(signal의 절반이상을 통과 시키는 경우, highest - lowest)  
 medium의 bandwidth와 signal의 bandwidth가 일치 할 수록 데이터의 손실이 줄어든다.  
 

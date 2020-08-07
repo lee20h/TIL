@@ -19,27 +19,27 @@ Carrier signal
 ## **ASK(Amplitude Shift Keying)**  
 Carrier signal의 amplitude을 올렸다가 내렸다 하므로, Noise에 약하다는 단점이 있다. Bandwidth = (1 + d) * N_baud (d : modulation preocess)  
 **baud rate == bit rate**  
-![ASK](./images/Data_Communication/ASK.JPG)  
+![ASK](/TIL/images/Data_Communication/ASK.JPG)  
 진폭을 기준으로 한다.  
-![ASK_BW](./images/Data_Communication/ASK_BW.JPG)  
+![ASK_BW](/TIL/images/Data_Communication/ASK_BW.JPG)  
 bandwidth = N_baud  
 
 ## **FSK (Frequency Shift Keying)**  
 Carrier signal의 주파수를 바꾸므로 Noise의 문제가 없다. 좋은 주파수 대역이 정해져 있다.  
 **baud rate == bit rate**  
-![FSK](./images/Data_Communication/FSK.JPG)  
-![FSK_BW](./images/Data_Communication/FSK_BW.JPG)
+![FSK](/TIL/images/Data_Communication/FSK.JPG)  
+![FSK_BW](/TIL/images/Data_Communication/FSK_BW.JPG)
 Bandwidth = f_c1 - f_c0 + N_baud  
 Bandwidth가 많이 필요하다.  
 
 ## **PSK (Phase Shift Keying)**  
 Carrier signal의 위상을 바꾼다. 0 : zero 1 : inverse  
-![PSK](./images/Data_Communication/PSK.JPG)  
+![PSK](/TIL/images/Data_Communication/PSK.JPG)  
 PSK의 특징은 noise에 강하며, Bandwidth가 많이 필요하지 않아 ASK랑 같다.  
 bit 수를 늘린 2-PSK는 ASK와 bit rate가 같지만 4-PSK, 8-PSK는 2bit, 3bit로 늘어난다.  
 bandwidth = N_baud (ASK의 Bandwidth와 같다.)
 4-PSK (Q-PSK)  
-![Q-PSK](./images/Data_Communication/Q-PSK.JPG)  
+![Q-PSK](/TIL/images/Data_Communication/Q-PSK.JPG)  
 | Dibit | Phase |
 |-------|-------|
 | 00 | 0 |
@@ -50,7 +50,7 @@ bandwidth = N_baud (ASK의 Bandwidth와 같다.)
 ## QAM (Quadraturer Amplitude modulation)  
 ASK와 PSK을 조합해서 사용한다. Bandwidth가 ASK와 PSK와 같다. 하지만 ASK에서 Noise 문제가 발생할 수 있다.  
 4-QAM, 8-QAM  
-![QAM](./images/Data_Communication/QAM.JPG)  
+![QAM](/TIL/images/Data_Communication/QAM.JPG)  
 여러 방식이 가능하다. Bit rate는 Baud rate에 bit수를 곱해주면 된다.  
 | Modulation | Units | Bits/Baud | Baud rate | Bit Rate |
 |-------|-------|-------|-------|-------|

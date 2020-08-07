@@ -48,7 +48,7 @@ sidebar: auto
 어휘분석은 토큰으로 나눠서 분석
 구문분석은 토큰들을 파스트리로 변환해서 분석  
 
-![Compilation](./images/Program_Langauge/Compilation.JPG)
+![Compilation](/image/Program_Langauge/Compilation.JPG)
 
 컴파일 순서  
 컴파일-링킹-로딩-실행  

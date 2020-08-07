@@ -582,3 +582,86 @@ sb.reverse.toString(); // 최장 공통 부분 수열 리스트
 여기서 여러 개의 문자열을 비교할려면 배열을 늘려주자.
 
 ---
+
+- 7日  
+
+어제 공부하고 정리한 LCS을 토대로 LCS 문제를 풀어보았다.  
+
+5582. 공통 부분 문자열
+```
+for (int i=1; i<=asize; i++) {
+	for (int j=1; j<=bsize; j++) {
+		if(a[i-1] == b[j-1]) {
+			dp[i][j] = dp[i-1][j-1] + 1;
+		}
+		ans = max(ans,dp[i][j]);
+	}
+}
+```
+문자 하나하나를 비교하며 같은 경우 dp의 이전 대각선 방향의 값을 1을 더하는 연산을 반복해서 공통 부분 문자열의 갯수를 세주었다.  
+
+15482. 한글 LCS  
+```
+#include <bits/stdc++.h>
+using namespace std;
+
+char str1[3027];
+char str2[3027];
+int board[1005][1005];
+
+bool check(int i, int j) {
+	if (str1[i * 3] == str2[j * 3] && str1[i * 3 + 1] == str2[j * 3 + 1] && str1[i * 3 + 2] == str2[j * 3 + 2]) return true;
+	return false;
+}
+
+int main() {
+	scanf("%s %s", str1, str2);
+	int len1 = strlen(str1) / 3;
+	int len2 = strlen(str2) / 3;
+	for (int i = 1; i <= len1; i++) {
+		for (int j = 1; j <= len2; j++) {
+			if (check(i - 1, j - 1)) board[i][j] = board[i - 1][j - 1] + 1;
+			else board[i][j] = max(board[i - 1][j], board[i][j - 1]);
+		}
+	}
+	printf("%d", board[len1][len2]);
+	return 0;
+}
+```
+이 문제의 경우에는 전체 소스를 보아야한다. 왜냐 하면 다른 소스를 참고했기 때문이다. 먼저 영문을 사용하듯이 LCS을 사용했는데 내 컴파일러 환경에서는 한글을 2byte로 세서 크기가 2배 정도 늘어나 있었다. 따라서 알고리즘을 다 돌린 후 마지막에 2를 나눠서 구하면 테스트 케이스 값이 전부 정확히 나와서 제출을 했으나 계속 오답이였다. 따라서 계속 해보다가 질문을 찾아보니 BOJ상에서는 유니코드로 3byte를 차지한다는 것을 알게되어 같은 코드에서 3배로 했으나 답이 계속 안 나와서 해당 질문자의 코드를 조금 고쳐서 사용해보았다. C로 짠 코드와 C++로 짠 코드에서 한글의 byte 차이가 나는지 궁금하다.  
+
+9252. LCS 2, 1958 LCS 3  
+```
+for (int i=1; i<=n; i++) {
+	for (int j=1; j<=m; j++) {
+		if(a[i-1] == b[j-1])  {
+			dp[i][j] = dp[i-1][j-1] + 1;
+			LCS[i][j] += LCS[i-1][j-1] + a[i-1];
+		}
+		else  {
+			dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+			if(dp[i][j] == dp[i-1][j])
+				LCS[i][j] = LCS[i-1][j];
+			else
+				LCS[i][j] = LCS[i][j-1];
+		}
+	}
+}
+-------------------------------------------
+for (int i=1; i<=asize; i++) {
+	for (int j=1; j<=bsize; j++) {
+		for (int k=1; k<=csize; k++) {
+			if(a[i-1] == b[j-1] && b[j-1] == c[k-1])
+				dp[i][j][k] = dp[i-1][j-1][k-1] + 1;
+			else {
+				dp[i][j][k] = max(max(dp[i-1][j][k], dp[i][j-1][k]), dp[i][j][k-1]);
+			}
+		}
+	}
+}
+```
+LCS 2의 경우에는 LCS의 수열을 보여주는 것이고 LCS 3의 경우에는 문자열이 늘어났을 경우이다. 이 때 LCS의 수열을 보여주는 것은 어제 공부 했던거와 같이 할려했으나 코드를 작성 중에 포문 속에 같이 찾게 되면 시간을 더 줄일 수 있을 거 같아서 만약 찾게 되면 똑같이 대각선의 수열을 뒤에 붙이지만 찾지 못한 경우 해당 내용에서 DP 배열의 값을 비교해서 더 큰 쪽이 LCS가 진행 중이므로 해당 좌표의 LCS을 현재 좌표에 넣어주었다.  
+
+문자열이 늘어난 LCS3의 경우에는 똑같이 삼중포문을 써서 배열 하나를 늘려, 다 같은 경우와 아닌 경우를 나눠서 똑같이 LCS의 수를 구해주었다.  
+
+---

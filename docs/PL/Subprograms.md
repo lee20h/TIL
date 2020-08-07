@@ -62,7 +62,7 @@ Semantics Model
 2) Out mode
 3) Inout mode  
 
-![Parameter-Passing](./images/Program_Language/Parameter-Passing.JPG) 
+![Parameter-Passing](/TIL/images/Program_Language/Parameter-Passing.JPG) 
 대부분은 명시해서 사용한다. int x out y inout z와 같이 명시한다. C언어에서는 In mode만 지원한다. 하지만 Pointer을 이용해서 극복한다.  
 
 ### **구현**  
@@ -122,7 +122,7 @@ swap(temp,value7,value9);
 ```  
 자유도가 증가하며 **Textual substitution**가 일어난다.  
 
-![Parameter-Passing-Methods](./images/Program_Language/Parameter-Passing-Methods.JPG)  
+![Parameter-Passing-Methods](/TIL/images/Program_Language/Parameter-Passing-Methods.JPG)  
 C와 C++에서 다차원 배열을 Formal Parameter로 받아야하는 경우 `void f(int v[][10])`이런 식으로 뒤에 사이즈를 명시해야 stack에서 배열 크기만큼 할당할 수 있다.  
 해결법으로 배열의 주소값과 차원별로 사이즈를 보내주는 방식으로 할 수 있다.  
 ```
@@ -234,8 +234,8 @@ Caller와 Callee가 있을 때 subprogram은 호출 후 Callee가 끝나야 반�
 Quasi-concurrent execution이라며 동시실행한다고 보기도 한다. 
 
 Coroutine을 이용해서 가능한 실행 흐름
-![Coroutine](./images/Program_Language/Coroutine.JPG)  
+![Coroutine](/TIL/images/Program_Language/Coroutine.JPG)  
 이런 식으로 A -> B -> A 이런식으로 흘러갈 수 있다.  
 
-![Coroutine-Loop](./images/Program_Language/Coroutine-Loop.JPG)
+![Coroutine-Loop](/TIL/images/Program_Language/Coroutine-Loop.JPG)
 Loop가 있어도 똑같이 진행된다고 생각하면 된다.  
