@@ -31,5 +31,21 @@ exports.DC_list = [
     'DC/Network Models.md',
     'DC/Signals.md',
     'DC/Digital Transimission.md',
-    'DC/Analog Transmission.md'
+    'DC/Analog Transmission.md',
+    'DC/Multiplexing.md',
+    'DC/Transmission Media.md',
+    'DC/Circuit Switching and Telephone Network.md',
+    'DC/Error Detection and Correction.md',
+    'DC/Data Link Control and Protocols.md',
+    'DC/Multiple Access.md',
+    'DC/Wireless LANs.md',
+    'DC.Connecting LANs, Backbone Networks, and Virtual LANs.md'
+]
+
+exports.JS_list = [
+    'JS/Modern JavaScript.md'
+]
+
+exports.DB_list = [
+    'DB/Database.md'
 ]

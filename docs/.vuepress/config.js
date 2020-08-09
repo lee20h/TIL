@@ -10,19 +10,27 @@ module.exports = {
     sidebar: [
       {
         title: "Algorithm",
-        children: CONST.AlgorithmList,
+        children: CONST.AlgorithmList
       },
       {
         title: "Operating_System",
-        children: CONST.OS_List,
+        children: CONST.OS_List
+      },
+      {
+        title: "JavaScript",
+        children: CONST.JS_list
+      },
+      {
+        title: "DataBase",
+        children: CONST.DB_list
       },
       {
         title: "Program_Language",
-        children: CONST.PL_list,
+        children: CONST.PL_list
       },
       {
         title: "Data_Communication",
-        children: CONST.DC_list,
+        children: CONST.DC_list
       }
     ],
     nav: [
