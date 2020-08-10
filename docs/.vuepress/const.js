@@ -39,7 +39,7 @@ exports.DC_list = [
     'DC/Data Link Control and Protocols.md',
     'DC/Multiple Access.md',
     'DC/Wireless LANs.md',
-    'DC.Connecting LANs, Backbone Networks, and Virtual LANs.md'
+    'DC/Connecting LANs, Backbone Networks, and Virtual LANs.md'
 ]
 
 exports.JS_list = [
