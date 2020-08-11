@@ -1550,3 +1550,629 @@ html
 [예시 참고](https://iseongho.github.io/posts/node-template-engine-pug/)  
 
 ---
+
+- 11日  
+
+# Express DB사용  
+
+- MySQL
+```js
+npm install mysql
+```
+```js
+var mysql      = require('mysql');
+var connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'dbuser',
+  password : 's3kreee7'
+});
+
+connection.connect();
+
+connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
+  if (err) throw err;
+  console.log('The solution is: ', rows[0].solution);
+});
+
+connection.end();
+```
+- MongoDB
+```js
+npm install mongodb
+```
+```js
+var MongoClient = require('mongodb').MongoClient;
+
+MongoClient.connect('mongodb://localhost:27017/animals', function(err, db) {
+  if (err) {
+    throw err;
+  }
+  db.collection('mammals').find().toArray(function(err, result) {
+    if (err) {
+      throw err;
+    }
+    console.log(result);
+  });
+});
+```
+- PostgreSQL
+```js
+npm install pg-promise
+```
+```js
+var pgp = require("pg-promise")(/*options*/);
+var db = pgp("postgres://username:password@host:port/database");
+
+db.one("SELECT $1 AS value", 123)
+    .then(function (data) {
+        console.log("DATA:", data.value);
+    })
+    .catch(function (error) {
+        console.log("ERROR:", error);
+    });
+```
+- SQLite
+```js
+npm install sqlite3
+```
+```js
+var sqlite3 = require('sqlite3').verbose();
+var db = new sqlite3.Database(':memory:');
+
+db.serialize(function() {
+
+  db.run('CREATE TABLE lorem (info TEXT)');
+  var stmt = db.prepare('INSERT INTO lorem VALUES (?)');
+
+  for (var i = 0; i < 10; i++) {
+    stmt.run('Ipsum ' + i);
+  }
+
+  stmt.finalize();
+
+  db.each('SELECT rowid AS id, info FROM lorem', function(err, row) {
+    console.log(row.id + ': ' + row.info);
+  });
+});
+
+db.close();
+```
+
+# ORM (Sequelize)
+node.js를 이용해 웹 서버를 구축할 때 데이터베이스를 사용하게 된다. 이 때 쿼리문을 다 직접 작성하지 않고 간편하게 다룰 수 있게 해주는 것이 `ORM`이라고 한다. `ORM`은 객체와 관계형 데이터베이스의 관계를 매핑 해주는 도구로 자바스크립트만을 이용해서 쿼리를 데이터베이스에게 보내 줄 수 있다.  
+
+그 중 sequelize라는 라이브러리를 보게 될 것이다.  
+## 설치
+```js
+npm install sequelize // 시퀄라이즈 설치
+npm install mysql2 // mysql2 설치
+npm install -g sequelize-cli // sequelize-cli를 전역으로 설치한다.
+```
+
+## 모델
+### 1. 직접 작성
+```
+sequelize init
+```
+해당 명령어를 통해 models 폴더 속 `index.js`가 만들어진다.
+```js
+// index.js 파일
+"use strict";
+
+const fs = require("fs");
+const path = require("path");
+const Sequelize = require("sequelize");
+const basename = path.basename(__filename);
+const env = process.env.NODE_ENV || "development";
+const config = require(__dirname + "/../config/config.json")[env];
+const db = {};
+
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    config
+  );
+}
+
+fs.readdirSync(__dirname)
+  .filter(file => {
+    return (
+      file.indexOf(".") !== 0 &&
+      file !== basename &&
+      file.slice(-3) === ".js"
+    );
+  })
+  .forEach(file => {
+    const model = sequelize["import"](path.join(__dirname, file));
+    db[model.name] = model;
+  });
+
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+```
+
+`index.js` 파일에서 반복문을 돌면서 models 폴더 속 파일을 읽어가며 모델로 정의한다. 원하는 테이블 이름을 파일의 이름으로 js 파일로 만들어 준 뒤 모델을 정의하게되면 해당 테이블이 만들어진다.  
+
+모델을 정의하는 메소드는 `define()`이다.
+```js
+sequelize.define('객체 이름', 스키마 정의, 테이블 설정)
+```
+과 같이 사용하면 된다.  
+
+```js
+module.exports = (sequelize, DataTypes) => {
+  return sequelize.define(
+    "messages", // 테이블 이름
+    {
+      // 스키마 정의
+      messageContent: {
+        // column 이름
+        type: DataTypes.STRING(500), // 데이터 타입 설정
+        allowNull: false // null 허용 설정
+      },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      roomId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      }
+    },
+    {
+      // 테이블 옵션
+      timestamps: true,
+      underscored: true,
+      paranoid: true
+    }
+  );
+};
+```
+해당 코드와 같이 `define()` 메소드를 이용해 테이블을 생성해 주고 있다. 테스트 시엔 `sequelizae.sync()`을 작성하고 코드 실행 후 mysql에 접속하여 테이블을 확인하면 된다. 전에 설명과 같이 models에 js파일들을 원하는 이름으로 생성하여 테이블 생성하면 그대로 얻어 낼 수 있다.
+
+### 2.CLI로 정의
+models 폴더에 직접 작성하지 않고 터미널 창에서 명령어를 통해 테이블을 정의하는 방법이다. 이때의 sequelize-cli라는 것은 `sequelize command line interface`의 준말이다. 따라서 터미널에서 명령어를 통해 데이터베이스 작업을 할 수 있게 만들어준다.
+기본 문법
+```js
+sequelize model:create --name TABLE_NAME  --attributes "COLUMN1:type, COLUMN2:type, COLUMN3:type"
+```
+
+유저의 모델
+```js
+sequelize model:create --name user --attributes nickName: string, passWord: string
+```
+
+이 때 migrations 폴더에는 현재 시간을 이름으로 갖는 migration 파일이 생성된다. 그리고 models 폴더에는 `user.js` 파일이 생성된다. 이 `user.js` 파일은 위에서 직접 작성한 파일과 비슷하게 된다. 다른 점은 테이블의 이름이 복수형으로 저장된다는 점이다.  
+```js
+"use strict";
+module.exports = (sequelize, DataTypes) => {
+  const user2 = sequelize.define(
+    "user2",
+    {
+      user_id: DataTypes.STRING,
+      password: DataTypes.STRING
+    },
+    {}
+  );
+  user2.associate = function(models) {
+    // associations can be defined here
+  };
+  return user2;
+};
+```
+이후 옵션 설정은 `user.js` 파일에서 직접 설정해야한다. 이후 설정 적용시에는 user table을 drop 후 `sequelize.sync()`을 실행시켜 새로 생성한다. 이때 옵션을 수정했다면 migrations 폴더에 있는 user/migrations 파일 또한 수정해주어야한다. 이후 마지막으로 명령어를 통해 migrate할 수 있다.
+```
+sequelize db:migrate
+```
+
+# Logger API : Morgan
+## 설치
+
+```js
+$ npm install morgan
+```
+
+## 사용
+
+```js
+var logger = require('morgan');
+...
+app.use(logger(":remote-addr"), function(req, res, next){
+  next();
+});
+ 
+app.use(logger(":method"), function(req, res, next){
+  next();
+});
+ 
+app.use(logger(":url"), function(req, res, next){
+  next();
+});
+ 
+app.use(logger(":date"), function(req, res, next){
+  next();
+});
+ 
+app.use(logger(":status"), function(req, res, next){
+  next();
+});
+...
+```
+
+## 토큰
+| Token | Content |
+|---|---|
+| :req[header] | request의 특정 HTTP |
+| :res[header] |	response의 특정 HTTP |
+| :http-version | HTTP version |
+| :response-time | 응답시간 |
+| :remote-addr | 사용자의 IP |주소
+ :date | request 날짜/시간| 
+| :method | request에 대한  HTTP method |
+| :url | 요청된 URL |
+| :referrer | 현재 URL을 참고하는 URL |
+|:user-agent | User-agent 서명 |
+| :status | HTTP 상태 |
+
+## 로그 파일로 저장
+'default', 'short', 'tiny', 'dev' 4가지 포맷을 지원한다.
+```js
+...
+var fs = require('fs');
+...
+app.use(logger({
+  format: 'dev',
+  stream: fs.createWriteStream('app.log', {'flags': 'w'})
+}));
+...
+```
+이 때 `app.log`는 이름일뿐 수정 가능하며 저장 위치는 Express 앱의 root이다.
+
+# CORS (Cross Origin Resource Sharing)
+
+## 이슈
+
+이번 프로젝트를 예로 들면 FE단의 vue.js에서는 localhost:8080 즉, localhost의 8080의 포트를 사용하고 BE단의 express.js에서는 localhost:3000으로 3000 포트를 사용한다. 이 때  서로 다른 port를 listen 중에  FE단에서 BE단으로 ajax 요청을 보낼려고 하면 Cross Domain 이슈가 일어나게 된다.
+
+CORS 사용하지 않은 상황에서 Cross Domain 오류 메시지
+
+```js
+XMLHttpRequest cannot load http://xx.xx.xx.xx/xxx.
+Request header field Content-Type is not allowed by Access-Control-Allow-Headers. 
+```
+
+## 설치
+
+```jsx
+npm install cors
+```
+
+## 사용
+
+**1. 모든 도메인 요청 활성화(모든 작업 CORS 허용 테스트용)**
+
+```jsx
+var express = require('express')
+var app = express();
+var cors = require('cors')
+
+app.use(cors());
+```
+
+**2. 싱글 라우트에 대한 도메인 활성화(특정 작업에 대해서만 CORS허용)**
+
+```jsx
+var express = require('express');
+var app = express();
+var cors = require('cors');
+// ***********  products/:id 에 대한 url 라우팅시에만  cors 를 허용 
+app.get('/products/:id', cors(), function(req,res,next) {
+res.json({msg:'This is CORS-enabled for a single Route'});
+})
+```
+
+**3. CORS Config settings(setting 값을 수정하여서 CORS 허용 IP지정)**
+
+```jsx
+var express = require('express');
+var app = express();
+var corsOptions = {
+	origin :'http://example.com',
+	optionsSuccessStatus:200; // IE 11이나 여러 스마트 TV들에 대한 확인 
+};
+
+app.get('/products/:id',cors(corsOptions),function(req,res,next){
+res.json({msg:' This is CORS-enabled for only example.com.'});
+});
+```
+
+**4. CORS Dynamic Origin 동적으로 읽어서 사용**
+
+whitelist 배열을 push 로 추가하여서 실시간으로 허용 및 제거 가능
+
+```jsx
+var express = require('express');
+var app = express();
+var whitelist = ['http://example1.com','http://example2.com']
+var corsOptions = {
+	origin: function(origin,callback)    {
+		if(whitelist.indexOf(origin) !==-1){
+			callback (null,true);
+		} 
+		else{
+			callback (new Error('Not allowed by CORS'))
+		}
+	}
+}
+app.get('/products/:id', cors(corsOptions),function(req,res,next){
+res.json({msg: 'This is CORS-enabled for a whitelisted domain.'})
+});
+```
+
+# Path Module
+Path 모듈은 파일과 Directory 경로 작업을 위한 Utility를 제공한다.
+
+## **Path 모듈의 주요 메소드들**
+
+### **1.path.normalize**
+
+normalize에 Path를 넣으면 알아서 경로를 normalize해서 return 해준다.
+
+```jsx
+const path = require("path");
+let myPath = path.normalize("/this/is//a//my/.././path/normalize");
+console.log(myPath); // /this/is/a/path/normalize
+```
+
+위의 경우 ../는 상위 디렉토리로 가기 때문에 my가 생략된 것을 볼 수 있다.
+
+### **2. path.join([...paths])**
+
+path.join은 String을 주게 되면 플랫폼별(windows냐 mac이냐) 구분자를 사용해서 경로를 정규화해서 리턴해준다.
+
+```jsx
+const path = require("path");
+myPath = path.join("/this", "is", "a", "////path//", "join");
+console.log(myPath); // /this/is/a/path/join
+```
+
+플랫폼에 따라 구분자는 달라지므로 윈도우라면 백슬래시(**\**)가 들어갈 것이다.
+
+### **3.path.resolve([...paths])**
+
+path.resolve는 path.join과 path.normalize를 합친 것 같은 효과이다.
+
+이것은 주어진 문자열을 cd를 해서 최종 마지막 폴더까지 간 후 pwd(Print Working Directory)를 한 것과 동일하다. 그리고 문서에 따르면 절대 경로가 만들어질 때까지 prepend된다.
+
+그리고 만약 주어진 path를 모두 사용했음에도 절대 경로를 못만들었다면, cwd(Current working Directory)를 사용한다.
+
+```jsx
+const path = require("path");
+myPath = path.resolve("/this", "is/a", "../.", "path", "resolve");
+console.log(myPath); // /this/is/path/resolve
+myPath = path.resolve("wwwroot", "static_files/png/", "../gif/image.gif");
+console.log(myPath); // /Users/yohan/Desktop/MyTest/wwwroot/static_files/gif/image.gif
+/*
+이 경우에는 주어진 값만으로는 절대경로를 만들 수 없으므로 cwd를 사용한다.
+*/
+```
+
+### **4. path.dirname(path), path.basename(path[, ext])**
+
+path.dirname은 현재 작업하고 있는 디렉토리의 이름을 출력한다.반면 path.basename은 파일이름을 출력한다.만약 basename에 옵션값을 주게 되면 뒤의 확장자를 제거할 수도 있다.
+
+```jsx
+const path = require("path");
+myPath = path.dirname("/foo/bar/baz/asdf/image.png");
+console.log(myPath); ///foo/bar/baz/asdf
+myPath = path.basename("/foo/bar/baz/asdf/image.png");
+console.log(myPath); //image.png
+myPath = path.basename("/foo/bar/baz/asdf/image.png", ".png");
+console.log(myPath); //image
+```
+
+### **5.path.parse(path)**
+
+path.parse는 path를 말 그대로 파싱해준다.
+
+```jsx
+const path = require("path");
+myPath = path.parse("/home/user/dir/file.txt");
+console.log(myPath);
+// { root: '/',
+// dir: '/home/user/dir',
+// base: 'file.txt',
+// ext: '.txt',
+// name: 'file' }
+```
+
+이러한 메소드가 있지만 magicsora에서는 path 모듈과 `__dirname` 을 사용해서 현재의 경로를 사용하여 정적 경로와 접근했다.
+
+# Multer Module
+보통 JSON 형식으로 된 데이터는 AJAX로든 폼 태그로든 쉽게 업로드할 수 있습니다. 이미지 업로드를 도와주는 multer 모듈이 있다.
+
+## 설치
+
+```jsx
+npm install multer
+```
+
+## 예제
+
+```jsx
+const multer = require('multer');
+// 기타 express 코드
+const upload = multer({ dest: 'uploads/', limits: { fileSize: 5 * 1024 * 1024 } });
+app.post('/up', upload.single('img'), (req, res) => {
+  console.log(req.file); 
+});
+```
+
+이제 폼데이터나 폼 태그를 통해 업로드한 이미지를 올리면 `req.file`로 정보가 들어오고, **dest** 속성에 지정해둔 경로에 이미지가 저장된다. **limits** 속성은 선택 사항인데 여러 가지 제한을 걸 수 있다. 위에서는 파일 사이즈를 5MB로 제한했다. `upload.single('img')` 미들웨어를 라우터 콜백함수 전에 끼워넣은 것은 폼데이터의 속성명이 img이거나 폼 태그 인풋의 name이 img인 파일 **하나만** 받겠다라는 뜻이다. 이미지가 아닌 나머지 데이터는 그대로 `req.body`에 들어옵니다.
+
+만약 이미지를 하나가 아닌 여러 개를 받고 싶다 하면 `upload.array('키', 최대파일개수)` 하면 된다. `req.file` 대신 `req.files`에 정보가 담긴다.
+
+최종적으로 사용하는 코드는 대부분 아래의 예제와 같다.
+
+```jsx
+const path = require('path');
+const upload = multer({ 
+	storage: multer.diskStorage({ 
+		destination: function (req, file, cb) { 
+			cb(null, 'uploads/');
+	 },
+		filename: function (req, file, cb) { 
+			cb(null, new Date().valueOf() + path.extname(file.originalname));
+		}
+	}),
+});
+```
+
+진행 중인 프로젝트에서는 이런 식으로 구현했다.
+```jsx
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './uploads/');
+    },
+    filename: (req, file, cb) => {
+        const originalFileName = file.originalname.split('.');
+        let fileName = 'none';
+        if (originalFileName.length > 0) {
+            fileName = `${originalFileName[0]}-${Date.now()}.${originalFileName[1]}`;
+        }
+        cb(null, fileName)
+    }
+});
+const upload = multer({
+    storage: storage,
+})
+```
+
+# body-parser
+
+post로 요청된 body를 쉽게 추출할 수 있는 모듈이다. 추출된 결과는 request객체(IncomingMessage 타입)에 body 속성으로 저장된다. Magicsora에서는 URL-encoded form body parser만 사용한다.
+
+## 내장모듈와 다른점
+
+http모듈로만 post body를 파싱하려면,
+
+```jsx
+req.on('data', function(chunk) { body += chunk; }); 
+```
+
+와 같이 이벤트를 등록해야한다. 그다음에 인코딩처리를 해줘야한다.
+
+body-parser를 쓰면 좀 더 수월하다는 것을 볼 수 있다.
+
+```jsx
+bodyParser.urlencoded()
+```
+
+자동으로 req에 body속성이 추가되고 저장된다. 만약 urls에 접근하고싶다면, req.body.urls이다. 인코딩도 default로 UTF-8로 해준다.
+
+## urlencoded()의 옵션
+
+만약 아무 옵션을 주지 않는다면, body-parser deprecated undefined extended: provide extended option 같은 문구가 뜬다.
+
+```jsx
+.use(bodyParser.urlencoded({ extended: true or false })); 
+```
+
+extended 는 중첩된 객체표현을 허용할지 말지를 정하는 것이다. 객체 안에 객체를 파싱할 수 있게하려면 true.
+
+### extended 옵션에 대해
+
+- 참조문서 : [https://stackoverflow.com/questions/29960764/what-does-extended-mean-in-express-4-0/45690436#45690436](https://stackoverflow.com/questions/29960764/what-does-extended-mean-in-express-4-0/45690436#45690436)
+
+내부적으로 true 를 하면 qs 모듈을 사용하고, false 면 query-string 모듈을 사용한다. 이 두 모듈간의 차이에서 중첩객체 파싱여부가 갈린다. 예제는 참조문서의 stackoverflow 에 잘 나와있다.
+
+### req.body.hasOwnProperty is not a function 이슈
+
+- 참조문서 : [https://github.com/expressjs/express/issues/3264](https://github.com/expressjs/express/issues/3264)
+
+express generator 등오로 express 프로젝트를 세팅하면, app.js 에서 `app.use(express.urlencoded({extended: false}));` 가 보인다.
+
+위에서 언급했듯이, false면 querystring모듈을 사용하는데, querystring.parse는 object를 상속받지 않는다. 따라서 아래와 같은 이슈가 있을 수 있다.
+
+### 실제 예시 코드
+
+최근 프로젝트에서 사용한 body-parser 모듈은 `db.js` 에서 ajax 통신 post 방식으로 FE에서 책을 등록할 때 해당 책의 정보를 넘겨줄 때 사용한다. BE에서 ajax 통신을 받을 때 이러한 방식으로 사용했다. JSON형식으로 넘겨온 데이터를 조금 더 파싱하기 편한 형태로 만들기 위해서 body-parser 모듈을 사용했다. 요청 파라미터인 `req`에 `body` 로 쉽게 접근한다.
+
+```jsx
+router.post("/upload", upload.single('file'), (req, res) => {
+    //res.json({ file: req.file });
+    const name = req.body.name;
+    const auth = req.body.auth;
+    const pub = req.body.pub;
+    const price = req.body.price;
+    const image = req.file.filename;
+    book.create({
+        name: name,
+        auth: auth,
+        pub: pub,
+        price: price,
+        image: image
+    }).then(book => {
+        console.log("generated BOOK", book.name);
+    });
+    res.header("Access-Control-Allow-Origin", "*");
+});
+```
+
+# http-errors
+
+## 설치
+
+```jsx
+npm install http-errors
+```
+
+## 예시
+
+```jsx
+var createError = require('http-errors')
+var express = require('express')
+var app = express()
+
+app.use(function (req, res, next) {
+  if (!req.user) return next(createError(401, 'Please login to view this page.'))
+  next()
+})
+```
+
+error을 캐치하고 해당 에러를 에러코드에 맞춰서 에러를 처리할 수 있다.
+
+## 실제 예시 코드
+
+```jsx
+// catch 404(not found) and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
+});
+
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
+```
+
+프로젝트에서는 app이 404 에러코드(존재하지 않은 페이지)를 받으면 해당 에러를 처리해주고 next()을 통해서 다음 미들웨어 함수로 넘겨준다. 밑에 error handler 또한 에러가 있다면 메시지와 에러를 `res`객체에 담아서 보낸다.
+
+---

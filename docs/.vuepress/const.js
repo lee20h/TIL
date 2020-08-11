@@ -1,6 +1,9 @@
 exports.AlgorithmList = [
     'Algorithm/그래프.md',
     'Algorithm/문자열 검색.md',
+    'Algorithm/이분탐색.md',
+    'Algorithm/LCS.md',
+    'Algorithm/LIS.md',
     'Algorithm/NP.md',
     'Algorithm/정렬.md',
     'Algorithm/이항계수 페르마소정리.md',
@@ -48,4 +51,16 @@ exports.JS_list = [
 
 exports.DB_list = [
     'DB/Database.md'
+]
+
+exports.Express_list = [
+    'Express/Express.md',
+    'Express/Template Engine.md',
+    'Express/CORS.md',
+    'Express/Sequelize.md',
+    'Express/Path.md',
+    'Express/Multer.md',
+    'Express/Morgan.md',
+    'Express/Body-parser.md',
+    'Express/Http-errors.md'
 ]
