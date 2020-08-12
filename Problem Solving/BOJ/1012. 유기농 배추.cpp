@@ -1,53 +1,54 @@
-#include <iostream>
-#include <string.h>
+#include <bits/stdc++.h>
 using namespace std;
 
-bool check[50][50]= {false,};
-int arr[50][50] = {0,};
-int n, m;
-int dir[4] = {1,0,-1,0};
-int dir2[4] = {0,1,0,-1};
-void search(int sero, int garo) {
-	int x,y;
+const int MAX = 50;
+
+int farm[MAX][MAX];
+bool visited[MAX][MAX];
+int n, m, k, T;
+int pos[4] = {0, 0, 1, -1};
+int pos2[4] = {1, -1, 0, 0};
+
+void dfs(int y, int x) {
+	
 	for (int i=0; i<4; i++) {
-		x = garo + dir2[i];
-		y = sero + dir[i];
+		int posy = y + pos[i];
+		int posx = x + pos2[i];
 		
-		if (x<0 || x>=m || y<0 || y>=n) continue;
-		
-		if(arr[y][x] && !check[y][x]) {
-			check[y][x] = true;
-			search(y,x);
-		}
+		if(posy < 0 || posx < 0 || posy >= n || posx >= m) continue;
+		if(farm[posy][posx] == 1 && !visited[posy][posx]) {
+			visited[posy][posx] = true;
+			dfs(posy,posx);
+		} 
 	}
 }
 
 int main() {
-	int t;
-	int a;
-	int garo,sero;
-	int insect;
-	cin >> t;
-	for (int test=0; test<t; test++) {
-		cin >> m >> n >> a;
-		memset(arr,0,sizeof(arr));
-        memset(check,0,sizeof(check));
-		insect = 0;
-		for(int i=0; i<a; i++) {
-			cin >> garo >> sero;
-			arr[sero][garo] = 1;
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cin >> T;
+	while(T--) {
+		int insect = 0;
+		cin >> m >> n >> k;
+			
+		memset(farm, 0, sizeof(farm));
+		memset(visited, false, sizeof(visited));
+		
+		for (int i=0; i<k; i++) {
+			int y, x;
+			cin >> x >> y;
+			farm[y][x] = 1;
 		}
+		
 		for (int i=0; i<n; i++) {
 			for (int j=0; j<m; j++) {
-				if(arr[i][j] && !check[i][j]) {
+				if(farm[i][j] == 1 && !visited[i][j]) {
 					insect++;
-					check[i][j] = true;
-					search(i,j);
+					visited[i][j] = true;
+					dfs(i,j);
 				}
 			}
 		}
 		cout << insect << '\n';
 	}
-	
-	return 0;
 }
