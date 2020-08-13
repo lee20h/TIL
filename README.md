@@ -1,9 +1,10 @@
 # 📙 Today I Learned  
 ## 규칙  
-* 기억에 남는 내용 기록
+* 기억에 남는 내용 기록 후 웹에 정리
 * 쓸데없는 Commit 지양
 * markdown으로 작성
-* 1일 1문제(PS, SQL) 해결
+* 1일 1문제(PS, SQL)이상 해결
+* 문제 풀고 Problem Solving 폴더에 모으기
 
 ---  
 
@@ -2307,5 +2308,259 @@ void update(vector<long long> &tree, int node, int start, int end, int index, lo
 }
 ```
 리프 노드가 아닌 경우에는 자식도 변경해줘야 하기 때문에, `start != end`로 리프 노드인지 검사 해줘야 한다.
+
+---
+
+- 13日  
+
+# 세그먼트 트리를 이용한 문제풀이  
+[구간 합 구하기](https://www.acmicpc.net/problem/2042) ,[최솟값](https://www.acmicpc.net/problem/10868) ,[최솟값과 최댓값](https://www.acmicpc.net/problem/2357), [구간 곱 구하기](https://www.acmicpc.net/problem/11505)  
+
+## 구간 합 구하기
+```c++
+const int MAX = 1000000 + 1;
+
+long long arr[MAX];
+long long tree[4*MAX];
+
+long long init(int node, int start, int end) {
+    if (start == end) {
+        return tree[node] = arr[start];
+    } else {
+        return tree[node] = init(node*2, start, (start+end)/2) + init(node*2+1, (start+end)/2+1, end);
+    }
+}
+void update(int node, int start, int end, int index, long long diff) {
+    if (index < start || index > end) return;
+    tree[node] = tree[node] + diff;
+    if (start != end) {
+        update(node*2, start, (start+end)/2, index, diff);
+        update(node*2+1, (start+end)/2+1, end, index, diff);
+    }
+}
+long long sum(int node, int start, int end, int left, int right) {
+    if (left > end || right < start) {
+        return 0;
+    }
+    if (left <= start && end <= right) {
+        return tree[node];
+    }
+    return sum(node*2, start, (start+end)/2, left, right) + sum(node*2+1, (start+end)/2+1, end, left, right);
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, m, k;
+	cin >> n >> m >> k;
+	m += k;
+	
+    for (int i=0; i<n; i++) 
+    	cin >> arr[i];
+    		
+    init(1, 0, n-1);
+    
+    while (m--) {
+        int t1;
+        cin >> t1;
+        
+        if (t1 == 1) {
+        	int t2;
+        	long long t3;
+            cin >> t2 >> t3;
+            t2--;
+            long long diff = t3 - arr[t2];
+            arr[t2] = t3;
+            update(1, 0, n-1, t2, diff);
+        }
+		else if (t1 == 2) {
+            int t2, t3;
+            cin >> t2 >> t3;
+            cout << sum(1, 0, n-1, t2-1, t3-1) << '\n';
+        }
+    }
+}
+```
+가장 기본적인 문제로 세그먼트 트리를 각 범위의 합을 노드의 값으로 가지게 만들어준다. 따라서 `init()` 함수를 통해서 세그먼트 트리를 만들어주고 이후의 `update()` 함수와 `sum()` 함수로 원하는 기능을 구현해주었다.  
+
+`sum()` 함수의 경우에는 `init()` 함수와 비슷하되 그 범위의 값을 더해서 리턴하는 형식이며, `update()` 함수는 변경 값을 해당하는 배열 값을 빼서 두 값의 차이만큼을 diff 매개변수로 넘겨서 해당하는 범위에 값을 모두 diff만큼 더해준다. 리프 노드가 아닌 경우에는 자식도 변경해야하므로, `if(start != end)` 조건으로 리프 노드인지 체크 해주었다.  
+
+
+## 최솟값
+```c++
+const int MAX = 100000 + 1;
+const int INF = 1000000001;
+
+int arr[MAX];
+int tree[4 * MAX];
+
+int init(int node, int start, int end) {
+	if(start == end)
+		return tree[node] = arr[start];
+	else 
+		return tree[node] = min(init(node*2, start, (start+end)/2), init(node*2+1, (start+end)/2 +1, end));
+}
+
+int select(int node, int start, int end, int left, int right) {
+	if (left > end || right < start) 
+		return INF;
+	if (left <= start && end <= right)
+		return tree[node];
+	
+	return min(select(node*2, start, (start+end)/2, left, right), select(node*2+1, (start+end)/2+1, end, left, right));
+	
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, m;
+	cin >> n >> m;
+	for (int i=0; i<n; i++)
+		cin >> arr[i];
+	
+	init(1, 0, n-1);
+	
+	for (int i=0; i<m; i++) {
+		int a, b;
+		cin >> a >> b;
+		cout << select(1,0,n-1,a-1,b-1) << '\n';
+	}
+}
+```
+이전 문제인 구간 합 구하기와 비슷하게 세그먼트 트리 자료구조를 형성해서 푸는 문제로, 똑같이 하되, 최솟값을 구하기 위해서 `init()` 함수로 세그먼트 트리를 만들 때 최솟값을 리턴하게 하여 세그먼트 트리가 해당 범위의 최솟값을 노드 값으로 저장하게 했다. 또 `select()` 함수도 범위의 최솟값을 찾아서 리턴하게 만들었다.
+
+
+## 최솟값과 최댓값
+```c++
+const int INF = 2e9 + 1;
+const int MAX = 100000 + 1;
+
+int arr[MAX];
+int max_tree[4*MAX];
+int min_tree[4*MAX];
+
+int max_init(int node, int start, int end) {
+	if(start == end)
+		return max_tree[node] = arr[start];
+	else 
+		return max_tree[node] = max(max_init(node*2, start,(start+end)/2), max_init(node*2+1, (start+end)/2+1, end));
+}
+
+int min_init(int node, int start, int end) {
+	if(start == end)
+		return min_tree[node] = arr[start];
+	else 
+		return min_tree[node] = min(min_init(node*2, start,(start+end)/2), min_init(node*2+1, (start+end)/2+1, end));
+}
+
+int max_select(int node, int start, int end, int left, int right) {
+	if(left > end || right < start)
+		return 0;
+	if(left <= start && end <= right)
+		return max_tree[node];
+	
+	return max(max_select(node*2, start, (start+end)/2, left, right), max_select(node*2+1, (start+end)/2+1, end, left, right));
+}
+
+int min_select(int node, int start, int end, int left, int right) {
+	if(left > end || right < start)
+		return INF;
+	if(left <= start && end <= right)
+		return min_tree[node];
+	
+	return min(min_select(node*2, start, (start+end)/2, left, right), min_select(node*2+1, (start+end)/2+1, end, left, right));
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, m;
+	cin >> n >> m;
+	for (int i=0; i<n; i++)
+		cin >> arr[i];
+	
+	max_init(1,0,n-1);
+	min_init(1,0,n-1);
+	
+	for (int i=0; i<m; i++) {
+		int a, b;
+		cin >> a >> b;
+		cout << min_select(1,0,n-1,a-1,b-1) << ' ' << max_select(1,0,n-1,a-1,b-1) << '\n';
+	}
+}
+```
+이 문제는 최솟값 문제와 매우 비슷하다. 반대로 최댓값을 만들면 되나, pair을 통한 배열로 구현할 것인지 각자 세그먼트 트리를 범위의 최댓값을 넣는 트리와 최솟값을 넣는 트리로 두 가지를 나눠서 할 지 고민하였다.  
+
+문제에서 메모리가 충분해 보이므로 두 개의 트리를 만들어서 각자 함수를 통해서 구하도록 만들었다. 이 문제에 경우에는 앞에서 푼 두 문제를 응용하면 충분히 풀만 하였다.  
+
+처음에 세그먼트 트리를 이해하는 시간이 오래 걸렸지만 문제 해결에 있어서는 상당히 도움이 되는 자료구조다.
+
+## 구간 곱 구하기
+```c++
+#include <iostream>
+#include <vector>
+using namespace std;
+
+const int MAX = 1000000 + 1;
+const int DIV = 1000000007;
+
+int arr[MAX];
+int tree[4*MAX];
+
+long long init(int node, int start, int end) {
+	if(start == end)
+		return tree[node] = arr[start];
+	else
+		return tree[node] = init(node*2, start, (start+end)/2) * init(node*2+1, (start+end)/2+1, end) % DIV;
+}
+
+long long update(int node, int start, int end, int idx, int val) {
+	if(idx < start || end < idx)
+		return tree[node];
+	if(start == end)
+		return tree[node] = val;
+	
+	return tree[node] = update(node*2, start, (start+end)/2, idx, val) * update(node*2+1, (start+end)/2+1, end, idx, val) % DIV;
+}
+
+long long mul(int node, int start, int end, int left, int right) {
+	if(right < start || end < left)
+		return 1;
+	if(left <= start && end <= right)
+		return tree[node] ;
+		
+	return mul(node*2, start, (start+end)/2, left, right) * mul(node*2+1, (start+end)/2+1, end, left, right) % DIV;
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, m, k;
+	cin >> n >> m >> k;
+	for (int i=0; i<n; i++) {
+		cin >> arr[i];
+	}
+	init(1,0,n-1);
+	m += k;
+	while(m--) {
+		int a, b, c;
+		cin >> a >> b >> c;
+		if(a == 1) {
+			b--;
+			arr[b] = c;
+			update(1,0,n-1,b,c);
+		}
+		else if (a == 2) {
+			cout << mul(1,0,n-1,b-1,c-1) << '\n';
+		}
+	}
+}
+```
+해당 문제는 구간 합 구하기와 비슷하게 하면 될 것이라고 막연하게 생각했지만 발상을 꺾기가 어려웠다.  
+
+합 구하기와 비슷하게 하되 `update()` 함수에서 다른 문제와 달리 해야했다. 왜냐하면 다른 문제에서는 해당 값을 가지고 값을 갱신해도 상관이 없었다. 하지만 이 문제에서는 달랐다.  
+
+이미 모듈러 연산을 통해서 값이 줄어들어있으므로 또 해당 값을 가지고 갱신하면서 모듈러 연산을 하게되면 값이 변하게 된다. 따라서 `update()` 함수에서도 리프 노드부터 값을 새로 갱신을 하여 값을 얻어냈다.
 
 ---
