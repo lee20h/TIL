@@ -86,7 +86,7 @@ Static-scope일 때는 이미 정해져있기 때문에 offset을 찾기 쉽다.
 Chain_offset or nesting_depth란 static_link을 몇번 따라갔는가이다. pair로 정의하면 (chain_offset, local_offset)으로 정의하면 된다.  
 
 Ada의 예시
-```
+```r
 procedure Main_2 is
   X : Integer;
   procedure Bigsub is
@@ -138,7 +138,7 @@ non-local 변수에 대해 접근할려고 할 때 속도가 느려질 수 있�
 
 Block  
 example C
-```
+```c
 void f() {
 	{int temp;
 	temp = list[upper];

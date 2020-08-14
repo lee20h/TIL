@@ -123,7 +123,7 @@ enum 이름이 겹치는 경우
 장점 : 가독성 증가, 신뢰성 증가(컴파일러 체크 가능, 연산 불가)
 
 Reliability vs Writeability  
-```
+```cpp
 1) Reliability
 days nextDay(days d) {
     int i = d;
@@ -179,21 +179,21 @@ Python, Ruby, Lua는 배열끼리 붙이거나 원소를 집어 넣을 때만 �
 
 - Array Initialization  
 C, C++, C#, Java는  
-```
+```c#
 int list [] = {4, 5, 7, 83};
 ```  
 배열의 길이를 컴파일러가 계산해준다.  
 C와 C++은 
 문자형 배열 즉 문자열도  
-```
+```c
 char name [] = "freddie";
 ```  
 자동으로 크기를 8을 할당해준다. (null-character)  
-```
+```c
 char *name [] = {"Bob", "Jake", "Joe"};
 ```  
 Java는 String을 기본 타입으로 인정하기 때문에
-```
+```java
 String* [] names = {"Bob", "Jake", "Joe"};
 ```  
 로 해야한다.  
@@ -210,7 +210,7 @@ String* [] names = {"Bob", "Jake", "Joe"};
 - Slice  
     새로운 자료형이 아닌 정의된 배열의 부분배열이다.  
     ex) Python  
-    ```
+    ```py
     vector = [2, 4, 6, 8, 10, 12, 14, 16]
     mat = [ [1,2,3], [4,5,6], [7,8,9] ]
     ```
@@ -268,7 +268,7 @@ let tup = (3, 5, 7)
 let a, b, c = tup  
 
 Tuple이 없는 C언어  
-```
+```c
 1)
 typedef struct _TwoValue {
     int intVal;
@@ -354,7 +354,7 @@ Type을 명시해서 사용하는 Union (Ada)
 Free Union  
 Type checking을 하지않는 Union (C, C++, FORTRAN)  
 
-```
+```r
 Ada Union
 type Shape (Circle, Triangle, Rectangle);
 type Colors is (Red, Green, Blue);
@@ -385,7 +385,7 @@ Pointer랑 달리 Reference는 초기화가 필요하다.
 
 dereference는 implicit(묵시적), explicit(명시적) 가능함  
 
-```
+```c
 int a = 10;
 int *p;
 int &b = a;
@@ -398,7 +398,7 @@ printf("%d",*p); // 명시적
 
 - Problems  
 **Dangling pointers** (dangerous)  
-```
+```c
 char *p;
 p = (char *)malloc(100);
 ...
@@ -407,7 +407,7 @@ free(p);
 *p = 'a'; // p is a dangling pointer
 ```
 Lost heap-dynamic variable (memory leakage problem, dangling object, garbage)  
-```
+```c
 void f() {
     char *p =(char *)malloc(100)  
     ...
@@ -421,7 +421,7 @@ dangling pointer을 없애기 위해서 scope에 끝에서 자동으로 메모�
 C, C++  
 포인터 연산이 가능하다. *(p+i) == p[i]  
 void * 포인터는 다른 타입의 포인터도 받을 수 있다.  
-```
+```c
 int a = 10;
 void *p = &a;
 *p; // error;

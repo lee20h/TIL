@@ -138,7 +138,7 @@ subprogram 중첩 가능
 subprogram 중첩 불가능
 속도 ↑ (C기반언어)
 
-```
+```cpp
 func big() {
     func sub1() {
         var x = 7;
@@ -154,7 +154,7 @@ func big() {
 big에 의해서 sub1에 `x`가 가려진 걸 `hidden` or `closer`변수라고 한다.
 
 ### Block
-```
+```cpp
 void sub() {
     int count;
     while(...) {
@@ -168,14 +168,14 @@ C와 C++에서는 허용하나, JAVA와 C#은 허용하지 않는다. 속도면�
 
 함수형 언어는 `let`키워드로 블록을 구성한다.  
 Scheme
-```
+```s
 (LET (
     (top (+ a b))
     (bottom (- c d))/ top bottom)
 )
 ```
 ML
-```
+```m
 let
     val top = a + b
     val bottom = c -d
@@ -202,7 +202,7 @@ Python 또한, 전역변수와 지역변수가 이름이 같은 경우에는 명
 
 ## **Scope 정리**  
 
-```
+```cpp
 func big() {
 	func sub1() {
 		var x = 7;

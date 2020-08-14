@@ -2564,3 +2564,249 @@ int main() {
 이미 모듈러 연산을 통해서 값이 줄어들어있으므로 또 해당 값을 가지고 갱신하면서 모듈러 연산을 하게되면 값이 변하게 된다. 따라서 `update()` 함수에서도 리프 노드부터 값을 새로 갱신을 하여 값을 얻어냈다.
 
 ---
+
+- 14日  
+
+그래프 문제를 복습하는 차원에서 풀어보았는데, 상당히 막힌 부분이 많았다.  
+
+벽 부수고 이동하기 시리즈이다. BFS로 생각하되 다른 생각지 못한 부분이 많아서 전체적으로 시간이 길어지고 집중력이 엄청 떨어졌다. `1번`은 수월하게 풀리는 경향이 있었고 `2번`도 `1번`을 조금씩 필요한 만큼 고쳐나갔다.  
+
+벽 부수고 이동하기 2
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 1000 + 1;
+int arr[MAX][MAX];
+bool visited[MAX][MAX][11];
+int pos[4] = {0,0,1,-1};
+int pos2[4] = {1,-1,0,0};
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, m, k;
+	cin >> n >> m >> k;
+	for (int i=1; i<=n; i++) {
+		for (int j=1; j<=m; j++) {
+			char c;
+			cin >> c;
+			arr[i][j] = c - '0';
+		}
+	}
+	
+	queue<pair<pair<int,int>,pair<int,int>>> q;
+	q.push({{1,1},{0,1}});
+	visited[1][1][0] = true;
+	
+	while(!q.empty()) {
+		int ypos = q.front().first.first;
+		int xpos = q.front().first.second;
+		int wall = q.front().second.first;
+		int cnt = q.front().second.second;
+		
+		q.pop();
+		
+		if(ypos == n && xpos == m) {
+			cout << cnt;
+			return 0;
+		}
+		
+		for (int i=0; i<4; i++) {
+			int y = ypos + pos[i];
+			int x = xpos + pos2[i];
+			
+			if(y > n || x > m || y < 1 || x < 1)
+				continue;
+				
+			if(visited[y][x][wall]) continue;
+			
+			if(arr[y][x] == 1 && wall < k) {
+				q.push({{y,x},{wall+1, cnt+1}});
+				visited[y][x][wall+1] = true;
+			}
+			if(arr[y][x] == 0) {
+				q.push({{y,x},{wall, cnt+1}});
+				visited[y][x][wall] = true;
+			}
+		}
+	}
+	cout << "-1";	
+}
+```
+
+하지만 시리즈 3부터 막히기 시작했다. `3번`부터 생각해낸 것은 밤과 낮에 다른 행동을 주기 위해서 카운트를 모듈러 연산 2를 하여서 밤 낮을 나눠, 부술 건지 말건지 선택하게 해서 풀었다.  
+
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 1000 + 1;
+int arr[MAX][MAX];
+bool visited[MAX][MAX][11];
+int pos[4] = {-1,0,1,0};
+int pos2[4] = {0,-1,0,1};
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, m, k;
+	cin >> n >> m >> k;
+	for (int i=1; i<=n; i++) {
+		for (int j=1; j<=m; j++) {
+			char c;
+			cin >> c;
+			arr[i][j] = c - '0';
+		}
+	}
+	
+	queue<pair<pair<int,int>,pair<int,int>>> q;
+	q.push({{1,1},{0,0}});
+	visited[1][1][0] = true;
+	int ans = -1;
+	while(!q.empty()) {
+		int ypos = q.front().first.first;
+		int xpos = q.front().first.second;
+		int wall = q.front().second.first;
+		int cnt = q.front().second.second;
+		
+		q.pop();
+		
+		if(ypos == n && xpos == m) {
+			ans = cnt + 1;
+			break;
+		}
+		for (int i=0; i<4; i++) {
+			int y = ypos + pos[i];
+			int x = xpos + pos2[i];
+			
+			if(y > n || x > m || y < 1 || x < 1)
+				continue;
+			
+			if(arr[y][x] == 1 && wall < k && !visited[y][x][wall+1]) {
+				if(cnt % 2 == 0) {
+					q.push({{y,x},{wall+1, cnt+1}});
+					visited[y][x][wall+1] = true;
+				}
+				else if(cnt % 2 == 1) {
+					q.push({{ypos,xpos},{wall,cnt+1}});
+				}
+			}
+			else if(arr[y][x] == 0 && !visited[y][x][wall]) {
+				q.push({{y,x},{wall, cnt+1}});
+				visited[y][x][wall] = true;
+			}
+		}
+	}
+	cout << ans;
+	
+}
+```
+
+마지막 `4번`은 제일 시간이 오래걸렸고 다른 문제와 개념이 상이하게 되는 문제인 것 같다. 먼저 `플러드 필 알고리즘` 개념으로 영역마다 값을 넣고 이중 포문에서 벽이 선택되었을 때 주위에 있는 영역의 포함된 공간의 갯수와 자기 자신을 선택한 숫자를 더해서 출력해주면 되는 문제였다. 하지만 이 부분을 생각하기 위해서 문제를 이해하는데 오래걸렸다.  
+
+```cpp
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <set>
+using namespace std;
+
+const int MAX = 1000 + 1;
+
+int map[MAX][MAX];
+int n, m;
+bool visit[MAX][MAX];
+int resultmap[MAX][MAX];
+int cnt;
+int dy[4] = {1,-1,0,0};
+int dx[4] = {0,0,1,-1};
+
+void visitClear() {
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			visit[i][j] = 0;
+}
+
+void dfs(int y, int x, int comType) {
+	cnt++;
+	map[y][x] = comType;
+
+	for (int i=0; i<4; i++) {
+		int ny = y + dy[i];
+		int nx = x + dx[i];
+		
+		if(nx<0 || ny<0 || nx==m || ny==n) 
+			continue;
+			
+		if(visit[ny][nx] || map[ny][nx])
+			continue;
+		visit[ny][nx] = true;
+		dfs(ny,nx,comType);
+	}
+}
+
+int main() {
+	cin >> n >> m;
+	char temp;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			cin >> temp;
+			map[i][j] = temp - '0';
+			if((temp -'0') == 1)
+				map[i][j] = -1;
+		}
+	}
+
+	//컴포넌트 자리 찾아주기
+	vector<int>com = {0};
+	int comtype = 0; // 1부터시작
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			if (map[i][j] == 0) {
+				comtype++;
+				cnt = 0;
+				dfs(i, j, comtype);
+				com.push_back(cnt);
+			}
+
+	//순회하며 컴포넌트 합쳐주기
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			//벽일때
+			if (map[i][j] == -1) {
+				//상하좌우의 컴포넌트 구해준거 다합쳐주기, 중복 조심
+				int sum = 0;
+				set<int> used;
+				
+				for (int k=0; k<4; k++) {
+					int ny = i + dy[k];
+					int nx = j + dx[k];
+					
+					if(nx<0 || ny<0 || nx==m || ny==n) 
+						continue;
+					
+					if(map[ny][nx] != -1 && used.count(map[ny][nx])==0) {
+						used.insert(map[ny][nx]);
+						sum += com[map[ny][nx]];
+					}
+					resultmap[i][j] = (sum + 1)%10;
+				}
+			}
+		}
+	}
+	
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < m; j++)
+		{
+			cout << resultmap[i][j];
+		}
+		cout << '\n';
+	}
+}
+```
+
+---
+

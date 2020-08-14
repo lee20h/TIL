@@ -17,7 +17,7 @@ Template Literal을 사용하면 명시적인 문자열 이스케이프를 사�
 
 화살표 함수 식은 `function` 표현에 비해 구문이 짧고 자신의 `this`, `arguments`, `super` 또는 `new.target`을 바인딩 하지 않아서 항상 `익명함수`이다. 이 함수 표현은 메소드 함수가 아닌 곳에 적합하고, 생성자로는 적합하지 않다. 따라서 `this`의 컨텍스트를 보존해야할 경우 화살표 함수를 사용해야한다.  
 
-```
+```js
 function Person(name) {
   this.name = name;
 }
@@ -30,7 +30,7 @@ Person.prototype.prefixName = function (arr) {
 };
 ```
 익명 함수를 사용하듯이 간단한 값을 리턴하는 함수나 함수 표현식이 필요할 때 사용하면 간결해진다.  
-```
+```js
 const arr = [1,2,3,4,5];
 const squares = arr.map(function (x) return { return x * x});
 -->
@@ -43,7 +43,7 @@ const squares = arr.map(x => x * x);
 ### Default Parameter  
 
 기본 매개 변수를 자바스크립트에서 처리하는 방법은 C++에서 처리했던 방법과 같이 ES6부턴 바뀌었다.  
-```
+```js
 function add(x=0, y=0) {
 	return x + y;
 }
@@ -52,14 +52,14 @@ function add(x=0, y=0) {
 ### Rest Parameter  
 
 나머지 매개 변수에 대해서  
-```
+```js
 function logArguments(...args) {
 	args.forEach(arg => console.log(arg))
 }
 ```
 
 배열 구조 분해 할당을 통해서 이름이 있는 매개변수을 손쉽게 구현할 수 있다. 하지만 함수의 인자를 전달하지 않으면 `null`이 전달되어 오류가 발생하기 때문에 기본 매개 변수를 설정하면 해결할 수 있다.
-```
+```js
 function initializeCanvas({ height=720, width=480, lineStroke='#122122'}) {
   console.log(`height = ${height}`);
   console.log(`width = ${width}`);
@@ -78,14 +78,14 @@ initializeCanvas({
 ## 객체  
 ### Shorthand Properties  
 객체는 `new Object()`, `Object.create()` 또는 리터럴 표기법으로 초기화 할 수 있다. 자바스크립트에서는 속기형 속성 작성법을 통해서 객체의 속성 정의를 편리하게 `[]`와 `{}`을 통해 배열과 객체 속성을 정의할 수 있다. 여기에 추가적으로 객체의 속성과 값의 이름이 동일한 경우에는 다음과 같이 작성하면 간결하다.  
-```
+```js
 const favorites = { animations, movies, music};
 ```  
 
 ### Object Enhancements
 
 간추린 메소드 표기법과 계산된 속성 이름 동적 설정을 통해 향상된 객체 표기법을 사용한다. 먼저 간추린 메소드 표기법은 아래와 같다.  
-```
+```js
 let name  = 'SM7',
     maker = 'Samsung',
     boost = 'powerUp';
@@ -105,7 +105,7 @@ console.dir(car);
 //  ↳ __proto__: Object
 ```  
 이런 식으로 메소드들을 function을 명시하지 않고 표기할 수 있다. 계산된 속성 이름 동적 설정은 변수나 자바스크립트 식에 의해 계산된 속성 이름을 동적으로 설정할 수 있다.
-```
+```js
 let name  = 'SM7',
     maker = 'Samsung',
     boost = 'powerUp',
@@ -128,7 +128,7 @@ console.dir(car);
 ```
 
 또 `getter/setter`을 사용할 수 있어서 `get`과 `set`을 사용하여 접근할 수 있다. 자바스크립트에서는 비공개(private) 접근 제어자를 제공하지 않아서 관습적으로 `_`을 이름 앞에 붙여 사용하지만 접근은 가능하다. 비공개 접근 제어자 대신에 외부와 단절된 블록 영역과 `Symbol`을 사용한 고유 식별자로 접근 불가능한 속성을 사용할 수 있다.
-```
+```js
 {
 
   // 심볼(Symbol) 등록
@@ -160,7 +160,7 @@ console.dir(car);
 
 ## 심볼
 Symbol 데이터 타입은 고유한 기본 값으로 수정이 불가능하며 클래스나 객체 내부에서만 접근할 수 있는 비공개 키로 사용된다.  
-```
+```js
 {
   // 블록 스코프 내에서만 접근 가능한 심볼
   const _privateKey = Symbol();
@@ -190,7 +190,7 @@ fileReader[_privateKey](); // Uncaught ReferenceError: _privateKey is not define
 배열 객체에 추가된 클래스나, 스태틱, 인스턴스 메소드  
 `Array.from()`  
 유사 배열을 배열화할 수 있다.  
-```
+```js
 // DOM 객체 수집(Collection) = NodeList
 // lis 변수에 참조된 값은 length 속성을 가진 유사 배열 객체
 var lis = document.querySelectorAll('ul.demo li');
@@ -199,7 +199,7 @@ var lis = document.querySelectorAll('ul.demo li');
 Array.from(lis).forEach(li => console.log(li)); // <li> 순환
 ```
 전개 연산자를 사용하여 유사 배열 객체를 배열화 할 수 있다.  
-```
+```js
 const lisHTML = [...lis].map(li => li.innerHTML);
 ```
 
@@ -214,7 +214,7 @@ map의 경우에는 새로운 배열로 반환한다는 점을 기억해야한�
 
 ## 클래스
 C++와 같이 클래스를 선언하고 사용할 수 있으나 생성자의 경우 직접 명시해서 사용해줘야한다.  
-```
+```js
 class Person {
   constructor(name, age, gender) {
     this.name   = name;
@@ -231,7 +231,7 @@ class Person {
 ## 모듈  
 `import` `export`를 사용하여 외부 모듈이나 다른 스크립트로 보내고 받아서 사용할 수 있다.  
 간단하게 `export` 키워드를 가지고 내보내기가 쉽게 가능하다. 또한 객체를 이용한 리스트 내보내기도 가능하다.  
-```
+```js
 function sumTwo(a,b) {
 	return a + b;
 }
@@ -246,7 +246,7 @@ export default api;
 ```
 모듈을 내보낼 때 이렇게 사용하며 항상 `export default` 메소드는 모듈 코드의 마지막에 위치해야 한다.  
 `import`또한 키워드를 통해서 쉽게 받아올 수 있다. 하지만 전체를 불러오면 그 파일의 모든 코드가 실행되므로 파이썬과 유사하게 지정 불러오기를 사용할 수 있다. 다음과 같이 사용한다.  
-```
+```js
 import { sumTwo, sumThree} from 'math/addition';
 or
 import {
@@ -256,13 +256,13 @@ import {
 ```
 
 디폴트 모듈에 경우에는 다음과 같다.
-```
+```js
 import api from 'math/addition';
 or
 import { default as api} from 'math/addition';
 ```
 추가적으로 react에 경우는 이렇게 사용한다.
-```
+```js
 import React from 'react';
 const { Component, PropTypes } = React;
 or
@@ -276,7 +276,7 @@ import되는 값은 참조되서 사용하는게 아니라 바인딩되서 사�
 
 `Promise`는 비동기 조작의 최종 완료 또는 실패를 나타내는 객체이다. 또한 `Fetch API`를 이용하여 요청, 응답과 같은 HTTP의 파이프라인 요소를 조작하는 것이 가능하다.  
 
-```
+```js
 func1(function (value1) {
   func2(value1, function (value2) {
     func3(value2, function (value3) {
@@ -290,7 +290,7 @@ func1(function (value1) {
 });
 ```
 --->
-```
+```js
 func1(value1)
   .then(func2)
   .then(func3)
@@ -301,7 +301,7 @@ func1(value1)
 ```
 
 프로미스를 사용하는 예제
-```
+```js
 const promise = new Promise((resolve, reject) => {
   if ( true ) {
     resolve();
@@ -327,7 +327,7 @@ Async 함수는 function 키워드 앞에 Async를 붙이면 된다. 이 함수�
 ### Await  
 
 Await 키워드는 데이터가 응답 반환 될때까지 실행흐름을 중단 시킨다.  
-```
+```js
 const getData = () => {
   let timeout = Math.floor(Math.random() * 2000);
   return new Promise(resolve => {
@@ -345,7 +345,7 @@ getdata가 돌아올 때까지 실행 흐름을 멈춰놓고 돌아오면 진행
 
 Async/Await 코드르 사용하면 Promise 코드를 조금 더 간결하게 표현할 수 있다.  
 
-```
+```js
 Promise 코드
 const api = 'https://jsonplaceholder.typicode.com';
 
@@ -365,7 +365,7 @@ function asyncCallDatas() {
 asyncCallDatas();
 ```
 Async/Await 코드
-```
+```js
 const api = 'https://jsonplaceholder.typicode.com';
 
 async function asyncCallDatas() {
@@ -392,7 +392,7 @@ async function asyncCallDatas() {
 for ..of 문은 반복 가능한 객체(Array, Map, Set, String, TypedArray, arguments 객체 등을 포함)에서 반복하고 각 개별 속성 값에 대해 실행되는 문이 있는 사용자 정의 반복 후크를 호출하는 루프를 생성한다.  
 
 배열 순환
-```
+```js
 const iterable = [9, 19, 109];
 
 for (let item of iterable) {
@@ -411,7 +411,7 @@ for (let [index, item] of iterable.entries()) {
 ```
 
 문자 순환
-```
+```js
 const iterable = 'yamoo9';
 
 for (let char of iterable) {
@@ -426,7 +426,7 @@ for (let char of iterable) {
 ```
 
 Set 순환
-```
+```js
 const iterable = new Set([9, 19, 109, 19, 9]);
 
 for (let number of iterable) {
@@ -438,7 +438,7 @@ for (let number of iterable) {
 ```
 
 Map 순환
-```
+```js
 const iterable = new Map([['name', 'yamoo9'], ['job', '강사']]);
 
 for (let info of iterable) {
@@ -458,7 +458,7 @@ for (let [key, value] of iterable) {
 ```
 
 NodeList 순환
-```
+```js
 const buttons = document.querySelectorAll('button');
 
 for (let button of [...buttons]) {
@@ -467,7 +467,7 @@ for (let button of [...buttons]) {
 ```
 
 Generator 순환
-```
+```js
 function* fibonacci() {
   let [prev, curr] = [1, 1];
   while (true) {
@@ -486,7 +486,7 @@ for (let n of fibonacci()) {
 for..in문은 객체의 열거 가능한(enumerable) 모든 속성을 순환한다.  
 for...of문은 컬렉션 전용이며, [Symbol.iterator] 속성이 있는 모든 컬렉션을 순환한다.  
 
-```
+```js
 // Object, Array 프로토타입 확장
 Object.prototype.addCustom = function () {};
 Array.prototype.createCustom = function () {};
@@ -518,7 +518,7 @@ for (let value of iterable) {
 조건 : [Symbol.iterator] 메서드를 소유해야 한다.  
 Iterator 프로토콜에 준하는 객체를 반환해야 한다.  
 
-```
+```js
 const star4 = {
   [Symbol.iterator]() {
     let _star = Symbol('_star');
@@ -566,7 +566,7 @@ next() 메서드의 반환 값은 객체로 value, done 속성을 소유해야 �
 done은 반복이 종료될 경우 true, 종료되지 않을 경우 false 여야 한다.  
 value는 JavaScript의 모든 데이터 타입 설정이 가능하다.  
 
-```
+```js
 function iteratorMaker(array) {
   let index = 0;
   return {
@@ -598,7 +598,7 @@ protocols.next(); // {done: true, value: undefined}
 객체를 순환 처리하는 경우 `for..in문`외에도 `for..of`문을 사용할 수 있다.  
 
 Object.keys() : 객체의 속성을 배열 객체로 반환
-```
+```js
 const picture_keys = Object.keys(picture);
 // 출력: ['large', 'medium', 'thumbnail']
 
@@ -608,7 +608,7 @@ for (let key of picture_keys) {
 ```
 
 Object.values() : 객체의 값을 Iterable 프로토콜에 준하는 객체로 반환
-```
+```js
 const picture_values = Object.values(picture);
 // 출력: ['https://...', 'https://...', 'https://...']
 
@@ -618,7 +618,7 @@ for (let value of picture_values) {
 ```
 
 Object.entires() : 객체의 속성, 값을 쌍으로 하는 배열을 묶은 배열을 반환  
-```
+```js
 const picture_entries = Object.entries(picture);
 // 출력:  
 // [
@@ -633,7 +633,7 @@ for (let [key, value] of picture_entries) {
 ```
 
 추가적으로 배열 객체 메소드를 사용하여 순환하는 것도 가능하다.  
-```
+```js
 // 속성 순환
 Object.keys(picture).forEach(key => console.log(key));
 
@@ -651,7 +651,7 @@ Object.entries(picture).forEach(entry => {
 Generator 객체는 제너레이터 함수 `function* () {}`로부터 반환된 값이며, 이터레이션 프로토콜을 준수한다.  
 
 피보나치
-```
+```js
 function* fibonacci(n=1) {
   let [ current, next ] = [1, 1];
   while(n--) {
@@ -666,7 +666,7 @@ let fibo10 = fibonacci(10);
 ```
 
 간단한 ID 생성
-```
+```js
 function* idMaker(id=10000, prefix="id") {
   while(true) {
     yield `${prefix}-${Math.floor(Math.random() * id)}`;
@@ -681,7 +681,7 @@ ids.next().value; // "id-5198"
 ```
 
 고유키 생성
-```
+```js
 function* uniqueIdMaker(count=5, limit=10) {
   const keys = 'abcdefghijklmnopqrstuvwxyz!@#1234567890'.split('');
   function _uid(count){
@@ -708,7 +708,7 @@ C++ STL의 set과 동일하게 사용할 수 있다. 배열과 같이 사용하�
 이 있다. 위에서 이미 살펴본 메소드들 이므로, 예제는 생략한다.  
 
 합집합, 교집합, 차집합, 부분집합을 처리할 수 있는데 정의 방법을 살펴보자.
-```
+```js
 class y9Set extends Set {
 
   // 합집합
@@ -739,7 +739,7 @@ WeakSet은 Set과 유사하다. set과 달리 객체만 수집할 수 있으며,
 특징으로는 size 속성을 가지지 않으며, 객체 타입만 `.add()`하거나 `.delete()`할 수 있다. 또한 `forEach`문과 `for..in`문으로 순환 할 수 없다. 마지막으로는 약한 참조로 메모리 누수 관리에 효과적이다.  
 
 ### Set과 WeakSet의 차이
-```
+```js
 // 데이터(객체)
 let arr = [1, 3, 5, 7],
     obj = {key: 'value'};
@@ -790,7 +790,7 @@ let wset = new WeakSet();
 ```
 
 추천 사용법은  
-```
+```js
 // WeakSet 객체 생성
 let ownClass = new WeakSet();
 
@@ -817,7 +817,7 @@ class OffCanvasMenu {
 
 WeakMap은 WeakSet과 동일하게 Map과 달리 객체만 수집하며, 약한 참조로 메모리 누수를 예방한다.  
 
-```
+```js
 let _age = new WeakMap();
 
 class Person {
@@ -834,7 +834,7 @@ class Person {
 }
 ```
 이런식으로 사용하는데 비공개 데이터를 저장하기 위해서 사용하게 되면 `Reflect.ownKeys()`을 통해서도 멤버 이름이 드러나지 않는다는 점이 특징이다. 따라서 DOM요소 자체를 훼손시키지 않고 DOM 요소에 연관 데이터를 저장하게 되면 가비지 컬렉션에 의해 제거된 DOM 객체에 약한 참조된 WeakMap이 자동으로 제거되어 메모리 관리가 수월해진다. 예시는 다음과 같다.  
-```
+```js
 let map = new WeakMap();
 
 let someEl = document.querySelector('#some');

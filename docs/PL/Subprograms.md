@@ -34,7 +34,7 @@ C++ Python Ruby Ada PHP에서 Formal Parameter에 기본 값을 지정해줄 수
 `int printf(const char *fmt, ...); printf("%d",2); printf("%d%d",5,7);`  
 이 가변인자를 사용하려면 무조건 **Positional한 언어**여야만 가능하다. 위치를 사용해서 가변인자를 구현하기 때문이다.  
 C#에서도 사용할 수 있다.  
-```
+```cs
 public void DisplayList(params int[] list) {
 	foreach (int next in list) {
 		Console.WriteLine("Next value {0}", next);
@@ -83,7 +83,7 @@ actual parameter의 값을 formal parameter에 초기화시켜준다.
 Formal Parameter가 지역변수처럼 사용된 다음 반환 될 때 Actual Parameter에 값이 반환된다. 이 방법 또한 추가적인 공간이 필요하다.  
 잠재적 문제  
 C#에서의 예  
-```
+```cs
 void Fixer(out int x, out int y) {
 	x = 17;
 	y = 35;
@@ -94,7 +94,7 @@ f.Fixer(out a, out a);
 이 때 변수 a의 값은 무엇일까?  
 컴파일러마다 어떤 값을 넣는지는 다르다.  
 다른 예시도 보자.  
-```
+```cs
 void Doit(out int x, int idx) {
 	x = 17;
 	idx = 42;
@@ -115,7 +115,7 @@ Call-by-Reference와 같은 말로, 주소값을 전달하는 방식이다. 장�
 
 ### Pass-by-Name  
 C의 MACRO정의 (#define)과 똑같다고 보면 된다.  
-```
+```c
 #define swap(t,a,b) {t = a; a = b; b = t;}
 int temp = 0, value7 = 10, value9 = 20;
 swap(temp,value7,value9);
@@ -125,7 +125,7 @@ swap(temp,value7,value9);
 ![Parameter-Passing-Methods](/TIL/images/Program_Language/Parameter-Passing-Methods.JPG)  
 C와 C++에서 다차원 배열을 Formal Parameter로 받아야하는 경우 `void f(int v[][10])`이런 식으로 뒤에 사이즈를 명시해야 stack에서 배열 크기만큼 할당할 수 있다.  
 해결법으로 배열의 주소값과 차원별로 사이즈를 보내주는 방식으로 할 수 있다.  
-```
+```c
 void f(int **v, int xsize, int ysize) { }
 ```
 
@@ -147,7 +147,7 @@ ex) `void g(); int k(); f(g()); f(k())`
 3) **Ad hoc binding** (그때 마다 다르며 자신을 call한 환경의 변수를 참조)  
 
 ex)
-```
+```cpp
 function sub1() {
 	var x;
 	function sub2() {
@@ -174,7 +174,7 @@ Ad hoc binding : sub3'x
 Indirect call  
 C와 C++에서는 함수 포인터를 이용해서 구현한다.  
 C#에서는 delegate을 사용한다.  
-```
+```cs
 public delegate int Change(int x);
 static int fun1 (int x) {}
 Change chgfun1 = new Change(fun1);
@@ -190,7 +190,7 @@ e.g `void f(); void f(int a); void (int a, int b)`
 Generic Subprogram  
 Generic 혹은 Polymorphic subprogram 이라고 한다.  
 C++에서는 template을 가지고 구현한다.  
-```
+```cpp
 template <class Type> Type max(Type first, Type second) {
 	return first > second ? first : second;
 }
@@ -199,7 +199,7 @@ Subprogram이 모든 타입을 받아서 사용되는게 아니라 자료형 별
 
 User-defined overloaded Operator  
 Python example  
-```
+```py
 def __add__ (self, second) :
 	return Complex(self.real + second.real, self.imag + second.imag)
 ```
@@ -209,7 +209,7 @@ def __add__ (self, second) :
 subprogram과 referencing environment를 합친 것을 Closure이라고 한다.  
 Closure을 데이터처럼 사용할려면 함수에서 Closure을 반환하면 사용할 수 있다.  
 JavaScript에서의 Closure는  
-```
+```js
 function makeAdder(x) {
 	return funtion(y) {return x + y;}
 }
@@ -222,7 +222,7 @@ document.write("add 5 to 20: " + add5(20) + "<br />");
 Closure는 anonymous function이라고 할 수 있는데 이게 곧 referencing environment이다.  
 C#에서는 delegate을 이용해서 closure을 만든다.  
 `Func<int, int> // <input, output>`
-```
+```cs
 static Func<int, int> makeAdder(int x) {
 	return delegate (int y) {return x + y;};
 }

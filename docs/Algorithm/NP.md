@@ -35,8 +35,13 @@ ex) 그래프 G에서 길이가 가장 짧은 해밀토니안 경로는 얼마�
 현재까지 연구결과로 어떤 문제가 NP-완비라면 현실적인 시간에 풀 수 없다. 허나, 아직 증명이 되지 못했다.  
 
 **다항식 시간 변환**(Polynominal Time Reduction)은 문제 A의 사례 α를 문제 B의 사례β가 있을 때 아래의 성질을 만족해야하며, α≤ｐβ로 표기한다.  
-1) 변환은 다항식 시간에 이루어진다.  
-2) 두 사례의 답은 일치한다.  
+
+알고리즘은 아래 사진과 같다.  
+![Polynominal Time Reduction](/TIL/images/Polynominal-Time-Reduction.JPG)  
+
+1) 문제 A를 다항식 시간에 문제 B로 변환한다.  
+2) 변환된 문제 B를 푼다.  
+3) 문제 B의 대답이 Yes이면 Yes, No이면 No를 반환한다.  
 
 ## NP-완비/하드
 
@@ -44,10 +49,14 @@ ex) 그래프 G에서 길이가 가장 짧은 해밀토니안 경로는 얼마�
 **NP-하드** : 모든 NP문제가 NP-하드로 다항식 시간에 변환가능하다.  
 **NP-완비**(complete) : NP-완비는 NP이며, NP-하드이다.  
 + NP-하드 ⊂ NP-완비  
+
+예를 들어 이러한 예시가 있을 때
+![Polynominal Time Reduction](/TIL/images/Algorithm/Polynominal-Time-Reduction.JPG)  
 알려진 임의의 NP-하드 문제 A로부터 문제 L로 다항식 시간에 변환가능하면 문제 L도 NP-하드이다.  
 
 **NP-하드의 증명**  
 해밀토니안 싸이클(그래프의 모든 정점을 단 한번씩 방문하고 돌아오는 경로)문제가 NP-하드임을 알고 있을 때 TSP(Traveling Salesman Problem)문제도 NP-하드임을 보인다.  
+![TSP](/TIL/images/Algorithm/TSP.JPG)  
 `해밀토니안 싸이클을 갖는다 ⇔ 길이가 정점n 이하인 해밀토니안 싸이클을 갖는다.`  
 따라서 TSP는 NP-하드이다.  
 
@@ -62,6 +71,7 @@ NP-완비 문제의 예
 *최장경로 문제* : 주어진 그래프에서 정점 s에서 t로가는 길이 k 이상인 단순경로가 존재하는가?  
 *두 점 사이 해밀토니안 경로 문제* : 주어진 그래프에서 정점 s에서 t에 이르는 해밀토니안 경로가 존재하는가? (NP-완비)  
 해밀토니안 경로 문제를 이용해서 최장경로 문제를 해결해보자. 
+![Longest-Path](/TIL/images/Algorithm/Longest-Path.JPG)  
 두 점 s와 t사이에 해밀토니안 경로를 갖는다 ⇔ 두 점 s와 t 사이에 길이가 4인 단순경로를 갖는다.  
 따라서 최장경로 문제는 NP-하드다.  
 
@@ -70,5 +80,6 @@ NP-완비 문제의 예
 - 주어진 시간 예산 내에서 최대한 좋은 해를 찾는 알고리즘(휴리스틱) 개발에 집중한다. (대부분 Greedy 알고리즘 이용)  
 
 포함관계  
+![NP-Relation](/TIL/images/Algorithm/NP-Relation.JPG)   
 P ⊂ NP (O)  
 NP ⊂ P (?) 아직까지 밝혀진 바가 없다.  

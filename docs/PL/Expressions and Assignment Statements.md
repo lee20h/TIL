@@ -8,7 +8,7 @@ sidebar: auto
 ## Side Effect
 **Side effect**란 함수가 자신이 선언된 범위 밖의 변수의 값을 변경시키는 것.  
 ex)  
-```
+```cpp
 int gCount;
 int square(int a) {
 	gCount++;
@@ -51,9 +51,9 @@ int square(int a) {
 Functional side effect는 함수 안에서 전역 변수나 매개변수의 값을 바꿀 때 side effect가 있다고 한다.  
 a = 10; b = a + func(a);  
 왼쪽을 먼저하면 변수 b에 20이 할당되지만, 오른쪽을 먼저하면 변수 b에 30이 할당된다. 
-```
+```cpp
 int a = 5;
-itn fun1() {
+int fun1() {
 	a = 17;
 	return 3;
 }
@@ -92,7 +92,7 @@ ex) 1 -> 1.0 (int -> float)
 
 Mixed Mode operation일 경우 coercion이 묵시적으로 일어나게 된다. coercion이 일어나게 되면 컴파일러가 *타입 오류*를 탐지 못하는 경우가 있을 수 있다.  
 
-```
+```c
 int a;
 float b, c, d;
 ...
@@ -120,7 +120,7 @@ C에서는 0이 거짓, 0이 아니면 참이다. 잘못된 표현중 하나는 
 ex) (13 * a) * (b / 13 - 1)  
 만약 a가 0이라면 (b / 13 - 1)하면 된다.  
 지원하지 않는 경우 일어나는 문제  
-```
+```cpp
 index = 0;
 while (index < length> && (LIST[index] != value))
 	index++;
@@ -146,7 +146,7 @@ Unary assignment operator
 Perl의 조건 할당  
 `($flag ? $total : $subtotal) = 0`  
 이것은 밑에 코드와 같다.
-```
+```perl
 if ($flag)
 	$total = 0
 else

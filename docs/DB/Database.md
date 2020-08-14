@@ -256,7 +256,7 @@ SQL문의 실행 순서
 - Drop Table : 해당 테이블 삭제 (구조와 저장된 데이터 삭제)
 
 **테이블 생성**  
-```
+```sql
 Create Table EMP
 (
   empno number(10) primary key,
@@ -270,7 +270,7 @@ varchar은 가변 길이 문자열, char은 고정 길이 문자열이다.
 제약조건 사용  
 기본키, 외래키, 기본값, not null 등 테이블 생성시에 지정 가능하다.  
 `constraint`을 사용하여 기본키와 기본키의 이름을 지정하며, 외래키 지정 가능
-```
+```sql
 constraint depttk foreign key (deptno)
     references dept(deptno)
 ```
@@ -317,14 +317,14 @@ constraint depttk foreign key (deptno)
 ### DML
 **INSERT**
 1) INSERT문 사용
-```
+```sql
 INSERT INTO table (column1, column2, ...) VALUES (expression1, expression2, ...);
 ```
 테이블명, 칼럼명, 데이터 순으로 입력  
 
 2) SELECT문 사용
 
-```
+```sql
 INSERT INTO DEPT_TEST
   SELECT * FROM DEPT;
 ```
@@ -335,7 +335,7 @@ INSERT INTO DEPT_TEST
 
 **UPDATE**  
 값을 수정하기 위해서 사용
-```
+```sql
 UPDATE EMP
   SET ENAME = '조조'
 WHERE EMPNO = 100;
@@ -344,7 +344,7 @@ WHERE EMPNO = 100;
 
 **DELETE**  
 값을 삭제하기 위해서 사용
-```
+```sql
 DELETE FROM EMP
 WHERE EMPNO = 100;
 ```
@@ -352,13 +352,13 @@ WHERE EMPNO = 100;
 
 TRUNCATE  
 `DELETE`와 다르게 삭제시에 테이블의 용량이 초기화된다.
-```
+```sql
 TRUNCATE TABLE 테이블명;
 ```
 
 **SELECT**  
 특정 칼럼을 조회한다.
-```
+```sql
 SELECT *
 FROM EMP
 WHERE 사원번호 = 1000;
@@ -379,7 +379,7 @@ WHERE 사원번호 = 1000;
 정렬은 데이터베이스에 부하를 주므로 인덱스를 사용하여 `ORDER BY`를 피할 수 있다.  
 기본 키를 기준으로 오름차순으로 정렬된다.  
 또한 INDEX 힌트를 줄 수 있다.
-```
+```sql
 SELECT /*+ INDEX_DESC(A) */
 FROM EMP A;
 ```
@@ -490,13 +490,13 @@ DUAL TABLE : Oracle 데이터베이스에 의해서 자동으로 생성되는 �
 **DECODE, CASE**
 DECODE  
 IF문과 같이 조건이 참이면 A, 거짓이면 B  
-```
+```sql
 DECODE (EMPNO, 1000, 'TRUE', 'FALSE')
 ```
 
 CASE  
 IFELSE문과 같이 조건을 나열하여 해당하면 실행하며, 다 거짓인 경우 ELSE문 실행  
-```
+```sql
 CASE [EXPRESSION]
   WHEN CONDITION_1 THEN RESULT_1
   WHEN CONDITION_2 THEN RESULT_2
@@ -511,7 +511,7 @@ ROWNUM
 Oracle 데이터베이스의 SELECT문 결과에 논리적 일련번호 부여한다. 따라서 조회되는 행 수를 제한할 때 많이 사용된다. 페이지 단위 출력을 하기 위해선 인라인 뷰(FROM절 서브쿼리)를 사용한다.  
 
 LIMIT과 같이 사용할 수 있다.
-```
+```sql
 SELECT *
 FROM ( SELECT ROWNUM list, ENAME
     FROM EMP)
@@ -519,7 +519,7 @@ WHERE list <= 5;
 ```
 
 페이지 단위 출력의 인라인 뷰는 아래와 같다.
-```
+```sql
 SELECT *
 FROM (SELECT ROWNUM list, ENAME
     FROM EMP)
@@ -528,7 +528,7 @@ WHERE list BETWEEN 5 AND 10;
 
 ROWID  
 Oracle 데이터베이스 내에서 데이터를 구분할 수 있는 유일한 값이다. ROWID를 통해서 데이터가 어떤 데이터 파일, 어느 블록에 저장되어 있는지 알 수 있다.  
-```
+```sql
 SELECT ROWID, EMPNO
 FROM EMP
 ```
@@ -541,7 +541,7 @@ ROWID 구조
 
 **WITH**
 서브쿼리를 사용해서 임시 테이블이나 뷰처럼 사용할 수 있는 구문으로, 서브쿼리 블록에 별칭을 지정한다. 옵티마이저는 SQL을 인라인 뷰나 임시 테이블로 판단한다.  
-```
+```sql
 WITH viewData AS
   (SELECT * FROM EMP
     UNION ALL
@@ -552,7 +552,7 @@ SELECT * FROM viewData WHERE EMPNO=1000;
 ### DCL(Data Control Language)
 GRANT  
 데이터베이스 사용자에게 권한(연결, 입력, 수정, 삭제, 조회)을 부여
-```
+```sql
 GRANT privileges ON object TO user;
 // privileges 권한 대입, object 테이블명, user DB사용자 지정
 ```
@@ -566,7 +566,7 @@ Privileges(권한)
 - INDEX : 인덱스 생성
 - ALL : 모든 권한
 
-```
+```sql
 GRANT SELECT, INSERT, UPDATE, DELETE
   ON EMP
   TO LIMBEST;
@@ -580,7 +580,7 @@ WITH ADMIN OPTION
 - 테이블에 대한 모든 권한 부여
 - 권한 A -> B, B -> C 부여한 후 권한 취소하면 B 사용자 권한만 취소
 
-```
+```sql
 GRANT SELECT, INSERT, UPDATE, DELETE
   ON EMP
   TO LIMBEST WITH GRANT OPTION;
@@ -588,7 +588,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE
 
 REVOKE
 권한 회수
-```
+```sql
 REVOKE privileges ON object FROM user;
 ```
 
@@ -665,7 +665,7 @@ UNION ALL
 
 ### 계층형 조회(CONNECT BY)
 ORACLE 데이터베이스에서 지원하며, 계층형으로 데이터 조회  
-```
+```sql
 CREATE TABLE EMP(
   EMPNO NUMBER(10) PRIMARY KEY,
   ENAME VARCHAR2(20),
@@ -696,7 +696,7 @@ COMMIT
 - START WITH구는 시작 조건을 의미, CONNECT BY PRIOR는 조인 조건
 - ROOT로부터 하위 노드의 질의 실행
 - 계층형 조회에서 MAX(LEVEL)사용시 최대 계층 수
-```
+```sql
 SELECT MAX(LEVEL)
 FROM LIMBEST.EMP
 START WITH MGR IS NULL
@@ -704,7 +704,7 @@ CONNECT BY PRIOR EMPNO = MGR;
 ```
 
 LPAD 함수를 이용해 계층형 조회 결과를 명확히 볼 수 있다.
-```
+```sql
 SELECT LEVEL, LPAD(' ', 4 * (LEVEL -1) ) || EMPNO, MGR, CONNECT_BY_ISLEAF
 FROM EMP
 START WITH MGR IS NULL
@@ -744,7 +744,7 @@ CONNECT BY 키워드
 **ROLLUP**
 - GROUP BY의 컬럼에 대해 **SUBTOTAL**을 만듬
 - GROUP BY구에 칼럼이 두 개 이상 오면 **순서에 따라 결과가 달라짐**
-```
+```sql
 SELECT DECODE(DEPTNO, NULL, '전체합계', DEPTNO), SUM(SAL)
 FROM EMP
 GROUP BY ROLLUP(DEPTNO);
@@ -755,7 +755,7 @@ ROLLUP은 DEPTNO에 대해서 기존 GROUP BY와는 다르게 부서별 전체�
 **GROUPING 함수**  
 - ROLLUP, CUBE, GROUPING SETS에 생성되는 **합계값을 구분**하기 위해 만들어짐
 - 예로 소계, 합계 등이 계산되면 GROUPING 함수는 1을 반환하고 아니면 0을 반환해서 합계값 식별
-```
+```sql
 SELECT DEPTNO, GROUPING(DEPTNO), JOB, GROUPING(JOB), SUM(SAL)
 FROM EMP
 GROUP BY ROLLUP(DEPTNO)
@@ -764,7 +764,7 @@ GROUP BY ROLLUP(DEPTNO)
 **GROUPING SETS 함수**
 - GROUP BY에 나오는 칼럼의 순서와 관계없이 **다양한 소계** 만듬
 - GROUP BY에 나오는 칼럼의 순서와 관계없이 **개별적**으로 모두 처리
-```
+```sql
 SELECT DEPTNO, JOB, SUM(SAL)
 FROM EMP
 GROUP BY GROUPING SETS(DEPTNO, JOB);
@@ -776,7 +776,7 @@ GROUPING SETS함수로 DEPTNO와 JOB을 실행한 결과 DEPTNO 합계와 JOB �
 - 다차원 집계를 제공하여 다양하게 데이터 분석
 - **조합할 수 있는 경우의 수 모두 조합** (부서와 직업을 CUBE로 사용하면 부서별 합계, 직업별 합계, 부서별 직업별 합계, 전체합계 조회)
 
-```
+```sql
 SELECT DEPTNO, JOB, SUM(SAL)
 FROM EMP
 GROUP BY GROUPING SETS (DEPTNO, JOB);
@@ -784,7 +784,7 @@ GROUP BY GROUPING SETS (DEPTNO, JOB);
 
 ### 윈도우 함수
 윈도우 함수는 행과 행 간의 관계를 정의하기 위해서 제공되는 함수로, 순위, 합계, 평균, 행 위치 등을 조작할 수 있다.  
-```
+```sql
 SELECT WINDOW_FUNCTION(ARGUMENTS)
         OVER (PARTITION BY 칼럼
                 ORDER BY WINDOWING절)
@@ -805,7 +805,7 @@ FROM 테이블명;
 - UNBOUNDED FOLLOWING : 윈도우 마지막 위치가 마지막 행 
 - CURRENT ROW : 윈도우 시작 위치가 현재 행
 
-```
+```sql
 SELECT EMPNO, ENAME, SAL,
         SUM(SAL) OVER(ORDER BY SAL,
                   ROWS BETWEEN UNBOUNDED PRECEDING
@@ -822,7 +822,7 @@ BETWEEN 사이의 값으로 현재행, 처음, 마지막 행을 조건을 줄 �
 - RANK : 특정항목 및 파티션에 대해서 순위 계산, 동일한 순위는 동일한 값 부여
 - DENSE_RANK : 동일한 순위를 하나의 건수로 계산
 - ROW_NUMBER : 동일한 순위에 대해서 고유의 순위를 부여
-```
+```sql
 SELECT ENAME, SAL,
       RANK() OVER (ORDER BY SAL DESC) ALL RANK,
       RANK() OVER (PARTITION BY JOB ORDER BY SAL DESC) JOB RANK
@@ -841,7 +841,7 @@ FROM EMP;
 - LAST_VALUE : 파티션에 가장 나중에 나오는 값, MAX함수와 같은 결과
 - LAG : 이전 행을 가져옴
 - LEAD : 윈도우의 특정 위치의 행 가져옴. 기본값은 1  
-```
+```sql
 SELECT DEPTNO, ENAME, SAL, 
   FIRST_VALUE(ENAME) OVER (PARTITION BY DEPTNO
     ORDER BY SAL DESC ROWS UNBOUNDED PRECEDING) AS DEPT_A FROM EMP;
@@ -931,7 +931,7 @@ Oracle 데이터베이스는 Global Non-Prefixed 지원하지 않는다.
 | 15 | 전체 테이블을 스캔(FULL TABLE SCAN)하는 경우 |
 
 ROWID를 사용한 조회
-```
+```sql
 SELECT /*+ RULE */ * -- 규칙 기반 옵티마이저로 실행하라는 HINT
 FROM EMP
 WHERE ROWID='AAAHYhAABAAALNJAAN';
@@ -976,7 +976,7 @@ WHERE ROWID='AAAHYhAABAAALNJAAN';
 - High Watermark는 테이블에 데이터가 저장된 블록에서 최상위 위치를 의미하고 데이터가 삭제되면 High Watermark가 변경
 
 ### 실행 계획
-```
+```sql
 SELECT * FROM EMP, DEPT;
 WHERE EMP.DEPTNO = DEPT.DEPTNO AND
       EMP.DEPTNO = 10;
@@ -997,7 +997,7 @@ INDEX SCAN(SYS_C007959) -> INDEX SCAN(DEPT TABLE : Outer Table) -> TABSLE ACCESS
 - 외부 테이블(선행 테이블)의 크기가 작은 것을 먼저 찾는 것이 중요하다. 왜냐 데이터가 스캔되는 범위를 줄이기 위해서이다.
 - Random Access가 발생하는데 이것은 성능 지연을 발생시킨다. 따라서 Nested Loop 조인은 Random Access의 양을 줄여야 성능이 향상
 
-```
+```sql
 SELECT /*+ ordered use_nl (b) */ * -- use_nl힌트는 Nested Loop 조인을 실행하게 함.
 FROM EMP a, DEPT b
 WHERE a.DEPTNO = b.DEPTNO
@@ -1013,7 +1013,7 @@ WHERE a.DEPTNO = b.DEPTNO
 - 정렬이 발생하기 때문에 데이터양이 많아지면 성능이 떨어짐
 - 정렬 데이터양이 너무 많으면 정렬은 임시 영역에서 수행되는데 이때, 임시 영역은 디스크에 있어서 성능이 떨어진다.
 
-```
+```sql
 SELECT /*+ ordered use merge(b) */ *
 FROM EMP a, DEPT b
 WHERE a.DEPTNO = b.DEPTNO
@@ -1027,7 +1027,7 @@ WHERE a.DEPTNO = b.DEPTNO
 - 해시 함수를 사용해서 주소를 계산하고 해당 주소를 사용해서 테이블을 조인하기 떄문에 CPU 연산을 많이 한다.
 - 선행 테이블이 충분히 메모리에 로딩되는 크기여야 한다.
 
-```
+```sql
 SELECT /*+ ordered use_hash(b) */ *
 FROM EMP a, DEPT b
 WHERE a.DEPTNO = b.DEPTNO

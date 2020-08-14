@@ -24,7 +24,7 @@ break절 전까지 다 실행이 가능하다.
 C언어에서는 조건절에서는 정수만 가능하지만, C#에서는 정수와 문자열을 허용한다. 그리고 C#에서는 여러 케이스가 계속 실행되는 것을 허용하지 않는다. 따라서 한 케이스마다 goto나 break가 나와야한다.  
 
 Scheme에서의 Multiple Selector  
-```
+```s
 (COND
 	(predicate1 expression)
 	...
@@ -46,7 +46,7 @@ range(2, 7) = [2,3,4,5,6] range(0, 8, 2) = [0,2,4,6]
 
 ## Funtional Language에서의 Loop  
 명령형 언어에서는 counter 변수를 가지고 loop을 돌지만 함수형 언어에서는 재귀호출을 통해서 반복을 구현한다.  
-```
+```cpp
 명령형
 int sum(int a) {
 	int s = 0;
@@ -72,7 +72,7 @@ current : 현재 위치의 원소 반환
 next : 현재 위치에서 다음 위치로 이동  
 reset : 첫번째 원소로 이동  
 ex)  
-```
+```php
 @list = (1,3,5);  
 reset $list;
 print ("First number: " + cureent($list));
@@ -81,7 +81,7 @@ while ($current_value = next($list))
 ```
 Java 5.0에서는 for가 foreach와 같다. for (String myElement : myList) { }  
 C#과 F#에서도 foreach를 사용하는데 유저가 원하는 `IEnumerator`인터페이스를 가지고 foreach을 원하는대로 사용할 수 있다.  
-```
+```java
 List<String> names = new list<String>();
 names.Add("Bob");
 names.Add("Carol");
@@ -99,7 +99,7 @@ Dijkstra가 디자인한 검증을 목적으로 한 프로그래밍이다. 일�
 Guarded Commands로 쓰여진 코드들은 병렬적으로 실행이 가능하며, 순서가 중요하지 않다.  
 
 Selection Guarded Command  
-```
+```r
 if <Boolean expr> -> <statement>
 [] <Boolean expr> -> <statement>
 ...
@@ -109,7 +109,7 @@ fi
 모든 조건절을 동시에 확인해서 참인 것들 중에서 랜덤으로 실행이 된다. 하나 이상 참이 있어야한다. 다 거짓이라면 런타임 에러가 일어난다.  
 
 Loop Guarded Command  
-```
+```r
 do <Boolean> -> <statement>
 [] <Boolean> -> <statement>
 ...

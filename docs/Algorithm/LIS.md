@@ -29,7 +29,7 @@ DP를 이용한 방법은 아래와 같이 알고리즘을 짜볼 수 있다.
   	4. 현재 원소도 포함해주어야 하므로 최종적으로 dp[i]에 val + 1을 할당해준다.
 3. dp배열의 원소 중에서 가장 큰 값을 출력한다.  
 
-```
+```cpp
 for(int i=1;i<N;i++) {
 	for(int j=0;j<i;j++) { 
 		if (array[i] > array[j] && dp[j] + 1 > dp[i])
@@ -50,7 +50,7 @@ for(int i=1;i<N;i++) {
 - 그렇지 않다면, 그 수가 들어갈 자리에 넣는다. (이분 탐색을 통해 들어갈 자리를 찾는다)
 
 LIS의 갯수만 구할 때의 가장 이해하기 쉬운 코드를 찾아보았다.  
-```
+```cpp
 dp[0] = array[0];
 int idx = 0;
 for (int i = 1; i < n; i++) {
@@ -66,7 +66,7 @@ for (int i = 1; i < n; i++) {
 ```
 
 혹은 이런 방식으로 짧게 구현하는 방법도 있다
-```
+```cpp
 for (int i=0; i<n; i++) {
 	vector<int>::iterator iter = lower_bound(dp.begin(), dp.end(), arr[i]);
 	if(iter == dp.end()) dp.push_back(arr[i]);
@@ -80,7 +80,7 @@ cout << dp.size();
 ![LIS 이진탐색 그림](https://t1.daumcdn.net/cfile/tistory/993FE1405AADFAF70F)  
 위 그림을 통해서 소스의 전체적인 느낌을 파악한 뒤 다른 문제에서 요하는 경로 추적 또한 코드로 보았다.  
 
-```
+```cpp
 dp[0] = array[0];
 tracking[0] = new Pair(0, array[0]);
 int idx = 0;
@@ -98,7 +98,7 @@ for (int i = 1; i < n; i++) {
 ```
 이후에는 스택에서 인덱스와 pair의 first을 비교하여 스택에 넣어준 다음 꺼내주게 되면 순서대로 출력할 수 있다.
 
-```
+```cpp
 lis.push_back(v[0]);
 p.push_back({0, v[0]});
 
