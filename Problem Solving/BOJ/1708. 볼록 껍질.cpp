@@ -39,8 +39,8 @@ int main() {
 		cin >> v[i].x >> v[i].y;
 	}
 		
-	sort(v, v + n, comp_y);
-	sort(v + 1, v + n, comp_c);		
+	sort(v, v + n, comp_y); // 시작점 찾기 
+	sort(v + 1, v + n, comp_c);	 // 시작점을 두고 나머지 점들을 0번째 점과 각도가 작은 순으로 다시 정렬 
 	
 	s.push(v[0]);
 	s.push(v[1]);	

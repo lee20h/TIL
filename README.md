@@ -2999,7 +2999,7 @@ int ccw(int x1, int y1, int x2, int y2, int x3, int y3) {
 
 평면상에서 두 선분이 주어졌을 때 교차 여부를 판단할 때 CCW 알고리즘을 사용하게 되면 쉽게 구할 수 있다.  
 
-![선분교차](month/img/algorithm/CCW1.jpg)  
+![선분교차](/month/img/algorithm/CCW1.jpg)  
 선분 AB를 기준으로 선분 CD의 꼭짓점인 C와 D는 서로 다른 방향에 위치하게 된다. 점 A,B,C는 시계 방향, 점 A,B,D는 시계반대 방향의 방향관계를 갖으므로 CCW의 반환값이 서로 다르다. 따라서 `CCW(A,B,C) * CCW(A,B,D) < 0`을 만족한다면 두 선분은 교차한다.  
 
 교차하지 않을 때는 `CCW(A,B,C) * CCW(A,B,D) > 0`을 만족한다는 것을 쉽게 알 수 있다. 선분의 꼭짓점이 다른 선분 위에 위치하게 될 때 `CCW(A,B,C) * CCW(A,B,D) = 0`과 같이 값이 나온다는 것도 같이 알아두면 좋다.  
@@ -3035,5 +3035,84 @@ CCW 알고리즘에서는 이차원 평면상 두 벡터의 수직벡터의 z좌
 그라함 스캔 알고리즘이 시간 복잡도가 O(n)이며, 반시계방향 정렬하는 시간 복잡도가 O(nlogn)이다. 따라서 블록 껍질를 구하는 시간 복잡도는 O(nlogn)이다.
 
 [그림 출처](https://wogud6792.tistory.com/12)
+
+---
+
+- 18日  
+
+# 에라토스테네스의 체
+
+많은 수들에서 소수를 빠르고 정확하게 판별하는 알고리즘이다. 상당히 여러 곳에서 활용될 수 있으므로 잘 기억하자.  
+
+## 단일 숫자 소수 여부 확인
+어떤 수의 소수 여부 확인에 있어서는 특정한 숫자의 제곱근까지만 약수 여부를 검증하면 시간 복잡도 O(N^1/2)으로 빠르게 구할 수 있다.  
+
+하지만 대량의 소수를 구해야하는 경우에 필요한 알고리즘이 바로 에라토스테네스의 체이다.  
+
+## 원리
+해당하는 숫자 범위만큼 배열을 먼저 할당한 뒤, 소수가 아닌 수들을 하나 씩 제거해가는 식으로 구현한다.  
+
+- 배열 생성 후 초기화
+- `for(2 to n)` 문을 통해서 특정 수의 배수에 해당하는 수를 제거한다. 이때, 자기 자신과 이미 제거된 수는 건너뛴다.
+- 배열에 남아있는 숫자가 바로 소수다.
+
+## 소스
+```cpp
+void Eratos(int n){
+	for (int i = 2; i <= n; i++)
+	    PrimeArray[i] = true;
+
+	/*	에라토스테네스의 체에 맞게 소수를 구함
+		만일, PrimeArray[i]가 true이면 i 이후의 i 배수는 약수로 i를
+		가지고 있는 것이 되므로 i 이후의 i 배수에 대해 false값을 준다.
+		PrimeArray[i]가 false이면 i는 이미 소수가 아니므로 i의 배수 역시
+		소수가 아니게 된다. 그러므로 검사할 필요도 없다.
+또한 i*k (k < i) 까지는 이미 검사되었으므로 j시작 값은 i*2 에서 i*i로 개선할 수 있다.
+	*/
+	for (int i = 2; i * i <= n; i++)
+	{
+		if (PrimeArray[i])
+			for (int j = i * i; j <= n; j += i)
+			    PrimeArray[j] = false;
+	}
+}
+```
+
+[변형 문제](https://www.acmicpc.net/problem/1016)  
+
+제곱 ㄴㄴ 수를 찾는 문제로, 1보다 큰 제곱수 X로 나뉘어지지 않는 수들을 찾는 문제이다. 최솟값과 최댓값 사이 구간에 제곱 ㄴㄴ 수 숫자를 출력하면 된다.  
+
+```cpp
+ll Min,Max;
+
+bool check[1000005];
+int main(){
+    ios_base :: sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int cnt = 0;
+    cin >> Min >> Max;
+
+    for(ull i=2;i*i<=Max;i++){
+        ull nn = Min/(i*i);
+        if(Min%(i*i))
+            nn++;
+
+        for(ull j=nn;;j++){
+            if(j*i*i>Max)
+                break;
+            if(!check[j*i*i-Min]){
+                cnt++;
+                check[j*i*i-Min] = true;
+            }
+        }
+    }
+    
+    cout << Max - Min + 1 - cnt;
+    return 0;
+}
+```
+
+내부 포문은 `i*i`에 포함되는 숫자들을 전부 체크하고 제곱 ㄴㄴ 수를 세준다. [min, max] 구간에서 `i*i*k >= min`인 수에 도달하기 위해서 `ull nn = Min/(i*i)`을 통해서 조정을 해줬다.  
 
 ---
