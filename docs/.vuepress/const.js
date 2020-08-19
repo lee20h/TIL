@@ -1,6 +1,7 @@
 exports.AlgorithmList = [
     'Algorithm/그래프.md',
     'Algorithm/문자열 검색.md',
+    'Algorithm/KMP.md',
     'Algorithm/이분탐색.md',
     'Algorithm/세그먼트 트리.md',
     'Algorithm/LCS.md',

@@ -3116,3 +3116,173 @@ int main(){
 내부 포문은 `i*i`에 포함되는 숫자들을 전부 체크하고 제곱 ㄴㄴ 수를 세준다. [min, max] 구간에서 `i*i*k >= min`인 수에 도달하기 위해서 `ull nn = Min/(i*i)`을 통해서 조정을 해줬다.  
 
 ---
+
+- 19日  
+
+# KMP
+
+문자열 검색 알고리즘 중 접두사와 접미사를 구하는 알고리즘으로 naive 문자열 검색과 달리 문자열 전부를 검색하는 것이 아닌 접두사와 접미사가 같은 조건에 의해 만들어진 실패함수로 적절하게 인덱스를 조정하여 검색하는 알고리즘이다.  
+
+[그림참고](https://m.blog.naver.com/kks227/220917078260)  
+
+## 실패함수
+
+KMP 알고리즘에는 찾고자하는 문자열의 위치마다 별도의 실패 함수 값이 존재한다. 이 값은 불일치가 발생하였을 때 반복 인덱스가 어디로 이동해야 하는지 나타내는 값으로, 검색시에 틀린다고 무조건 찾는 문자열의 크기만큼 넘어가지 않게 하기 위한 장치이다. 이 함수로 만들어진 배열을 fail이라고 할 때 `fail[x]`가 가진 의미는 `찾는 문자열의 처음 (x+1)글자 중, 일치하는 접두사/접미사 중 최대 길이`다.  
+
+KMP 알고리즘에도 쓰이지만 접두사와 접미사 관련해서 필요한 경우 이 실패함수만 가져다가 사용하는 경우도 있다. 
+
+### 실패함수 소스
+
+```cpp
+int fail[MAX] = {0,};
+for (int i=1, j=0; i<S.length(); i++) {
+	while(j < 0 && S[i] != S[j])
+		j = fail[j-1];
+	if(S[i] == S[j])
+		fail[j] = ++j;
+}
+```
+
+## KMP 알고리즘
+
+만들어진 실패 함수로 찾고자하는 문자열의 인덱스를 조정해줘서 대상 문자열과 찾고자하는 문자열의 글자들을 비교하며 찾아간다. 그리고 소스에서 보면 알겠지만 실패함수와 매우 흡사하다는 것을 알 수 있다. 이 말은 실패함수는 찾고자하는 문자열에 대해 KMP 알고리즘을 적용시켰다고 할 수 있다. 즉. KMP 알고리즘의 논리는 String에서 Word을 찾는다고 하면, 실패 함수는 Word에서 Word의 부분 문자열을 찾는다고 볼 수 있다. 이후 KMP에서는 `if(S[i] == W[j])`에서 찾은 뒤 원하는 동작을 넣어주면 된다.
+
+### KMP 알고리즘 소스
+
+```cpp
+for(int i=0, j=0; i<N; i++){
+	// 현재 글자가 불일치하면 fail 값을 계속 따라감
+	while(j > 0 && S[i] != W[j]) j = fail[j-1];
+	// 현재 글자가 일치
+	if(S[i] == W[j]){
+		// W를 S[i:i+M-1]에서 찾음
+		if(j == M-1){
+			// i=0부터 시작한다면 i-M+1. 문제 조건에 따라 1을 더함
+			result.push_back(i-M+2);
+			// 찾지 못한 것처럼 j를 이동시키면 됨
+			j = fail[j];
+		}
+		else j++;
+	}
+}
+```
+
+### 문제
+
+BOJ  
+[찾기](http://noj.am/1786), [Cubeditor](http://noj.am/1701), [시저 암호](http://noj.am/1893), [광고](http://noj.am/1305), [문자열 제곱](http://noj.am/4354)  
+
+-----
+
+시저 암호
+```cpp
+/*
+	먼저 map 자료구조에 오른쪽으로 shift한 문자들을 넣어놓고 0~a 즉, 모든 경우의 수를 다 찾아본다.
+	먼저 새로운 W의 실패함수를 구하고 S에서의 W에 대해 KMP 알고리즘을 시행한다.
+	S에서 W를 한번만 찾은 반복문에 대해서만 정답으로 취급해준다. 
+*/
+int main() {
+	while(n--) {
+		string A, W, S;
+		int a, w, s;
+		vector<int> v;
+		map<char, char> shift; // shift한 문자 결과 
+		cin >> A >> W >> S;
+		a = A.size();
+		w = W.size();
+		s = S.size();
+		
+		for (int i=0; i<a; i++)
+			shift[A[i]] = A[(i+1)%a];
+		
+		for (int circle=0; circle<a; circle++) {
+			
+			if(circle != 0) {
+				for (int i=0; i<w; i++)
+					W[i] = shift[W[i]];
+			}
+			
+			memset(fail, 0, sizeof(fail));
+			
+			for (int i=1, j=0; i<w; i++) { // W의 실패함수 
+				while(j > 0 && W[i] != W[j])
+					j = fail[j-1];
+				if(W[i] == W[j])
+					fail[i] = ++j;
+			}
+			
+			bool flag = false; 
+			for (int i=0, j=0; i<s; i++) {
+				while(j > 0 && S[i] != W[j])
+					j = fail[j-1];
+				if(S[i] == W[j]) {
+					if(j == w-1) {
+						if(!flag) { // 한번 찾은 경우
+							flag = true;
+							j = fail[j];
+						}
+						else { // 두번 이상 찾게 되면 안된다.
+							flag = false;
+							break;
+						}
+					} 
+					else
+						j++;
+				}
+			}
+			
+			if(flag)
+				v.push_back(circle);
+		}
+}
+```
+
+마법의 단어
+```cpp
+/*
+	T를 쉬프트한 문자열 (최대 T.length()개)가 T와 같아지는 경우가 K번 존재
+	문자열들이 주어졌을 때 순열의 조합으로 만들 수 있는 단어 중 몇개냐
+	순열은 next_permutation 사용하고 kmp를 통해 구하되, 주어진 문자열의 끝까지 가게되면
+	자기 자신과 같으므로 length()에서 -1만큼 해준다. 
+*/
+int kmp(string a, string b) { // 일반적인 KMP이지만 KMP 알고리즘 for문의 범위가 a.length() -1이다. 자기 자신을 빼주기 위함
+	memset(fail, 0, sizeof(fail));
+	int cnt = 0;
+	for (int i=1, j=0; i<a.length(); i++) {
+		while(j > 0 && a[i] != b[j])
+			j = fail[j-1];
+		if(a[i] == b[j])
+			fail[i] = ++j;
+	}
+	for (int i=0, j=0; i<a.length()-1; i++) {
+		while(j > 0 && a[i] != b[j])
+			j = fail[j-1];
+		if(a[i] == b[j]) {
+			if(j == b.length()-1) {
+				cnt++;
+				j = fail[j];
+			}
+			else
+				j++;
+		}
+			
+	}
+	return cnt;
+}
+int main() {
+	do {
+		string comb, word;
+		for (int i=0; i<n; i++)
+			word += str[v[i]];
+		
+		comb = word + word;
+		
+		if(kmp(comb, word) == k)
+			cnt++;
+		
+	}while(next_permutation(v.begin(),v.end()));
+	cout << cnt;
+} 
+```
+
+---
