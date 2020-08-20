@@ -3286,3 +3286,134 @@ int main() {
 ```
 
 ---
+
+- 20日  
+
+[주기문](https://noj.am/1498), [주기](https://noj.am/3779), [앞뒤가 맞는 수열](https://noj.am/16570), [이름 정하기](https://noj.am/16900)  
+
+주기문, 주기 알고리즘 동일. 주기문
+```cpp
+const int MAX = 1e6 + 1;
+
+int fail[MAX];
+
+/*
+	문자열의 n 제곱이란 부분문자열을 n번 이어붙였을 대 해당 문자열이 나와야하기 때문에
+	접두사이면서 접미사인 부분문자열의 길이를 실패함수를 통해서 저장한다.
+	따라서 문자열의 인덱스 - 1일 때 부분문자열의 길이는 문자열을 n번 제곱했을 때의 부분문자열의 길이이다.
+	즉, length / length - fail[leength-1] 이 제곱을 뜻하며 펠린드롬을 제외해주고 찾아주면 된다. 
+*/
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	string str;
+	cin >> str;
+	int n = 0;
+	for (int i=1, j=0; i<str.length(); i++) {
+		while(j > 0 && str[i] != str[j])
+			j = fail[j-1];
+		if(str[i] == str[j]) {
+			fail[i] = ++j;
+		}
+	}
+	
+	for (int i=2; i<=str.length(); i++) {
+		if (fail[i-1] == 0 || fail[i - 1] % (i - fail[i - 1])) // 펠린드롬 
+			continue;
+		int ans = i / (i - fail[i-1]); // 제곱수 
+		if(ans > 1) { // 제곱을 갖는 경우 
+			cout << i << ' ' << ans << '\n';
+		}
+	}
+}
+```
+
+앞뒤가 맞는 수열
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 1e6+1;
+
+int arr[MAX];
+int sub[MAX];
+int fail[MAX];
+
+/*
+	앞을 자르고 부분 문자열의 접두사와 접미사의 같은 길이 중 최대를 구하고자 한다.
+	이 때 앞을 자르는 것을 거꾸로 생각하면 끝에서부터 kmp로 실패함수 값을 구하는것과 같다. 
+*/
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n;
+	cin >> n;
+	for (int i=n-1; i>=0; i--) {
+		cin >> arr[i];
+	}
+	
+	for (int i=1, j=0; i<n; i++) {
+		while(j>0 && arr[i] != arr[j])
+			j = fail[j-1];
+		if(arr[i] == arr[j])
+			fail[i] = ++j;
+	}
+	
+	int ans = -1, cnt = 1;
+	
+	for (int i=0; i<n; i++) {
+		if(fail[i]) {
+			
+			if(ans < fail[i]) {
+				cnt = 1;
+				ans = fail[i];
+			}
+			else if(ans == fail[i])
+				cnt++;
+		}
+	}
+	if(ans == -1)
+		cout << ans;
+	else
+		cout << ans << ' ' << cnt;
+	
+}
+```
+
+이름 정하기
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 1e6+1;
+long long fail[MAX];
+/*
+	KMP 실패함수를 이용해서 부분 문자열을 구한다. 
+	접두사와 접미사가 같으므로 전체 길이에서 반복되는 길이만큼을 빼고 n-1을 곱해준다.
+	그 다음 전체 길이와 더하면 된다. n-1인 이유는 자기 자신을 제외하기 때문이다. 
+*/
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	string c;
+	long long n;
+	cin >> c >> n;
+	long long len = c.length();
+	for (int i=1, j=0; i<len; i++) {
+		while(j>0 && c[i] != c[j])
+			j = fail[j-1];
+		if(c[i] == c[j]) 
+			fail[i] =  ++j;
+	}
+		
+	cout << len + (len-fail[len-1]) * (n-1);
+}
+```
+
+주로 문자열 알고리즘에 대해 공부하며 문제를 풀어볼 예정이며, SQLD 시험을 위해 데이터베이스도 꾸준히 공부해야한다.  
+
+----
+
