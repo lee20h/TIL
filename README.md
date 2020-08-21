@@ -3417,3 +3417,134 @@ int main() {
 
 ----
 
+# 환형 문자열  
+
+환형 문자열이란 동그랗게 말린 원형 문자열을 뜻한다. 밑에 문제에서 볼 수 있겠지만, 룰렛이나 시계와 같이 동그란 물체에 문자열을 대입해서 해결하는 문제이다.  
+
+이 문제에 있어서는 KMP 알고리즘을 사용하는데 환형 문자열을 두 배로 늘리고 그 해당 문자열에 다른 문자열이 들어있나 체크해주면 된다. 이때 KMP 알고리즘을 사용한다.
+
+[시계 사진들](http://noj.am/10266), [속타는 저녁 메뉴](http://noj.am/11585)  
+
+시계 사진들
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 360000;
+
+int fail[MAX+100];
+
+bool origin[MAX+100];
+bool comp[MAX*2+100];
+
+/*
+	바늘이 360000개 만큼 가능하므로 그 들어오는 숫자만큼 bool형 배열로 체크한 뒤,
+	그 배열을 두배로 늘려서 들어오는 배열과 KMP 알고리즘으로 비교하였다.
+	이 때 MAX값만큼 for문을 돌려야하는게 가장 헷갈렸다. 
+*/
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, a;
+	cin >> n;
+	bool flag = false;
+	for (int i=0; i<n; i++) {
+		cin >> a;
+		comp[a] = comp[a+MAX] = true;
+	}
+	
+	for (int i=0; i<n; i++) {
+		cin >> a;
+		origin[a] = true;
+	}
+	
+		
+	for (int i=1, j=0; i<MAX; i++) {
+		while(j>0 && origin[i] != origin[j])
+			j = fail[j-1];
+		if(origin[i] == origin[j])
+			fail[i] = ++j;
+	}
+	
+	for (int i=0, j=0; i<MAX*2; i++) {
+		while(j>0 && comp[i] != origin[j])
+			j = fail[j-1];
+		if(comp[i] == origin[j]) {
+			if(j == MAX-1) {
+				flag = true;
+				break;
+			}
+			else
+				j++;
+		}
+	}
+	if(flag)
+		cout << "possible";
+	else
+		cout << "impossible";
+}
+```
+
+속타는 저녁 메뉴
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 1e6+1;
+
+char a[MAX];
+char b[MAX*2];
+int fail[MAX*3];
+
+/*
+	원형 룰렛에 들어가는 문자열은 환형 문자열로, 해당 문자열이 원형 룰렛 모양에 들어가는지 보기 위해서
+	원형 룰렛 모양을 두배로 늘린 다음 kmp 알고리즘을 통해 얼마나 들어가는지 확인한다.
+	기약분수를 만들기 위해 최대공약수를 구해서 나눠준다. 
+*/
+
+int ShortFraction(int a, int b) {
+	if(!(b%a))
+		return a;
+	return ShortFraction(b%a, a);
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n;
+	cin >> n;
+	int num = 0;
+	for (int i=0; i<n; i++) {
+		cin >> a[i];
+	}
+	for (int i=0; i<n; i++) {
+		cin >> b[i];
+		b[n+i] = b[i];
+	}
+	
+	for (int i=1,j=0; i<n; i++) {
+		while(j>0 && a[i] != a[j])
+			j = fail[j-1];
+		if(a[i] == a[j])
+			fail[i] = ++j;
+	}
+	
+	for (int i=0, j=0; i<n*2-1; i++) {
+		while(j>0 && b[i] != a[j])
+			j = fail[j-1];
+		if(b[i] == a[j]) {
+			if(j == n-1) {
+				j = fail[j];
+				num++;
+			}
+			else
+				j++;
+		}
+	}
+	
+	cout << num/ShortFraction(num,n) << '/' << n/ShortFraction(num,n);
+	
+}
+```
+
+---
