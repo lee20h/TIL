@@ -81,9 +81,9 @@ Kill은 이러한 시간이 없이 바로 중지시키기 때문에 결과가 �
 명령어는 `docker rm <중지된 컨테이너 ID/NAMES>`이다. 이 경우에는 각각 컨테이너의 이름이나 ID를 통해 하나하나 지울 수 있다.  
 
 컨테이너를 모두 지울려면 다음과 같다.  
-~~~
-dockker rm `docker ps -a -q`
-~~~
+```
+docker rm `docker ps -a -q`
+```
 
 이미지의 삭제는 `docker rmi <이미지 id>`를 통해서 하나씩 삭제할 수 있다.  
 

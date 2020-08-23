@@ -179,7 +179,7 @@ Python, Ruby, Lua는 배열끼리 붙이거나 원소를 집어 넣을 때만 �
 
 - Array Initialization  
 C, C++, C#, Java는  
-```c#
+```cs
 int list [] = {4, 5, 7, 83};
 ```  
 배열의 길이를 컴파일러가 계산해준다.  

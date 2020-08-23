@@ -38,7 +38,7 @@ AWS, Azure, Google cloud 등 어디에서든 실행 가능하게 해준다.
 
 `docker run hello-world`  
 
-![hello](/TIL/images/Docker/hello-world.jpg)  
+![hello](/TIL/images/Dock/hello-world.jpg)  
 
 입력시에 로컬에 `hello-world`라는 이미지가 없으므로 라이브러리로부터 Pulling하여서 실행한다. 그 결과는 위의 이미지와 같다.  
 
@@ -77,18 +77,18 @@ AWS, Azure, Google cloud 등 어디에서든 실행 가능하게 해준다.
 일반적인 소프트웨어처럼 호스트 OS 위에서 실행되며, 하드웨어 자원을 VM 내부의 게스트 OS에 에뮬레이트 하는 방식으로 오버헤드가 크다. 하지만 게스트 OS 종류에 대한 제약이 없고 구현이 다소 쉽다. 따라서 일반적으로 많이 이용하는 방법이다.  
 
 ### 하이퍼 바이저 기반의 VM 구조
-![hypervisor](/TIL/images/Docker/hypervisor.jpg)  
+![hypervisor](/TIL/images/Dock/hypervisor.jpg)  
 
 하이퍼바이저에 의해 구동되는 VM은 각 VM마다 독립된 가상 하드웨어 자원을 할당받는다. 논리적으로 분리되어 있어서 한 VM에 오류가 발생해도 다른 VM으로 퍼지지 않는다.  
 
 ### Docker 구조 비교
-![docker](/TIL/images/Docker/docker.jpg)  
+![docker](/TIL/images/Dock/docker.jpg)  
 
 VM과 비교했을 때 컨테이너는 하이퍼바이저와 게스트 OS가 필요하지 않으므로 더 가볍다.  
 
 어플리케이션을 실행할 때는 컨테이너 방식에서는 호스트 OS위에 어플리케이션의 실행 패키지인 이미지를 배포하기만 하면 되는데 VM은 어플리케이션을 실행하기 위해서 VM을 띄우고 자원을 할당한 다음, 게스트 OS를 부팅하여 어플리케이션을 실행 해야해서 훨씬 복잡하고 무겁게 실행해야 한다.  
 
-![docker](/TIL/images/Docker/docker_detail.jpg)  
+![docker](/TIL/images/Dock/docker_detail.jpg)  
 
 ### 컨테이너 격리시킬 때 사용되는 기능
 

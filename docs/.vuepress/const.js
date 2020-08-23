@@ -2,6 +2,7 @@ exports.AlgorithmList = [
     'Algorithm/그래프.md',
     'Algorithm/문자열 검색.md',
     'Algorithm/KMP.md',
+    'Algorithm/트라이.md',
     'Algorithm/이분탐색.md',
     'Algorithm/세그먼트 트리.md',
     'Algorithm/LCS.md',
@@ -72,6 +73,6 @@ exports.Express_list = [
 ]
 
 exports.Docker_list = [
-    'Docker/Docker.md',
-    'Docker/Docker Command.md'
+    'Dock/Docker.md',
+    'Dock/Docker Command.md'
 ]
