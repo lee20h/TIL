@@ -25,10 +25,6 @@ module.exports = {
         children: CONST.Express_list
       },
       {
-        title: "Docker",
-        children: CONST.Docker_list
-      },
-      {
         title: "DataBase",
         children: CONST.DB_list
       },

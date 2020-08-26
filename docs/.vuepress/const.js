@@ -70,11 +70,6 @@ exports.Express_list = [
     'Express/Multer.md',
     'Express/Morgan.md',
     'Express/Body-parser.md',
-    'Express/Http-errors.md'
-]
-
-exports.Docker_list = [
-    'Dock/도커.md',
-    'Dock/도커 명령어.md',
-    'Dock/도커 이미지.md'
+    'Express/Http-errors.md',
+    'Express/Passport.md'
 ]
