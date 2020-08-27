@@ -4246,4 +4246,132 @@ module.exports = router;
 admin에서 id와 password를 클라이언트단에서 넘겨받아 디비와 비교 한 뒤 jwt을 인코딩하여 다시 보내주는 코드이다.  
 
 auth의 경우에는 passport의 전략을 잡아주고 jwt의 유효성을 확인하기 위해 클라이언트단에서 넘어왔을 때 체크해주기 위한 함수로 작성이 되어있다.  
+
+---
+
+- 27日  
+
+KMP PS 소스 해설
+
+[문제](http://noj.am/1787)
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 1e6+1;
+const int INF = 1e9;
+int fail[MAX], dp[MAX];
+
+int sol(int pos) {
+	if(pos < 0 || fail[pos] == 0)
+		return INF;
+		
+	int& ret = dp[pos];
+	if(ret != -1)
+		return ret;
+		
+	return ret = min(fail[pos], sol(fail[pos-1]));
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	
+	int n;
+	string str;
+	cin >> n >> str;
+	
+	for(int i=1,j=0; i<n; i++) {
+		while(j>0 && str[i] != str[j])
+			j = fail[j-1];
+		if(str[i] == str[j])
+			fail[i] = ++j;
+	}
+	memset(dp, -1, sizeof(dp));
+	
+	long long sum = 0;
+	for (int i=0; i<n; i++) {
+		int ret = sol(i);
+		if(ret == INF)
+			continue;
+		sum += (long long)(i-ret+1);
+	}
+	cout << sum;
+}
+```
+
+접두사와 접미사가 연속되는 수 중에서 가장 짧은 것을 출력하는 문제로 우리가 구하는 실패함수의 n은 접두사와 접미사가 연속되는 것의 가장 긴 문자열을 말한다. 실패함수의 특징 중에 n-1 n-2 n-3 ~ 이런식으로 가게되면 연속으로 이어지는 접두사와 접미사를 볼 수 있으며, 도중에 0이 나온다는 것은 이어지지 않는다는 말로, 즉 접두사와 접미사가 같지 않다는 것을 뜻한다.  
+
+따라서 O(n) 시간복잡도로 포문 한번을 돌리되, 해당 실패함수를 먼저 구한 뒤 i만큼의 길이라고 가정하고 재귀를 통해서 해당 값을 구하도록 한다. 재귀는 길이를 -1을 계속 하여 가장 작은 값을 찾는 것이다. 이때 같은 연산을 반복하므로 비효율적이므로 dp를 이용해준다.  
+
+추가적으로 어제 공부한 passport에서 토이 프로젝트에 적용한 코드가 진행이 안되어 수정이 필요했다. 다음과 같이 수정을 하였다. 
+
+```js
+router.post('/login', async (req, res) => {
+    if(req.body.id && req.body.password) {
+        const id = req.body.id;
+        const password = req.body.password;
+        var idDb, pwdDb;
+        await admin.findOne({
+            where : {id : id}
+        })
+        .then(adminDb => {
+            idDb = adminDb.dataValues.id;
+            pwdDb = adminDb.dataValues.password;
+        })
+        .catch(err => {
+            console.error(err);
+        });
+        const check = (idDb == id) && (pwdDb == password);
+        if (check) {
+            const payload = {
+                id: idDb
+            };
+            const token = jwt.encode(payload, cfg.jwtSecret);
+            res.json({
+                token: token
+            });
+        }
+        else {
+            res.sendStatus(401);
+        }
+    }
+    else {
+        res.sendStatus(401);
+    }
+});
+
+router.get('/adminCheck', (req, res) => {
+    const token = req.headers['x-access-token'] || req.query.token;
+
+    if(!token) {
+        return res.status(403).json({
+            suceess: false,
+            message: 'not logged in'
+        });
+    }
+    
+    /* 토큰 유효성 검사 */
+    const vaild = new Promise((resolve, reject) => {
+        jwt.verify(token, cfg.jwtSecret, (err, decoded) => {
+            if (err) reject(err);
+            else resolve(decoded);
+        })
+    });
+    /* 유효하지 않은 토큰으로 403 에러 처리 */
+    const onError = (error) => {
+        res.status(403).json({
+            success: false,
+            message: error.message
+        })
+    };
+
+    vaild.then((decoded) => {
+        res.json(decoded);
+    }).catch(onError);
+});
+```
+
+이전 코드에서는 let과 var의 차이 때문에 조건문에 들어가지 못하였다. let은 무조건 false가 리턴되는 이유인데 제대로 알아내지 못했다. var로 바꾸자 바로 token을 얻을 수 있었다. 하지만, decode 함수 또한, 작동하지 않아서 직접 jwt.secret과 클라이언트단에서 token을 받아서 decode 후 해당 id를 반환해줬다.
+
 ---
