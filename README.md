@@ -4307,34 +4307,33 @@ int main() {
 추가적으로 어제 공부한 passport에서 토이 프로젝트에 적용한 코드가 진행이 안되어 수정이 필요했다. 다음과 같이 수정을 하였다. 
 
 ```js
-router.post('/login', async (req, res) => {
+router.post('/login', (req, res) => {
     if(req.body.id && req.body.password) {
         const id = req.body.id;
         const password = req.body.password;
-        var idDb, pwdDb;
-        await admin.findOne({
+        admin.findOne({
             where : {id : id}
         })
         .then(adminDb => {
-            idDb = adminDb.dataValues.id;
-            pwdDb = adminDb.dataValues.password;
+            const idDb = adminDb.dataValues.id;
+            const pwdDb = adminDb.dataValues.password;
+            const check = (pwdDb === password);
+            if (check) {
+                const payload = {
+                    id: idDb
+                };
+                const token = jwt_s.encode(payload, cfg.jwtSecret);
+                res.json({
+                    token: token
+                });
+            }
+            else {
+                res.sendStatus(401);
+            }
         })
         .catch(err => {
             console.error(err);
         });
-        const check = (idDb == id) && (pwdDb == password);
-        if (check) {
-            const payload = {
-                id: idDb
-            };
-            const token = jwt.encode(payload, cfg.jwtSecret);
-            res.json({
-                token: token
-            });
-        }
-        else {
-            res.sendStatus(401);
-        }
     }
     else {
         res.sendStatus(401);
@@ -4373,5 +4372,61 @@ router.get('/adminCheck', (req, res) => {
 ```
 
 이전 코드에서는 let과 var의 차이 때문에 조건문에 들어가지 못하였다. let은 무조건 false가 리턴되는 이유인데 제대로 알아내지 못했다. var로 바꾸자 바로 token을 얻을 수 있었다. 하지만, decode 함수 또한, 작동하지 않아서 직접 jwt.secret과 클라이언트단에서 token을 받아서 decode 후 해당 id를 반환해줬다.
+
+---
+
+- 28日  
+
+Insomnia라는 프로그램을 사용해보고 그 후기를 적어볼려고 한다. 먼저 Insomnia는 postman과 같이 rest api test tool이다. 이번에 중고책 사고 파는 플랫폼을 토이 프로젝트로 진행하면서 백엔드를 주로 맡아서 코딩을 하게 되었는데, 이때 프론트엔드를 진행해주는 친구와 매번 rest api를 맞추기 위해서 툴을 만들어줄 수 없으므로 로직으로만 완벽하게 코딩했다고 생각하며 깃에 커밋하곤 했다.  
+
+하지만 매번 완벽하게 코딩하긴 어려우므로, 제대로 통신이 안된 경우도 많다. 따라서 테스트를 해보고 코딩을 하면 더욱 수월하겠지만 테스트를 할 폼이 없어서 어려움을 겪곤 했다. 이런 와중에 Insomnia를 알게 되었다. 검색도 해보면서 Postman과 비슷한 프로그램으로 웹 개발에 쓰이는 rest api를 테스트할 수 있는 도구라 사용하면 개발에 도움이 많이 된다는 포스팅도 보게 되었다.  
+
+바로 설치 후 해당 프로그램을 이용해 토이 프로젝트에서 원하는 부분을 빠르게 구현할 수 있었다. 해당 도구를 빨리 알았으면 더 빠르지 않았을까 생각해본다.  
+
+이후에는 Orcle에 대해 조금 더 공부하며, 그룹 함수에 대해 이해가 필요하여 복습하였다. 제일 헷갈려서 오해한 부분이 `ROLLUP`과 `CUBE`이다. 두 함수에 있어서 매개변수가 하나라면 직관적으로 이해되어서 해당 쿼리가 실행결과를 쉽게 예측할 수 있었지만, 매개변수가 두 개 이상부터는 쉽지 않았다. 그 외의 조건이 더 붙는다면 혼돈 그 자체다.  
+
+따라서, ROLLUP과 CUBE, 더 보면 GROUPING SET까지 제대로 된 이해가 필요하다.
+
+## 그룹 함수
+**ROLLUP**
+- GROUP BY의 컬럼에 대해 **SUBTOTAL**을 만듬
+- GROUP BY구에 칼럼이 두 개 이상 오면 **순서에 따라 결과가 달라짐**
+```sql
+SELECT DECODE(DEPTNO, NULL, '전체합계', DEPTNO), SUM(SAL)
+FROM EMP
+GROUP BY ROLLUP(DEPTNO);
+```
+DEPTNO에 대해서 GROUP BY로 급여 합계를 계산하고 부서별 전체합계를 추가해서 계산한다.  
+ROLLUP은 DEPTNO에 대해서 기존 GROUP BY와는 다르게 부서별 전체합계를 계산한다.  
+
+**GROUPING 함수**  
+- ROLLUP, CUBE, GROUPING SETS에 생성되는 **합계값을 구분**하기 위해 만들어짐
+- 예로 소계, 합계 등이 계산되면 GROUPING 함수는 1을 반환하고 아니면 0을 반환해서 합계값 식별
+```sql
+SELECT DEPTNO, GROUPING(DEPTNO), JOB, GROUPING(JOB), SUM(SAL)
+FROM EMP
+GROUP BY ROLLUP(DEPTNO)
+```
+
+**GROUPING SETS 함수**
+- GROUP BY에 나오는 칼럼의 순서와 관계없이 **다양한 소계** 만듬
+- GROUP BY에 나오는 칼럼의 순서와 관계없이 **개별적**으로 모두 처리
+```sql
+SELECT DEPTNO, JOB, SUM(SAL)
+FROM EMP
+GROUP BY GROUPING SETS(DEPTNO, JOB);
+```
+GROUPING SETS함수로 DEPTNO와 JOB을 실행한 결과 DEPTNO 합계와 JOB 합계가 개별적으로 조회되었다. 즉, 서로 관계가 없다.  
+
+**CUBE 함수**  
+- CUBE 함수에 제시한 칼럼 가능한 모든 집계 계산
+- 다차원 집계를 제공하여 다양하게 데이터 분석
+- **조합할 수 있는 경우의 수 모두 조합** (부서와 직업을 CUBE로 사용하면 부서별 합계, 직업별 합계, 부서별 직업별 합계, 전체합계 조회)
+
+```sql
+SELECT DEPTNO, JOB, SUM(SAL)
+FROM EMP
+GROUP BY CUBE(DEPTNO, JOB);
+```
 
 ---
