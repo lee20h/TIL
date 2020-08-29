@@ -6,9 +6,9 @@ sidebar: auto
 
 ## 이미지 내부 파일 시스템
 
-|docker| run | 이미지 이름| 커맨드 |
-|---|---|---|--|---|
-|도커 클라이언트 언급 | 컨테이너 생성 및 실행 | 이 컨테이너를 위한 이미지 | 이 자리는 원래 이미지가 가지고 있는 시작 명령어를 무시하고 여기에 있는 커맨드를 실행 |  
+| docker | run | 이미지 이름 | 커맨드 |
+|---|---|---|---|
+| 도커 클라이언트 언급 | 컨테이너 생성 및 실행 | 이 컨테이너를 위한 이미지 | 이 자리는 원래 이미지가 가지고 있는 시작 명령어를 무시하고 여기에 있는 커맨드를 실행 |  
 
 예를 들어서 명령어를 통해 이해해보자.  
 `docker run alpine ls` alpine 이미지의 명령어를 `ls`명령어로 대체하여 alpine 이미지에서 실행된다.  
@@ -53,7 +53,7 @@ sidebar: auto
 
 `docker run` = `docker create <이미지 이름>` + `docker start <컨테이너 아이디/이름>`  
 
-docker create을 사용하면 컨테이너의 ID가 출력이 된다. 이후 컨테이너의 아이디 중 일부를 docker start 뒤에 붙여주면 된다. 이때 docker start에 옵션이 존재하는데 바로 `-a` 옵션이다. 이것은 attach을 의미하며 실행이 될 때 붙어있다가 출력값들을 화면에 출력시킬 수 있게 보내주는 옵션이다. 이 옵션이 없이 docker start ID만 입력하게 되면 컨테이너 ID만 다시 출력하고 끝나게 된다.  
+`docker create`을 사용하면 컨테이너의 ID가 출력이 된다. 이후 컨테이너의 아이디 중 일부를 `docker start` 뒤에 붙여주면 된다. 이때 `docker start`에 옵션이 존재하는데 바로 `-a` 옵션이다. 이것은 attach을 의미하며 실행이 될 때 붙어있다가 출력값들을 화면에 출력시킬 수 있게 보내주는 옵션이다. 이 옵션이 없이 `docker start ID`만 입력하게 되면 컨테이너 ID만 다시 출력하고 끝나게 된다.  
 
 ### 중지
 
@@ -68,9 +68,9 @@ docker create을 사용하면 컨테이너의 ID가 출력이 된다. 이후 컨
 
 이것을 구조적으로 보게 되면,  
 
-docker stop -> Sigterm -> Sigkill -> Container(main process)  
+`docker stop -> Sigterm -> Sigkill -> Container(main process)`  
 
-docker kill -> Sigkill -> Container(main process)  
+`docker kill -> Sigkill -> Container(main process)`  
 
 Stop은 Sigterm에서 Grace Period(정리 하는 시간)을 갖고 작업들을 완료한 뒤, 컨테이너를 중지시키는 시간을 갖게 된다.   
 Kill은 이러한 시간이 없이 바로 중지시키기 때문에 결과가 차이가 난다.  
@@ -117,7 +117,7 @@ docker rm `docker ps -a -q`
 
 `docker exec -it <컨테이너 아이디> redis-cli`  
 
-위에서 공부한 docker exec를 이용해서 컨테이너 속에서 켜진 레디스 서버에 레디스 컨테이너를 켜보자.  
+위에서 공부한 `docker exec`를 이용해서 컨테이너 속에서 켜진 레디스 서버에 레디스 컨테이너를 켜보자.  
 
 여기서 `-it`를 처음보는데 이 옵션은 interactive terminal을 따로 나눠서 붙인 약자로, exec를 통한 실행 후 다음 명령어를 입력할 수 있는 옵션이다. 따라서, `-it` 옵션이 없다면 레디스 클라이언트를 실행 후 바로 나와서 이어서 사용하지 못한다.  
 

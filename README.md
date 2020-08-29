@@ -4430,3 +4430,201 @@ GROUP BY CUBE(DEPTNO, JOB);
 ```
 
 ---
+
+- 29日  
+
+# Node.js 환경에서 Docker
+
+간단한 Node.js 앱을 도커를 이용해서 만들어보자  
+
+## express 앱 작성
+
+`npm init`을 통해서 package.json 파일을 생성 해준다. 그 이후 종속성에 express을 넣은 뒤 간단하게 소스를 작성해준다.
+
+```js
+const express = require('express');
+
+const PORT = 8080;
+
+// app
+const app = express();
+app.get('/', (req, res) => {
+    res.send("Hello Wolrd!");
+});
+
+app.listen(PORT);
+
+console.log(`Server is running`)
+```
+
+이후 도커파일을 작성한다.  
+
+## 도커파일 작성
+
+```dockerfile
+FROM node:10
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./ 
+# 소스 변경시 매번 종속성 설치 막기 위함
+RUN npm install
+
+COPY ./ ./
+
+CMD [ "node", "server.js" ]
+```
+
+- FROM baseimage = node:10(version)
+- WORKDIR 도커 이미지속 소스 디렉토리
+- RUN 명령어
+- COPY 현재 디렉토리에서 도커 이미지로 복사함
+- CMD 컨테이너에서 실행할 명령어
+
+## 도커 빌드
+
+`docker build -t lee20h/nodejs ./`을 통해서 현재 디렉토리에 있는 파일들을 도커로 제작한다.  
+
+이후 실행을 할 때는 `docker run lee20h/nodejs`를 하게 되면 콘솔은 찍히지만 해당 express 앱에서 열어논 포트로 접근을 할 수 없다.  
+
+따라서 이러한 명령어를 통해서 진행해야 한다.  
+`docker run -p 3000:8080 lee20h/nodejs`  
+여기서 `-p` 옵션은 port로, 도커 이미지에 열린 포트 8080에서 해당 로컬 포트인 3000으로 연결해주는 것이다. 따라서 8080포트를 3000포트로 연결해줘서 이후엔 3000포트로 접근할 수 있게 된다. 추후의 실행때 별도의 옵션은 필요없다.  
+
+## 앱 수정 후 도커 재빌드
+
+앱을 수정하고 도커를 빌드하고 반복을 하게 되면 상당히 비효율적이다. 제일 먼저 도커파일에서 볼 수 있듯이, COPY를 진행해서 도커이미지에 해당 디렉토리에 있는 파일들을 옮기고 `npm install`을 진행하게 된다. 이때, `copy ./ ./`을 위에서 하고 진행하게 되면 처음에는 도커가 캐시에 저장해서 빠르게 진행할 수 있다.  
+
+하지만 해당 파일들이 내용이 바뀌게 되면 종속성 파일을 새로 다시 설치하고 copy도 새로하기 때문에 상당히 비효율적이다. 따라서 위에서 만든 도커파일처럼 먼저 package.json을 copy 후 종속성 설치를 한다. 그 뒤 나머지 소스들을 복사하는 식으로 한다면 종속성은 캐싱하여 빠르게 진행이 가능하다.  
+
+이러한 방법도 매번 도커 재빌드 -> 재실행이 반복되어야한다. 따라서 저장을 하면 자동으로 재배포 되듯이 편한 방법을 찾게 된다. 그러한 방법은 다음과 같다.  
+
+방법의 이름은 `Docker Volume`이라한다. Volume을 사용해서 어플리케이션 실행하는 방법은 `docker run -p 3000:8080 -v /usr/src/app/node_modules -v $(pwd):/usr/src/app <이미지 아이디>`이다.  
+
+앞에서 본 -p 옵션을 그대로 사용하되 두 가지가 추가 되었다.  
+
+처음의 -v 명령어는 해당 디렉토리에 있는 것은 호스트 디렉토리에 존재하지 않으므로 매핑하지 말라는 부분이다. 따라서 WORKDIR에서 `npm install`을 통해서 생긴 node_modules은 호스트 디렉토리에는 없기 때문에 매핑이 되지 않으므로 제외해준다.  
+
+이후의 -v 명령어는 현재 경로의 WORKDIR를 참조하라는 뜻으로 해당 WORKDIR가 도커 컨테이너에 참조가 된다.  
+
+이러한 명령어가 Volume을 사용해서 어플리케이션을 실행하는 방법이다. 따라서 도커 컨테이너가 WORKDIR을 참조하기 때문에 소스가 바뀌게 되면 바로 적용이 되는 것을 볼 수 있다.
+
+---
+
+- 29日  
+
+# 좋은 git commit message  
+
+[How ti Write a Git Commit Message](https://chris.beams.io/posts/git-commit/), [Git Commit Message Conventions
+](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/), [좋은 커밋 메시지를 위한 영어 사전](https://blog.ull.im/engineering/2019/03/10/logs-on-git.html)  
+
+해당 사이트들을 참고하여 git commit message에 대해 생각해보았다.  
+
+프로그래머들이 가장 골치아파하는 부분이 바로, 이름 짓기라고 생각한다. 왜냐 코딩을 하면서 변수나 함수, 클래스들의 이름을 지어야할 때 고민을 대다수가 한다고 생각하기 때문이다. 이런 고민은 git을 이용해서 commit을 할때도 그렇다. 흔히 commit message를 고민할 때 적고 싶은 말은 많되, 다 보내기가 어렵고 까다롭다고 생각된다. 한글로 적는 프로젝트 팀의 경우에는 수월한 반면에 영어로 commit message를 적는 프로젝트 팀의 경우에는 익숙하지 않다면 곤혹스러울 수 있다.  
+
+## 짧은 규칙
+
+이러한 경우를 대비하기 위해 여러 가지 참고 사이트들을 통해서 규칙을 잡아보도록 한다.  
+
+- 동명사보다는 명사 사용
+- 관사 사용 지양
+- commit message는 명령문. 부정문은 `Don't` 사용
+- 오타 수정은 `Fix typo`
+
+## 작성 시 도움되는 단어
+
+- FIX : 보통 올바르지 않은 동작을 고친 후 사용  
+
+ex) Fix A, Fix A in B, Fix A To B, Fix A so that B ...
+
+- ADD : 코드나 텍스트, 예제, 문서 등의 추가가 있을 때 사용
+
+ex) Add A for B, Add A to B
+
+- REMOVE : 코드의 삭제가 있을 때 사용. 'Clean', 'Eliminate'으로 사용하기도 함
+
+추가적으로 ‘unnecessary’, ‘useless’, ‘unneeded’, ‘unused’, ‘duplicated’를 A 앞에 자주 사용  
+
+ex) Remove A, Remove A from B
+
+- USE : 특별히 무언가를 사용해 구현
+
+ex) Use A, Use A for B, Use A to B
+
+- REFACTOR : 전면 수정한 경우 사용
+
+ex) Refactor A
+
+- SIMPLIFY : 복잡한 코드를 단순화할 때 사용. Refactor보다 적은 범위
+
+ex) Simplify A
+
+- UPDATE : 개정이나 버전 업데이트 시 사용. 주로 문서나 리소스, 라이브러리에 사용
+
+ex) Update A to B
+
+- IMPROVE : 향상시에 사용. 예로 호환성, 성능, 검즘 기능 등
+
+ex) Improve A
+
+- MAKE : 기존 동작의 변경을 명시
+
+ex) MAKE A B
+
+- IMPLEMENT : 구현체를 완성할 때 사용
+
+ex) Implement A, Implement A to B
+
+- REVISE : 문서의 개정이 있을 때 사용
+
+ex) Revise A
+
+- CORRECT : 문법의 오류나 타입의 변경, 이름 변경시 사용
+
+ex) Correct A
+
+- ENSURE : 무엇이 확실하게 보장받는다는 것을 명시. 혹은 if 구문과 같이 조건을 준 경우 사용
+
+ex) Ensure A
+
+- PREVENT : 특정한 처리 막기
+
+ex) Prevent A, Prevent A from B
+
+- AVOID : 회피로, if 구문으로 특정한 동작 제외시킬 때 사용
+
+ex) Avoid A, Avoid A if B
+
+- MOVE : 코드의 이동시 사용
+
+ex) Move A to B(into)
+
+- RENAME : 이름 변경시 사용
+
+ex) Rename A to B
+
+- ALLOW : 허용을 표현할 때 사용
+
+ex) Allow A to B
+
+- VERIFY : 검증 코드 넣을 때 사용
+
+ex) Verify A
+
+- SET : 변수 값을 변경하듯 작은 수정에 사용
+
+ex) Set A to B
+
+- PASS : 파라미터를 넘기는 처리에 주로 사용
+
+ex) Pass A to B
+
+## 마지막으로
+
+생각보다 Commit message를 쓰고자하면 생각이 나지 않는다. 이때 한 단어로 표현할 수 있게 생각을 해보고, 적어야한다.  
+
+하지만, 한 단어로 표현할 만큼 작업을 한 뒤 commit을 하기 어렵고, 누구나 해당 commit이 어떤 작업을 했는지 알아 볼 수 있게 message를 작성하는 것 또한 어렵다. 따라서 자주 commit을 하면서 숙달을 해야하면 자주 생각을 해야하는 부분이라고 생각된다.
+
+---
+
+
