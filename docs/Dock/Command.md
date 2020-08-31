@@ -49,7 +49,7 @@ sidebar: auto
 
 생성 -> 시작 -> 실행 -> 중지 -> 삭제  
 
-### 생성 ~ 실행
+### 생성부터 실행까지
 
 `docker run` = `docker create <이미지 이름>` + `docker start <컨테이너 아이디/이름>`  
 
