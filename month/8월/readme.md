@@ -1,0 +1,4783 @@
+# 8월
+
+| 날짜 | 공부 내용 |
+|------|----------|
+| 1일 | Ajax HTTP 요청 헤더 |
+| 2일 | 프랙탈 구조 |
+| 3일 | Vuepress |
+| 4일 | 이분탐색 |
+| 5일 | bitset과 행렬제곱 |
+| 6일 | 이분탐색 정리, LCS |
+| 7일 | LCS 문제풀이 |
+| 8일 | Express |
+| 9일 | LIS |
+| 10일 | Express Template Engine |
+| 11일 | Express (DB, ORM (Sequelize), Logger API : Morgan, CORS, Path Module, Multer, body-parser, http-errors) |
+| 12일 | 세그먼트 트리 |
+| 13일 | 세그먼트 트리를 이용한 문제풀이 |
+| 14일 | BFS (벽 부수고 이동하기) |
+| 15일 | 비트마스크 |
+| 16일 | LCA |
+| 17일 | CCW | 
+| 18일 | 에라토스테네스의 체 |
+| 19일 | KMP |
+| 20일 | KMP 문제 풀이 (주기문, 주기, 앞뒤가 맞는 수열, 이름 정하기) |
+| 21일 | 도커 |
+| 22일 | 도커 클라이언트 명령어 |
+| 23일 | 트라이 |
+| 24일 | 도커 이미지 |
+| 25일 | 라빈-카프(Rabin-Karp) |
+| 26일 | JWT(JSON Web Token) |
+| 27일 | KMP 문제 풀이 (문자열의 주기 예측)  |
+| 28일 | Insomnia, Oracle 그룹 함수 |
+| 29일 | Node.js 환경에서 Docker, 좋은 git commit message |
+| 30일 | SQLD 복습 |
+| 31일 | KMP 문제 풀이 (최대 문자열 붙여넣기) |
+
+- 1日  
+
+### Ajax HTTP 요청 헤더
+
+**HTTP 헤더**  
+클라이언트와 서버 사이에 이루어지는 HTTP 요청과 응답은 HTTP 헤더를 사용하여 수행됩니다. HTTP 헤더는 클라이언트와 서버와 서로에게 전달해야 할 다양한 종류의 데이터 포함한다.  
+
+```
+Accept: */*
+Referer: http://codingsam.com/examples/tryit/tryhtml.php?filename=ajax_header_request_01
+Accept-Language: ko-KR
+Accept-Encoding: gzip, deflate
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko
+Host: codingsam.com
+DNT: 1
+Connection: Keep-Alive
+```
+
+- 헤더 이름, 콜론, 공백, 헤더 값의 순서로 구성
+- 일부 헤더는 요청 헤더와 응답 헤더에 모두 사용되나, 일부 헤더는 둘 중 하나에서만 사용
+- 요청 헤더는 원래 웹 브라우저가 자동으로 설정해서 보내므로, 사용자가 직접 설정 불가하나, Ajax를 이용하여 직접 설정하거나 확인 가능
+
+HTTP 요청 헤더  
+Ajax에서는 요청을 보내기 전에 setRequestHeader() 메소드를 사용하여 HTTP 요청 헤더를 작성 가능하다. 해당 메소드는 아래와 같다.
+```
+XMLHttpRequest인스턴스.setRequestHeader(헤더이름, 헤더값);
+```
+예제로는,
+```
+var httpRequest = new XMLHttpRequest();
+httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState == XMLHttpRequest.DONE && httpRequest.status == 200 ) {
+        document.getElementById("text").innerHTML = httpRequest.responseText;
+    }
+};
+httpRequest.open("GET", "/examples/media/ajax_request_header.php", true);
+httpRequest.setRequestHeader("testheader", "123");
+httpRequest.send();
+```
+
+HTTP 응답 헤더  
+- getAllResponseHeaders() 메소드 :  HTTP 응답 헤더의 모든 헤더를 문자열로 반환
+- getResponseHeader() 메소드 :  HTTP 응답 헤더 중 인수로 전달받은 이름과 일치하는 헤더의 값을 문자열로 반환
+
+```
+var httpRequest = new XMLHttpRequest();
+httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState == XMLHttpRequest.DONE && httpRequest.status == 200 ) {
+        document.getElementById("text").innerHTML = httpRequest.responseText;
+        document.getElementById("header").innerHTML = httpRequest.getAllResponseHeaders();
+        document.getElementById("user").innerHTML =
+            "testheader: " + httpRequest.getResponseHeader("testheader");
+    }
+};
+httpRequest.open("GET", "/examples/media/ajax_response_header.php", true);
+httpRequest.send();
+```
+
+Content-Type 헤더  
+Content-Type 헤더의 값을 직접 설정하지 않으면, HTML 문서의 MIME 타입인 "text/html"로 자동 설정되며 Ajax 응용 프로그램에서 다루게 되는 XML은 일반적인 파일 형태의 XML 문서가 아니다. Ajax 요청을 받은 후 서버에서 실행되어 동적으로 생성되는 XML 형태의 데이터이므로 확장자가 `.xml`이 아니다. 따라서 header() 함수를 사용하여 응답 데이터의 MIME 타입이 `text/xml`이라고 명시해야한다.
+
+```
+var httpRequest = new XMLHttpRequest();
+httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState == XMLHttpRequest.DONE && httpRequest.status == 200 ) {
+        document.getElementById("text").value = httpRequest.responseText;
+        document.getElementById("header").innerHTML = httpRequest.getAllResponseHeaders();
+        document.getElementById("user").innerHTML =
+            "testheader: " + httpRequest.getResponseHeader("tes
+    }
+};
+httpRequest.open("GET", "/examples/media/ajax_response_header_xml.php", true);
+httpRequest.send();
+```
+
+### Ajax 고급
+다양한 Ajax 요청  
+
+주기적으로 Ajax 요청하기  
+Ajax는 클라이언트가 서버에 데이터를 요청하는 클라이언트 풀링 방식을 사용하므로, 서버 푸시 방식의 실시간 서비스를 만들 수 없다. 이 땐 주기적으로 Ajax 요청을 보내도록 설정하여, 실시간 서비스와 비슷한 동작을 하도록 만든다.  
+
+0.5초마다 주기적으로 Ajax 요청을 보내 현재 서버 시간 출력하는 예제
+```
+function sendRequest() {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState == XMLHttpRequest.DONE && httpRequest.status == 200 ) {
+            document.getElementById("text").innerHTML = httpRequest.responseText;
+        }
+    };
+    httpRequest.open("GET", "/examples/media/ajax_periodic_request.php");
+    httpRequest.send();
+}
+sendRequest();
+window.setInterval("sendRequest()", 500); // 매 0.5초마다 Ajax 요청을 보냄.
+```
+0.5초마다 XMLHttpRequest 객체를 계속 초기화한다. 이때 서버에서의 응답이 0.5초 이상 걸리게 되면 화면에는 아무것도 표시되지 않을 수도 있다.
+
+```
+function sendRequest() {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState == XMLHttpRequest.DONE && httpRequest.status == 200 ) {
+            document.getElementById("text").innerHTML = httpRequest.responseText;
+            self.setTimeout("sendRequest()", 500); // 응답을 받은 후 0.5초 뒤에 다시 Ajax 요청을 보냄.
+        }
+    };
+    httpRequest.open("GET", "/examples/media/ajax_periodic_request.php");
+    httpRequest.send();
+}
+sendRequest();
+```
+해당 예제는 응답을 받고 나서 0.5초가 지난 후에 sendRequest() 함수를 다시 호출하는 예제다.  
+
+데이터가 변경된 경우에만 Ajax 응답하기  
+매번 요청하게 되면 네트워크와 서버의 자원을 많이 소모하게 된다. 따라서 웹 페이지의 내용이 변경된 경우 서버가 응답을 보내도록 설정하는 것이 자원을 절약할 수 있다. 이 방법은 Ajax 요청 헤더에 이전 요청 시간을 헤더로 포함해서 보내는 것으로 설정할 수 있다.  
+
+Ajax 요청 취소
+```
+function abortRequest() {
+    httpRequest.abort();
+    document.getElementById("text").innerHTML = "Ajax 요청을 취소했습니다.";
+}
+```
+`abort()`메소드를 사용하면 된다.  
+
+### 문서 타입별 응답 처리
+서버로부터의 응답 데이터 확인
+- responseText 프로퍼티
+
+서버에 요청하여 응답으로 받은 데이터를 문자열로 반환한다.
+```
+document.getElementById("text").innerHTML = xmlHttp.responseText;
+```
+텍스트 파일의 응답 처리
+```
+var httpRequest = new XMLHttpRequest();
+httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState == XMLHttpRequest.DONE && httpRequest.status == 200 ) {
+        // 텍스트 파일의 응답 처리는 responseText 프로퍼티를 사용해야 함.
+        document.getElementById("text").innerHTML = httpRequest.responseText;
+        // 텍스트 파일의 응답 처리에 responseXML 프로퍼티를 사용하면 null을 반환함.
+        document.getElementById("xml").innerHTML = httpRequest.responseXML;
+    }
+};
+httpRequest.open("GET", "/examples/media/ajax_doctype_text.php");
+httpRequest.send();
+```
+
+- responseXML 프로퍼티
+
+서버에 요청하여 응답으로 받은 데이터를 XML DOM 객체로 반환한다.
+```
+var httpRequest = new XMLHttpRequest();
+httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState == XMLHttpRequest.DONE && httpRequest.status == 200 ) {
+        // XML 문서의 응답 처리에 responseText 프로퍼티를 사용하면 XML 코드를 문자열로 반환함.
+        document.getElementById("text").innerHTML = httpRequest.responseText;
+        // XML 문서의 응답 처리는 responseXML 프로퍼티를 사용해야 함.
+        document.getElementById("xml").innerHTML = httpRequest.responseXML;
+    }
+};
+httpRequest.open("GET", "/examples/media/ajax_doctype_xml.php");
+httpRequest.send();
+```
+
+XML 데이터의 응답 처리
+서버로부터 XML 데이터를 응답으로 받은 경우에는 responseXML 프로퍼티를 사용하여 받은 데이터를 처리할 수 있다.
+먼저 responseXML 프로퍼티를 사용하여 XML DOM 객체를 반환한 후에 해당 객체를 가지고 작업하면 된다.
+```
+var httpRequest, xmlData, result, i;
+httpRequest = new XMLHttpRequest();
+httpRequest.onreadystatechange = function() {
+    if (httpRequest.readyState == XMLHttpRequest.DONE && httpRequest.status == 200 ) {
+        xmlData = httpRequest.responseXML;
+        document.getElementById("text").innerHTML =
+            xmlData.getElementsByTagName("b")[0].firstChild.nodeValue;
+            // XML 데이터의 첫 번째 <b>태그의 텍스트 노드의 값을 반환함.
+    }
+};
+httpRequest.open("GET", "/examples/media/ajax_doctype_xml.php");
+httpRequest.send();
+```
+
+---
+
+- 2日  
+
+BOJ 별 찍기 - 11을 통해서 프랙탈 구조를 재귀 형태로 구현하는 방법을 공부하였다. 제일 먼저 예제를 통해서 들어오는 값만큼 높이를 가진다는 것만 파악하고 나머지를 작은 삼각형을 통해서 큰 삼각형을 만들려는 생각이 들었지만 앞으로 나아가지 못했다. 다른 블로그의 포스팅으로 구조를 공부해서 풀어보았다.
+```
+void star(int n, int y, int x) {
+	if (n == 3) {
+		arr[y][x] = '*';
+		arr[y+1][x-1] = '*';
+		arr[y+1][x+1] = '*';
+		arr[y+2][x-2] = '*';
+		arr[y+2][x-1] = '*';
+		arr[y+2][x] = '*';
+		arr[y+2][x+1] = '*';
+		arr[y+2][x+2] = '*';
+		return;
+	}
+	
+	star(n/2,y,x);
+	star(n/2,y+(n/2),x-(n/2));
+	star(n/2,y+(n/2),x+(n/2));
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n;
+	cin >> n; 
+	for (int i=0; i<n; i++) {
+		for (int j=0; j<2*n; j++) {
+			if (j == 2 * n - 1)
+				arr[i][j] = '\0';
+			else
+				arr[i][j] = ' ';
+		}
+	}
+	
+	star(n, 0, n-1);
+	
+	for (int i=0; i<n; i++) {
+		for (int j=0; j<2*n-1; j++) {
+			cout << arr[i][j];
+		}
+		cout << '\n';
+	}
+}
+```
+
+큰 삼각형이 3개의 삼각형을 쪼개지고, 쪼개진 삼각형 안에 3개의 삼각형으로 쪼개지는 프랙탈 구조이므로 재귀함수를 이용해서 문제를 해결해야한다. 큰 삼각형 속에 윗 삼각형, 좌하단 삼각형, 우하단 삼각형 총 3개의 삼각형을 재귀적으로 호출해야한다.  
+먼저 배열의 모든 값을 공백으로 하며, 행의 끝 부분만 null로 초기화한다. 별을 그릴 때는 삼각형 꼭대기부터 차례대로 그리기 때문에 star() 함수에 매개변수로 높이와 꼭대기 별의 좌표를 보내준다. 그리고 재귀 함수 속 기저조건으로는 높이가 3이 된 경우 별을 그리도록 한다.  
+따라서 처음에는 높이를 n과 y,x 좌표로 (0,n-1)을 넘긴 다음 해당 삼각형을 그려주기 위해서  
+```
+  *
+ * *
+*****
+```
+별로 삼각형을 그려주며 위의 삼각형 높이와 맨 위 꼭대기 좌표로 재귀 1번, 좌하단의 삼각형의 높이와 맨 위 꼭대기 좌표로 재귀 1번, 우하단의 삼각형의 높이와 맨 위 곡대기 좌표로 재귀 1번. 총 3번의 재귀를 star() 함수에서 진행하며 해당 위치에서 높이가 3인 된 경우 출력을 한다.
+
+---
+
+- 3日  
+
+## Vuepress [공식사이트](https://vuepress.vuejs.org/guide/)
+
+### Quick Start
+`yarn create vuepress [directoryName]`을 통해서 해당 원하는 디렉토리에서 vuepress을 생성한다.  
+
+### Manual Setup
+1) 새 디렉토리를 만들어서 그곳으로 이동한다.
+`mkdir vuepress-starter && cd vuepress-starter`
+
+2) 패키지 매니저를 초기화한다.
+`yarn init # npm init`
+
+3) VuePress을 설치한다.
+`yarn add -D vuepress # npm install -D vuepress`
+
+4) docs 경로를 만든 다음 README.md 마크다운을 만들어서 입력한다.
+`mkdir docs && echo '# Hello VuePress' > docs/README.md`
+
+5) package.json에 Script에 아래와 같이 입력하여 yarn으로 VuePress을 빌드하고 개발을 위해 로컬로 킬 수 있게 한다.
+```
+{
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  }
+}
+```
+
+6) 로컬 서버로 열어 개발을 한다.
+`yarn docs:dev # npm run docs:dev`
+
+그 이후로는 정적 페이지를 만들 수 있게 되었다.  
+
+`.vuepress/config.js`에서 자바스크립트 외부로 모듈을 export 할 수 있다. 따라서 아래와 같이 기입하게 되면 build을 할 때 해당 내용이 html으로 변환되어 build 폴더에 생기게 된다. 그 값이 index.html으로 남게 된다.
+```
+module.exports = {
+  title: 'Hello VuePress',
+  description: 'Just playing around'
+}
+```
+이 외에도 `base`로 base url을 지정하거나 `themeConfig`을 통해서 `sidebar`와 `nav`을 만들어서 ui를 구축할 수 있다. 먼저 `nav`는 맨 위 상단 바에 유지되는 내용이고, `sidebar`의 경우에는 왼쪽에 메뉴로 값들을 유지할 수 있다.  
+나의 경우에는 `.vuepress/components`에 Home.vue로 index.html을 바꾸게 했으며 그렇기 위해서 루트 디렉토리의 Readme.md를 home.vue으로 잡아줬다. 이후에는 `.vuepress/` 경로에 폴더로 나눠서 마크다운 형식의 파일로 모두 표기하며  
+```
+---
+sidebar : auto
+---
+```
+을 통해서 자동으로 `#, ##, ###`을 h1, h2, h3으로 자동으로 매칭해주며, 왼쪽 사이드바에 나오게 된다.  
+
+---
+
+- 4日  
+
+이분탐색 알고리즘을 공부했다. 이분 탐색 알고리즘은 말 그대로 두 가지로 쪼개서 탐색한다는 것이다. 오름차순으로 정렬된 리스트에서 특정한 값의 위치를 찾는 알고리즘으로, 처음 중간의 값을 임의의 값으로 선택하여, 그 값과 찾고자 하는 값의 크고 작음을 비교하는 방식이다.  
+이분 탐색 알고리즘을 얘기하면 같이 나오는 알고리즘이 있다. 바로 파라메트릭 탐색​이다.  
+
+두 탐색의 공통점을 먼저 살펴보자  
+- 정렬된 상태여야 한다
+- 구간을 반절로 나누어 탐색
+
+이분탐색
+- 내가 찾고자 하는 답을 구함
+- 답이 연속된 데이터에 들어있는지 확인 수단으로만 쓰임
+
+파라메트릭 탐색
+- 찾고자하는 답의 가능한 범위(min,Max)를 구함
+- 어떤 조건을 적용해 최적화 문제를 결정 문제(참/거짓)로 바꾸어 푸는 알고리즘
+
+파라메트릭 탐색 조건
+- 최대값 M을 구하는 문제의 경우, M이 어떤 조건 c를 만족하면 M보다 작은 값도 모두 조건 c를 만족해야 함
+- 최소값 m을 구하는 문제의 경우, m이 어떤 조건 c를 만족하면 m보다 큰 값도 모두 조건 c를 만족해야 함
+- 이산적인 범위
+
+문제는 대표적으로 2가지를 살펴볼 것이다.  
+
+1. 합이 0인 네 정수 
+배열 A B C D의 원소 합이 0이 되는 쌍의 개수 찾기
+```
+7453. 합이 0인 네 정수
+for (int i=0; i<n; i++) {
+		for (int j=0; j<n; j++) {
+			v.push_back(arr[2][i] + arr[3][j]);
+		}
+	}
+	
+	sort(v.begin(),v.end());
+	
+	
+	long long ans = 0;
+	
+	for (int i=0; i<n; i++) {
+		for (int j=0; j<n; j++) {
+			long long ab = arr[0][i] + arr[1][j];
+			
+			long long first = lower_bound(v.begin(),v.end(), -ab) - v.begin();
+			long long last = upper_bound(v.begin(),v.end(), -ab) - v.begin();
+			
+			if(v[first] == -ab) {
+				ans += (last - first);
+			}
+		}
+	}
+```
+O(n⁴)의 시간복잡도로 풀 수 없으니, 먼저 배열 4개를 2개로 줄인다. AB와 CD로 나누기 위해 벡터 하나를 가지고 CD을 합친다. 그 후 벡터를 정렬하고 AB배열의 합이 CD배열의 합의 음의 값과 같은 경우를 찾았다. 이 때, 같은 값을 가진 원소가 많을 수 있으므로 `lower_bound`와 `upper_bound`을 통해서 원소의 갯수를 다 찾았다.  
+
+이 문제를 풀면서 가장 걸렸던 것은 시간이였다. 해당 문제의 제한 시간은 2초지만, 내가 알기로 산술연산이 1억번당 1초라고 알고 있었기 때문에 배열을 만들 때 쓰인 1600만번과 1600만 원소 정렬, lower_bound와 upper_bound로 인한 log₂(1600만) = 23.9xxx로 1억번당 1초로 계산하게되면 총 3.6초 정도 걸리게되므로 시간제한에 걸린다.  
+하지만 해당 소스는 통과가 되므로 이 점이 가장 의아했다. 찾아본 결과 1억당 1초라는 얘기는 오래된 얘기이며, 해당 코드가 기계어 단위로 몇 개의 명령어로 환산되는지 알기 어렵고 캐시 미스 등 성능에 영향을 줄 수 있는 요소가 많다. 따라서 시간 복잡도는 점근적으로만 나타낼 뿐 정확한 연산의 개수를 구해주는 장치가 아니므로 참고사항일 뿐 정밀하게 시간을 계산할 수 없다. 라는 답변을 읽어볼 수 있었다.
+
+2. 도토리 숨기기  
+상자의 개수 N, 규칙의 개수 K, 도토리의 개수 D가 주어지고 규칙이 K만큼 주어지는데 규칙은 A상자 ~ B상자까지 C개 간격으로 도토리를 하나씩 넣는 규칙을 얘기한다.
+```
+15732. 도토리 숨기기
+while (left <= right) {
+		int mid = (left + right) / 2;
+		
+		long long sum = 0;
+		for (int i=0; i<k; i++) {
+			int high = min(v[i].first.second, mid);
+			if(high >= v[i].first.first) {
+				sum += ((high - v[i].first.first) / v[i].second) + 1;
+			}
+		}
+		if(sum >= d) {
+			ans = mid;
+			right = mid - 1;
+		}
+		else {
+			left = mid + 1;
+		}
+	}
+```
+이 문제는 먼저 이분탐색이라는 것을 알 기 어려웠고, 조건을 무엇으로 할지가 가장 어려웠다. 왜냐하면 K개의 규칙 때문에 무엇을 잡아야하는지 상당히 혼동스러웠기 때문이다.  
+
+상자번호를 기준으로 잡고 주어진 규칙의 B상자번호와 기준값을 비교해서 작은 값보다 A상자번호가 같거나 작은 경우에 해당 값과 A상자번호 값을 뺀 후 C개로 나누어준 뒤 0번째도 도토리를 넣으므로 1을 더해주게 된다. 이렇게 하면 해당 기준 값일 때의 i번째 규칙의 도토리 갯수를 셀 수 있게된다. 해당 도토리 갯수를 전부 다 더한 다음 주어진 도토리 갯수를 조건으로 둬서 이분탐색을 하면 된다.  
+
+---
+
+- 5日  
+
+PS을 하면서 막힌 부분과 기억해야 하는 부분을 기록해볼 것이다.  
+
+18119. 단어 암기  
+처음에 모든 알파벳을 기억하고 있되, 밑의 연산에 따라서 잊거나 기억할 수 있다. 이 때의 주어진 단어를 몇 개 기억하는지 출력하라.
+```
+vector<bitset<26>> check;
+vector<bitset<26>> copy_check;
+if(cmd == 1) {
+	for (int j=0; j<n; j++) {
+		if(copy_check[j][x - 'a'] == true)
+			check[j][x - 'a'] = false;
+	}
+}
+	
+else {
+	for (int j=0; j<n; j++) {
+		if(copy_check[j][x - 'a'] == true)
+			check[j][x - 'a'] = true;
+	}
+}
+	
+for (int j=0; j<n; j++) {
+	if(copy_check[j] == check[j]) cnt++;
+}
+cout << cnt << '\n';
+```
+bitset을 알파벳 수인 26개로 잡아놓고 문자열마다 해당 알파벳 부분을 true로 잡아놓은다. 그리고 그 bitset벡터를 복사한 뒤 연산에서 해당 알파벳이 나온다면 복사된 벡터에 존재한다면 그 알파벳을 true 혹은 false로 조정해준다. 이렇게 하여 bitset을 전체 비교해서 같은 카운트를 세준다.  
+
+10830. 행렬 제곱  
+최대 5x5 행렬을 최대 천억만큼 거듭 제곱한 결과를 구해야한다.  
+```
+vector<vector<ll>> power(vector<vector<ll>> mat, ll num) {
+	vector<vector<ll>> ret(n, vector<ll>(n));
+	for (int i=0; i<n; i++) {
+		ret[i][i] = 1;
+	} 
+	
+	while(num > 0) {
+		if (num % 2) {
+			ret = mul(ret, mat);
+		}
+		num /= 2;
+		mat = mul(mat, mat);
+	}
+	return ret;
+}
+```
+핵심 함수는 다음과 같다. 분할 정복의 거듭 제곱과 비슷하게 하되, 그것을 행렬로 하면 된다는 생각을 하였다. 따라서 단위행렬을 만들고 횟수가 홀수, 짝수를 나눠서 시도하되, 행렬의 곱을 만들어주기 위해 함수로 구현을 하였다. 행렬의 곱셈도 함수로 구현하여 답을 구했다.
+
+---
+
+- 6日  
+
+이분 탐색 정리  
+
+이분 탐색은 오름차순으로 정렬된 리스트에서 특정한 값의 위치를 찾는 알고리즘이다. 처음 중간의 값을 임의의 값으로 선택하여, 그 값과 찾고자 하는 값의 크고 작음을 비교하는 방식을 채택하고 있다. 처음 선택한 중앙값이 만약 찾는 값보다 크면 그 값은 새로운 최고값이 되며, 작으면 그 값은 새로운 최하값이 된다. 검색 원리상 정렬된 리스트에만 사용할 수 있다는 단점이 있지만, 검색이 반복될 때마다 목표값을 찾을 확률은 두 배가 되므로 속도가 빠르다는 장점이 있다. 이분 탐색은 분할 정복 알고리즘의 한 예이다.
+
+이분 탐색의 과정
+
+1. 배열의 중간을 먼저 탐색한다.
+2. 중간값이 탐색값이면 중단.
+3. 중간값이 탐색값이 아니라면 중간값과 탐색값의 크기를 비교한다.
+4. 중간값 > 탐색값 - 중간값의 오른쪽 인덱스들은 제외
+5. 중간값 < 탐색값 - 중간값의 왼쪽 인덱스들은 제외
+
+데이터가 정렬되어 있으면 위의 과정을 반복해서 절반씩 나눠서 걸러낸다.
+
+STL algorithm에서 `upper_bound`와 `lower_bound`함수를 살펴보면 이분탐색을 기반으로 한 탐색 방법이다. 이분탐색이므로, 배열이나 리스트가 정렬이 되어 있어야 한다. `lower_bound`의 결과는 key값이 없으면 key값보다 큰 가장 작은 정수 값을 찾는다. 같은 원소가 여러 개 있어도 상관 없으며, 항상 유일한 해를 구할 수 있다. 예를 들어 `[begin, end]` 배열이 있을 때, 중간위치의 인덱스를 mid라고 하면 `arr[mid] < key` 이면서 `arr[mid] >= key`인 최소의 m 값을 찾으면 된다. `upper_bound`는 반대로 생각하면 된다.  
+
+반환형은 Iterator이므로 vector를 사용하게 되면 벡터의 begin()을 빼게 되면 인자의 순서를 구할 수 있고, 배열이라면 첫 번쨰 주소를 빼면 인자의 순서를 알 수 있다.  
+
+시간 복잡도는 O(log(last - first))으로, 전체 원소 개수에 로그에 비례한다.  
+
+LCS 알고리즘
+
+LCS는 두 가지로 나뉘어진다. 
+
+`최장 공통 부분 문자열(Longest Common Substring)`과 `최장 공통 부분 수열(Longest Common Subsequence)` 두 가지로 나뉘는데 비슷하나 차이점이 뚜렷하다. 그 차이점은 해당 부분의 연속 여부이다. 아래 예시를 봐보자.  
+
+A**BCD**FEF  A**BCD**F**EF**  
+**BCD**EF	 **BCDEF**  
+
+해당 두 개의 문자열이 있다고 가정해보자. 먼저, 최장 공통 부분 문자열의 경우에는 `BCD` 3개를 갖고, 최장 공통 부분 수열의 경우에는 `BCDEF` 5개를 갖게 된다.  
+
+최장 공통 부분 문자열  
+![LCS](https://wikimedia.org/api/rest_v1/media/math/render/svg/83ccdb67e41ba0b5043a8eb2a67ca0d7a6908ad2)
+
+
+```
+for (int i=1; i<=A.length; i++) {
+	for (int j=1; j<=B.length; j++) {
+		if(A[i-1] == B[j-1]) {
+			LCS[i][j] = LCS[i-1][j-1]+1
+			if(ans < LCS[i][j])
+				ans = LCS[i][j]
+		}
+	}
+}
+```
+
+최장 공통 부분 수열  
+![LCS2](https://wikimedia.org/api/rest_v1/media/math/render/svg/a40feb09ada8db5fb1fb6fe0c31b2ee25b7c9835)  
+X와 Y는 비교할 각 문자열, i와 j는 문자열의 각 인덱스이다. 구현에 있어 3가지가 필요하다.
+
+1. 처음엔 편의를 위해서 빈 수열로 채워준다.  
+          
+|   | 0 | A | G | C | A | T |
+|---|---|---|---|---|---|---|
+| 0 | Ø | Ø | Ø | Ø | Ø | Ø |
+| G | Ø |   |   |   |   |   |
+| A | Ø |   |   |   |   |   |
+| C | Ø |   |   |   |   |   |
+
+2. X와 Y의 문자가 같은 경우이다. 이때 예시를 보자.  
+```
+stirng a = "ABCD"
+string b = "AEBD"
+LCS("ABCD", "AEBD") = 1 + LCS("ABC", "AEB")
+```
+`(ABCD와 AEBD의 길이) = (ABC, AEB를 비교했을 때의 길이 + 1)`
+
+3. X와 Y의 문자가 다를 경우
+```
+LCS("ABC", "AEB") = MAX(LCS("AB", "AEB"), LCS("ABC", "AE"))
+```
+(AB, AEB 길이)와 (ABC,AE 길이) 중 큰 값을 (ABC, AEB 길이)에 대입한다.  
+
+이러한 3가지를 코드로 나타내면
+```
+for(int i=1;i<=A.length;i++) { 
+	for(int j=1;j<=B.length;j++) { 
+		if (A[i-1] == B[j-1]) { 
+			LCS[i][j] = LCS[i-1][j-1] + 1; 
+		} 
+		else { 
+			LCS[i][j] = Math.max(LCS[i][j-1], LCS[i-1][j]); 
+		}
+	}
+}
+```
+
+두 문자열의 각 문자를 비교하지 않고 선행 문자를 끼고 문자열로써 비교를 하는 것이다. 따라서 LCS 배열 마지막에는 LCS의 길이를 볼 수 있게 된다.  
+
+추가적으로, LCS에 해당하는 부분 수열을 알고 싶다면 표로 생각해보자. LCS에서 DP와 같이 전의 값을 이용해서 값을 찾아낸다. 이 때 값이 변하는 구간은 항상 대각선으로 변하게 된다. 따라서, 대각선인 시점을 체크해서 그 전까지는 같은 수열을 갖다가 대각선 이후로 수열이 바뀌는 것을 볼 수 있다. 이것을 코드로 봐보자.
+
+```
+for (int i = 1; i <= A.length; i++) {
+    for (int j = 1; j <= B.length; j++) {
+        if (A[i - 1] == B[j - 1]) {
+            LCS[i][j] = LCS[i - 1][j - 1] + 1;
+            solution[i][j] = "diagonal";
+        }
+		else {
+            LCS[i][j] = Math.max(LCS[i][j - 1], LCS[i - 1][j]);
+
+            if (LCS[i][j] == LCS[i - 1][j]) 
+                solution[i][j] = "top";
+            else 
+                solution[i][j] = "left";
+            
+        }
+    }
+}
+
+int a = A.length;
+int b = B.length;
+
+while(solution[a][b] != null) {
+    if (solution[a][b] == "diagonal") {
+        sb.append(A[a-1]);
+        a--;
+        b--;
+	}
+    else if (solution[a][b] == "top") 
+        a--;
+    else if (solution[a][b] == "left") 
+        b--;
+}
+sb.reverse.toString(); // 최장 공통 부분 수열 리스트
+```
+
+여기서 여러 개의 문자열을 비교할려면 배열을 늘려주자.
+
+---
+
+- 7日  
+
+어제 공부하고 정리한 LCS을 토대로 LCS 문제를 풀어보았다.  
+
+5582. 공통 부분 문자열
+```
+for (int i=1; i<=asize; i++) {
+	for (int j=1; j<=bsize; j++) {
+		if(a[i-1] == b[j-1]) {
+			dp[i][j] = dp[i-1][j-1] + 1;
+		}
+		ans = max(ans,dp[i][j]);
+	}
+}
+```
+문자 하나하나를 비교하며 같은 경우 dp의 이전 대각선 방향의 값을 1을 더하는 연산을 반복해서 공통 부분 문자열의 갯수를 세주었다.  
+
+15482. 한글 LCS  
+```
+#include <bits/stdc++.h>
+using namespace std;
+
+char str1[3027];
+char str2[3027];
+int board[1005][1005];
+
+bool check(int i, int j) {
+	if (str1[i * 3] == str2[j * 3] && str1[i * 3 + 1] == str2[j * 3 + 1] && str1[i * 3 + 2] == str2[j * 3 + 2]) return true;
+	return false;
+}
+
+int main() {
+	scanf("%s %s", str1, str2);
+	int len1 = strlen(str1) / 3;
+	int len2 = strlen(str2) / 3;
+	for (int i = 1; i <= len1; i++) {
+		for (int j = 1; j <= len2; j++) {
+			if (check(i - 1, j - 1)) board[i][j] = board[i - 1][j - 1] + 1;
+			else board[i][j] = max(board[i - 1][j], board[i][j - 1]);
+		}
+	}
+	printf("%d", board[len1][len2]);
+	return 0;
+}
+```
+이 문제의 경우에는 전체 소스를 보아야한다. 왜냐 하면 다른 소스를 참고했기 때문이다. 먼저 영문을 사용하듯이 LCS을 사용했는데 내 컴파일러 환경에서는 한글을 2byte로 세서 크기가 2배 정도 늘어나 있었다. 따라서 알고리즘을 다 돌린 후 마지막에 2를 나눠서 구하면 테스트 케이스 값이 전부 정확히 나와서 제출을 했으나 계속 오답이였다. 따라서 계속 해보다가 질문을 찾아보니 BOJ상에서는 유니코드로 3byte를 차지한다는 것을 알게되어 같은 코드에서 3배로 했으나 답이 계속 안 나와서 해당 질문자의 코드를 조금 고쳐서 사용해보았다. C로 짠 코드와 C++로 짠 코드에서 한글의 byte 차이가 나는지 궁금하다.  
+
+9252. LCS 2, 1958 LCS 3  
+```
+for (int i=1; i<=n; i++) {
+	for (int j=1; j<=m; j++) {
+		if(a[i-1] == b[j-1])  {
+			dp[i][j] = dp[i-1][j-1] + 1;
+			LCS[i][j] += LCS[i-1][j-1] + a[i-1];
+		}
+		else  {
+			dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+			if(dp[i][j] == dp[i-1][j])
+				LCS[i][j] = LCS[i-1][j];
+			else
+				LCS[i][j] = LCS[i][j-1];
+		}
+	}
+}
+-------------------------------------------
+for (int i=1; i<=asize; i++) {
+	for (int j=1; j<=bsize; j++) {
+		for (int k=1; k<=csize; k++) {
+			if(a[i-1] == b[j-1] && b[j-1] == c[k-1])
+				dp[i][j][k] = dp[i-1][j-1][k-1] + 1;
+			else {
+				dp[i][j][k] = max(max(dp[i-1][j][k], dp[i][j-1][k]), dp[i][j][k-1]);
+			}
+		}
+	}
+}
+```
+LCS 2의 경우에는 LCS의 수열을 보여주는 것이고 LCS 3의 경우에는 문자열이 늘어났을 경우이다. 이 때 LCS의 수열을 보여주는 것은 어제 공부 했던거와 같이 할려했으나 코드를 작성 중에 포문 속에 같이 찾게 되면 시간을 더 줄일 수 있을 거 같아서 만약 찾게 되면 똑같이 대각선의 수열을 뒤에 붙이지만 찾지 못한 경우 해당 내용에서 DP 배열의 값을 비교해서 더 큰 쪽이 LCS가 진행 중이므로 해당 좌표의 LCS을 현재 좌표에 넣어주었다.  
+
+문자열이 늘어난 LCS3의 경우에는 똑같이 삼중포문을 써서 배열 하나를 늘려, 다 같은 경우와 아닌 경우를 나눠서 똑같이 LCS의 수를 구해주었다.  
+
+---  
+
+- 8日  
+
+## Express  
+
+Node.js를 위한 빠르고 개방적인 간결한 웹 프레임워크  
+
+```
+$ npm install express-generator -g
+```
+
+해당 명령어를 통해 express을 설치할 수 있다. 이 때의 node.js가 설치되어 있다고 가정하고 진행하는 것이다.  
+
+```
+$ express --view=pug 디렉토리 이름
+```
+
+express 앱을 원하는 디렉토리로 작성한다.
+
+```
+npm install
+> set DEBUG=디렉토리 이름:* & npm start
+```
+해당 디렉토리로 이동 후 npm을 설치하고 Debug 설정 후 npm start을 통해서 localhost:3000에 앱에 액세스할 수 있게 된다.  
+
+### 라우팅  
+
+라우팅이라는 개념이 등장하는데 이것은 URI 및 특정한 HTTP 요청 메소드인 특정 엔드포인트에 대한 클라이언트 요청에 애플리케이션이 응답하는 방법을 결정하는 것이다. 이 때 각 라우트는 하나 이상의 핸들러 함수를 가질 수 있으며, 라우트 경로가 일치할 때 실행이 된다. 라우트 경로는 문자열, 문자열 패턴 또는 정규식일 수 있다.
+
+라우트의 구조  
+
+```
+app.METHOD(PATH, HANDLER)
+```
+
+- app : express의 인스턴스
+- METHOD : HTTP 요청 메소드 (대표적으로 GET, POST, PUT, DELETE 등. 과 모든 요청 메소드를 뜻하는 `all`)
+- PATH : 서버의 경로
+- HANDLER : 라우트가 일치될 때 실행하는 함수
+
+예시를 통해 이해해보자.
+```
+app.get('/', function (req, res) {
+	res.send('Hello Wolrd!');
+});
+```
+이 예시는 홈페이지에서 Hello World!로 응답하는 코드이다.  
+
+이어서 봐보면
+```
+app.post('/', function(req, res) {
+	res.send('Got a POST request');
+});
+```
+애플리케이션의 루트 라우트(`'/'`)에서 POST 요청에 응답하는 코드이다.  
+
+```
+app.put('/user', function(req, res) {
+	res.send('Got a PUT request at /user');
+});
+```
+마찬 가지로 /user 라우트에 대한 PUT 요청의 응답이다.
+
+```
+app.delete('/user', fucntion (req, res) {
+	res.send('Got a DELETE request at /user');
+});
+```
+마지막으로 같은 예제로 /user 라우트에 대한 DELETE 요청에 응답하는 코드이다.  
+
+라우트 핸들러  
+
+라우트 경로가 일치될 때 실행되는 함수로 미들웨어와 비슷하게 작동하는 여러 콜백 함수를 제공하여 요청을 처리할 수 있다. 차이점은 `next('route')`을 호출하여 나머지 라우트 콜백을 우회할 수 있다. 이것은 라우트에 대한 조건을 지정 후, 현재의 라우트를 계속할 필요 없을 경우 후속 라우트에 제어를 전달할 수 있다.  
+
+예시와 함께 설명을 보자.  
+```
+app.get('/example/a, function(req, res) {
+	res.send('Hello from A!');
+});
+```
+하나의 콜백 함수는 하나의 라우트를 처리할 수 있다.  
+
+```
+app.get('/example/b', function (req, res, next) {
+  console.log('the response will be sent by the next function ...');
+  next();
+}, function (req, res) {
+  res.send('Hello from B!');
+});
+```
+2개 이상의 콜백 함수도 하나의 라우트로 처리할 수 있다. 이 때 무조건 `next` 오브젝트를 지정해주어야 한다.
+
+```
+var cb0 = function (req, res, next) {
+  console.log('CB0');
+  next();
+}
+
+var cb1 = function (req, res, next) {
+  console.log('CB1');
+  next();
+}
+
+var cb2 = function (req, res) {
+  res.send('Hello from C!');
+}
+
+app.get('/example/c', [cb0, cb1, cb2]);
+```
+
+하나의 콜백 함수 배열은 하나의 라우트를 처리할 수 있다. 따라서 경로를 지정해준 뒤 배열로 핸들러를 지정해줄 수 있다.
+
+```
+var cb0 = function (req, res, next) {
+  console.log('CB0');
+  next();
+}
+
+var cb1 = function (req, res, next) {
+  console.log('CB1');
+  next();
+}
+
+app.get('/example/d', [cb0, cb1], function (req, res, next) {
+  console.log('the response will be sent by the next function ...');
+  next();
+}, function (req, res) {
+  res.send('Hello from D!');
+});
+```
+위에서 이야기한 내용들을 섞어서도 가능하다. 무슨 말이냐면, 독립적인 함수와 함수 배열의 조합으로 하나의 라우트를 처리할 수 있다.
+
+응답 메소드
+응답 오브젝트(`res`)에 대한 메소드는 응답을 클라이언트로 전송하고 요청-응답 주기를 종료할 수 있다. 따라서 라우트 핸들러에서 해당 메소드 중 하나도 호출되지 않는다면 클아이언트 요청은 정지된채로 방치되게 된다.
+| 메소드 | 설명 |
+|-------|-------|
+| res.download() | 파일이 다운로드 되도록 프롬프트 |
+| res.end() | 응답 프로세스를 종료 |
+| res.json() | JSON 응답을 전송 |
+| res.jsonp() | JSNOP 지원을 통해 JSON 응답 전송 |
+| res.redirect() | 요청의 경로를 재지정 |
+| res.render() | 보기 템플릿을 렌더링 |
+| res.send() | 다양한 유형의 응답 전송 |
+| res.sendFile | 파일을 옥텟 스트림의 형태로 전송 |
+| res.sendStatus() | 응답 상태 코드를 설정 후 해당 코드를 문자열로 표현한 내용을 응답 본문 전송 |
+
+**app.route()**  
+
+라우트 경로에 대하여 체인 가능한 라우트 핸들러를 작성할 수 있다. 경로가 같으므로 모듈식 라우틀르 작성하면 가독성이 증가하며 편리하게 코딩을 할 수 있다.
+```
+app.route('/book')
+	.get(function(req, res) {
+		res.send('Get a random book');
+	})
+	.post(function(req, res) {
+		res.send('Add a book');
+	})
+	.put(function(req, res) {
+		res.send('Update the book');
+	});
+```
+
+**express.Router**
+
+`app.route()`와 비슷하게 `express.Router` 클래스를 사용하여 모듈식 마운팅 가능한 핸들러를 작성할 수 있다. Router 인스턴스는 완전한 미들웨어이자, 라우팅 시스템으로 미니 앱(mini-app)이라고 불리기도 한다.  
+
+```
+// bird.js
+
+var express = require('express');
+var router = express.Router();
+
+// middleware that is specific to this router
+router.use(function timeLog(req, res, next) {
+  console.log('Time: ', Date.now());
+  next();
+});
+
+// define the home page route
+router.get('/', function(req, res) {
+  res.send('Birds home page');
+});
+
+// define the about route
+router.get('/about', function(req, res) {
+  res.send('About birds');
+});
+
+module.exports = router;
+
+// app.js
+var birds = require('./birds');
+...
+app.use('/birds', birds);
+```
+이러하게 라우터를 모듈로 작성하고, 미들웨어 함수를 로드하고 다른 라우트들을 정의한 뒤 기본 앱의 한 경로에 라우터 모듈을 마운트한다. 그 뒤 앱 내에서 라우터 모듈을 로드 하게 되면 라우터에서 정의해놓은 라우트들의 요청을 처리할 수 있으며, 미들웨어 함수를 호출할 수 있게 된다.  
+
+
+
+### 정적 파일 이용
+
+이미지나, CSS 파일 및 JavaScript와 같은 정적 파일을 제공하려면 Express의 기본 제공 미들웨어 함수인 `express static`을 이용하여야 한다.  
+
+정적 자산이 포함된 디렉토리의 이름을 `express.static` 미들웨어 함수에 전닳하면 파일의 직접적인 제공이 가능하다.  
+
+```
+app.use(express.static('public'));
+```
+위와 같은 코드를 이용하면 public 디렉토리에 있는 정적 파일을 제공할 수 있다.  
+따라서 다음과 같이 접근을 하게되면 해당 정적 파일을 그대로 접근할 수 있게 된다.
+```
+localhost:3000/img/cat.jpg
+localhost:3000/css/style.css
+localhost:3000/js/app.js
+localhost:3000/index.html
+```
+
+여러 개의 디렉토리를 정적 파일이 있는 디렉토리로 등록을 할 수 있는데 해당 문법을 그대로 사용하면 된다.
+```
+app.use(express.static('public'))
+app.use(express.static('files'))
+```
+
+이렇게 사용하면 되나, `express.static`을 설정한 순서대로 파일을 검색한다. 따라서 같은 이름의 파일이 존재한다면 먼저 설정한 파일을 찾는다는 말이 된다.  
+
+또, 정적 파일을 접근 시에 가상 경로를 만들어서 파일에 접근하게 하고 싶다면 위와 같은 문법을 사용하면 된다.  
+```
+app.use('/static', express.static('public'));
+```
+
+```
+localhost:3000/static/img/cat.jpg
+localhost:3000/static/css/style.css
+localhost:3000/static/js/app.js
+localhost:3000/static/index.html
+```
+
+`express.static` 함수에 제공되는 경로는 node 프로세스가 실행되는 디렉토리에 상대적이므로 다른 디렉토리에서 express 앱을 실행하는 경우에는 절대 경로로 주어지는 것이 안정성을 높일 수 있다.
+
+### 미들웨어  
+
+미들웨어함수는 요청 오브젝트(`req`), 응답 오브젝트(`res`), 그리고 애플레키에션의 요청-응답 주기 중 그 다음의 미들웨어 함수에 대한 액세스 권한을 갖는 함수이다. 미들웨어 함수는 일반적으로 `next`라는 이름의 변수로 표시된다.  
+
+- 모든 코드를 실행
+- 요청 및 응답 오브젝트에 대한 변경을 실행
+- 요청-응답 주기를 종료
+- 스택 내의 그 다음 미들웨어를 호출
+
+미들웨어 함수는 이러한 작업을 수행할 수 있다.
+
+현재의 미들웨어 함수가 요청-응답 주기를 종료하지 않았다면 `next()`을 호출하여 그 다음 미들웨어 함수에 제어를 전달해야한다. 그렇지 않으면 해당 요청은 정지된 채 방치된다.  
+
+![Express 폼](https://expressjs.com/images/express-mw.png)  
+express 공식홈페이지의 사진 설명  
+
+사진을 통해서 미들웨어 함수 호출의 요소에 대해 알아 볼 수 있다.
+- `get` : HTTP 메소드
+- `'/'` : 라우트
+- `function` : 함수
+- `req` : HTTP 요청 인수
+- `res` : HTTP 응답 인수
+- `next` : 콜백 인수
+
+예시로 두 개의 미들함수를 정의한 간단한 코드를 살펴보자.
+```
+var express = require('express');
+var app = express();
+
+app.get('/', function (req, res) {
+  res.send('Hello World!');
+});
+
+app.listen(3000);
+```
+루트 경로의 GET 요청을 받고 응답을 `Hello World!`로 보내는 함수를 정의했다.  
+
+미들웨어함수를 정의하고 사용하는 방법을 짧게 예제를 통해 봐보자
+
+```
+var express = require('express');
+var app = express();
+
+var myLogger = function (req, res, next) {
+  console.log('LOGGED');
+  next();
+};
+
+app.use(myLogger);
+
+app.get('/', function (req, res) {
+  res.send('Hello World!');
+});
+
+app.listen(3000);
+```
+이렇게 짜게되면 앱이 요청을 수신할 때마다 "LOGGED"라는 메세지를 터미널에 출력하게 된다. 이때의 미들웨어의 로드 순서는 중요하며, 먼저 로드된 순서대로 실행이 되게된다. 만약 루트 경로에 대한 라우팅 이후에 `MyLogger`가 로드되면, 루트 경로의 라우트 핸들러가 요청-응답 주기를 종료하므로 `MyLogger`에 닿지 못해서 실행이 될 일이 없게 된다.  
+그와 달리 `MyLogger` 미들웨어 함수는 메시지를 출력 후 `next()` 함수를 호출하여 스택 내의 그 다음 미들웨어 함수에게 요청을 전달한다. 따라서 루트 경로에 라우팅을 할 수 있게 된다.  
+
+그러므로 라우트를 정의하고 사용할 때에 순서를 유념하고 사용해야 원하는 개발을 할 수 있을 것이다.
+
+마지막으로 여러 유형의 미들웨어를 살펴본다.
+
+- 애플리케이션 레벨 미들웨어
+- 라우터 레벨 미들웨어
+- 오류 처리 미들웨어
+- 기본 제공 미들웨어
+- 써드파티 미들웨어
+
+이러한 종류가 존재하나, 위의 3가지 미들웨어를 살펴볼 것이다. 개발할 때 직접적으로 사용했던 미들웨어이였기 때문이다.  
+
+애플리케이션 레벨 미들웨어  
+
+`app.use()`나 `app.METHOD()` 함수를 이용할 수 있는 애플리케이션 레벨에 존재하는 미들웨어를 뜻하며, 이 미들웨어 함수는 일련의 미들웨어 함수를 함께 로드 할 수 있으며, 하나의 마운트 위치에 미들웨어 시스템의 하위 스택을 작성할 수 있다.  
+
+예제로 살펴보자.  
+```
+var app = express();
+
+app.use(function (req, res, next) {
+  console.log('Time:', Date.now());
+  next();
+});
+```
+지금까지 자주 보았던 미들웨어로, 마운트 경로가 없는 미들웨어 함수이다. 이 함수는 앱이 요청을 수신할 때마다 실행하게 된다.  
+
+```
+app.use('/user/:id', function (req, res, next) {
+  console.log('Request Type:', req.method);
+  next();
+});
+```
+이 예시는 `/user/:id` 경로에 마운트 되는 미들웨어 함수이다. 이 함수는 모든 유형의 HTTP 요청에 대해 실행이 된다.
+
+```
+app.get('/user/:id', function (req, res, next) {
+  res.send('USER');
+});
+```
+라우트 및 해당 라우트의 핸들러 함수로, `/user/:id`경로의 GET 요청을 처리한다.
+
+```
+app.use('/user/:id', function(req, res, next) {
+  console.log('Request URL:', req.originalUrl);
+  next();
+}, function (req, res, next) {
+  console.log('Request Type:', req.method);
+  next();
+});
+```
+라우터 핸들러를 이용하면 하나의 경로에 대해 여러 라우트를 정의할 수 있다. 해당 /user/:id 경로에 대한 GET 요청에 대해 2개의 라우트를 정의하나, 첫 번째 라우트가 요청-응답 주기를 종료시키므로 두 번째 라우트는 호출되지 않는다.
+
+```
+app.get('/user/:id', function (req, res, next) {
+  console.log('ID:', req.params.id);
+  next();
+}, function (req, res, next) {
+  res.send('User Info');
+});
+
+// handler for the /user/:id path, which prints the user ID
+app.get('/user/:id', function (req, res, next) {
+  res.end(req.params.id);
+});
+```
+경로에 대한 GET 요청을 처리하는 미들웨어 하위 스택을 표시하는 예제로, 라우터 미들웨어 스택의 나머지 미들웨어 함수들을 건너뛰려면 `next('route')`을 호출하여 제어를 그 다음 라우트로 전달해야한다. 이 때 `next('route')`는 app.METHOD()나 router.METHOD() 함수를 이용해 로드된 미들웨어 함수에서만 작동된다.  
+
+```
+app.get('/user/:id', function (req, res, next) {
+  // if the user ID is 0, skip to the next route
+  if (req.params.id == 0) next('route');
+  // otherwise pass the control to the next middleware function in this stack
+  else next(); //
+}, function (req, res, next) {
+  // render a regular page
+  res.render('regular');
+});
+
+// handler for the /user/:id path, which renders a special page
+app.get('/user/:id', function (req, res, next) {
+  res.render('special');
+});
+```
+마지막으로 미들웨어 하위 스택으로 넘어가는 예제를 보여주며 이러한 코딩도 가능하다는 것을 보여준다.
+
+### 라우터 레벨 미들웨어
+라우터 레벨 미들웨어는 `express.Router()` 인스턴스에 바인드된다는 점을 제외하면 애플레키에션 레벨 미들웨어와 동일한 방식으로 작동한다.
+```
+var app = express();
+var router = express.Router();
+
+// a middleware function with no mount path. This code is executed for every request to the router
+router.use(function (req, res, next) {
+  console.log('Time:', Date.now());
+  next();
+});
+
+// a middleware sub-stack shows request info for any type of HTTP request to the /user/:id path
+router.use('/user/:id', function(req, res, next) {
+  console.log('Request URL:', req.originalUrl);
+  next();
+}, function (req, res, next) {
+  console.log('Request Type:', req.method);
+  next();
+});
+
+// a middleware sub-stack that handles GET requests to the /user/:id path
+router.get('/user/:id', function (req, res, next) {
+  // if the user ID is 0, skip to the next router
+  if (req.params.id == 0) next('route');
+  // otherwise pass control to the next middleware function in this stack
+  else next(); //
+}, function (req, res, next) {
+  // render a regular page
+  res.render('regular');
+});
+
+// handler for the /user/:id path, which renders a special page
+router.get('/user/:id', function (req, res, next) {
+  console.log(req.params.id);
+  res.render('special');
+});
+
+// mount the router on the app
+app.use('/', router);
+```
+지금까지의 애플리케이션 레벨 미들웨어에서 사용된 함수들을 router 레벨에서 돌릴 수 있게 변경한 예제이다. 그리고 마지막에 app이 존재하는 app.js와 같은 파일에서 `app.use('path', router)`을 명시해서 마운트를 해줘야한다.  
+
+### 오류 처리 미들웨어
+다른 미들웨어 함수와 동일한 방법으로 정의할 수 있지만 오류 처리 함수는 인수를 3개가 아닌 4개(err, req, res, next)를 가지므로 분류가 새롭게 된다고 생각하면 된다.
+```
+app.use(function(err, req, res, next) {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+```
+
+---
+
+- 9日  
+
+## LIS
+LIS(Longest Increasing Subsequence) : 최장 증가 부분 수열  
+
+수열 하나가 주어졌을 때, 가장 긴 증가하는 부분 수열을 구할 때 3가지 방법이 있다.
+
+- 완전 탐색을 이용한 방법(O(2ⁿ))
+- DP를 이용한 방법 (O(n²))
+- 이진 탐색을 이용한 방법 (O(n logn))
+
+### 완전탐색을 이용한 방법
+완전 탐색의 경우에는 하나하나 다 비교해보면 되므로 모든 증가 부분수열을 고려한다. 배열을 받아서 원 배열에서 증가 부분 수열의 첫번째 수를 선택한 뒤, 다음 수의 조건(첫 수보다 원 배열에서 뒤에 있고 큰 후보)에 해당하는 값들의 배열을 꾸려 재귀를 해나가면 될 것 같다.  
+
+어떤 수가 나올지는 상관없이 자신보다 작은 숫자인지 확인하고 이전 값에서 1을 계속 더해가면 해당 LCS의 길이를 구할 수 있다.
+
+### DP를 이용한 방법
+DP를 이용한 방법은 아래와 같이 알고리즘을 짜볼 수 있다.  
+1. 수열의 길이와 같은 dp배열을 하나 선언한다. 
+
+2. 수열을 처음부터 끝까지 순서대로 1개씩 탐색한다. ( 현재 위치 = i )
+  	1. dp[i]에 넣을 값을 초기화해준다. (val)
+
+  	2. 현재 위치(i)보다 이전에 있는 원소(j) 중에서 현재 원소보다 작은지 체크한다. (크거나 같으면 LIS 불가능)
+
+  	3. 현재 원소보다 작다면, dp[j]가 val 보다 큰지 체크한다. 이 때 val보다 크다면 j번째 원소를 포함했을 때가, 지금까지 확인한 최장 증가 부분 수열보다 더 길다는 의미이므로 val에 dp[j]를 할당해준다. 
+
+  	4. 현재 원소도 포함해주어야 하므로 최종적으로 dp[i]에 val + 1을 할당해준다.
+3. dp배열의 원소 중에서 가장 큰 값을 출력한다.  
+
+```
+for(int i=1;i<N;i++) {
+	for(int j=0;j<i;j++) { 
+		if (array[i] > array[j] && dp[j] + 1 > dp[i])
+			 dp[i] = dp[j] + 1; // 증가 수열
+	}
+	if (max < dp[i])
+		max = dp[i]; 
+	
+}
+```
+처음에 dp 배열의 값들을 1로 초기화 해주어야하며, if문의 조건에 `dp[j] + 1 > dp[i]`가 들어간 이유는 예를 들어서 10 20 30 20 인 경우 값이 20을 만나게 되면 값이 줄어드는 것을 볼 수 있다. 이 부분을 보장해주기 위해 해당 조건을 추가한 것이다.  
+
+### 이진 탐색을 이용한 방법
+
+해당 부분은 잘 정리된 블로그 포스팅을 참고해서 썼다.
+
+- 배열 마지막 요소보다 새로운 수가 크다면, 배열에 넣는다.
+- 그렇지 않다면, 그 수가 들어갈 자리에 넣는다. (이분 탐색을 통해 들어갈 자리를 찾는다)
+
+LIS의 갯수만 구할 때의 가장 이해하기 쉬운 코드를 찾아보았다.  
+```
+dp[0] = array[0];
+int idx = 0;
+for (int i = 1; i < n; i++) {
+	if (dp[idx] < array[i]) { 
+		dp[++idx] = array[i]; 
+	}
+	else {
+		int ii = lower_bound(array.begin(), array.end(), idx);
+		dp[ii] = array[i];
+	} 
+}
+// ans => idx + 1
+```
+
+혹은 이런 방식으로 짧게 구현하는 방법도 있다
+```
+for (int i=0; i<n; i++) {
+	vector<int>::iterator iter = lower_bound(dp.begin(), dp.end(), arr[i]);
+	if(iter == dp.end()) dp.push_back(arr[i]);
+	else *iter = arr[i];
+}
+cout << dp.size();
+```
+`lower_bound`을 통해서 못 찾으면 push_back, 찾으면 해당 값을 배열의 값으로 치환해준다.  
+
+![LIS 이진탐색 그림](https://t1.daumcdn.net/cfile/tistory/993FE1405AADFAF70F)  
+
+위 그림을 통해서 소스의 전체적인 느낌을 파악한 뒤 다른 문제에서 요하는 경로 추적 또한 코드로 보았다.  
+
+```
+dp[0] = array[0];
+tracking[0] = new Pair(0, array[0]);
+int idx = 0;
+for (int i = 1; i < n; i++) { 
+	if (dp[idx] < array[i]) { 
+		dp[++idx] = array[i];
+		tracking[i] = new Pair(idx, array[i]);
+	}
+	else { 
+		int ii = lower_bound(idx, array[i]);
+		dp[ii] = array[i];
+		tracking[i] = new Pair(ii, array[i]);
+	}
+}
+```
+이후에는 스택에서 인덱스와 pair의 first을 비교하여 스택에 넣어준 다음 꺼내주게 되면 순서대로 출력할 수 있다.
+
+```
+lis.push_back(v[0]);
+p.push_back({0, v[0]});
+
+for (int i=1; i<n; i++) {
+	int idx = lower_bound(lis.begin(), lis.end(), v[i]) - lis.begin();
+	if(idx >= lis.size())  {
+		lis.push_back(v[i]);
+	}
+	else {
+		lis[idx] = v[i];
+	}
+	p.push_back({idx, v[i]});
+}
+stack<int> st;
+int len = lis.size();
+cout << len << '\n';
+for (int i=n-1; i>=0; i--) {
+	if (p[i].first == len-1) {
+		st.push(p[i].second);
+		len--;
+	}
+}
+while(!st.empty()) {
+	cout << st.top() << ' ';
+	st.pop();
+}
+```
+나는 이런 식으로 만들어서 pair로 추적하는 아이디어를 집어 넣어서 구현하였다.
+
+[그림 및 소스 출처](https://mygumi.tistory.com/303)  
+
+---
+
+- 10日  
+
+Express  
+## Template Engine  
+
+HTML code를 최소화시키도록 도와주는 도구로, 정적인 파일과 동적인 파일의 장단점을 결합시켰다. 따라서 정적인 파일만을 서비스한다면 사용할 필요가 없다. 동적인 결과를 정적인 파일에 담기 위해 사용한다. 즉, 자바스크립트 코드로 연산된 결과를 변수에 넣은 뒤 뷰 파일에서 사용하도록 한다.  
+
+클라이언트 요청에 따라 웹 문서에 들어가는 내용이 달라질 수 있으므로 정적인 부분과 동적인 부분을 나누기 위해서 사용한다. 이 때 `app.js` 내 HTML 코드를 쓰지 않아도 되며 뷰 파일과 자바스크립트 코드를 따로 사용할 수 있다.
+
+클라이언트 측 브라우저는 HTML 템플릿, JSON / XML 데이터 및 템플릿 엔진 라이브러리를 서버에서 로드합니다.   
+
+템플릿 엔진은 클라이언트의 브라우저에서 템플릿과 데이터를 사용하여 최종 HTML을 생성합니다. 그러나 일부 HTML 템플릿은 데이터를 처리하고 서버 측에서 최종 HTML 페이지를 생성합니다.  
+
+## 종류
+크게 두 가지로 나눈다.  
+1. pug(jade)
+2. ejs
+
+차이점을 보면 ejs는 기본 html 문법을 그대로 사용하며, 협업할 때 ejs, 개인이 개발을 할 때는 pug을 추천한다. 두 템플릿엔진 둘 다 엔진을 통해서 html 문법으로 변환 시켜준다.  
+
+여기서는 pug을 주로 볼려고 한다.
+
+## pug의 장점
+
+- HTML을 간단히 표현. 가독성이 좋다
+- 마크업 문법보다 코드량이 적어 생산량이 좋다
+- JS 연산 결과를 쉽게 보여줌
+- 정적인 부분과 동적인 부분 나눌 수 있다
+
+## pug의 특징
+
+- 마크업과 달리 닫는 태그가 없다
+- 들여쓰기로 종속성 구별
+- 태그 선언시 태그 이름만 쓴다
+- ID와 CLASS 선언시 CSS 선택자 사용
+- 태그 없이 ID나 CLASS 선언시 자동으로 div 태그 사용
+- 태그에 속성 줄 땐 괄호 사용
+- 여러줄 사용시에 `|` 사용
+- script나 CSS로 태그 사용시 끝에 `.` 입력
+- 템플릿 속에서 Javascript 사용시 앞에 `-` 입력
+
+## 설치
+
+`npm install pug --save`  
+
+터미널에서 해당 명령어 입력 시 `package.json`에 dependencies에 추가된다.  
+
+## 예시
+
+```
+var express = require('express');
+var app = express();
+
+app.set('view engine', 'pug'); // 사용할 템플릿 엔진 설정
+app.set('views', './views'); // 템플릿이 있는 폴더 지정 (지정 안한 경우 default로 views가 설정된다)
+app.use(express.static('public')) //정적 경로 지정
+app.get('/주소' function(req, res) => {
+	res.render('pug파일 이름');
+})
+```
+
+## 문법
+### **기본 문법**
+
+```
+html
+	head
+	body
+		h1 Hello Pug
+```
+
+```
+idx.pug:
+html
+	head
+		title= title
+	body
+		h1= message
+
+app.js:
+app.get('/', function (req,res) => {
+	res.render('idx', { title: 'Hey', message: 'Hello there!'});
+});
+```
+들여쓰기로 상위태그 안에 종속하게 할 수 있다.
+```
+<html>
+	<head></head>
+	<body>
+		<h1>Hello Pug</h1>
+	</body>
+</html>
+```
+
+조금 더 심화해서 변수를 이용해보자
+```
+idx.pug:
+html
+	head
+		title #{_title}
+	body
+		h1 Hello Pug
+		ul
+			-for(let i=0; i<5; i++)
+				li Hello
+		div #{time}
+
+app.js:
+app.get('/', (req,res) => {
+	res.render('idx', {time:Date(), _title:'Pug'});
+})
+```
+
+### 문법 요약
+HTML5
+```
+doctype html   		→   <!DOCTYPE html>
+```
+**Block 생성**
+```
+p foo 		  		 →   <p>foo</p>
+```
+**속성**
+- 단일 속성
+```
+a (href='	') Google  →  <a href="	">Google</a>
+```
+- 다중 속성
+```
+input(
+	type='checkbox'
+	name='agreement'
+	checked
+)
+```
+```
+<input type="checkbox" name="agreement" checked="checked">
+```
+
+조건문
+- **if문**
+```
+- var user = { description: 'foo bar baz' }
+- var authorised = false
+#user
+	if user.description
+		h2.green Description
+		p.description= user.description
+	else if authrised
+		h2.blue Description
+		p.description.
+			User has no description,
+			why not add one...
+	else
+		h2.red Description
+		p.description
+```
+```
+<div id="user">
+	<h2 class="green">Description</h2>
+	<p class="description>foo bar baz</p>
+</div>
+```
+- **unless문**
+if와 반대로 실행
+```
+unless user.isAnonymous
+	p You're logged in as #{user.name}
+```
+```
+if !user.isAnonymous
+	p You're logged in as #{user.name}
+```
+둘 다 같은 html로 변환되게 된다.  
+
+**Case 조건문**  
+```
+- var friends = 10   // JS코드는 - 입력
+case friends
+	when 0
+		p you have no friends
+	when 1
+		p you have a friend
+	default
+		p you have #{friends} friends
+```
+```
+<p>you have 10 friends</p>
+```
+
+**OR문과 Break**  
+- OR문은 `when` 밑줄에 다시 `when` 조건
+- Break는 `- Break` 입력
+
+```
+- var friends = 0
+case friends
+	when 0
+	when 1
+		p you have very few friends
+		- break
+	default
+		p you have #{friends} friends
+```
+```
+<p>you have very few friends</p>
+```
+
+**Element 조건문**
+```
+- var friends = 1
+case friends
+	when 0: p you have no friends
+	when 1: p you have a friend
+	deafult: p you have #{friends} friends
+```
+```
+<p>you have a friends</p>
+```
+
+**반복문**
+- for문
+```
+- for (let x=0; x<3; x++)
+	li item
+```
+```
+<li>item</li>
+<li>item</li>
+<li>item</li>
+```
+- each문
+```
+-
+	var list = ["one", "two", "three", "four"]
+each item in list
+	li= item
+```
+```
+<li>one</li>
+<li>two</li>
+<li>three</li>
+<li>four</li>
+```
+
+*마크업 코드를 내용물 그대로 표시*  
+예시
+```
+p
+	= 'This code is <escaped>!'
+```
+```
+<p>This code is &lit;escaped&gt;!</p>
+```
+이 때는 `=` -> `!=`으로 고치면 마크업 코드 그대로 사용가능하다.  
+
+```
+p
+	!= 'This code is <strong>not</strong> escaped!'
+```
+```
+<p>This code is <strong>not</strong> escaped!</p>
+```
+
+**Mixin 변수**  
+템플릿 단위로 재사용 가능한 변수로, 규칙은 `+{변수 이름}`
+```
+// 선언
+mixin list
+	ul
+		li foo
+		li bar
+		li baz
+
+// 사용
++list
++list
+```
+```
+<ul>
+	<li>foo</li>
+	<li>bar</li>
+	<li>baz</li>
+</ul>
+<ul>
+	<li>foo</li>
+	<li>bar</li>
+	<li>baz</li>
+</ul>
+```
+
+**includes(템플릿 파일 포함)**  
+규칙 : include{파일 경로}
+```
+html
+	include includes/head.pug
+	body
+		h1 My Site
+```
+
+예시
+```
+doctype html
+html
+	title My Blog
+	body
+		include includes/header.pug // 헤더
+		p#main Welcome to my blog. // 헤더와 푸터 사이 내용
+		include includes/footer.pug // 푸터
+```
+
+[예시 참고](https://iseongho.github.io/posts/node-template-engine-pug/)  
+
+---
+
+- 11日  
+
+# Express DB사용  
+
+- MySQL
+```js
+npm install mysql
+```
+```js
+var mysql      = require('mysql');
+var connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'dbuser',
+  password : 's3kreee7'
+});
+
+connection.connect();
+
+connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
+  if (err) throw err;
+  console.log('The solution is: ', rows[0].solution);
+});
+
+connection.end();
+```
+- MongoDB
+```js
+npm install mongodb
+```
+```js
+var MongoClient = require('mongodb').MongoClient;
+
+MongoClient.connect('mongodb://localhost:27017/animals', function(err, db) {
+  if (err) {
+    throw err;
+  }
+  db.collection('mammals').find().toArray(function(err, result) {
+    if (err) {
+      throw err;
+    }
+    console.log(result);
+  });
+});
+```
+- PostgreSQL
+```js
+npm install pg-promise
+```
+```js
+var pgp = require("pg-promise")(/*options*/);
+var db = pgp("postgres://username:password@host:port/database");
+
+db.one("SELECT $1 AS value", 123)
+    .then(function (data) {
+        console.log("DATA:", data.value);
+    })
+    .catch(function (error) {
+        console.log("ERROR:", error);
+    });
+```
+- SQLite
+```js
+npm install sqlite3
+```
+```js
+var sqlite3 = require('sqlite3').verbose();
+var db = new sqlite3.Database(':memory:');
+
+db.serialize(function() {
+
+  db.run('CREATE TABLE lorem (info TEXT)');
+  var stmt = db.prepare('INSERT INTO lorem VALUES (?)');
+
+  for (var i = 0; i < 10; i++) {
+    stmt.run('Ipsum ' + i);
+  }
+
+  stmt.finalize();
+
+  db.each('SELECT rowid AS id, info FROM lorem', function(err, row) {
+    console.log(row.id + ': ' + row.info);
+  });
+});
+
+db.close();
+```
+
+# ORM (Sequelize)
+node.js를 이용해 웹 서버를 구축할 때 데이터베이스를 사용하게 된다. 이 때 쿼리문을 다 직접 작성하지 않고 간편하게 다룰 수 있게 해주는 것이 `ORM`이라고 한다. `ORM`은 객체와 관계형 데이터베이스의 관계를 매핑 해주는 도구로 자바스크립트만을 이용해서 쿼리를 데이터베이스에게 보내 줄 수 있다.  
+
+그 중 sequelize라는 라이브러리를 보게 될 것이다.  
+## 설치
+```js
+npm install sequelize // 시퀄라이즈 설치
+npm install mysql2 // mysql2 설치
+npm install -g sequelize-cli // sequelize-cli를 전역으로 설치한다.
+```
+
+## 모델
+### 1. 직접 작성
+```
+sequelize init
+```
+해당 명령어를 통해 models 폴더 속 `index.js`가 만들어진다.
+```js
+// index.js 파일
+"use strict";
+
+const fs = require("fs");
+const path = require("path");
+const Sequelize = require("sequelize");
+const basename = path.basename(__filename);
+const env = process.env.NODE_ENV || "development";
+const config = require(__dirname + "/../config/config.json")[env];
+const db = {};
+
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    config
+  );
+}
+
+fs.readdirSync(__dirname)
+  .filter(file => {
+    return (
+      file.indexOf(".") !== 0 &&
+      file !== basename &&
+      file.slice(-3) === ".js"
+    );
+  })
+  .forEach(file => {
+    const model = sequelize["import"](path.join(__dirname, file));
+    db[model.name] = model;
+  });
+
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+```
+
+`index.js` 파일에서 반복문을 돌면서 models 폴더 속 파일을 읽어가며 모델로 정의한다. 원하는 테이블 이름을 파일의 이름으로 js 파일로 만들어 준 뒤 모델을 정의하게되면 해당 테이블이 만들어진다.  
+
+모델을 정의하는 메소드는 `define()`이다.
+```js
+sequelize.define('객체 이름', 스키마 정의, 테이블 설정)
+```
+과 같이 사용하면 된다.  
+
+```js
+module.exports = (sequelize, DataTypes) => {
+  return sequelize.define(
+    "messages", // 테이블 이름
+    {
+      // 스키마 정의
+      messageContent: {
+        // column 이름
+        type: DataTypes.STRING(500), // 데이터 타입 설정
+        allowNull: false // null 허용 설정
+      },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      roomId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      }
+    },
+    {
+      // 테이블 옵션
+      timestamps: true,
+      underscored: true,
+      paranoid: true
+    }
+  );
+};
+```
+해당 코드와 같이 `define()` 메소드를 이용해 테이블을 생성해 주고 있다. 테스트 시엔 `sequelizae.sync()`을 작성하고 코드 실행 후 mysql에 접속하여 테이블을 확인하면 된다. 전에 설명과 같이 models에 js파일들을 원하는 이름으로 생성하여 테이블 생성하면 그대로 얻어 낼 수 있다.
+
+### 2.CLI로 정의
+models 폴더에 직접 작성하지 않고 터미널 창에서 명령어를 통해 테이블을 정의하는 방법이다. 이때의 sequelize-cli라는 것은 `sequelize command line interface`의 준말이다. 따라서 터미널에서 명령어를 통해 데이터베이스 작업을 할 수 있게 만들어준다.
+기본 문법
+```js
+sequelize model:create --name TABLE_NAME  --attributes "COLUMN1:type, COLUMN2:type, COLUMN3:type"
+```
+
+유저의 모델
+```js
+sequelize model:create --name user --attributes nickName: string, passWord: string
+```
+
+이 때 migrations 폴더에는 현재 시간을 이름으로 갖는 migration 파일이 생성된다. 그리고 models 폴더에는 `user.js` 파일이 생성된다. 이 `user.js` 파일은 위에서 직접 작성한 파일과 비슷하게 된다. 다른 점은 테이블의 이름이 복수형으로 저장된다는 점이다.  
+```js
+"use strict";
+module.exports = (sequelize, DataTypes) => {
+  const user2 = sequelize.define(
+    "user2",
+    {
+      user_id: DataTypes.STRING,
+      password: DataTypes.STRING
+    },
+    {}
+  );
+  user2.associate = function(models) {
+    // associations can be defined here
+  };
+  return user2;
+};
+```
+이후 옵션 설정은 `user.js` 파일에서 직접 설정해야한다. 이후 설정 적용시에는 user table을 drop 후 `sequelize.sync()`을 실행시켜 새로 생성한다. 이때 옵션을 수정했다면 migrations 폴더에 있는 user/migrations 파일 또한 수정해주어야한다. 이후 마지막으로 명령어를 통해 migrate할 수 있다.
+```
+sequelize db:migrate
+```
+
+# Logger API : Morgan
+## 설치
+
+```js
+$ npm install morgan
+```
+
+## 사용
+
+```js
+var logger = require('morgan');
+...
+app.use(logger(":remote-addr"), function(req, res, next){
+  next();
+});
+ 
+app.use(logger(":method"), function(req, res, next){
+  next();
+});
+ 
+app.use(logger(":url"), function(req, res, next){
+  next();
+});
+ 
+app.use(logger(":date"), function(req, res, next){
+  next();
+});
+ 
+app.use(logger(":status"), function(req, res, next){
+  next();
+});
+...
+```
+
+## 토큰
+| Token | Content |
+|---|---|
+| :req[header] | request의 특정 HTTP |
+| :res[header] |	response의 특정 HTTP |
+| :http-version | HTTP version |
+| :response-time | 응답시간 |
+| :remote-addr | 사용자의 IP |주소
+ :date | request 날짜/시간| 
+| :method | request에 대한  HTTP method |
+| :url | 요청된 URL |
+| :referrer | 현재 URL을 참고하는 URL |
+|:user-agent | User-agent 서명 |
+| :status | HTTP 상태 |
+
+## 로그 파일로 저장
+'default', 'short', 'tiny', 'dev' 4가지 포맷을 지원한다.
+```js
+...
+var fs = require('fs');
+...
+app.use(logger({
+  format: 'dev',
+  stream: fs.createWriteStream('app.log', {'flags': 'w'})
+}));
+...
+```
+이 때 `app.log`는 이름일뿐 수정 가능하며 저장 위치는 Express 앱의 root이다.
+
+# CORS (Cross Origin Resource Sharing)
+
+## 이슈
+
+이번 프로젝트를 예로 들면 FE단의 vue.js에서는 localhost:8080 즉, localhost의 8080의 포트를 사용하고 BE단의 express.js에서는 localhost:3000으로 3000 포트를 사용한다. 이 때  서로 다른 port를 listen 중에  FE단에서 BE단으로 ajax 요청을 보낼려고 하면 Cross Domain 이슈가 일어나게 된다.
+
+CORS 사용하지 않은 상황에서 Cross Domain 오류 메시지
+
+```js
+XMLHttpRequest cannot load http://xx.xx.xx.xx/xxx.
+Request header field Content-Type is not allowed by Access-Control-Allow-Headers. 
+```
+
+## 설치
+
+```jsx
+npm install cors
+```
+
+## 사용
+
+**1. 모든 도메인 요청 활성화(모든 작업 CORS 허용 테스트용)**
+
+```jsx
+var express = require('express')
+var app = express();
+var cors = require('cors')
+
+app.use(cors());
+```
+
+**2. 싱글 라우트에 대한 도메인 활성화(특정 작업에 대해서만 CORS허용)**
+
+```jsx
+var express = require('express');
+var app = express();
+var cors = require('cors');
+// ***********  products/:id 에 대한 url 라우팅시에만  cors 를 허용 
+app.get('/products/:id', cors(), function(req,res,next) {
+res.json({msg:'This is CORS-enabled for a single Route'});
+})
+```
+
+**3. CORS Config settings(setting 값을 수정하여서 CORS 허용 IP지정)**
+
+```jsx
+var express = require('express');
+var app = express();
+var corsOptions = {
+	origin :'http://example.com',
+	optionsSuccessStatus:200; // IE 11이나 여러 스마트 TV들에 대한 확인 
+};
+
+app.get('/products/:id',cors(corsOptions),function(req,res,next){
+res.json({msg:' This is CORS-enabled for only example.com.'});
+});
+```
+
+**4. CORS Dynamic Origin 동적으로 읽어서 사용**
+
+whitelist 배열을 push 로 추가하여서 실시간으로 허용 및 제거 가능
+
+```jsx
+var express = require('express');
+var app = express();
+var whitelist = ['http://example1.com','http://example2.com']
+var corsOptions = {
+	origin: function(origin,callback)    {
+		if(whitelist.indexOf(origin) !==-1){
+			callback (null,true);
+		} 
+		else{
+			callback (new Error('Not allowed by CORS'))
+		}
+	}
+}
+app.get('/products/:id', cors(corsOptions),function(req,res,next){
+res.json({msg: 'This is CORS-enabled for a whitelisted domain.'})
+});
+```
+
+# Path Module
+Path 모듈은 파일과 Directory 경로 작업을 위한 Utility를 제공한다.
+
+## **Path 모듈의 주요 메소드들**
+
+### **1.path.normalize**
+
+normalize에 Path를 넣으면 알아서 경로를 normalize해서 return 해준다.
+
+```jsx
+const path = require("path");
+let myPath = path.normalize("/this/is//a//my/.././path/normalize");
+console.log(myPath); // /this/is/a/path/normalize
+```
+
+위의 경우 ../는 상위 디렉토리로 가기 때문에 my가 생략된 것을 볼 수 있다.
+
+### **2. path.join([...paths])**
+
+path.join은 String을 주게 되면 플랫폼별(windows냐 mac이냐) 구분자를 사용해서 경로를 정규화해서 리턴해준다.
+
+```jsx
+const path = require("path");
+myPath = path.join("/this", "is", "a", "////path//", "join");
+console.log(myPath); // /this/is/a/path/join
+```
+
+플랫폼에 따라 구분자는 달라지므로 윈도우라면 백슬래시(**\**)가 들어갈 것이다.
+
+### **3.path.resolve([...paths])**
+
+path.resolve는 path.join과 path.normalize를 합친 것 같은 효과이다.
+
+이것은 주어진 문자열을 cd를 해서 최종 마지막 폴더까지 간 후 pwd(Print Working Directory)를 한 것과 동일하다. 그리고 문서에 따르면 절대 경로가 만들어질 때까지 prepend된다.
+
+그리고 만약 주어진 path를 모두 사용했음에도 절대 경로를 못만들었다면, cwd(Current working Directory)를 사용한다.
+
+```jsx
+const path = require("path");
+myPath = path.resolve("/this", "is/a", "../.", "path", "resolve");
+console.log(myPath); // /this/is/path/resolve
+myPath = path.resolve("wwwroot", "static_files/png/", "../gif/image.gif");
+console.log(myPath); // /Users/yohan/Desktop/MyTest/wwwroot/static_files/gif/image.gif
+/*
+이 경우에는 주어진 값만으로는 절대경로를 만들 수 없으므로 cwd를 사용한다.
+*/
+```
+
+### **4. path.dirname(path), path.basename(path[, ext])**
+
+path.dirname은 현재 작업하고 있는 디렉토리의 이름을 출력한다.반면 path.basename은 파일이름을 출력한다.만약 basename에 옵션값을 주게 되면 뒤의 확장자를 제거할 수도 있다.
+
+```jsx
+const path = require("path");
+myPath = path.dirname("/foo/bar/baz/asdf/image.png");
+console.log(myPath); ///foo/bar/baz/asdf
+myPath = path.basename("/foo/bar/baz/asdf/image.png");
+console.log(myPath); //image.png
+myPath = path.basename("/foo/bar/baz/asdf/image.png", ".png");
+console.log(myPath); //image
+```
+
+### **5.path.parse(path)**
+
+path.parse는 path를 말 그대로 파싱해준다.
+
+```jsx
+const path = require("path");
+myPath = path.parse("/home/user/dir/file.txt");
+console.log(myPath);
+// { root: '/',
+// dir: '/home/user/dir',
+// base: 'file.txt',
+// ext: '.txt',
+// name: 'file' }
+```
+
+이러한 메소드가 있지만 magicsora에서는 path 모듈과 `__dirname` 을 사용해서 현재의 경로를 사용하여 정적 경로와 접근했다.
+
+# Multer Module
+보통 JSON 형식으로 된 데이터는 AJAX로든 폼 태그로든 쉽게 업로드할 수 있습니다. 이미지 업로드를 도와주는 multer 모듈이 있다.
+
+## 설치
+
+```jsx
+npm install multer
+```
+
+## 예제
+
+```jsx
+const multer = require('multer');
+// 기타 express 코드
+const upload = multer({ dest: 'uploads/', limits: { fileSize: 5 * 1024 * 1024 } });
+app.post('/up', upload.single('img'), (req, res) => {
+  console.log(req.file); 
+});
+```
+
+이제 폼데이터나 폼 태그를 통해 업로드한 이미지를 올리면 `req.file`로 정보가 들어오고, **dest** 속성에 지정해둔 경로에 이미지가 저장된다. **limits** 속성은 선택 사항인데 여러 가지 제한을 걸 수 있다. 위에서는 파일 사이즈를 5MB로 제한했다. `upload.single('img')` 미들웨어를 라우터 콜백함수 전에 끼워넣은 것은 폼데이터의 속성명이 img이거나 폼 태그 인풋의 name이 img인 파일 **하나만** 받겠다라는 뜻이다. 이미지가 아닌 나머지 데이터는 그대로 `req.body`에 들어옵니다.
+
+만약 이미지를 하나가 아닌 여러 개를 받고 싶다 하면 `upload.array('키', 최대파일개수)` 하면 된다. `req.file` 대신 `req.files`에 정보가 담긴다.
+
+최종적으로 사용하는 코드는 대부분 아래의 예제와 같다.
+
+```jsx
+const path = require('path');
+const upload = multer({ 
+	storage: multer.diskStorage({ 
+		destination: function (req, file, cb) { 
+			cb(null, 'uploads/');
+	 },
+		filename: function (req, file, cb) { 
+			cb(null, new Date().valueOf() + path.extname(file.originalname));
+		}
+	}),
+});
+```
+
+진행 중인 프로젝트에서는 이런 식으로 구현했다.
+```jsx
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './uploads/');
+    },
+    filename: (req, file, cb) => {
+        const originalFileName = file.originalname.split('.');
+        let fileName = 'none';
+        if (originalFileName.length > 0) {
+            fileName = `${originalFileName[0]}-${Date.now()}.${originalFileName[1]}`;
+        }
+        cb(null, fileName)
+    }
+});
+const upload = multer({
+    storage: storage,
+})
+```
+
+# body-parser
+
+post로 요청된 body를 쉽게 추출할 수 있는 모듈이다. 추출된 결과는 request객체(IncomingMessage 타입)에 body 속성으로 저장된다. Magicsora에서는 URL-encoded form body parser만 사용한다.
+
+## 내장모듈와 다른점
+
+http모듈로만 post body를 파싱하려면,
+
+```jsx
+req.on('data', function(chunk) { body += chunk; }); 
+```
+
+와 같이 이벤트를 등록해야한다. 그다음에 인코딩처리를 해줘야한다.
+
+body-parser를 쓰면 좀 더 수월하다는 것을 볼 수 있다.
+
+```jsx
+bodyParser.urlencoded()
+```
+
+자동으로 req에 body속성이 추가되고 저장된다. 만약 urls에 접근하고싶다면, req.body.urls이다. 인코딩도 default로 UTF-8로 해준다.
+
+## urlencoded()의 옵션
+
+만약 아무 옵션을 주지 않는다면, body-parser deprecated undefined extended: provide extended option 같은 문구가 뜬다.
+
+```jsx
+.use(bodyParser.urlencoded({ extended: true or false })); 
+```
+
+extended 는 중첩된 객체표현을 허용할지 말지를 정하는 것이다. 객체 안에 객체를 파싱할 수 있게하려면 true.
+
+### extended 옵션에 대해
+
+- 참조문서 : [https://stackoverflow.com/questions/29960764/what-does-extended-mean-in-express-4-0/45690436#45690436](https://stackoverflow.com/questions/29960764/what-does-extended-mean-in-express-4-0/45690436#45690436)
+
+내부적으로 true 를 하면 qs 모듈을 사용하고, false 면 query-string 모듈을 사용한다. 이 두 모듈간의 차이에서 중첩객체 파싱여부가 갈린다. 예제는 참조문서의 stackoverflow 에 잘 나와있다.
+
+### req.body.hasOwnProperty is not a function 이슈
+
+- 참조문서 : [https://github.com/expressjs/express/issues/3264](https://github.com/expressjs/express/issues/3264)
+
+express generator 등오로 express 프로젝트를 세팅하면, app.js 에서 `app.use(express.urlencoded({extended: false}));` 가 보인다.
+
+위에서 언급했듯이, false면 querystring모듈을 사용하는데, querystring.parse는 object를 상속받지 않는다. 따라서 아래와 같은 이슈가 있을 수 있다.
+
+### 실제 예시 코드
+
+최근 프로젝트에서 사용한 body-parser 모듈은 `db.js` 에서 ajax 통신 post 방식으로 FE에서 책을 등록할 때 해당 책의 정보를 넘겨줄 때 사용한다. BE에서 ajax 통신을 받을 때 이러한 방식으로 사용했다. JSON형식으로 넘겨온 데이터를 조금 더 파싱하기 편한 형태로 만들기 위해서 body-parser 모듈을 사용했다. 요청 파라미터인 `req`에 `body` 로 쉽게 접근한다.
+
+```jsx
+router.post("/upload", upload.single('file'), (req, res) => {
+    //res.json({ file: req.file });
+    const name = req.body.name;
+    const auth = req.body.auth;
+    const pub = req.body.pub;
+    const price = req.body.price;
+    const image = req.file.filename;
+    book.create({
+        name: name,
+        auth: auth,
+        pub: pub,
+        price: price,
+        image: image
+    }).then(book => {
+        console.log("generated BOOK", book.name);
+    });
+    res.header("Access-Control-Allow-Origin", "*");
+});
+```
+
+# http-errors
+
+## 설치
+
+```jsx
+npm install http-errors
+```
+
+## 예시
+
+```jsx
+var createError = require('http-errors')
+var express = require('express')
+var app = express()
+
+app.use(function (req, res, next) {
+  if (!req.user) return next(createError(401, 'Please login to view this page.'))
+  next()
+})
+```
+
+error을 캐치하고 해당 에러를 에러코드에 맞춰서 에러를 처리할 수 있다.
+
+## 실제 예시 코드
+
+```jsx
+// catch 404(not found) and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
+});
+
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
+```
+
+프로젝트에서는 app이 404 에러코드(존재하지 않은 페이지)를 받으면 해당 에러를 처리해주고 next()을 통해서 다음 미들웨어 함수로 넘겨준다. 밑에 error handler 또한 에러가 있다면 메시지와 에러를 `res`객체에 담아서 보낸다.
+
+---
+
+- 12日  
+
+# 세그먼트 트리
+
+문제를 예로 들어서 세그먼트 트리를 얘기해보자. [참고](https://www.acmicpc.net/blog/view/9)을 내가 이해한 방향으로 적어보았다.  
+
+## 문제
+배열 A가 있고, 여기서 다음과 같은 두 연산을 수행해야하는 문제를 생각해보자
+
+1) 구간 l, r (l ≤ r)이 주어졌을 때, A[l] + A[l+1] + ... + A[r-1] + A[r]을 구해서 출력하기
+2) i번째 수를 v로 바꾸기. A[i] = v
+수행해야하는 연산은 최대 M번이다.  
+
+세그먼트 트리나 다른 방법을 사용하지 않고 문제를 푼다면, 1번 연산을 수행하는데 O(N), 2번 연산을 수행하는데 O(1)이 걸리게 된다. 총 시간 복잡도는 O(NM) + O(M) = O(NM)이 나오게 된다.  
+
+2번 연산이 없다고 생각해보자.  
+
+수를 바꾸는 경우가 없기 때문에, 합도 변하지 않는다. 따라서, 앞에서부터 차례대로 합을 구해놓는 방식으로 문제를 풀 수 있다.  
+
+S[i] = A[1] + ... + A[i] 라고 했을 때, i~j까지 합은 S[j] - S[i-1]이 된다.  
+
+i~j까지 합은 A[i] + ... + A[j]인데, S[j] = A[1] + ... + A[j], S[i-1]= A[1] + ... + A[i-1] 이기 때문이다.  
+
+```c++
+S[0] = A[0];
+for (int i=1; i<n; i++) {
+    S[i] = S[i-1] + A[i];
+}
+```
+여기서 2번 연산을 하려면, 수가 바뀔때마다 S를 변경해줘야 한다. 가장 앞에 있는 0번째 수가 바뀐 경우에는 모든 S 배열을 변경해야 하기 때문에, 시간복잡도는 O(N)이 걸리게 된다.  
+
+따라서, M과 N이 매우 큰 경우에는 시간이 너무 오래걸리게 된다.  
+
+이러한 부분을 해결하기 위해서 사용하는 자료구조가 `세그먼트 트리`이다.  
+
+
+## 세그먼트 트리
+세그먼트 트리를 이용하게되면 해당 1번 연산과 2번 연산 모두 O(logN)으로 수행할 수 있다.  
+
+세그먼트 트리의 리프 노드와 리프 노드가 아닌 다른 노드의 의미는 다음과 같다.
+- 리프 노드 : 배열 그 수 자체
+- 다른 노드 : 왼쪽 자식과 오른쪽 자식의 합
+
+따라서 노드의 번호가 `x`라면 왼쪽 자식의 번호는 `2*x`, 오른쪽 자식의 번호는 `2*x+1`가 되게 된다.  
+
+리프 노드가 10개 인 경우를 그림으로 보면 다음과 같다.  
+![세그먼트 트리](https://onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/blog/seg1.png)  
+
+해당 노드에 적혀있는 숫자는 저장하고 있는 합의 범위를 나타낸 것이다. 노드의 번호의 경우에는 위에서 적은 것과 같이 왼쪽 자식의 번호는 해당 노드에 2를 곱한 값, 오른쪽 자식의 번호는 2를 곱한 뒤 1을 더한 값이 되게된다.  
+
+### 트리 제작
+만약 N이 2의 제곱꼴이라면 완전 이진 트리로 높이가 `logN`이다. 리프 노드가 N개인 완전 이진 트리는 필요한 노드의 갯수가 `2*N-1`개이다.  
+
+2의 제곱꼴이 아니라면, 높이가 H = ⌈logn⌉ 이며, 총 세그먼트 트리를 만드는데 필요한 배열의 크기는 2^(H+1) -1개가 된다.  
+
+따라서 다음 코드로 Segment Tree를 만들 수 있다.
+```c++
+// a: 배열 a
+// tree: 세그먼트 트리
+// node: 세그먼트 트리 노드 번호
+// node가 담당하는 합의 범위가 start ~ end
+long long init(vector<long long> &a, vector<long long> &tree, int node, int start, int end) {
+    if (start == end) {
+        return tree[node] = a[start];
+    } else {
+        return tree[node] = init(a, tree, node*2, start, (start+end)/2) + init(a, tree, node*2+1, (start+end)/2+1, end);
+    }
+}
+```
+start == end 인 경우는 node가 리프 노드인 경우이다. 리프 노드는 배열의 그 원소를 가져야하기 때문에 `tree[node] = a[start]`가 된다.  
+node의 왼쪽 자식은 `node*2`, 오른쪽 자식은 `node*2+1`이 된다. 이때, node가 담당하는 구간이 `[stard,end]`라면 왼쪽 자식은 `[start, (start+end)/2]`, 오른쪽 자식은 `[(start+end)/2 +1, end]`를 담당한다. 따라서 재귀 함수를 이용해서 왼쪽 오른쪽 자식 트리들을 만들어서 합을 저장한다.
+
+### 합 찾기
+구간이 `[left, right]`로 주어졌을 때, 합을 찾으려면 루트부터 트리를 순회하면서 각 노드가 담당하는 구간과 left, right 사이의 관계를 봐야한다.  
+
+예를 들어서 [0,9]의 합을 구하는 경우에는 루트 노드 하나로 합을 알 수 있다.
+[세그먼트 0,9](https://onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/blog/seg3.png)  
+또, [3,9]의 합을 구하는 경우에는 다음과 같다.  
+[세그먼트 3,9](https://onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/blog/seg6.png)  
+
+node가 `[start, end]`을 담당하는 경우에 해당 구간의 합을 구해야한다. 이 때 4가지로 나뉘게 된다.
+
+1) [left, right]와 [start,end]가 겹치지 않은 경우
+2) [left, right]와 [start,end]를 완전히 포함하는 경우
+3) [start, end]]와 [left, right]를 완전히 포함하는 경우
+4) [left, right]와 [start,end]가 겹치져 있는 경우 (1,2,3 제외한 나머지 경우)  
+
+`1번`의 경우엔 `if (left > end || right < start)`로 나타낼 수 있다. `left > end`는 `[start, end]` 뒤에 `[left, right]`가 있는 경우다. 이 경우엔 겹치지 않으므로 탐색을 이어갈 필요 없다. 따라서 0을 리턴하고 종료한다.
+
+`2번`의 경우엔 `if (left <= start && end <= right)`로 나타낼 수 있다. 이 경우에도 탐색을 이어갈 필요가 없다. 왜냐하면, 구해야하는 합의 범위는 `[left, right]`인데, `[start, end]`는 그 범위에 모두 포함되고, 그 node의 자식도 포함되기 때문에 더 이상 호출할 필요가 없다. 따라서 tree[node]를 리턴하고 종료한다.
+
+`3번`과 `4번`의 경우는 왼쪽 자식과 오른쪽 자식을 루트로 하는 트리로 다시 탐색을 시작해야 한다.  
+```c++
+// node가 담당하는 구간이 start~end이고, 구해야하는 합의 범위는 left~right
+long long sum(vector<long long> &tree, int node, int start, int end, int left, int right) {
+    if (left > end || right < start) {
+        return 0;
+    }
+    if (left <= start && end <= right) {
+        return tree[node];
+    }
+    return sum(tree, node*2, start, (start+end)/2, left, right) + sum(tree, node*2+1, (start+end)/2+1, end, left, right);
+}
+```
+
+### 수 변경하기
+중간에 어떤 수를 변경한다면, 그 숫자가 포함된 구간을 담당하는 노드를 모두 변경해야한다.  
+3번째 수를 변경할 때, 변경해야하는 구간을 봐보자.
+[세그먼트 수 변경](https://onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/blog/seg7.png)  
+다음은 5를 변경할 때 변경해야하는 구간이다.  
+[세그먼트 수 변경2](https://onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/blog/seg8.png)  
+
+index 번째 수를 val로 변경한다면, 그 수가 얼마만큼 변했는지 알아야한다. 해당 숫자를 `diff`라고 하면, `diff = val - a[index]`로 구할 수 있다.  
+
+수 변경은 2가지 경우가 있다.
+1) `[start, end]`에 index가 포함된 경우
+2) `[start, end]`에 index가 포함되지 않은 경우
+
+node의 구간에 포함되는 경우에는 `diff`만큼 증가시켜 합을 변경해 줄수 있다. `tree[node] = tree[node] + diff` 포함되지 않은 경우는 그 자식도 index가 포함되지 않으므로 탐색을 중단해야 한다.
+```c++
+void update(vector<long long> &tree, int node, int start, int end, int index, long long diff) {
+    if (index < start || index > end) return;
+    tree[node] = tree[node] + diff;
+    if (start != end) {
+        update(tree,node*2, start, (start+end)/2, index, diff);
+        update(tree,node*2+1, (start+end)/2+1, end, index, diff);
+    }
+}
+```
+리프 노드가 아닌 경우에는 자식도 변경해줘야 하기 때문에, `start != end`로 리프 노드인지 검사 해줘야 한다.
+
+---
+
+- 13日  
+
+# 세그먼트 트리를 이용한 문제풀이  
+[구간 합 구하기](https://www.acmicpc.net/problem/2042) ,[최솟값](https://www.acmicpc.net/problem/10868) ,[최솟값과 최댓값](https://www.acmicpc.net/problem/2357), [구간 곱 구하기](https://www.acmicpc.net/problem/11505)  
+
+## 구간 합 구하기
+```c++
+const int MAX = 1000000 + 1;
+
+long long arr[MAX];
+long long tree[4*MAX];
+
+long long init(int node, int start, int end) {
+    if (start == end) {
+        return tree[node] = arr[start];
+    } else {
+        return tree[node] = init(node*2, start, (start+end)/2) + init(node*2+1, (start+end)/2+1, end);
+    }
+}
+void update(int node, int start, int end, int index, long long diff) {
+    if (index < start || index > end) return;
+    tree[node] = tree[node] + diff;
+    if (start != end) {
+        update(node*2, start, (start+end)/2, index, diff);
+        update(node*2+1, (start+end)/2+1, end, index, diff);
+    }
+}
+long long sum(int node, int start, int end, int left, int right) {
+    if (left > end || right < start) {
+        return 0;
+    }
+    if (left <= start && end <= right) {
+        return tree[node];
+    }
+    return sum(node*2, start, (start+end)/2, left, right) + sum(node*2+1, (start+end)/2+1, end, left, right);
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, m, k;
+	cin >> n >> m >> k;
+	m += k;
+	
+    for (int i=0; i<n; i++) 
+    	cin >> arr[i];
+    		
+    init(1, 0, n-1);
+    
+    while (m--) {
+        int t1;
+        cin >> t1;
+        
+        if (t1 == 1) {
+        	int t2;
+        	long long t3;
+            cin >> t2 >> t3;
+            t2--;
+            long long diff = t3 - arr[t2];
+            arr[t2] = t3;
+            update(1, 0, n-1, t2, diff);
+        }
+		else if (t1 == 2) {
+            int t2, t3;
+            cin >> t2 >> t3;
+            cout << sum(1, 0, n-1, t2-1, t3-1) << '\n';
+        }
+    }
+}
+```
+가장 기본적인 문제로 세그먼트 트리를 각 범위의 합을 노드의 값으로 가지게 만들어준다. 따라서 `init()` 함수를 통해서 세그먼트 트리를 만들어주고 이후의 `update()` 함수와 `sum()` 함수로 원하는 기능을 구현해주었다.  
+
+`sum()` 함수의 경우에는 `init()` 함수와 비슷하되 그 범위의 값을 더해서 리턴하는 형식이며, `update()` 함수는 변경 값을 해당하는 배열 값을 빼서 두 값의 차이만큼을 diff 매개변수로 넘겨서 해당하는 범위에 값을 모두 diff만큼 더해준다. 리프 노드가 아닌 경우에는 자식도 변경해야하므로, `if(start != end)` 조건으로 리프 노드인지 체크 해주었다.  
+
+
+## 최솟값
+```c++
+const int MAX = 100000 + 1;
+const int INF = 1000000001;
+
+int arr[MAX];
+int tree[4 * MAX];
+
+int init(int node, int start, int end) {
+	if(start == end)
+		return tree[node] = arr[start];
+	else 
+		return tree[node] = min(init(node*2, start, (start+end)/2), init(node*2+1, (start+end)/2 +1, end));
+}
+
+int select(int node, int start, int end, int left, int right) {
+	if (left > end || right < start) 
+		return INF;
+	if (left <= start && end <= right)
+		return tree[node];
+	
+	return min(select(node*2, start, (start+end)/2, left, right), select(node*2+1, (start+end)/2+1, end, left, right));
+	
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, m;
+	cin >> n >> m;
+	for (int i=0; i<n; i++)
+		cin >> arr[i];
+	
+	init(1, 0, n-1);
+	
+	for (int i=0; i<m; i++) {
+		int a, b;
+		cin >> a >> b;
+		cout << select(1,0,n-1,a-1,b-1) << '\n';
+	}
+}
+```
+이전 문제인 구간 합 구하기와 비슷하게 세그먼트 트리 자료구조를 형성해서 푸는 문제로, 똑같이 하되, 최솟값을 구하기 위해서 `init()` 함수로 세그먼트 트리를 만들 때 최솟값을 리턴하게 하여 세그먼트 트리가 해당 범위의 최솟값을 노드 값으로 저장하게 했다. 또 `select()` 함수도 범위의 최솟값을 찾아서 리턴하게 만들었다.
+
+
+## 최솟값과 최댓값
+```c++
+const int INF = 2e9 + 1;
+const int MAX = 100000 + 1;
+
+int arr[MAX];
+int max_tree[4*MAX];
+int min_tree[4*MAX];
+
+int max_init(int node, int start, int end) {
+	if(start == end)
+		return max_tree[node] = arr[start];
+	else 
+		return max_tree[node] = max(max_init(node*2, start,(start+end)/2), max_init(node*2+1, (start+end)/2+1, end));
+}
+
+int min_init(int node, int start, int end) {
+	if(start == end)
+		return min_tree[node] = arr[start];
+	else 
+		return min_tree[node] = min(min_init(node*2, start,(start+end)/2), min_init(node*2+1, (start+end)/2+1, end));
+}
+
+int max_select(int node, int start, int end, int left, int right) {
+	if(left > end || right < start)
+		return 0;
+	if(left <= start && end <= right)
+		return max_tree[node];
+	
+	return max(max_select(node*2, start, (start+end)/2, left, right), max_select(node*2+1, (start+end)/2+1, end, left, right));
+}
+
+int min_select(int node, int start, int end, int left, int right) {
+	if(left > end || right < start)
+		return INF;
+	if(left <= start && end <= right)
+		return min_tree[node];
+	
+	return min(min_select(node*2, start, (start+end)/2, left, right), min_select(node*2+1, (start+end)/2+1, end, left, right));
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, m;
+	cin >> n >> m;
+	for (int i=0; i<n; i++)
+		cin >> arr[i];
+	
+	max_init(1,0,n-1);
+	min_init(1,0,n-1);
+	
+	for (int i=0; i<m; i++) {
+		int a, b;
+		cin >> a >> b;
+		cout << min_select(1,0,n-1,a-1,b-1) << ' ' << max_select(1,0,n-1,a-1,b-1) << '\n';
+	}
+}
+```
+이 문제는 최솟값 문제와 매우 비슷하다. 반대로 최댓값을 만들면 되나, pair을 통한 배열로 구현할 것인지 각자 세그먼트 트리를 범위의 최댓값을 넣는 트리와 최솟값을 넣는 트리로 두 가지를 나눠서 할 지 고민하였다.  
+
+문제에서 메모리가 충분해 보이므로 두 개의 트리를 만들어서 각자 함수를 통해서 구하도록 만들었다. 이 문제에 경우에는 앞에서 푼 두 문제를 응용하면 충분히 풀만 하였다.  
+
+처음에 세그먼트 트리를 이해하는 시간이 오래 걸렸지만 문제 해결에 있어서는 상당히 도움이 되는 자료구조다.
+
+## 구간 곱 구하기
+```c++
+#include <iostream>
+#include <vector>
+using namespace std;
+
+const int MAX = 1000000 + 1;
+const int DIV = 1000000007;
+
+int arr[MAX];
+int tree[4*MAX];
+
+long long init(int node, int start, int end) {
+	if(start == end)
+		return tree[node] = arr[start];
+	else
+		return tree[node] = init(node*2, start, (start+end)/2) * init(node*2+1, (start+end)/2+1, end) % DIV;
+}
+
+long long update(int node, int start, int end, int idx, int val) {
+	if(idx < start || end < idx)
+		return tree[node];
+	if(start == end)
+		return tree[node] = val;
+	
+	return tree[node] = update(node*2, start, (start+end)/2, idx, val) * update(node*2+1, (start+end)/2+1, end, idx, val) % DIV;
+}
+
+long long mul(int node, int start, int end, int left, int right) {
+	if(right < start || end < left)
+		return 1;
+	if(left <= start && end <= right)
+		return tree[node] ;
+		
+	return mul(node*2, start, (start+end)/2, left, right) * mul(node*2+1, (start+end)/2+1, end, left, right) % DIV;
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, m, k;
+	cin >> n >> m >> k;
+	for (int i=0; i<n; i++) {
+		cin >> arr[i];
+	}
+	init(1,0,n-1);
+	m += k;
+	while(m--) {
+		int a, b, c;
+		cin >> a >> b >> c;
+		if(a == 1) {
+			b--;
+			arr[b] = c;
+			update(1,0,n-1,b,c);
+		}
+		else if (a == 2) {
+			cout << mul(1,0,n-1,b-1,c-1) << '\n';
+		}
+	}
+}
+```
+해당 문제는 구간 합 구하기와 비슷하게 하면 될 것이라고 막연하게 생각했지만 발상을 꺾기가 어려웠다.  
+
+합 구하기와 비슷하게 하되 `update()` 함수에서 다른 문제와 달리 해야했다. 왜냐하면 다른 문제에서는 해당 값을 가지고 값을 갱신해도 상관이 없었다. 하지만 이 문제에서는 달랐다.  
+
+이미 모듈러 연산을 통해서 값이 줄어들어있으므로 또 해당 값을 가지고 갱신하면서 모듈러 연산을 하게되면 값이 변하게 된다. 따라서 `update()` 함수에서도 리프 노드부터 값을 새로 갱신을 하여 값을 얻어냈다.
+
+---
+
+- 14日  
+
+그래프 문제를 복습하는 차원에서 풀어보았는데, 상당히 막힌 부분이 많았다.  
+
+벽 부수고 이동하기 시리즈이다. BFS로 생각하되 다른 생각지 못한 부분이 많아서 전체적으로 시간이 길어지고 집중력이 엄청 떨어졌다. `1번`은 수월하게 풀리는 경향이 있었고 `2번`도 `1번`을 조금씩 필요한 만큼 고쳐나갔다.  
+
+벽 부수고 이동하기 2
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 1000 + 1;
+int arr[MAX][MAX];
+bool visited[MAX][MAX][11];
+int pos[4] = {0,0,1,-1};
+int pos2[4] = {1,-1,0,0};
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, m, k;
+	cin >> n >> m >> k;
+	for (int i=1; i<=n; i++) {
+		for (int j=1; j<=m; j++) {
+			char c;
+			cin >> c;
+			arr[i][j] = c - '0';
+		}
+	}
+	
+	queue<pair<pair<int,int>,pair<int,int>>> q;
+	q.push({{1,1},{0,1}});
+	visited[1][1][0] = true;
+	
+	while(!q.empty()) {
+		int ypos = q.front().first.first;
+		int xpos = q.front().first.second;
+		int wall = q.front().second.first;
+		int cnt = q.front().second.second;
+		
+		q.pop();
+		
+		if(ypos == n && xpos == m) {
+			cout << cnt;
+			return 0;
+		}
+		
+		for (int i=0; i<4; i++) {
+			int y = ypos + pos[i];
+			int x = xpos + pos2[i];
+			
+			if(y > n || x > m || y < 1 || x < 1)
+				continue;
+				
+			if(visited[y][x][wall]) continue;
+			
+			if(arr[y][x] == 1 && wall < k) {
+				q.push({{y,x},{wall+1, cnt+1}});
+				visited[y][x][wall+1] = true;
+			}
+			if(arr[y][x] == 0) {
+				q.push({{y,x},{wall, cnt+1}});
+				visited[y][x][wall] = true;
+			}
+		}
+	}
+	cout << "-1";	
+}
+```
+
+하지만 시리즈 3부터 막히기 시작했다. `3번`부터 생각해낸 것은 밤과 낮에 다른 행동을 주기 위해서 카운트를 모듈러 연산 2를 하여서 밤 낮을 나눠, 부술 건지 말건지 선택하게 해서 풀었다.  
+
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 1000 + 1;
+int arr[MAX][MAX];
+bool visited[MAX][MAX][11];
+int pos[4] = {-1,0,1,0};
+int pos2[4] = {0,-1,0,1};
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, m, k;
+	cin >> n >> m >> k;
+	for (int i=1; i<=n; i++) {
+		for (int j=1; j<=m; j++) {
+			char c;
+			cin >> c;
+			arr[i][j] = c - '0';
+		}
+	}
+	
+	queue<pair<pair<int,int>,pair<int,int>>> q;
+	q.push({{1,1},{0,0}});
+	visited[1][1][0] = true;
+	int ans = -1;
+	while(!q.empty()) {
+		int ypos = q.front().first.first;
+		int xpos = q.front().first.second;
+		int wall = q.front().second.first;
+		int cnt = q.front().second.second;
+		
+		q.pop();
+		
+		if(ypos == n && xpos == m) {
+			ans = cnt + 1;
+			break;
+		}
+		for (int i=0; i<4; i++) {
+			int y = ypos + pos[i];
+			int x = xpos + pos2[i];
+			
+			if(y > n || x > m || y < 1 || x < 1)
+				continue;
+			
+			if(arr[y][x] == 1 && wall < k && !visited[y][x][wall+1]) {
+				if(cnt % 2 == 0) {
+					q.push({{y,x},{wall+1, cnt+1}});
+					visited[y][x][wall+1] = true;
+				}
+				else if(cnt % 2 == 1) {
+					q.push({{ypos,xpos},{wall,cnt+1}});
+				}
+			}
+			else if(arr[y][x] == 0 && !visited[y][x][wall]) {
+				q.push({{y,x},{wall, cnt+1}});
+				visited[y][x][wall] = true;
+			}
+		}
+	}
+	cout << ans;
+	
+}
+```
+
+마지막 `4번`은 제일 시간이 오래걸렸고 다른 문제와 개념이 상이하게 되는 문제인 것 같다. 먼저 `플러드 필 알고리즘` 개념으로 영역마다 값을 넣고 이중 포문에서 벽이 선택되었을 때 주위에 있는 영역의 포함된 공간의 갯수와 자기 자신을 선택한 숫자를 더해서 출력해주면 되는 문제였다. 하지만 이 부분을 생각하기 위해서 문제를 이해하는데 오래걸렸다.  
+
+```cpp
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <set>
+using namespace std;
+
+const int MAX = 1000 + 1;
+
+int map[MAX][MAX];
+int n, m;
+bool visit[MAX][MAX];
+int resultmap[MAX][MAX];
+int cnt;
+int dy[4] = {1,-1,0,0};
+int dx[4] = {0,0,1,-1};
+
+void visitClear() {
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			visit[i][j] = 0;
+}
+
+void dfs(int y, int x, int comType) {
+	cnt++;
+	map[y][x] = comType;
+
+	for (int i=0; i<4; i++) {
+		int ny = y + dy[i];
+		int nx = x + dx[i];
+		
+		if(nx<0 || ny<0 || nx==m || ny==n) 
+			continue;
+			
+		if(visit[ny][nx] || map[ny][nx])
+			continue;
+		visit[ny][nx] = true;
+		dfs(ny,nx,comType);
+	}
+}
+
+int main() {
+	cin >> n >> m;
+	char temp;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			cin >> temp;
+			map[i][j] = temp - '0';
+			if((temp -'0') == 1)
+				map[i][j] = -1;
+		}
+	}
+
+	//컴포넌트 자리 찾아주기
+	vector<int>com = {0};
+	int comtype = 0; // 1부터시작
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			if (map[i][j] == 0) {
+				comtype++;
+				cnt = 0;
+				dfs(i, j, comtype);
+				com.push_back(cnt);
+			}
+
+	//순회하며 컴포넌트 합쳐주기
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			//벽일때
+			if (map[i][j] == -1) {
+				//상하좌우의 컴포넌트 구해준거 다합쳐주기, 중복 조심
+				int sum = 0;
+				set<int> used;
+				
+				for (int k=0; k<4; k++) {
+					int ny = i + dy[k];
+					int nx = j + dx[k];
+					
+					if(nx<0 || ny<0 || nx==m || ny==n) 
+						continue;
+					
+					if(map[ny][nx] != -1 && used.count(map[ny][nx])==0) {
+						used.insert(map[ny][nx]);
+						sum += com[map[ny][nx]];
+					}
+					resultmap[i][j] = (sum + 1)%10;
+				}
+			}
+		}
+	}
+	
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < m; j++)
+		{
+			cout << resultmap[i][j];
+		}
+		cout << '\n';
+	}
+}
+```
+
+---
+
+- 15日  
+
+# 비트마스크
+
+비트마스크란, 정수의 이진수 표현을 활용한 기법이다. 비트가 가질 수 있는 상태는 0과 1로 이진수로 표현이 된다. 따라서 비트로 알 수 있는 정보는 다음과 같다.
+
+- 0과 1로 true/false 상태를 갖는다.
+- 이진수를 십진수로 표현 가능하다.
+
+이러한 정보를 활용하는 방법을 봐보자.  
+예를 들어 집합 `{0,1,2,3,4,5 ...}`이 있다고 가정한다. 이후 해당 원소가 선택 되었나 안되었나 체크를 하는 방법을 여러가지로 볼 수 있다. 먼저 배열을 통해서 해당 인덱스를 체크할 수 있다.  
+
+```cpp
+int array[n] = {1,1,1,1,1,...}; // 0,1,2,3,4
+int array2[n] = {0,1,0,1,0,...}; //1,3...
+```
+
+이러하게 만든다면 메모리를 쓸데없이 낭비하게되며, 오버헤드가 증가한다. 따라서 다음과 같이 사용하게 되면 효율적일 수 있다.  
+
+```cpp
+{0,1,2,3,4} // 11111
+{1,2,3,4} // 11110
+{1,2,4} // 10110
+{2,4} // 10100
+{1} // 00010
+```
+부분집합으로 표현하여, index번째 요소가 존재한다면 1, 없다면 0으로 볼 수 있다. 이러한 값을 그대로 10진수로 변환할 수 있다.  
+```cpp
+{0,1,2,3,4} // 11111 (2^4 * 1) + (2^3 * 1) + (2^2 * 1) + (2^1 * 1) + (2^0 * 1) = 31
+{1,2,3,4} // 11110 (2^4 * 1) + (2^3 * 1) + (2^2 * 1) + (2^1 * 1) = 30 
+{1,2,4} // 10110 (2^4 * 1) + (2^2 * 1) + (2^1 * 1) = 22
+{2,4} // 10100 (2^4 * 1) + (2^2 * 1) = 20
+{1} // 00010 (2^1 * 1) = 2
+```
+
+이렇게 부분집합에서 빼고 넣어서 십진수로도 표현 가능할 수 있다. 비트를 제어하기 위해서 비트 연산이 존재한다.  
+
+## 비트 연산
+
+- &(AND) 연산
+
+`1011 & 1100 = 1000` 이러한 식과 같이 해당 비트셋에서 대응하는 두 비트가 모두 1일 때 1을 반환하게 된다.
+
+- |(OR) 연산
+
+`1011 | 1100 = 1111` 이러한 식과 같이 해당 비트셋에서 대응하는 두 비트 둘 중 하나라도 1일 때 1을 반환하게 된다.
+
+- ^(NOR) 연산
+
+`1011 ^ 1100 = 0111` 이러한 식과 같이 해당 비트셋에서 대응하는 두 비트가 서로 다르면 1을 반환하게 된다.
+
+- ~(NOT) 연산
+
+`~1011 = 0100` 이러한 식과 같이 비트 값들을 반전하여 반환한다.  
+
+- `>>,<<`(SHIFT) 연산
+
+`001011 << 2 = 101100` 이러한 식과 같이 해당 값을 숫자만큼 비트들을 옮긴다. 이때 왼쪽 시프트는 `A * 2^B`, 오른쪽 시프트는 `A / 2^B`를 의미한다.  
+
+## 연산
+
+원하는 인덱스의 값을 바꾸고 싶을 때, 어떤 연산을 사용해야 가능한지 보자.  
+
+예를 들어 `0101` => `1101`로 바꾸고 싶은 경우 여러가지 연산이 가능하다. 먼저 `0101 | 1000` 연산을 통해서 원하는 결과를 만들 수 있다. 또, `0101 | 1 << 3`을 통해서도 결과를 만들 수 있다.
+
+- `0101 | 1000 = 1101`
+- `0101 | 1 << 3 = 0101 | 1000 = 1101`
+
+추가적으로 `~`연산을 통해서 반대의 값을 쉬프트해서 `&`, `|` 연산을 할때는 먼저 쉬프트한 뒤 그 값을 NOT 연산 뒤 AND나 OR 연산을 하여 값을 얻어낸다.  
+
+마지막으로 연산을 통해서 원하는 인덱스 번째 비트의 값을 알아내는 연산을 봐보자.  
+
+```cpp
+Bitset & (1 << idx)
+```
+
+쉬프트 연산을 통해 해당 인덱스만큼 밀고 해당 값과 AND 연산을 통해서 1 혹은 0인지 알아 낼 수 있다.  
+
+이러한 테크닉을 비트마스크라고 하며, 여러 문제에 활용될 수 있다. 그 문제 중 대표 문제는 Traveling Salesman Problem으로 외판원 순회 문제이다. 해당 [문제](https://www.acmicpc.net/problem/2098)를 풀어보며 조금 더 이해를 가져보는 시간을 가져보자.
+
+```cpp
+int dp[MAX][1<<MAX];
+int tsp(int cur, int visited) {
+	int& ret = dp[cur][visited];
+	if(ret != -1)
+		return ret;
+		
+	if(visited == (1<<n)-1) {
+		if(arr[cur][0] != 0)
+			return arr[cur][0];
+		else
+			return INF;
+	}
+	
+	ret = INF;
+	for (int i=0; i<n; i++) {
+		if(arr[cur][i] && !(visited & (1 << i))) {
+			int visit = visited | (1 << i);
+			ret = min(ret, tsp(i, visit) + arr[cur][i]);
+		}
+	}
+	
+	return ret;
+}
+```
+해당 문제에서 사용한 함수를 가져와봤다. 이런식으로 비트마스크를 사용했다.
+
+---
+
+- 16日  
+
+# LCA
+
+Lowest Common Ancestor(LCA) 즉, 최소 공통 조상을 구하는 알고리즘이다. 두 정점 u,v에서 가장 가까운 공통 조상을 찾는 과정이다.  
+
+![이진 트리](https://ww.namu.la/s/80babca3318fe49e11009da782d4a7b3969bf17517764fe7dab69b05e0477ba3f057a995cd00c2434b4c964cd08ba76267c879cea21db822565ccd8a50252daee99e6b62a7fb63565a921230025be77d5a1f4090a56fb8a80dd67b6fbad32c6e)  
+
+ex) LCA(2,6) = 7, LCA(6,11) = 6, LCA(5,4) = 2  
+이런 식으로 노드들의 가장 가까운 위치의 공통 조상을 찾는 알고리즘이다. 또한, 두 노드의 가장 가까운 거리를 찾는다는 의미도 있어서 노드간 거리를 찾을 때도 사용된다.
+
+## 구현 방법
+
+구현 방법으로는 Loop을 이용한 방법과 이전에 공부했던 자료구조인 세그먼트 트리를 이용하는 방법과 DP를 이용하는 방법 3가지로 나눠서 봐보자.  
+
+### Loop를 이용한 방법
+
+먼저 다른 그래프 문제를 풀이하듯 트리구조를 생성해준다. 만일 root가 문제에서 주어진 경우 따로 기억해야한다.  
+
+배열 두 개를 선언해주는데 이때 하나는 노드의 부모노드를 저장해주는 `parent` 배열이고 다른 하나는 깊이를 저장해줄 `depth` 배열이다.  
+이후 DFS을 통해 root로부터 각각의 노드들의 parent와 depth을 저장해준다.  
+
+이후 문제에서 주어진 조건을 보자. 두 노드가 주어지면 각각의 depth을 구한다. 두 노드 중 depth가 깊은 노드를 얉은 노드에 깊이만큼 맞춰준다. depth을 같게 맞춰주었는데도 공통 조상을 찾지 못했다면, 두 노드를 동시에 한 칸씩 끌어올리게 된다. 이러한 반복을 통해서 LCS 즉, 최소 공통 조상을 찾게 된다.
+
+### DP 이용하는 방법
+
+Loop로 LCA를 구할 때는 트리의 크기가 작을 때는 시간이 크게 걸리지 않지만 트리의 크기가 커질수록 시간은 부담이 된다. 따라서 시간을 줄일 수 있는 방법인 DP를 이용한 방법에 대해 알아보자.  
+
+먼저 방법에 대해 크게 살펴보면 Loop에서 취한 방법은 모든 노드들의 부모를 다 체크해서 찾아가는 방법이였다. 이 부분을 효율적으로 탐색하기 위해 조상들을 접어서 탐색하는 방법을 취했다. 예를 들어 조상과 노드의 거리가 100이라고 가정시에 `100 = 2^6 + 2^5 + 2^2` 이런 식과 같이 3번의 접근으로 조상을 찾는 방법을 이용했다.  
+
+DP를 통해서 각 노드들의 조상 정보를 저장하게 되는데, 이때 각 노드들의 부모를 먼저 저장하고 부모의 정보를 이용해서 두 단계 앞의 조상을 구한다. 두 단계 앞의 조상을 이용해 네 단계 앞 조상의 정보를 구하고 또 여덟 단계 앞 조상을 구할 수 있다. 이런식으로 나아가게 되면 해당 노드로부터 `2ⁿ`에 해당하는 조상들의 정보를 완성시켜서 이용할 수 있게 된다.  
+
+이후에는 LCA를 구하는 과정을 통하면 된다. 이미 완성된 조상들의 정보로 Loop를 이용한 방식과 같이 얉은 깊이를 기준으로 동일시하게 만든 뒤 조상을 찾아가는 방법이다. 하지만 위치를 조정할 때는 깊이의 차이보다 작은 2ⁿ의 숫자 중 가장 큰 수를 선택하여 그 만큼 위치를 조정시켜준다. 차이가 아직 존재한다면 앞과 똑같이 반복한다.  
+
+그 후 두 노드의 깊이가 같게 되어서 만나게 되면 해당 노드가 LCA가 되는 것이고 만나지 못한다면, 다시 조상노드를 찾기 위해 올라가기를 반복한다. 이때 Loop를 이용한 방법과 다른 점은 조상노드를 찾기 위해 올라갈 때 해당 노드 직전까지만 올라간다는 차이점이 있다. 따라서 두 노드의 부모를 선택하면 그 값이 LCA 즉 최소 공통 조상이 된다. 이러하게 하는 이유는 두 노드의 공통 조상을 찾을 때 가질 수 있는 최대 조상부터 계산을 시작하면, 루트 노드이든 다른 어떤 노드든 가질 수 있는 공통 조상중 가장 깊이가 얕은 조상을 선택할 가능성이 있기 때문이다.  
+
+### 세그먼트 트리를 이용한 방법
+
+세그먼트 트리는 노드들의 값에 해당 자식들에 해당하는 범위만큼의 합과 같은 연산을 통한 값을 저장해놓은 자료구조다. LCA를 구할 때는 작은 값을 찾는 세그먼트 트리로 변형해서 찾아보도록 한다.  
+
+트리를 전순위 탐색하여 탐색순으로 세그먼트 리프노드에 (트리의 높이, 노드번호)를 갱신해준다. 이때 배열에 각 트리의 노드에 해당하는 세그먼트 리프 노드 번호를 기록한다.  
+
+자식노드에서 부모노드로 돌아왔을 때 다시 세그먼트 리프에 (트리높이, 부모노드번호)를 삽입해준다. 리프 노드 번호를 기록할 필요 없다.  
+
+발견된 순서에 따른 쿼리를 통해 두 노드의 LCA 즉, 최소 공통 조상을 구할 수 있다.  
+
+---
+
+- 17日  
+
+# CCW
+
+CCW란, 점 3개가 이차원 평면에 존재하여 점들을 이은 선분이 어떤 방향성을 나타내는지 확인하는 알고리즘이다.  
+
+가능한 경우의 수는 반시계 방향, 시계 방향, 일직선 총 3가지가 있다. 각각 반시계 방향인 경우에는 1, 일직선은 0, 시계 방향을 -1이라고 했을 때 그림은 아래와 같다.  
+
+![CCW](https://onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/blog/ccw1.png)  
+
+## 소스
+
+```cpp
+int ccw(int x1, int y1, int x2, int y2, int x3, int y3) {
+    int temp = x1*y2+x2*y3+x3*y1;
+    temp = temp - y1*x2-y2*x3-y3*x1;
+    if (temp > 0) {
+        return 1;
+    } else if (temp < 0) {
+        return -1;
+    } else {
+        return 0;
+    }
+}
+```
+
+## 사용 예시  
+
+### 두 선분의 교차 여부
+
+평면상에서 두 선분이 주어졌을 때 교차 여부를 판단할 때 CCW 알고리즘을 사용하게 되면 쉽게 구할 수 있다.  
+
+![선분교차](/month/img/algorithm/CCW1.jpg)  
+선분 AB를 기준으로 선분 CD의 꼭짓점인 C와 D는 서로 다른 방향에 위치하게 된다. 점 A,B,C는 시계 방향, 점 A,B,D는 시계반대 방향의 방향관계를 갖으므로 CCW의 반환값이 서로 다르다. 따라서 `CCW(A,B,C) * CCW(A,B,D) < 0`을 만족한다면 두 선분은 교차한다.  
+
+교차하지 않을 때는 `CCW(A,B,C) * CCW(A,B,D) > 0`을 만족한다는 것을 쉽게 알 수 있다. 선분의 꼭짓점이 다른 선분 위에 위치하게 될 때 `CCW(A,B,C) * CCW(A,B,D) = 0`과 같이 값이 나온다는 것도 같이 알아두면 좋다.  
+
+이때 문제점은 선분과 직선의 차이이다. 두 직선인 경우에는 위와 같이 CCW 값의 곱을 통해서 교차 여부를 알 수 있지만 두 선분의 경우에는 만나지 않더라도 CCW의 값의 곱이 음수가 될 수 있다.  
+![CCW2](https://t1.daumcdn.net/cfile/tistory/9998C64C5C7631D72C)  
+
+### 다각형의 넓이
+n각형의 경우 n이 매우 크게 되는 경우나 오목 다각형인 경우에는 넓이를 구하기가 매우 어려워진다. 이때도 CCW 알고리즘을 이용하면 쉽게 해결할 수 있다.  
+
+CCW 알고리즘에서는 이차원 평면상 두 벡터의 수직벡터의 z좌표를 기준으로 삼기 때문에 외적을 통해서 z좌표를 구해야하나, 선형대수학에서 사용한 삼각형 넓이 구하는 사선 공식과 결과가 같아서 사선 공식을 그대로 사용하도록 한다.  
+![사선 공식](https://t1.daumcdn.net/cfile/tistory/99176C425C763B020B)  
+
+따라서, CCW 함수의 반환값을 절댓값을 취한 뒤 1/2만 곱하면 된다. 다각형 넓이 구하는 CCW 알고리즘을 과정으로 알아보자.  
+
+- 고정점 설정
+- 고정점 기준으로 시계 or 시계반대 방향으로 꼭짓점을 돌면서 CCW 알고리즘 적용
+- 절댓값을 취한 뒤 1/2 곱  
+
+내각이 180도보다 큰 다각형인 오목다각형에 경우에도 알고리즘은 똑같이 진행해주면 된다. 왜냐하면 내각이 180도보다 크게 되면 위의 과정대로 진행 중 외부의 넓이를 더하게 되는 경우가 있으나, 다른 꼭짓점들에 대해 CCW 알고리즘을 적용하게 되면 기존의 방향과 반대방향인 부분이 존재해서 해당 외부 넓이만큼 빼서 원하는 다각형의 넓이를 구할 수 있다.
+
+### 볼록 껍질 (Convex Hull)
+볼록 껍질이란, 2차원 평면 상에서 주어진 점들을 모두 포함하는 가장 작은 다각형을 의미한다. 다각형의 각 변들은 주어진 점을 양 끝점으로 갖는다.  
+
+블록 껍질을 구하기 위해 사용하는 알고리즘은 `그라함 스캔 알고리즘`이다.  
+
+- 주어진 점들 중 y좌표가 가장 작거나 혹은 y좌표가 가장 작은 점이 둘 이상이라면 x좌표가 가장 작은 점을 선택
+- 선택한 점을 기준으로 나머지 점들을 반시계 방향으로 정렬
+- 그라함 스캔 알고리즘 적용
+
+그라함 스캔 알고리즘은 스택 자료구조를 이용한다. 위의 과정대로 처음 선택한 점을 스택에 넣고, 정렬된 점들을 차례대로 스택에 넣는다. 새로운 점을 스택에 push할 때 만약 스택에 점이 두개 이상이 있다면, 가장 최근에 push된 두 점을 이은 직선을 기준으로 새로운 점이 왼쪽에 있다면 push, 오른쪽에 있다면 pop하고 새로운 점을 push한다. 이때 사용하는 알고리즘이 CCW 알고리즘이다.
+
+그라함 스캔 알고리즘이 시간 복잡도가 O(n)이며, 반시계방향 정렬하는 시간 복잡도가 O(nlogn)이다. 따라서 블록 껍질를 구하는 시간 복잡도는 O(nlogn)이다.
+
+[그림 출처](https://wogud6792.tistory.com/12)
+
+---
+
+- 18日  
+
+# 에라토스테네스의 체
+
+많은 수들에서 소수를 빠르고 정확하게 판별하는 알고리즘이다. 상당히 여러 곳에서 활용될 수 있으므로 잘 기억하자.  
+
+## 단일 숫자 소수 여부 확인
+어떤 수의 소수 여부 확인에 있어서는 특정한 숫자의 제곱근까지만 약수 여부를 검증하면 시간 복잡도 O(N^1/2)으로 빠르게 구할 수 있다.  
+
+하지만 대량의 소수를 구해야하는 경우에 필요한 알고리즘이 바로 에라토스테네스의 체이다.  
+
+## 원리
+해당하는 숫자 범위만큼 배열을 먼저 할당한 뒤, 소수가 아닌 수들을 하나 씩 제거해가는 식으로 구현한다.  
+
+- 배열 생성 후 초기화
+- `for(2 to n)` 문을 통해서 특정 수의 배수에 해당하는 수를 제거한다. 이때, 자기 자신과 이미 제거된 수는 건너뛴다.
+- 배열에 남아있는 숫자가 바로 소수다.
+
+## 소스
+```cpp
+void Eratos(int n){
+	for (int i = 2; i <= n; i++)
+	    PrimeArray[i] = true;
+
+	/*	에라토스테네스의 체에 맞게 소수를 구함
+		만일, PrimeArray[i]가 true이면 i 이후의 i 배수는 약수로 i를
+		가지고 있는 것이 되므로 i 이후의 i 배수에 대해 false값을 준다.
+		PrimeArray[i]가 false이면 i는 이미 소수가 아니므로 i의 배수 역시
+		소수가 아니게 된다. 그러므로 검사할 필요도 없다.
+또한 i*k (k < i) 까지는 이미 검사되었으므로 j시작 값은 i*2 에서 i*i로 개선할 수 있다.
+	*/
+	for (int i = 2; i * i <= n; i++)
+	{
+		if (PrimeArray[i])
+			for (int j = i * i; j <= n; j += i)
+			    PrimeArray[j] = false;
+	}
+}
+```
+
+[변형 문제](https://www.acmicpc.net/problem/1016)  
+
+제곱 ㄴㄴ 수를 찾는 문제로, 1보다 큰 제곱수 X로 나뉘어지지 않는 수들을 찾는 문제이다. 최솟값과 최댓값 사이 구간에 제곱 ㄴㄴ 수 숫자를 출력하면 된다.  
+
+```cpp
+ll Min,Max;
+
+bool check[1000005];
+int main(){
+    ios_base :: sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int cnt = 0;
+    cin >> Min >> Max;
+
+    for(ull i=2;i*i<=Max;i++){
+        ull nn = Min/(i*i);
+        if(Min%(i*i))
+            nn++;
+
+        for(ull j=nn;;j++){
+            if(j*i*i>Max)
+                break;
+            if(!check[j*i*i-Min]){
+                cnt++;
+                check[j*i*i-Min] = true;
+            }
+        }
+    }
+    
+    cout << Max - Min + 1 - cnt;
+    return 0;
+}
+```
+
+내부 포문은 `i*i`에 포함되는 숫자들을 전부 체크하고 제곱 ㄴㄴ 수를 세준다. [min, max] 구간에서 `i*i*k >= min`인 수에 도달하기 위해서 `ull nn = Min/(i*i)`을 통해서 조정을 해줬다.  
+
+---
+
+- 19日  
+
+# KMP
+
+문자열 검색 알고리즘 중 접두사와 접미사를 구하는 알고리즘으로 naive 문자열 검색과 달리 문자열 전부를 검색하는 것이 아닌 접두사와 접미사가 같은 조건에 의해 만들어진 실패함수로 적절하게 인덱스를 조정하여 검색하는 알고리즘이다.  
+
+[그림참고](https://m.blog.naver.com/kks227/220917078260)  
+
+## 실패함수
+
+KMP 알고리즘에는 찾고자하는 문자열의 위치마다 별도의 실패 함수 값이 존재한다. 이 값은 불일치가 발생하였을 때 반복 인덱스가 어디로 이동해야 하는지 나타내는 값으로, 검색시에 틀린다고 무조건 찾는 문자열의 크기만큼 넘어가지 않게 하기 위한 장치이다. 이 함수로 만들어진 배열을 fail이라고 할 때 `fail[x]`가 가진 의미는 `찾는 문자열의 처음 (x+1)글자 중, 일치하는 접두사/접미사 중 최대 길이`다.  
+
+KMP 알고리즘에도 쓰이지만 접두사와 접미사 관련해서 필요한 경우 이 실패함수만 가져다가 사용하는 경우도 있다. 
+
+### 실패함수 소스
+
+```cpp
+int fail[MAX] = {0,};
+for (int i=1, j=0; i<S.length(); i++) {
+	while(j < 0 && S[i] != S[j])
+		j = fail[j-1];
+	if(S[i] == S[j])
+		fail[j] = ++j;
+}
+```
+
+## KMP 알고리즘
+
+만들어진 실패 함수로 찾고자하는 문자열의 인덱스를 조정해줘서 대상 문자열과 찾고자하는 문자열의 글자들을 비교하며 찾아간다. 그리고 소스에서 보면 알겠지만 실패함수와 매우 흡사하다는 것을 알 수 있다. 이 말은 실패함수는 찾고자하는 문자열에 대해 KMP 알고리즘을 적용시켰다고 할 수 있다. 즉. KMP 알고리즘의 논리는 String에서 Word을 찾는다고 하면, 실패 함수는 Word에서 Word의 부분 문자열을 찾는다고 볼 수 있다. 이후 KMP에서는 `if(S[i] == W[j])`에서 찾은 뒤 원하는 동작을 넣어주면 된다.
+
+### KMP 알고리즘 소스
+
+```cpp
+for(int i=0, j=0; i<N; i++){
+	// 현재 글자가 불일치하면 fail 값을 계속 따라감
+	while(j > 0 && S[i] != W[j]) j = fail[j-1];
+	// 현재 글자가 일치
+	if(S[i] == W[j]){
+		// W를 S[i:i+M-1]에서 찾음
+		if(j == M-1){
+			// i=0부터 시작한다면 i-M+1. 문제 조건에 따라 1을 더함
+			result.push_back(i-M+2);
+			// 찾지 못한 것처럼 j를 이동시키면 됨
+			j = fail[j];
+		}
+		else j++;
+	}
+}
+```
+
+### 문제
+
+BOJ  
+[찾기](http://noj.am/1786), [Cubeditor](http://noj.am/1701), [시저 암호](http://noj.am/1893), [광고](http://noj.am/1305), [문자열 제곱](http://noj.am/4354)  
+
+-----
+
+시저 암호
+```cpp
+/*
+	먼저 map 자료구조에 오른쪽으로 shift한 문자들을 넣어놓고 0~a 즉, 모든 경우의 수를 다 찾아본다.
+	먼저 새로운 W의 실패함수를 구하고 S에서의 W에 대해 KMP 알고리즘을 시행한다.
+	S에서 W를 한번만 찾은 반복문에 대해서만 정답으로 취급해준다. 
+*/
+int main() {
+	while(n--) {
+		string A, W, S;
+		int a, w, s;
+		vector<int> v;
+		map<char, char> shift; // shift한 문자 결과 
+		cin >> A >> W >> S;
+		a = A.size();
+		w = W.size();
+		s = S.size();
+		
+		for (int i=0; i<a; i++)
+			shift[A[i]] = A[(i+1)%a];
+		
+		for (int circle=0; circle<a; circle++) {
+			
+			if(circle != 0) {
+				for (int i=0; i<w; i++)
+					W[i] = shift[W[i]];
+			}
+			
+			memset(fail, 0, sizeof(fail));
+			
+			for (int i=1, j=0; i<w; i++) { // W의 실패함수 
+				while(j > 0 && W[i] != W[j])
+					j = fail[j-1];
+				if(W[i] == W[j])
+					fail[i] = ++j;
+			}
+			
+			bool flag = false; 
+			for (int i=0, j=0; i<s; i++) {
+				while(j > 0 && S[i] != W[j])
+					j = fail[j-1];
+				if(S[i] == W[j]) {
+					if(j == w-1) {
+						if(!flag) { // 한번 찾은 경우
+							flag = true;
+							j = fail[j];
+						}
+						else { // 두번 이상 찾게 되면 안된다.
+							flag = false;
+							break;
+						}
+					} 
+					else
+						j++;
+				}
+			}
+			
+			if(flag)
+				v.push_back(circle);
+		}
+}
+```
+
+마법의 단어
+```cpp
+/*
+	T를 쉬프트한 문자열 (최대 T.length()개)가 T와 같아지는 경우가 K번 존재
+	문자열들이 주어졌을 때 순열의 조합으로 만들 수 있는 단어 중 몇개냐
+	순열은 next_permutation 사용하고 kmp를 통해 구하되, 주어진 문자열의 끝까지 가게되면
+	자기 자신과 같으므로 length()에서 -1만큼 해준다. 
+*/
+int kmp(string a, string b) { // 일반적인 KMP이지만 KMP 알고리즘 for문의 범위가 a.length() -1이다. 자기 자신을 빼주기 위함
+	memset(fail, 0, sizeof(fail));
+	int cnt = 0;
+	for (int i=1, j=0; i<a.length(); i++) {
+		while(j > 0 && a[i] != b[j])
+			j = fail[j-1];
+		if(a[i] == b[j])
+			fail[i] = ++j;
+	}
+	for (int i=0, j=0; i<a.length()-1; i++) {
+		while(j > 0 && a[i] != b[j])
+			j = fail[j-1];
+		if(a[i] == b[j]) {
+			if(j == b.length()-1) {
+				cnt++;
+				j = fail[j];
+			}
+			else
+				j++;
+		}
+			
+	}
+	return cnt;
+}
+int main() {
+	do {
+		string comb, word;
+		for (int i=0; i<n; i++)
+			word += str[v[i]];
+		
+		comb = word + word;
+		
+		if(kmp(comb, word) == k)
+			cnt++;
+		
+	}while(next_permutation(v.begin(),v.end()));
+	cout << cnt;
+} 
+```
+
+---
+
+- 20日  
+
+[주기문](https://noj.am/1498), [주기](https://noj.am/3779), [앞뒤가 맞는 수열](https://noj.am/16570), [이름 정하기](https://noj.am/16900)  
+
+주기문, 주기 알고리즘 동일. 주기문
+```cpp
+const int MAX = 1e6 + 1;
+
+int fail[MAX];
+
+/*
+	문자열의 n 제곱이란 부분문자열을 n번 이어붙였을 대 해당 문자열이 나와야하기 때문에
+	접두사이면서 접미사인 부분문자열의 길이를 실패함수를 통해서 저장한다.
+	따라서 문자열의 인덱스 - 1일 때 부분문자열의 길이는 문자열을 n번 제곱했을 때의 부분문자열의 길이이다.
+	즉, length / length - fail[leength-1] 이 제곱을 뜻하며 펠린드롬을 제외해주고 찾아주면 된다. 
+*/
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	string str;
+	cin >> str;
+	int n = 0;
+	for (int i=1, j=0; i<str.length(); i++) {
+		while(j > 0 && str[i] != str[j])
+			j = fail[j-1];
+		if(str[i] == str[j]) {
+			fail[i] = ++j;
+		}
+	}
+	
+	for (int i=2; i<=str.length(); i++) {
+		if (fail[i-1] == 0 || fail[i - 1] % (i - fail[i - 1])) // 펠린드롬 
+			continue;
+		int ans = i / (i - fail[i-1]); // 제곱수 
+		if(ans > 1) { // 제곱을 갖는 경우 
+			cout << i << ' ' << ans << '\n';
+		}
+	}
+}
+```
+
+앞뒤가 맞는 수열
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 1e6+1;
+
+int arr[MAX];
+int sub[MAX];
+int fail[MAX];
+
+/*
+	앞을 자르고 부분 문자열의 접두사와 접미사의 같은 길이 중 최대를 구하고자 한다.
+	이 때 앞을 자르는 것을 거꾸로 생각하면 끝에서부터 kmp로 실패함수 값을 구하는것과 같다. 
+*/
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n;
+	cin >> n;
+	for (int i=n-1; i>=0; i--) {
+		cin >> arr[i];
+	}
+	
+	for (int i=1, j=0; i<n; i++) {
+		while(j>0 && arr[i] != arr[j])
+			j = fail[j-1];
+		if(arr[i] == arr[j])
+			fail[i] = ++j;
+	}
+	
+	int ans = -1, cnt = 1;
+	
+	for (int i=0; i<n; i++) {
+		if(fail[i]) {
+			
+			if(ans < fail[i]) {
+				cnt = 1;
+				ans = fail[i];
+			}
+			else if(ans == fail[i])
+				cnt++;
+		}
+	}
+	if(ans == -1)
+		cout << ans;
+	else
+		cout << ans << ' ' << cnt;
+	
+}
+```
+
+이름 정하기
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 1e6+1;
+long long fail[MAX];
+/*
+	KMP 실패함수를 이용해서 부분 문자열을 구한다. 
+	접두사와 접미사가 같으므로 전체 길이에서 반복되는 길이만큼을 빼고 n-1을 곱해준다.
+	그 다음 전체 길이와 더하면 된다. n-1인 이유는 자기 자신을 제외하기 때문이다. 
+*/
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	string c;
+	long long n;
+	cin >> c >> n;
+	long long len = c.length();
+	for (int i=1, j=0; i<len; i++) {
+		while(j>0 && c[i] != c[j])
+			j = fail[j-1];
+		if(c[i] == c[j]) 
+			fail[i] =  ++j;
+	}
+		
+	cout << len + (len-fail[len-1]) * (n-1);
+}
+```
+
+주로 문자열 알고리즘에 대해 공부하며 문제를 풀어볼 예정이며, SQLD 시험을 위해 데이터베이스도 꾸준히 공부해야한다.  
+
+----
+
+# 환형 문자열  
+
+환형 문자열이란 동그랗게 말린 원형 문자열을 뜻한다. 밑에 문제에서 볼 수 있겠지만, 룰렛이나 시계와 같이 동그란 물체에 문자열을 대입해서 해결하는 문제이다.  
+
+이 문제에 있어서는 KMP 알고리즘을 사용하는데 환형 문자열을 두 배로 늘리고 그 해당 문자열에 다른 문자열이 들어있나 체크해주면 된다. 이때 KMP 알고리즘을 사용한다.
+
+[시계 사진들](http://noj.am/10266), [속타는 저녁 메뉴](http://noj.am/11585)  
+
+시계 사진들
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 360000;
+
+int fail[MAX+100];
+
+bool origin[MAX+100];
+bool comp[MAX*2+100];
+
+/*
+	바늘이 360000개 만큼 가능하므로 그 들어오는 숫자만큼 bool형 배열로 체크한 뒤,
+	그 배열을 두배로 늘려서 들어오는 배열과 KMP 알고리즘으로 비교하였다.
+	이 때 MAX값만큼 for문을 돌려야하는게 가장 헷갈렸다. 
+*/
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, a;
+	cin >> n;
+	bool flag = false;
+	for (int i=0; i<n; i++) {
+		cin >> a;
+		comp[a] = comp[a+MAX] = true;
+	}
+	
+	for (int i=0; i<n; i++) {
+		cin >> a;
+		origin[a] = true;
+	}
+	
+		
+	for (int i=1, j=0; i<MAX; i++) {
+		while(j>0 && origin[i] != origin[j])
+			j = fail[j-1];
+		if(origin[i] == origin[j])
+			fail[i] = ++j;
+	}
+	
+	for (int i=0, j=0; i<MAX*2; i++) {
+		while(j>0 && comp[i] != origin[j])
+			j = fail[j-1];
+		if(comp[i] == origin[j]) {
+			if(j == MAX-1) {
+				flag = true;
+				break;
+			}
+			else
+				j++;
+		}
+	}
+	if(flag)
+		cout << "possible";
+	else
+		cout << "impossible";
+}
+```
+
+속타는 저녁 메뉴
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 1e6+1;
+
+char a[MAX];
+char b[MAX*2];
+int fail[MAX*3];
+
+/*
+	원형 룰렛에 들어가는 문자열은 환형 문자열로, 해당 문자열이 원형 룰렛 모양에 들어가는지 보기 위해서
+	원형 룰렛 모양을 두배로 늘린 다음 kmp 알고리즘을 통해 얼마나 들어가는지 확인한다.
+	기약분수를 만들기 위해 최대공약수를 구해서 나눠준다. 
+*/
+
+int ShortFraction(int a, int b) {
+	if(!(b%a))
+		return a;
+	return ShortFraction(b%a, a);
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n;
+	cin >> n;
+	int num = 0;
+	for (int i=0; i<n; i++) {
+		cin >> a[i];
+	}
+	for (int i=0; i<n; i++) {
+		cin >> b[i];
+		b[n+i] = b[i];
+	}
+	
+	for (int i=1,j=0; i<n; i++) {
+		while(j>0 && a[i] != a[j])
+			j = fail[j-1];
+		if(a[i] == a[j])
+			fail[i] = ++j;
+	}
+	
+	for (int i=0, j=0; i<n*2-1; i++) {
+		while(j>0 && b[i] != a[j])
+			j = fail[j-1];
+		if(b[i] == a[j]) {
+			if(j == n-1) {
+				j = fail[j];
+				num++;
+			}
+			else
+				j++;
+		}
+	}
+	
+	cout << num/ShortFraction(num,n) << '/' << n/ShortFraction(num,n);
+	
+}
+```
+
+---
+
+- 21日  
+
+# 도커
+
+컨테이너를 사용하여 응용프로그램을 더 쉽게 만들고 배포하고 실행할 수 있도록 설계된 도구이며 컨테이너 기반의 오픈 소스 가상화 플랫폼이며 생태계이다.  
+
+## 컨테이너
+
+코드와 모든 종속성을 패키지화하여 응용 프로그램이 한 컴퓨팅 환경에서 다른 컴퓨팅 환경으로 빠르게 안정적으로 실행되도록 하는 소프트웨어의 표준 단위다.
+
+서버에서의 컨테이너 개념은 다양한 프로그램, 실행환경을 컨테이너로 추상화하고 동일한 인터페이스를 제공하여 프로그램의 배포 및 관리를 단순하게 해준다.  
+
+일반 컨테이너의 개념에서 물건을 손쉽게 운송 해주는 것처럼 프로그램을 손쉽게 이동 배포 관리를 할 수 있게 해준다.  
+AWS, Azure, Google cloud 등 어디에서든 실행 가능하게 해준다.  
+
+### 컨테이너의 이미지
+
+코드, 런타임, 시스템 도구, 시스템 라이브러리 및 설정과 같은 응용 프로그램을 실행하는 데 필요한 모든 것들을 포함하는 가볍고 독립적이며 실행 가능한 소프트웨어 패키지이다.  
+
+컨테이너 이미지는 런타임에 컨테이너가 되고 도커 컨테이너의 경우 도커 엔진에서 실행될 때 이미지가 컨테이너가 된다.  
+리눅스와 윈도우 기반 애플리케이션 모두에서 사용할 수 있는 컨테이너화된 소프트웨어는 인프라에 관계없이 항상 동일하게 실행된다. 컨테이너는 소프트웨어를 환경으로부터 격리시키고 개발과 스테이징의 차이에도 불구하고 **균일하게 작동하도록 보장**한다.
+
+## 도커 이미지
+
+프로그램을 실행하는데 필요한 설정이나 종속성을 갖고 있으며, 컨테이너를 생성하여 도커 컨테이너를 이용하여 프로그램을 실행한다.  
+
+## 도커 사용 흐름
+
+1. 도커에 CLI에 커맨드 입력
+2. 도커 서버(Daemon)이 그 커맨드를 받아 그것에 따라 이미지를 생성하든 컨테이너를 실행하든 모든 작업을 한다.
+
+
+## 시작
+
+도커 설치 이후 첫 커맨드 입력해보자.  
+
+`docker run hello-world`  
+
+![hello](./month/img/Docker/hello-world.jpg)  
+
+입력시에 로컬에 `hello-world`라는 이미지가 없으므로 라이브러리로부터 Pulling하여서 실행한다. 그 결과는 위의 이미지와 같다.  
+
+`docker run hello-world` -> 도커 클라이언트로 전달 -> 도커 서버 (이미지 Cache 보관 장소에서 확인) 이때, 캐시 보관 장소에 없다면, 도커 허브(이미지 보관)에서 가져온다.  
+
+이후엔 hello-world 이미지가 캐시되었으므로, hello-world을 다시 실행하게되면 `Unable to find image~`라는 문구 없이 프로그램이 실행된다. 따라서 캐시된 이미지를 이용해서 실행된다는 것을 알 수 있다.  
+
+## 도커와 기존의 가상화 기술과의 차이를 통한 컨테이너 이해  
+
+**가상화 기술 나오기 전**에는 한대의 서버를 하나의 용도로만 사용하며, 남는 서버 공간은 그대로 방치되었다. 따라서 하나의 서버에 하나의 운영체제, 하나의 프로그램만을 운영하여 안정적이나, 비효율적인 방식이었다.  
+
+**가상화 기술(하이퍼 바이저) 출현**
+**하이퍼 바이저**는 호스트 시스템에서 다수 게스트 OS를 구동할 수 있게 하는 소프트웨어로, 하드웨어를 가상화하면서 하드웨어와 각각의 VM을 모니터링하는 중간 관리자이다.  
+
+하이퍼 바이져 기반의 가상화 출현으로 논리적으로 공간을 분할하여 VM이라는 독립적인 가상 환경의 서버 이용 가능하게 되었다.  
+
+- 네이티브 하이퍼바이저
+
+내부 설계
+| OS |
+|:--:|
+|하이퍼 바이저|
+| 하드웨어|  
+
+하이퍼 바이저가 하드웨어를 직접 제어하기에 자원 효율적으로 사용 가능하며, 별도의 호스트 OS가 없으므로 오버헤드가 적다. 하지만 여러 하드웨어 드라이버 세팅해야하므로 설치가 어렵다.
+
+- 호스트형 하이퍼바이저
+
+내부 설계
+| OS |
+|:-:|
+| **하이퍼 바이저** |
+| OS |
+| 하드웨어 |
+
+일반적인 소프트웨어처럼 호스트 OS 위에서 실행되며, 하드웨어 자원을 VM 내부의 게스트 OS에 에뮬레이트 하는 방식으로 오버헤드가 크다. 하지만 게스트 OS 종류에 대한 제약이 없고 구현이 다소 쉽다. 따라서 일반적으로 많이 이용하는 방법이다.  
+
+### 하이퍼 바이저 기반의 VM 구조
+![hypervisor](./month/img/Docker/hypervisor.jpg)  
+
+하이퍼바이저에 의해 구동되는 VM은 각 VM마다 독립된 가상 하드웨어 자원을 할당받는다. 논리적으로 분리되어 있어서 한 VM에 오류가 발생해도 다른 VM으로 퍼지지 않는다.  
+
+### Docker 구조 비교
+![docker](./month/img/Docker/docker.jpg)  
+
+VM과 비교했을 때 컨테이너는 하이퍼바이저와 게스트 OS가 필요하지 않으므로 더 가볍다.  
+
+어플리케이션을 실행할 때는 컨테이너 방식에서는 호스트 OS위에 어플리케이션의 실행 패키지인 이미지를 배포하기만 하면 되는데 VM은 어플리케이션을 실행하기 위해서 VM을 띄우고 자원을 할당한 다음, 게스트 OS를 부팅하여 어플리케이션을 실행 해야해서 훨씬 복잡하고 무겁게 실행해야 한다.  
+
+![docker](./month/img/Docker/docker_detail.jpg)  
+
+### 컨테이너 격리시킬 때 사용되는 기능
+
+리눅스에서 쓰이는 C group과 네임 스페이스에 대해서 알아야한다. 이것들은 컨테이너와 호스트에서 실행되는 다른 프로세스 사이에 벽을 만드는 리눅스 커널 기능들이다.  
+
+C Group은 CPU, 메모리, Network Bandwidth, HD i/o 등 프로세스 그룹의 시스템 리소스 사용량을 관리한다. 어떤 어플이 사용량이 너무 많다면 그 어플리케이션 같은 것들을 C group에 집어 넣어서 CPU와 메모리 사용 제한 가능  
+
+네임스페이스는 하나의 시스템에서 프로세스를 격리시킬 수 있는 가상화 기술로, 별개의 독립된 공간을 사용하는 것처럼 격리된 환경을 제공하는 경량 프로세스 가상화 기술이다.  
+
+리눅스에서 쓰이는 C group과 네임 스페이스를 도커에서 사용할 수 있는 이유를 알아보자.  
+먼저, 터미널에서 `docker version`쳐서 확인하게 되면, os가 리눅스로 되어있다. 이것을 설명하면 답이 될 것 같다.  
+
+Docker 클라이언트와 서버는 리눅스 환경에서 돌아간다. 즉, 우리가 사용하는 컴퓨터 OS위에 리눅스 VM이 있어서, 그 곳이 도커의 환경이 된다. 따라서 컨테이너와 이미지를 나눌 때 C Group과 네임 스페이스를 통해서 분리할 수 있다.  
+
+
+## 이미지로 컨테이너 만들기
+
+이미지는 응용 프로그램을 실행하는데 **필요한 모든 것**을 포함하고 있다. 이때의 **필요한 모든 것**에 대해 알아보자  
+
+1. 컨테이너가 시작 될 명령어 ex) run kakaotalk
+2. 파일 스냅샷 ex) 컨테이너에서 카카오톡을 실행하고 싶다면 카카오톡 파일 스냅샷
+
+※ 이때의 파일 스냅샷이란, 디렉토리나 파일을 카피 한것  
+
+### 이미지로 컨테이너 만드는 순서
+
+1. Docker 클라이언트에 `docker run <이미지>` 입력해준다.  
+
+2. 도커 이미지에 있는 파일 스냅샷을 컨테이너 하드 디스크에 옮겨 준다.
+
+3. 이미지에서 가지고 있는 명령어(컨테이너 실행시 사용될 명령어)를 이용해서 스냅샷을 실행시켜준다.
+
+---
+
+- 22日
+
+# 도커 클라이언트 명령어
+
+## 이미지 내부 파일 시스템
+
+|docker| run| 이미지 이름| ls |
+|---|---|---|--|---|
+|도커 클라이언트 언급 | 컨테이너 생성 및 실행 | 이 컨테이너를 위한 이미지 | 이 자리는 원래 이미지가 가지고 있는 시작 명령어를 무시하고 여기에 있는 커맨드를 실행 |  
+
+예를 들어서 명령어를 통해 이해해보자.  
+`docker run alpine ls` alpine 이미지의 명령어를 `ls`명령어로 대체하여 alpine 이미지에서 실행된다.  
+
+하지만 전에 했던 명령어인 `docker run hello-world`를 ls 명령어를 이용해서 사용하게 되면 에러가 난다. 왜냐하면 alpine 이미지 파일 스냅샷 안에 ls를 사용 가능하게 하는 파일이 있기 때문이다. 즉, hello-world 이미지에는 ls을 실행하게 하는 파일이 없다.  
+
+따라서 파일 하드디스크안에 들어오는 스냅샷에 무엇이 있는지에 따라서 커맨드의 사용 가능 여부가 결정된다.  
+
+## 컨테이너 나열
+
+`docker ps`를 통해서 도커 클라이언트의 process status을 체크해보자. 
+
+1. `docker alpine ping localhost`를 통해서 핑을 계속 보낸다.
+
+2. 다른 터미널에서 `docker ps`를 통해서 컨테이너들을 확인해본다.
+
+이러한 방법으로 체크를 하게 되면 컨테이너를 확인할 수 있다. 이때의 속성들을 적어봤다.  
+
+- CONTAINER ID : 컨테이너의 고유한 아이디 해시값으로 일부분만 출력
+- IMAGE : 컨테이너 생성시 사용한 도커 이미지
+- COMMAND : 컨테이너 시작시 실행될 명령어로, 대부분 내장되어 있으므로 별도 설정 필요가 없다.
+- CREATED : 컨테이너 생성 식나
+- STATUS : 컨테이너의 상태로 실행중은 Up, 종료는 Exited, 일시정지는 Pause로 나온다.
+- PORTS : 컨테이너가 개방한 포트와 호스트에 연결한 포트로, 특별한 설정을 하지 않은 경우 출력되지 않는다.
+- NAMES : 컨테이너 고유한 이름으로 컨테이너 생성시 `--name` 옵션으로 이름을 설정하지 않으면 도커 엔진이 임의로 형용사와 명사를 조합해서 설정한다. id와 마찬가지로 중복이 안되고 `docker rename` 명령어로 이름을 변경할 수 있다. ex) `docker rename origianl-name changed-name`  
+
+
+### 원하는 항목만 보기
+
+`docker ps --format 'table{{.Names}} \t 'table{{.Image}}` 이러한 명령어로 원하는 항목만 볼 수 있다. `--format` 옵션을 사용하여 Names와 Image 항목만 볼 수 있다. 이때의 `\t`는 탭 공백을 의미한다.  
+
+이외 모든 항목을 보고자 할때는 `docker ps -a`을 사용하면 된다. `-a`는 -all로, 꺼져있는 컨테이너도 확인할 수 있다.  
+
+
+## 도커 컨테이너의 생명 주기
+
+생명주기  
+
+생성 -> 시작 -> 실행 -> 중지 -> 삭제  
+
+### 생성 ~ 실행
+
+`docker run` = `docker create <이미지 이름>` + `docker start <컨테이너 아이디/이름>`  
+
+docker create을 사용하면 컨테이너의 ID가 출력이 된다. 이후 컨테이너의 아이디 중 일부를 docker start 뒤에 붙여주면 된다. 이때 docker start에 옵션이 존재하는데 바로 `-a` 옵션이다. 이것은 attach을 의미하며 실행이 될 때 붙어있다가 출력값들을 화면에 출력시킬 수 있게 보내주는 옵션이다. 이 옵션이 없이 docker start ID만 입력하게 되면 컨테이너 ID만 다시 출력하고 끝나게 된다.  
+
+### 중지
+
+중지 부분에는 두 가지 방법이 있다. 바로 `docker stop`과 `docker kill`이다.  
+`docker stop <컨테이너ID/NAMES>`, `docker kill <컨테이너ID/NAMES>`로 문법도 유사하다.  
+
+공통점은 실행중인 컨테이너를 중지시킨다.  
+
+차이점은 Stop의 경우를 먼저 보면, Gracefully하게 중지를 시킨다. 즉, 그동안 하던 작업들을 완료하고 컨테이너를 중지시킨다.  
+
+그에 반해, Kill은 Stop과 달리 기다리지 않고 바로 컨테이너를 중지 시킨다.  
+
+이것을 구조적으로 보게 되면,  
+
+docker stop -> Sigterm -> Sigkill -> Container(main process)  
+
+docker kill -> Sigkill -> Container(main process)  
+
+Stop은 Sigterm에서 Grace Period(정리 하는 시간)을 갖고 작업들을 완료한 뒤, 컨테이너를 중지시키는 시간을 갖게 된다.   
+Kill은 이러한 시간이 없이 바로 중지시키기 때문에 결과가 차이가 난다.  
+
+### 삭제
+
+컨테이너 삭제는 중지 시킨 뒤 삭제가 가능하다.  
+명령어는 `docker rm <중지된 컨테이너 ID/NAMES>`이다. 이 경우에는 각각 컨테이너의 이름이나 ID를 통해 하나하나 지울 수 있다.  
+
+컨테이너를 모두 지울려면 다음과 같다.  
+~~~
+dockker rm `docker ps -a -q`
+~~~
+
+이미지의 삭제는 `docker rmi <이미지 id>`를 통해서 하나씩 삭제할 수 있다.  
+
+나중에 도커를 많이 이용하게되면 용량이 많이 쌓이게 된다. 이럴 때 도커를 사용하지 않은 경우 용량이 부담이 될 수 있다. 따라서 전부 삭제하는 부분을 봐보자. 이 명령어는 컨테이너, 이미지, 네트워크를 모두 삭제할 수 있다. 하지만, 현재 실행 중인 컨테이너는 지워지지 않으므로 편리하다.  
+명령어는 `docker system prune`으로, 삭제한 뒤 삭제한 용량을 보여준다.  
+
+## 실행중인 컨테이너에 명령어 전달
+
+이미 실행중인 컨테이너에 명령어를 전달하고 싶을 때 사용하는 명령어  
+
+`docker exec <컨테이너 ID> <명령어>`  
+
+결과만 따지자면 위에서 공부한 `docker run <컨테이너 ID> <명령어>`와 같다. 하지만, run의 경우에는 새로 컨테이너를 만들어서 실행하고 exec은 이미 만들어진 컨테이너가 실행 중일 때만 사용할 수 있다.  
+
+# 레디스를 이용한 컨테이너 이해
+
+## 레디스의 작동
+
+레디스 서버를 실행한 후, 레디스 클라이언트를 통해서 서버에 명령어를 전달해 줘야 한다.  
+레디스 클라이언트 `set value1 hello` -> 레디스 서버  
+
+이 부분을 도커를 통해 실행해보자.  
+
+1. 먼저 첫 터미널로 레디스 서버를 작동 시키자.
+
+2. 그 후 레디스 클라이언트를 키기 위해 다른 터미널을 켜 레디스 클라이언트를 다음 명령어로 작동시킨다. `redis-cli`을 작성한다.
+
+3. 에러가 존재한다.  
+
+에러의 이유를 찾아보면, 컨테이너 속에 레디스 서버가 동작 중인데, 레디스 클라이언트가 컨테이너 밖에서 실행을 할려하자 거부를 당하였다. 이러한 경우를 해결하기 위해서는 레디스 클라이언트도 레디스 서버와 같은 컨테이너 속에서 실행을 시켜야한다. 그러기 위해서는 이러한 명령어로 사용한다.  
+
+`docker exec -it <컨테이너 아이디> redis-cli`  
+
+위에서 공부한 docker exec를 이용해서 컨테이너 속에서 켜진 레디스 서버에 레디스 컨테이너를 켜보자.  
+
+여기서 `-it`를 처음보는데 이 옵션은 interactive terminal을 따로 나눠서 붙인 약자로, exec를 통한 실행 후 다음 명령어를 입력할 수 있는 옵션이다. 따라서, `-it` 옵션이 없다면 레디스 클라이언트를 실행 후 바로 나와서 이어서 사용하지 못한다.  
+
+## 실행중인 컨테이너에 터미널 명령어 전달
+
+지금까지 배운 내용으로는 실행중인 컨테이너에 명령어를 전달할 때에는 `docker exec -it <컨테이너 ID> <명령어>` 전부를 다 타이핑해서 사용하였다. 이러한 문제를 해결해주기 위한 방법이 있다.  
+
+쉘이나 터미널 환경으로 접속을 하게 되면, 앞의 여러 명령어를 줄잉ㄹ 수 있다. 그 방법은 바로 `docker exec -it <컨테이너 ID> <명령어>`에서 명령어 부분에 `sh`, `bash`, `zsh`, `powershell`을 사용하면 된다. 이때 쉘 환경에 맞춰서 사용하면 된다. 여기서 exec가 아닌 run으로도 충분히 사용이 가능하다.
+
+쉘에 접근해서 사용하고 나서 나오고 싶을 때 컨트롤 + C를 통해서 쉘에서 빠져나오질 못한다. 컨트롤 + D를 통해서만 나올 수 있으므로 주의해줘야한다.
+
+---
+
+- 23日  
+
+# 트라이
+
+문자열에서 검색을 빠르게 해주는 자료구조이다. 정수형 자료형에서 이진색트리를 이용하면 O(logN), 문자열에서 이진검색트리를 사용하면 문자열의 최대 길이가 M 일때 O(MlogN) 시간복잡도를 갖는다.  
+
+하지만, 트라이를 이용한 문자열 검색에서는 O(M)의 시간 만에 원하는 문자열을 검색할 수 있다.  
+
+![트라이](https://t1.daumcdn.net/cfile/tistory/263B323C58955F3331)  
+
+종료 노드를 표시한 뒤 트라이 모양을 그려준 그림이다.  
+
+트라이는 트리 형태이기 때문에 검색시에 최대 트리의 높이까지 탐색하게 된다. 따라서 시간 복잡도는 O(H)가 된다. 하지만, 트리의 높이는 최대 문자열의 길이가 되기 때문에 O(M)의 시간복잡도를 갖는다고 말할 수 있다.  
+
+## 구현 방법
+
+```cpp
+struct Trie {
+    bool finish;    //끝나는 지점을 표시해줌
+    Trie* next[26];    //26가지 알파벳에 대한 트라이
+    Trie() : finish(false) {
+        memset(next, 0, sizeof(next));
+    }
+    ~Trie() {
+        for (int i = 0; i < 26; i++)
+            if (next[i])
+                delete next[i];
+    }
+    void insert(const char* key) {
+        if (*key == '\0')
+            finish = true;    //문자열이 끝나는 지점일 경우 표시
+        else {
+            int curr = *key - 'A';
+            if (next[curr] == NULL)
+                next[curr] = new Trie();    //탐색이 처음되는 지점일 경우 동적할당
+            next[curr]->insert(key + 1);    //다음 문자 삽입
+        }
+    }
+    Trie* find(const char* key) {
+        if (*key == '\0')return this;//문자열이 끝나는 위치를 반환
+        int curr = *key - 'A';
+        if (next[curr] == NULL)return NULL;//찾는 값이 존재하지 않음
+        return next[curr]->find(key + 1); //다음 문자를 탐색
+    }
+};
+```
+
+가장 보편적인 방법으로, 트라이는 자료구조이기 때문에 주어진 문제의 조건이나 사용해야하는 환경에 따라 변형하여 사용할 수 있다.  
+
+이 중 자주 변형하여 사용하는 것은 `find()` 함수로 여러 형식으로 바꾸어서 사용한다.  
+
+## 트라이의 장단점
+
+트라이의 장점이라면 시간이다. 위에서 다룬 시간복잡도에서만 봐도 확실히 시간복잡도가 짧다. 한 노드의 하나의 알파벳을 대응시켜서 만드는 자료구조라면, map 즉, 해시 자료구조를 사용하면 되나, 속도가 확실히 느리다.  
+
+이어서 단점을 보게되면 위에서 말한 해시 자료구조와 비교하게 되면, 공간복잡도가 차이가 크다는 것을 알 수 있다. 공간복잡도는 **포인터 크기 * 포인터 배열 개수 * 트라이에 존재하는 총 노드의 개수**가 되므로 해시에 비해 많은 차이가 난다.  
+
+---
+
+- 24日  
+
+# 도커 이미지
+
+도커 이미지는 컨테이너를 만들기 위해 필요한 설정이나 종속성들을 갖고 있는 소프트웨어 패키지로, 지금까지 사용한것 처럼 도커 이미지는 Dockerhub에 이미 다른 사람들이 만들어 놓은 것을 이용 할 수도 있으며, 직접 도커 이미지를 만등러서 사용할수도 있고 직접 만든 것을 Dockerhub에 업로드 할 수도 있다.
+
+생성 명령어 `docker create <이미지 이름>`
+
+도커 이미지 생성 순서
+
+1. Docker file 작성
+	- Docker File : Docker Image를 만들기 위한 설정 파일로, 컨테이너가 어떻게 행동할지 설정을 정의
+2. 도커 클라이언트
+	- 도커 파일에 입력된 것들이 도커 클라이언트에 전달되어야함
+3. 도커 서버
+	- 도커 클라이언트에 전달된 모든 중요한 작업들을 하는 곳
+4. 이미지 생성
+
+## 도커 파일 만드는 순서  
+
+도커 이미지가 필요한 것이 무엇인지 생각  
+
+1. 베이스 이미지 명시(파일 스냅샷에 해당)
+
+2. 추가적으로 필요한 파일을 다운 받기 위한 몇 가지 명령어를 명시 (파일 스냅샷에 해당)
+
+3. 컨테이너 시작시 실행 될 명령어를 명시 (싲가시 실행 될 명령어에 해당)
+
+베이스 이미지란?
+
+- 도커 이미지는 여러 개의 레이어로 되어 있는데 그 중 베이스 이미지는 이미지의 기반이 되는 부분이다. 따라서 레이어의 중간 단계의 이미지, 예를 들어 OS라고 생각할 수 있다.  
+
+## Hello 문구 출력하는 도커 만들기
+
+순서
+1. 도커 파일을 만들 폴더 만들기
+2. 방금 생성한 도커 폴더를 에디터를 이용해서 실행 (vs code)
+3. 파일 하나를 생성, 이름은 Dockerfile
+4. 그 안에 기본적인 토대 명시
+```dockerfile
+# 베이스 이미지 명시
+FROM baseImage
+
+# 추가적으로 필요한 파일 다운로드
+RUN command
+
+# 컨테이너 시작시 실행 될 명령어 명시
+CMD [ "excutable"]
+
+
+# FROM : 이미지 생성시 기반이 되는 이미지 레이어로, <이미지 이름> <태그> 형식으로 작성 태그를 안 붙이면 가장 최신것으로 다운 받음
+
+# RUN : 도커이미지가 생성되기 전에 수행할 쉘 명령어
+
+# CMD : 컨테이너가 시작되었을 때 실행할 실행 파일 또는 쉘 스크립트로, 해당 명령어는 DockerFile내 1회만 쓸 수 있다.
+
+```
+
+5. 베이스 이미지로부터 실제 값 추가
+
+6. 베이스 이미지는 ubuntu 나 centOS 등 원하는 것을 사용해도 되지만, "Hello"를 출력하기 때문에 가장 작은 alpine 베이스 이미지 사용
+
+7. Hello 문자 출력하기 위해 echo 사용해야하는데, alpine 안에 echo 사용 가능한 파일이 존재하므로 RUN 부분 생략
+
+8. 마지막으로 컨테이너 시작시 실행 될 명령어 echo hello 찍어준다.
+
+```dockerfile
+FROM alpine
+
+#RUN command
+
+CMD [ "echo", "Hello"]
+```
+
+## 완성된 도커 파일에서 이미지 생성하기
+
+`Dockerfile -> 도커 클라이언트 -> 도커 서버 -> 이미지`
+도커 파일에 입력된 것들이 도커 클라이언트에 전달되어 도커 서버가 인식되어야한다. 그렇게 하기 위해서는 `docker build ./ 또는 docker build .`을 사용해야한다.  
+
+이때 Build 명령어는 해당 디렉토리 내에서 dockerfile라는 파일을 찾아서 도커 클라이언트에 전달 시켜준다.  
+
+docker build 뒤에 `.` 이나 `./`을 사용하면 되는데 `./`이 권장 된다.  
+
+### Build 과정 설명
+
+Step 1/2
+- alpine 이미지 가져오기 `a24bb4013296`은 alpine 이미지 아이디
+
+Step 2/2
+- 임시 컨테이너 생성 후 그 컨테이너에 시작시 사용할 명령어 포함시킨다.
+- 방금 생성한 임시 컨테이너를 지우고 새로운 이미지 만들기
+
+**세부 설명**
+
+1. Alpine 이미지에 시작시 실행 될 명령어와 파일 스냅샷 (etc, dev, bin...) 이 들어 있다.
+
+2. 임시 컨테이너 생성 (시작시 실행할 명령어는 아직 없다) 후 하드 디스크에 파일 시스템 스냅샷 추가
+
+3. 임시 컨테이너에 시작시 실행할 명령어 추가
+
+4. 임시 컨테이너로 Alpine 이미지(1번과 다른 Alpine 이미지) (시작시 실행 될 명령어 삽입) 생성
+
+5. 임시 컨테이너 삭제
+
+따라서, 베이스 이미지에서 다른 종속성이나 새로운 커맨드를 추가 할때는 임시 컨테이너를 만든 후 그 컨테이너를 토대로 새로운 이미지를 만든다. 이후 임시 컨테이너는 삭제해준다.  
+
+## 도커 이미지에 이름 주는 방법
+
+원래의 build 방법은 `docker build ./`이다. 여기서 이미지에 이름을 주는 명령어가 있다.
+
+바로 `docker build -t 나의 도커아이디 / 저장소/프로젝트이름 : 버전 ./`이다. 여기서 나온 도커아이디/저장소:버전은 docker hub에 각각 나온 이름들과 동일하므로 확인해보면 된다.  
+
+`docekr build -t lee20h/hello:latest ./` 명령어를 치면 이러한 내용이 나온다.
+
+Successfully built 385d35d8da0f
+Successfully tagged lee20h/hello:latest  
+
+따라서 도커 이미지가 생성이 되고 해당 이미지에 이름을 붙일 수 있다. 그리고 사용할 때는 `docker run -it lee20h/hello`와 같이 사용하게되면 도커 이미지를 실행시킬 수 있게 된다.
+
+---
+
+- 25日  
+
+# 라빈-카프(Rabin-Karp)
+
+라빈-카프 알고리즘은 문자열 매칭 알고리즘 중 하나이다. 항상 빠르지는 않지만 일반적인 경우 빠르게 작동하는 간단한 구조의 문자열 매칭 알고리즘이라는 점에서 자주 사용된다.  
+
+해시 기법을 사용한다. 해시란, 일반적으로 긴 데이터를 상징하는 짧은 데이터로 바꾸어주는 기법이다. 상징하는 데이터로 바꾸어 처리하게 되면, 충돌이 없다는 가정하에 연산 속도가 O(1)에 달한다.  
+
+## 라빈-카프 해시 함수
+
+- abacaaba의 해시 값  
+
+97 * 2^7 + 98 * 2^6 + 96 * 2^5 + 99 * 2^4 + 97 * 2^3 + 97 * 2^2 + 98 * 2^1 + 97 * 2^0 = 24,833
+
+즉, 각 문자의 아스키 코드 값에 2의 제곱 수를 차례대로 곱하여 더해 준 것이다.  
+
+물론 충돌도 가능하지만 충돌율이 낮아서 사용할 수 있다. 충돌 시에는 포인터를 이용한 연결 자료구조를 이용해 해결한다.  
+
+라빈 카프 알고리즘은 여러 개의 문자열을 비교할 때 항상 해시 값을 구하여 비교하고, 해시 값은 거의 일치하지 않기 때문에 긴 글과 부분 문자열의 해시 값이 일치하는 경우에만 문자열을 처음부터 끝까지 재검사하여 일치하는지 확인하면 된다.  
+
+## 예시 코드
+```cpp
+void findString(string parent, string pattern) {
+	int parentSize = parent.size();
+	int patternSize = pattern.size();
+	int parentHash = 0, patternHash = 0, power = 1;
+	for (int i=0; i <= parentSize - patternSize; i++) {
+		if(i == 0) {
+			for (int j=0; j < patternSize; j++) {
+				parentHash = parentHash + parent[patternSize - 1 -j] * power;
+				patternHash = patternHash + pattern[patternSize - 1 -j] * power;
+			}
+			if(j < patternSize -1)
+				power = power * 2;
+		}
+		else {
+			parentHash = 2* (parentHash - parent[i-1] * power) + parent[patternSize-1+i];
+		}
+		if(parentHash == patternHash) {
+			bool found = true;
+			for (int j=0; j<patternSize; j++) {
+				if(parent[i+j] != pattern[j]) {
+					found = false;
+					break;
+				}
+			}
+			if(found)
+				cout << i+1 << "번째 위치서 발견\n";
+		}
+	}
+}
+```
+
+이 때 해시 값의 일치 여부를 검증하기 위해 나머지 연산을 이용하지만, 일반적으로 생각하면 오버 플로우가 발생해서 값이 음수로 변해도 연산 자체에서 구해지는 값은 같으므로 나머지 연산을 안해줘도 된다. 하지만, 안정적인 프로그램을 작성하거나 필요에 의해서 나머지 연산을 입혀주는 것이 좋다.
+
+추가적으로, 나머지 연산을 해서 배열에 값을 넣어야 할 때, 함수를 통해서 나머지 연산을 하게 된다. 이 때 음수의 값은 배열의 인덱스가 될 수 없으므로 이러하게 나머지 연산을 하게 된다.
+
+```cpp
+int mod(long long n) {
+	if(n >= 1) return n % MOD;
+	return ((-n/MOD+1)*MOD + n) % MOD;
+}
+```
+
+아직도 제대로 이해는 하지 못했으나 내용을 적어보려한다.  
+(n에 근접한 MOD의 배수) + n(음수) = n(음수)의 절댓값과 n보다 크고 n에 근접한 MOD의 배수와의 차이점 = MOD 배수 - |n| = MOD % n(n이 양수인 경우)와 동일하다.
+
+따라서 양수일 때는 `n % MOD`, 음수일 때는 `MOD 배수 - |n| % MOD`로 값이 반환된다는 것을 볼 수 있다.  
+
+그 이유로는 절댓값이 같은 양수와 해시 값이 겹치지 않도록 하기 위함으로 보인다.  
+
+---
+
+- 26日  
+
+# JWT
+
+JWT는 JSON Web Token의 약자로 전자 서명 된 URL-safe (URL로 이용할 수있는 문자 만 구성된)의 JSON이다.  
+JWT는 서버와 클라이언트 간 정보를 주고 받을 때 Http 리퀘스트 헤더에 JSON 토큰을 넣은 후 서버는 별도의 인증 과정없이 헤더에 포함되어 있는 JWT 정보를 통해 인증한다. 이때 사용되는 JSON 데이터는 URL-Safe 하도록 URL에 포함할 수 있는 문자만으로 만든다.  
+
+## 헤더
+
+헤더(Header)는 JWT를 어떻게 검증(Verify)하는가에 대한 내용을 담고 있다. 참고로 alg는 서명 시 사용하는 알고리즘이고, kid는 서명 시 사용하는 키(Public/Private Key)를 식별하는 값이다.
+```cpp
+{
+    "alg": "ES256",
+    "kid": "Key ID"
+}
+```
+
+위와 같은 JSON 객체를 문자열로 직렬화하고 UTF-8과 Base64 URL-Safe로 인코딩하면 다음과 같이 헤더를 생성할 수 있다.
+
+Base64URLSafe(UTF-8('{"alg": "ES256","kid": "Key ID"}')) -> eyJhbGciOiJFUzI1NiIsImtpZCI6IktleSBJRCJ9
+
+
+## Payload
+
+JWT의 내용이다. 페이로드(Payload)에 있는 속성들을 클레임 셋(Claim Set)이라 부른다. 클레임 셋은 JWT에 대한 내용(토큰 생성자(클라이언트)의 정보, 생성 일시 등)이나 클라이언트와 서버 간 주고 받기로 한 값들로 구성된다.
+```cpp
+{
+    "iss": "jinho.shin",
+    "iat": "1586364327"
+}
+```
+위와 같은 JSON 객체를 문자열로 직렬화하고 Base64 URL-Safe로 인코딩하면 다음과 같이 페이로드를 생성할 수 있다.
+
+Base64URLSafe('{"iss": "jinho.shin","iat": "1586364327"}') -> eyJpYXQiOjE1ODYzNjQzMjcsImlzcyI6ImppbmhvLnNoaW4ifQ
+
+## Signature
+
+점(.)을 구분자로 해서 헤더와 페이로드를 합친 문자열을 서명한 값이다. 서명은 헤더의 alg에 정의된 알고리즘과 비밀 키를 이용해 성성하고 Base64 URL-Safe로 인코딩한다.
+
+Base64URLSafe(Sign('ES256', '${PRIVATE_KEY}',
+'eyJhbGciOiJFUzI1NiIsImtpZCI6IktleSBJRCJ9.eyJpYXQiOjE1ODYzNjQzMjcsImlzcyI6ImppbmhvLnNoaW4ifQ'))) ->
+MEQCIBSOVBBsCeZ_8vHulOvspJVFU3GADhyCHyzMiBFVyS3qAiB7Tm_MEXi2kLusOBpanIrcs2NVq24uuVDgH71M_fIQGg
+JWT
+점을 구분자로 해서 헤더, 페이로드, 서명을 합치면 JWT가 완성된다.
+
+eyJhbGciOiJFUzI1NiIsImtpZCI6IktleSBJRCJ9.eyJpYXQiOjE1ODYzNjQzMjcsImlzcyI6ImppbmhvLn
+NoaW4ifQ.eyJhbGciOiJFUzI1NiIsImtpZCI6IktleSBJRC9.eyJpYXQiOjE1ODYzNjQzMjcsImlzcyI6Imp
+pbmhvLnNoaW4ifQ.MEQCIBSOVBBsCeZ_8vHulOvspJVFU3GADhyCHyzMiBFVyS3qAiB7Tm_ME
+Xi2kLusOBpanIrcs2NVq24uuVDgH71M_fIQGg
+이렇게 완성된 JWT는 헤더의 alg, kid 속성과 공개 키를 이용해 검증할 수 있다. 서명 검증이 성공하면 JWT의 모든 내용을 신뢰할 수 있게되고, 페이로드의 값으로 접근 제어나 원하는 처리를 할 수 있게된다.  
+
+JWT는 URL, Cookie, Header와 같이 사용할 수 있는 문자가 제한된 환경에서 정보를 주고받을 수 있게 하는 데이터 표현 형식(Format)이다. 따라서 토큰으로써, 로그인와 같이 Cookie/Session과 함께 쓰일 수 있다.  
+
+# Passport
+
+Node.js 인증 미들웨어인 Passport.js는 Node.js의 프레임워크인 express를 기반으로 한다. 인증 방식은 엄청 다양하다. 로컬에서의 아이디와 비밀번호를 이용한 로그인 부터 공신력있는 애플리케이션의 회원이라면 그의 정보로 인증하는 방법까지 다채롭다. 예를 들어 facebook, google, twitter 등 아이디가 있다면 따로 회원가입을 하지 않아도 그 정보로 인증을 할 수 있다는 것이다.  
+
+그러한 기능을 구현 원리를 숨기고 동일한 코드로 구현할 수 있게되어, 시간과 노력이 단축해주는 미들웨어이다.  
+
+```shell
+$ npm install passport
+```
+
+passport를 사용할 때는 반드시 필요한 미들웨어들을 import후 사용해야한다.  
+
+
+- express : passport.js는 express를 기반으로 작동하기 때문에 반드시 필요
+- body-parser : 브라우저에서 입력받은 정보에 접근
+- cookie-parser, express-session : passport는 인증이 실행된 뒤 유저의 정보를 express-session을 이용하여 저장
+- passport, passport-local : strategy는 알맞게 불러오시면 됩니다.
+- 자신이 사용하는 데이터베이스 모듈
+
+```js
+const express = require('express');
+const router = express.Router();
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const passport = require('passport')
+  , LocalStrategy = require('passport-local').Strategy;
+```
+
+import 이후에는 사용할 준비가 필요하다. 그러한 작업들을 아래에 명시했다. 이 때 순서가 중요하다는 것을 기억해야한다.  
+
+```js
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: false }));
+router.use(cookieParser('keyboard cat'));
+router.use(session({secret: 'keyboard cat'}));
+router.use(passport.initialize());
+router.use(passport.session());
+```
+
+세션을 사용하게 된다면 세션을 먼저 사용한 뒤 passport의 초기화와 세션을 잡아줘야한다.  
+
+이런 준비가 끝나면 이제 passport을 사용할 수 있게 되었다.  
+
+## Strategy
+
+passport는 Strategy라는 것을 사용한다. 모든 passport의 플러그인들을 사용하려면 전략을 짜 주어야 한다. 위에서 말했던 여러 공신력 있는 애플리케이션들의 가입 정보로 인증 받는 것 또한 전략 중 하나이다. 각각 애플리케이션 별로 전략들이 정의되어 있고 많이 사용하는 것이 `LocalStrategy`다. 
+ 
+해당 전략의 경우에는 우리들이 애플리케이션이나 웹을 만들거나 사용할 때 많이 사용하는 로그인 방법이다. ID와 Password를 이용한 전통적인 로그인 방법으로 밑에서 소개할 토이 프로젝트 코드에서도 해당 전략을 짜서 이용하였다.
+
+## 코드
+
+진행중인 토이 프로젝트에서는 해당 passport 미들웨어를 가지고 로그인시 JWT를 서버단에서 클라이언트단으로 넘겨줘서 사용하게 하였다.  
+
+다음의 코드와 같이 사용했다.
+
+`auth.js`
+```js
+const passport = require("passport");
+const passportJWT = require("passport-jwt");
+const admin = require("../models").admin;
+const cfg = require("../config/jwt_config");
+const ExtractJwt = passportJWT.ExtractJwt;
+const Strategy = passportJWT.Strategy;
+const params = {
+  secretOrKey: cfg.jwtSecret,
+  // 클라이언트에서 서버로 토큰을 전달하는 방식  (header, querystring, body 등이 있다.)
+  // header 의 경우 다음과 같이 써야 한다 { key: 'Authorization', value: 'JWT' + 토큰
+  jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("jwt")
+};
+
+module.exports = function () {
+  const strategy = new Strategy(params, function (payload, done) {
+    const check = admin.find(function (input) {
+      return input.id === payload.id;
+    });
+    if (check) {
+      return done(null, {
+        id: check.id,
+      });
+    } else {
+      return done(new Error("User not found"), null);
+    }
+  });
+  passport.use(strategy);
+  return {
+    initialize: function () {
+      return passport.initialize();
+    },
+    authenticate: function () {
+      return passport.authenticate("jwt", cfg.jwtSession);
+    },
+  };
+};
+```
+
+
+`admin.js` 
+```js
+var express = require("express");
+var router = express.Router();
+var jwt = require("jwt-simple");
+var auth = require("./auth")();
+var admin = require("../models").admin;
+var cfg = require("../config/jwt_config");
+
+router.post('/login', (req, res) => {
+    if(req.body.id && req.body.password) {
+        const id = req.body.id;
+        const password = req.body.password;
+        const query = admin.find( check => {
+            return check.id === id && check.password === password;
+        });
+        if (query) {
+            const payload = {
+                id: query.id
+            };
+            const token = jwt.encode(payload, cfg.jwtSecret);
+            res.json({
+                token: token
+            });
+        }
+        else {
+            res.sendStatus(401);
+        }
+    }
+    else {
+        res.sendStatus(401);
+    }
+});
+
+router.get('/adminCheck', auth.authenticate(), (req, res => {
+    res.send(req.query);
+}));
+
+module.exports = router;
+```
+
+admin에서 id와 password를 클라이언트단에서 넘겨받아 디비와 비교 한 뒤 jwt을 인코딩하여 다시 보내주는 코드이다.  
+
+auth의 경우에는 passport의 전략을 잡아주고 jwt의 유효성을 확인하기 위해 클라이언트단에서 넘어왔을 때 체크해주기 위한 함수로 작성이 되어있다.  
+
+---
+
+- 27日  
+
+KMP PS 소스 해설
+
+[문제](http://noj.am/1787)
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 1e6+1;
+const int INF = 1e9;
+int fail[MAX], dp[MAX];
+
+int sol(int pos) {
+	if(pos < 0 || fail[pos] == 0)
+		return INF;
+		
+	int& ret = dp[pos];
+	if(ret != -1)
+		return ret;
+		
+	return ret = min(fail[pos], sol(fail[pos-1]));
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	
+	int n;
+	string str;
+	cin >> n >> str;
+	
+	for(int i=1,j=0; i<n; i++) {
+		while(j>0 && str[i] != str[j])
+			j = fail[j-1];
+		if(str[i] == str[j])
+			fail[i] = ++j;
+	}
+	memset(dp, -1, sizeof(dp));
+	
+	long long sum = 0;
+	for (int i=0; i<n; i++) {
+		int ret = sol(i);
+		if(ret == INF)
+			continue;
+		sum += (long long)(i-ret+1);
+	}
+	cout << sum;
+}
+```
+
+접두사와 접미사가 연속되는 수 중에서 가장 짧은 것을 출력하는 문제로 우리가 구하는 실패함수의 n은 접두사와 접미사가 연속되는 것의 가장 긴 문자열을 말한다. 실패함수의 특징 중에 n-1 n-2 n-3 ~ 이런식으로 가게되면 연속으로 이어지는 접두사와 접미사를 볼 수 있으며, 도중에 0이 나온다는 것은 이어지지 않는다는 말로, 즉 접두사와 접미사가 같지 않다는 것을 뜻한다.  
+
+따라서 O(n) 시간복잡도로 포문 한번을 돌리되, 해당 실패함수를 먼저 구한 뒤 i만큼의 길이라고 가정하고 재귀를 통해서 해당 값을 구하도록 한다. 재귀는 길이를 -1을 계속 하여 가장 작은 값을 찾는 것이다. 이때 같은 연산을 반복하므로 비효율적이므로 dp를 이용해준다.  
+
+추가적으로 어제 공부한 passport에서 토이 프로젝트에 적용한 코드가 진행이 안되어 수정이 필요했다. 다음과 같이 수정을 하였다. 
+
+```js
+router.post('/login', (req, res) => {
+    if(req.body.id && req.body.password) {
+        const id = req.body.id;
+        const password = req.body.password;
+        admin.findOne({
+            where : {id : id}
+        })
+        .then(adminDb => {
+            const idDb = adminDb.dataValues.id;
+            const pwdDb = adminDb.dataValues.password;
+            const check = (pwdDb === password);
+            if (check) {
+                const payload = {
+                    id: idDb
+                };
+                const token = jwt_s.encode(payload, cfg.jwtSecret);
+                res.json({
+                    token: token
+                });
+            }
+            else {
+                res.sendStatus(401);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+        });
+    }
+    else {
+        res.sendStatus(401);
+    }
+});
+
+router.get('/adminCheck', (req, res) => {
+    const token = req.headers['x-access-token'] || req.query.token;
+
+    if(!token) {
+        return res.status(403).json({
+            suceess: false,
+            message: 'not logged in'
+        });
+    }
+    
+    /* 토큰 유효성 검사 */
+    const vaild = new Promise((resolve, reject) => {
+        jwt.verify(token, cfg.jwtSecret, (err, decoded) => {
+            if (err) reject(err);
+            else resolve(decoded);
+        })
+    });
+    /* 유효하지 않은 토큰으로 403 에러 처리 */
+    const onError = (error) => {
+        res.status(403).json({
+            success: false,
+            message: error.message
+        })
+    };
+
+    vaild.then((decoded) => {
+        res.json(decoded);
+    }).catch(onError);
+});
+```
+
+이전 코드에서는 let과 var의 차이 때문에 조건문에 들어가지 못하였다. let은 무조건 false가 리턴되는 이유인데 제대로 알아내지 못했다. var로 바꾸자 바로 token을 얻을 수 있었다. 하지만, decode 함수 또한, 작동하지 않아서 직접 jwt.secret과 클라이언트단에서 token을 받아서 decode 후 해당 id를 반환해줬다.
+
+---
+
+- 28日  
+
+Insomnia라는 프로그램을 사용해보고 그 후기를 적어볼려고 한다. 먼저 Insomnia는 postman과 같이 rest api test tool이다. 이번에 중고책 사고 파는 플랫폼을 토이 프로젝트로 진행하면서 백엔드를 주로 맡아서 코딩을 하게 되었는데, 이때 프론트엔드를 진행해주는 친구와 매번 rest api를 맞추기 위해서 툴을 만들어줄 수 없으므로 로직으로만 완벽하게 코딩했다고 생각하며 깃에 커밋하곤 했다.  
+
+하지만 매번 완벽하게 코딩하긴 어려우므로, 제대로 통신이 안된 경우도 많다. 따라서 테스트를 해보고 코딩을 하면 더욱 수월하겠지만 테스트를 할 폼이 없어서 어려움을 겪곤 했다. 이런 와중에 Insomnia를 알게 되었다. 검색도 해보면서 Postman과 비슷한 프로그램으로 웹 개발에 쓰이는 rest api를 테스트할 수 있는 도구라 사용하면 개발에 도움이 많이 된다는 포스팅도 보게 되었다.  
+
+바로 설치 후 해당 프로그램을 이용해 토이 프로젝트에서 원하는 부분을 빠르게 구현할 수 있었다. 해당 도구를 빨리 알았으면 더 빠르지 않았을까 생각해본다.  
+
+이후에는 Orcle에 대해 조금 더 공부하며, 그룹 함수에 대해 이해가 필요하여 복습하였다. 제일 헷갈려서 오해한 부분이 `ROLLUP`과 `CUBE`이다. 두 함수에 있어서 매개변수가 하나라면 직관적으로 이해되어서 해당 쿼리가 실행결과를 쉽게 예측할 수 있었지만, 매개변수가 두 개 이상부터는 쉽지 않았다. 그 외의 조건이 더 붙는다면 혼돈 그 자체다.  
+
+따라서, ROLLUP과 CUBE, 더 보면 GROUPING SET까지 제대로 된 이해가 필요하다.
+
+## 그룹 함수
+**ROLLUP**
+- GROUP BY의 컬럼에 대해 **SUBTOTAL**을 만듬
+- GROUP BY구에 칼럼이 두 개 이상 오면 **순서에 따라 결과가 달라짐**
+```sql
+SELECT DECODE(DEPTNO, NULL, '전체합계', DEPTNO), SUM(SAL)
+FROM EMP
+GROUP BY ROLLUP(DEPTNO);
+```
+DEPTNO에 대해서 GROUP BY로 급여 합계를 계산하고 부서별 전체합계를 추가해서 계산한다.  
+ROLLUP은 DEPTNO에 대해서 기존 GROUP BY와는 다르게 부서별 전체합계를 계산한다.  
+
+**GROUPING 함수**  
+- ROLLUP, CUBE, GROUPING SETS에 생성되는 **합계값을 구분**하기 위해 만들어짐
+- 예로 소계, 합계 등이 계산되면 GROUPING 함수는 1을 반환하고 아니면 0을 반환해서 합계값 식별
+```sql
+SELECT DEPTNO, GROUPING(DEPTNO), JOB, GROUPING(JOB), SUM(SAL)
+FROM EMP
+GROUP BY ROLLUP(DEPTNO)
+```
+
+**GROUPING SETS 함수**
+- GROUP BY에 나오는 칼럼의 순서와 관계없이 **다양한 소계** 만듬
+- GROUP BY에 나오는 칼럼의 순서와 관계없이 **개별적**으로 모두 처리
+```sql
+SELECT DEPTNO, JOB, SUM(SAL)
+FROM EMP
+GROUP BY GROUPING SETS(DEPTNO, JOB);
+```
+GROUPING SETS함수로 DEPTNO와 JOB을 실행한 결과 DEPTNO 합계와 JOB 합계가 개별적으로 조회되었다. 즉, 서로 관계가 없다.  
+
+**CUBE 함수**  
+- CUBE 함수에 제시한 칼럼 가능한 모든 집계 계산
+- 다차원 집계를 제공하여 다양하게 데이터 분석
+- **조합할 수 있는 경우의 수 모두 조합** (부서와 직업을 CUBE로 사용하면 부서별 합계, 직업별 합계, 부서별 직업별 합계, 전체합계 조회)
+
+```sql
+SELECT DEPTNO, JOB, SUM(SAL)
+FROM EMP
+GROUP BY CUBE(DEPTNO, JOB);
+```
+
+---
+
+- 29日  
+
+# Node.js 환경에서 Docker
+
+간단한 Node.js 앱을 도커를 이용해서 만들어보자  
+
+## express 앱 작성
+
+`npm init`을 통해서 package.json 파일을 생성 해준다. 그 이후 종속성에 express을 넣은 뒤 간단하게 소스를 작성해준다.
+
+```js
+const express = require('express');
+
+const PORT = 8080;
+
+// app
+const app = express();
+app.get('/', (req, res) => {
+    res.send("Hello Wolrd!");
+});
+
+app.listen(PORT);
+
+console.log(`Server is running`)
+```
+
+이후 도커파일을 작성한다.  
+
+## 도커파일 작성
+
+```dockerfile
+FROM node:10
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./ 
+# 소스 변경시 매번 종속성 설치 막기 위함
+RUN npm install
+
+COPY ./ ./
+
+CMD [ "node", "server.js" ]
+```
+
+- FROM baseimage = node:10(version)
+- WORKDIR 도커 이미지속 소스 디렉토리
+- RUN 명령어
+- COPY 현재 디렉토리에서 도커 이미지로 복사함
+- CMD 컨테이너에서 실행할 명령어
+
+## 도커 빌드
+
+`docker build -t lee20h/nodejs ./`을 통해서 현재 디렉토리에 있는 파일들을 도커로 제작한다.  
+
+이후 실행을 할 때는 `docker run lee20h/nodejs`를 하게 되면 콘솔은 찍히지만 해당 express 앱에서 열어논 포트로 접근을 할 수 없다.  
+
+따라서 이러한 명령어를 통해서 진행해야 한다.  
+`docker run -p 3000:8080 lee20h/nodejs`  
+여기서 `-p` 옵션은 port로, 도커 이미지에 열린 포트 8080에서 해당 로컬 포트인 3000으로 연결해주는 것이다. 따라서 8080포트를 3000포트로 연결해줘서 이후엔 3000포트로 접근할 수 있게 된다. 추후의 실행때 별도의 옵션은 필요없다.  
+
+## 앱 수정 후 도커 재빌드
+
+앱을 수정하고 도커를 빌드하고 반복을 하게 되면 상당히 비효율적이다. 제일 먼저 도커파일에서 볼 수 있듯이, COPY를 진행해서 도커이미지에 해당 디렉토리에 있는 파일들을 옮기고 `npm install`을 진행하게 된다. 이때, `copy ./ ./`을 위에서 하고 진행하게 되면 처음에는 도커가 캐시에 저장해서 빠르게 진행할 수 있다.  
+
+하지만 해당 파일들이 내용이 바뀌게 되면 종속성 파일을 새로 다시 설치하고 copy도 새로하기 때문에 상당히 비효율적이다. 따라서 위에서 만든 도커파일처럼 먼저 package.json을 copy 후 종속성 설치를 한다. 그 뒤 나머지 소스들을 복사하는 식으로 한다면 종속성은 캐싱하여 빠르게 진행이 가능하다.  
+
+이러한 방법도 매번 도커 재빌드 -> 재실행이 반복되어야한다. 따라서 저장을 하면 자동으로 재배포 되듯이 편한 방법을 찾게 된다. 그러한 방법은 다음과 같다.  
+
+방법의 이름은 `Docker Volume`이라한다. Volume을 사용해서 어플리케이션 실행하는 방법은 `docker run -p 3000:8080 -v /usr/src/app/node_modules -v $(pwd):/usr/src/app <이미지 아이디>`이다.  
+
+앞에서 본 -p 옵션을 그대로 사용하되 두 가지가 추가 되었다.  
+
+처음의 -v 명령어는 해당 디렉토리에 있는 것은 호스트 디렉토리에 존재하지 않으므로 매핑하지 말라는 부분이다. 따라서 WORKDIR에서 `npm install`을 통해서 생긴 node_modules은 호스트 디렉토리에는 없기 때문에 매핑이 되지 않으므로 제외해준다.  
+
+이후의 -v 명령어는 현재 경로의 WORKDIR를 참조하라는 뜻으로 해당 WORKDIR가 도커 컨테이너에 참조가 된다.  
+
+이러한 명령어가 Volume을 사용해서 어플리케이션을 실행하는 방법이다. 따라서 도커 컨테이너가 WORKDIR을 참조하기 때문에 소스가 바뀌게 되면 바로 적용이 되는 것을 볼 수 있다.
+
+---
+
+- 29日  
+
+# 좋은 git commit message  
+
+[How ti Write a Git Commit Message](https://chris.beams.io/posts/git-commit/), [Git Commit Message Conventions
+](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/), [좋은 커밋 메시지를 위한 영어 사전](https://blog.ull.im/engineering/2019/03/10/logs-on-git.html)  
+
+해당 사이트들을 참고하여 git commit message에 대해 생각해보았다.  
+
+프로그래머들이 가장 골치아파하는 부분이 바로, 이름 짓기라고 생각한다. 왜냐 코딩을 하면서 변수나 함수, 클래스들의 이름을 지어야할 때 고민을 대다수가 한다고 생각하기 때문이다. 이런 고민은 git을 이용해서 commit을 할때도 그렇다. 흔히 commit message를 고민할 때 적고 싶은 말은 많되, 다 보내기가 어렵고 까다롭다고 생각된다. 한글로 적는 프로젝트 팀의 경우에는 수월한 반면에 영어로 commit message를 적는 프로젝트 팀의 경우에는 익숙하지 않다면 곤혹스러울 수 있다.  
+
+## 짧은 규칙
+
+이러한 경우를 대비하기 위해 여러 가지 참고 사이트들을 통해서 규칙을 잡아보도록 한다.  
+
+- 동명사보다는 명사 사용
+- 관사 사용 지양
+- commit message는 명령문. 부정문은 `Don't` 사용
+- 오타 수정은 `Fix typo`
+
+## 작성 시 도움되는 단어
+
+- FIX : 보통 올바르지 않은 동작을 고친 후 사용  
+
+ex) Fix A, Fix A in B, Fix A To B, Fix A so that B ...
+
+- ADD : 코드나 텍스트, 예제, 문서 등의 추가가 있을 때 사용
+
+ex) Add A for B, Add A to B
+
+- REMOVE : 코드의 삭제가 있을 때 사용. 'Clean', 'Eliminate'으로 사용하기도 함
+
+추가적으로 ‘unnecessary’, ‘useless’, ‘unneeded’, ‘unused’, ‘duplicated’를 A 앞에 자주 사용  
+
+ex) Remove A, Remove A from B
+
+- USE : 특별히 무언가를 사용해 구현
+
+ex) Use A, Use A for B, Use A to B
+
+- REFACTOR : 전면 수정한 경우 사용
+
+ex) Refactor A
+
+- SIMPLIFY : 복잡한 코드를 단순화할 때 사용. Refactor보다 적은 범위
+
+ex) Simplify A
+
+- UPDATE : 개정이나 버전 업데이트 시 사용. 주로 문서나 리소스, 라이브러리에 사용
+
+ex) Update A to B
+
+- IMPROVE : 향상시에 사용. 예로 호환성, 성능, 검즘 기능 등
+
+ex) Improve A
+
+- MAKE : 기존 동작의 변경을 명시
+
+ex) MAKE A B
+
+- IMPLEMENT : 구현체를 완성할 때 사용
+
+ex) Implement A, Implement A to B
+
+- REVISE : 문서의 개정이 있을 때 사용
+
+ex) Revise A
+
+- CORRECT : 문법의 오류나 타입의 변경, 이름 변경시 사용
+
+ex) Correct A
+
+- ENSURE : 무엇이 확실하게 보장받는다는 것을 명시. 혹은 if 구문과 같이 조건을 준 경우 사용
+
+ex) Ensure A
+
+- PREVENT : 특정한 처리 막기
+
+ex) Prevent A, Prevent A from B
+
+- AVOID : 회피로, if 구문으로 특정한 동작 제외시킬 때 사용
+
+ex) Avoid A, Avoid A if B
+
+- MOVE : 코드의 이동시 사용
+
+ex) Move A to B(into)
+
+- RENAME : 이름 변경시 사용
+
+ex) Rename A to B
+
+- ALLOW : 허용을 표현할 때 사용
+
+ex) Allow A to B
+
+- VERIFY : 검증 코드 넣을 때 사용
+
+ex) Verify A
+
+- SET : 변수 값을 변경하듯 작은 수정에 사용
+
+ex) Set A to B
+
+- PASS : 파라미터를 넘기는 처리에 주로 사용
+
+ex) Pass A to B
+
+## 마지막으로
+
+생각보다 Commit message를 쓰고자하면 생각이 나지 않는다. 이때 한 단어로 표현할 수 있게 생각을 해보고, 적어야한다.  
+
+하지만, 한 단어로 표현할 만큼 작업을 한 뒤 commit을 하기 어렵고, 누구나 해당 commit이 어떤 작업을 했는지 알아 볼 수 있게 message를 작성하는 것 또한 어렵다. 따라서 자주 commit을 하면서 숙달을 해야하면 자주 생각을 해야하는 부분이라고 생각된다.
+
+---
+
+- 30日  
+
+SQLD 문제 공부 중 복습이 필요하거나 새로 알게 된 사실을 정리해보도록 한다.  
+
+- ANSI-SSPARC에서 정의한 3단계 구조 중 다음 내용의 스키마 구조는?  
+
+모든 사용자 관점을 통합한 조직 전체 관점의 통합적 표현이다. 모든 응용시스템들이나 사용자들이 필요로 하는 데이터를 통합한 조직 전체의 DB를 기술한 것으로 DB에 저장되는 데이터와 그들 간의 관계를 표현하는 스키마이다.  
+
+통합 관점의 스키마를 구조를 표현하는 것을 개념 스키마, 데이터 모델링은 통합 관점의 뷰를 가지고 있는 개념 스키마를 만들어가는 과정이다. 따라서 위의 설명이 말하는 것은 개념 스키마의 설명이다.  
+
+다른 단계의 구조들은 외부 스키마와 내부 스키마로, 외부 스키마는 응용 프로그램이 접근하는 데이터베이스를 정의한다. 내부 스키마는 개발자 관점으로, 데이터베이스의 물리적 저장 구조를 뜻한다.
+
+- ERD에서 관계에 표시되는 것
+
+관계명(Membership) : 관계 이름  
+관계 차수(Degree/Cardinality) : 두 엔터티 간 관계에서 수행되는 경우의 수  
+ex) 1:1, 1:M, M:N  
+관게 선택사양 : 관계에서 항상 참여하는지 아니면 참여할 수도 있는지를 나타내는 방법  
+ex) 필수 관계, 선택 관계  
+
+- ROW Chaining과 Row Migration 비교
+
+| 구분 | Row Chaining | Row Migration |
+|:---:|---|---|
+| 정의 | 하나의 Row를 하나의 블록에 저장할 수 없어서 여러 블록에 걸쳐서 저장하는 현상 | Update로 인하여 늘어나는 공간을 저장할 공간이 없어서 다른 블록으로 Row를 옮기는 현상 |
+| 특성 | Initial Row Piece(행 조각)와 Row Pointer로 블록 내에 저장됨 | 기존 블록에는 Migration되는 데이터의 row header와 블록 주소값을 갖게 되고, 새로운 블록에는 Migration되는 데이터가 저장됨 |
+| 문제점 | Row의 정보를 검색하기 위해 하나 이상의 데이터 블록을 Scan 해야 하기 때문에 성능이 감소됨 | Migration된 Row를 읽기 전에 기존 블록에서 헤더를 통해 Migration된 row를 읽기 때문에 성능이 감소됨 |
+| 해결책 | 블록의 크기를 크게 만듦 | PCTFREE를 크게 설정. 객체를 Export하고 삭제한 후, Import.  객체를 Migration하고 Truncate |  
+
+- ANSI JOIN
+
+ANSI JOIN은 다른 DBMS에서도 사용할 수 있는 표준 SQL로 ORACLE에서만 사용할 수 있는 문법과 달리 다른 DBMS에서도 통용되므로 처음부터 해당 ANSI로 쓰여지게되면 적용이 쉬워진다.  
+
+NATURAL JOIN은 두 개의 테이블에서 같은 이름의 칼럼을 찾아서 JOIN을 하기 때문에 칼럼에 테이블의 Alias를 사용하여 적을 시 오류가 발생한다.  
+추가적으로 JOIN ~ USING을 이용하는 방법도 있다. 해당 방법은 동일한 이름을 모두 조인한다. 따라서 USING을 통해서 컬럼을 선택해서 조인한다. 따라서 USING 구에서도 테이블의 Alias를 사용하게 되면 오류가 발생한다.  
+
+- 문자열에서 `_`이나 `%`가 들어간 문자를 검색
+
+해당 문자를 검색하기 위해선 ESCAPE 명령어를 사용해서 검색할 수 있다. 사용 밥업은 `_`나 `%`앞에 EXPACE로 특수 문자를 지정하면 검색할 수 있다.  
+
+```sql
+Select * From 테이블 Where NAME LIKE '%@_%' ESCAPE '@'
+```
+이러하게 사용하게 되면 C언어에서 사용하는 개행문자, 공백문자를 사용할 때 사용하는 백슬래시 문자를 출력해야할 때 사용하는 `\\`와 같이 문자 앞에 특정한 문자를 사용한 뒤 ESCAPE 문을 통해서 처리해준다.  
+
+- PL/SQL의 특징
+
+PL/SQL은 Block 구조로 되어있어 각 기능별로 모듈화가 가능  
+변수, 상수 등을 선언하여 SQL 문장 간 값을 교환  
+IF, LOOP 등의 절차형 언어를 사용하여 절차적인 프로그램이 가능  
+DBMS 정의 에러나 사용자 정의 에러를 정의하여 사용  
+PL/SQL은 Oracle에 내장되어 있으므로 Oracle과 PL/SQL을 지원하는 어떤 서버든 프로그램 옮기기 가능  
+PL/SQL은 응용 프로그램의 성능 향상  
+PL/SQL은 여러 SQL 문장을 Block으로 묶고 한 번에 Blcok 전부를 서버로 보내기 때문에 통신량 줄임  
+
+---
+
+- 31日  
+
+BOJ KMP 문제 중 2401. [최대 문자열 붙여넣기](http://noj.am/2401)  
+해당 문제는 긴 문자열이 하나 짧은 문자열이 여러 개 주어지는데 이때 짧은 문자열들로 긴 문자열을 채울 때 최대의 길이를 구하는 문제이다.  
+
+처음 문제를 해결할 때 매번 fail함수를 돌려서 긴 문자열에 접근할려고하니 시간이 너무 걸릴거 같아서 다른 방법을 모색해보았다. 그 다음에는 짧은 문자열이 긴 문자열에 들어갈 수 있는 부분을 먼저 찾고 변수에 넣어놓고 시작할려고 하니 메모리가 상당히 많이 들었다. 따라서 실패함수를 먼저 전부 구하고 해당 실패함수로 kmp를 돌리되, 조금 변형하여 긴 문자열 길이와 짧은 문자열 배열을 가지고 두 kmp의 변수로 두고 긴 문자열 속에서 짧은 문자열을 긴 문자열의 길이만큼 반복해서 다 찾아내며, 동적계획법을 통해서 이전의 연산을 하지 않고 이전의 인덱스의 값을 가지고 시작하는 식으로 코딩을 하였다.  
+
+동적계획법을 기획하는게 가장 헷갈렸고, 가장 약한 부분인거 같다. kmp의 경우에는 자주 풀어보고 자주 접하다보니 코드의 틀이 떠오르지만 동적계획법은 아직도 약점으로 작용하므로 조금 더, 공부해야 겠다.  
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+string short_str[501];
+int fail[501][10001];
+int dp[100001];
+int mem[501];
+
+/*
+	fail 함수를 매번 돌리면서 하나하나 비교하게되면 메모리 초과가 뜨게 된다.
+	따라서 짧은 문자열의 실패함수를 모두 구한 다음 긴 문자열의 인덱스 전부에서
+	짧은 문자열에 대해 kmp를 진행한다. 이때 kmp의 인덱스를 i를 긴 문자열 길이 j를 짧은 문자열로
+	잡고 돌리되, 동적계획법을 생각해서 현재의 인덱스는 이전의 인덱스의 값을 모두 가지고 시작한다.
+	그 후 일치한 경우 해당 값을 더하고 더 큰 값을 취하는 식으로 한다. 
+*/
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	
+	string str;
+	int t;
+	cin >> str >> t;
+	int Len = str.length();
+	for (int i=0; i<t; i++) {
+		cin >> short_str[i];
+		
+		int len = short_str[i].length();
+		
+		for (int idx=1,j=0; idx<len; idx++) {
+			while(j>0 && short_str[i][idx] != short_str[i][j])
+				j = fail[i][j-1];
+			if(short_str[i][idx] == short_str[i][j])
+				fail[i][idx] = ++j;
+		}
+	}
+	
+	for (int i=0; i<Len; i++)  {
+		if(i != 0)
+			dp[i] = dp[i-1];
+			
+		for (int j=0; j<t; j++) {
+			int len = short_str[j].length();
+			
+			while(mem[j]>0 && str[i] != short_str[j][mem[j]])
+				mem[j] = fail[j][mem[j]-1];
+			if(str[i] == short_str[j][mem[j]]) {
+				if(mem[j] == len-1) { // 긴 문자열에 다 들어간 경우 
+					int value = i - len >= 0 ? dp[i-len] : 0;
+					value += len;
+					dp[i] = max(dp[i], value);
+					mem[j] = fail[j][mem[j]];
+				}
+				else
+					mem[j]++;
+			}
+		}
+	}
+	cout << dp[Len-1];
+	
+}
+```
+---
