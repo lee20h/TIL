@@ -79,3 +79,13 @@ exports.Docker_list = [
     'Dock/Command.md',
     'Dock/Image.md'
 ]
+
+exports.SE_list = [
+    'SE/시스템 공학과 소프트웨어 공학.md',
+    'SE/소프트웨어 개발의 일반적 공정 과정.md',
+    'SE/소프트웨어 개발에 대한 오해와 실체.md'
+]
+
+exports.Network_list = [
+    'Network/Roadmap.md'
+]

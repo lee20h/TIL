@@ -33,12 +33,20 @@ module.exports = {
         children: CONST.Docker_list
       },
       {
+        title: "Software_Engineering",
+        children: CONST.SE_list
+      },
+      {
         title: "Program_Language",
         children: CONST.PL_list
       },
       {
         title: "Data_Communication",
         children: CONST.DC_list
+      },
+      {
+        title: "Computer_Network",
+        children: CONST.Network_list
       }
     ],
     nav: [
