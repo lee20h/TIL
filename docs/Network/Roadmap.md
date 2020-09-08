@@ -2,7 +2,7 @@
 sidebar: auto
 ---
 
-# road map
+# Roadmap
 
 ## 인터넷이란 무엇인가?  
 

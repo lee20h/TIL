@@ -37,3 +37,23 @@ sidebar: auto
 - STATUS : 컨테이너의 상태로 실행중은 Up, 종료는 Exited, 일시정지는 Pause로 나온다.
 - PORTS : 컨테이너가 개방한 포트와 호스트에 연결한 포트로, 특별한 설정을 하지 않은 경우 출력되지 않는다.
 - NAMES : 컨테이너 고유한 이름으로 컨테이너 생성시 `--name` 옵션으로 이름을 설정하지 않으면 도커 엔진이 임의로 형용사와 명사를 조합해서 설정한다. id와 마찬가지로 중복이 안되고 `docker rename` 명령어로 이름을 변경할 수 있다. ex) `docker rename origianl-name changed-name`  
+
+### 원하는 항목만 보기
+
+`docker ps --format 'table{{.Names}} \t 'table{{.Image}}`  
+이러한 명령어로 원하는 항목만 볼 수 있다. --format 옵션을 사용하여 Names와 Image 항목만 볼 수 있다. 이때의 `\t`는 탭 공백을 의미한다.  
+
+이외 모든 항목을 보고자 할때는 `docker ps -a`을 사용하면 된다. `-a`는 all을 뜻하며, 꺼져있는 컨테이너도 확인할 수 있다.  
+
+
+## 도커 컨테이너의 생명 주기
+
+생명주기  
+
+생성 -> 시작 -> 실행 -> 중지 -> 삭제  
+
+### 생성부터 실행까지
+
+`docker run` = `docker create <이미지 이름>` + `docker start <컨테이너 아이디/이름>`  
+
+`docker create`을 사용하면 컨테이너의 ID가 출력이 된다. 이후 컨테이너의 아이디 중 일부를 `docker start` 뒤에 붙여주면 된다. 이때 `docker start`에 옵션이 존재하는데 바로 `-a` 옵션이다. 이것은 attach을 의미하며 실행이 될 때 붙어있다가 출력값들을 화면에 출력시킬 수 있게 보내주는 옵션이다. 이 옵션이 없이 `docker start ID`만 입력하게 되면 컨테이너 ID만 다시 출력하고 끝나게 된다.  

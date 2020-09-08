@@ -921,3 +921,98 @@ Classful addressing : A,B,C,D,E 5개의 클래스로 나눈다.
 소프트웨어 개발은 기술적인 측면 뿐아니라 관리적인 측면에서 조직적으로 문제 극복 후 품질을 향상시키려는 노력을 요구한다. 따라서 참여한 모든 사람들이 무네점에 대한 정확한 인식과 목표를 가질 때 좋은 품질의 제품이 만들어지고 프로젝트는 성공적으로 완수할 수 있다.  
 
 ---
+
+- 8日  
+
+DP와 문자열 문제 해결
+
+[퇴사](http://noj.am/14501)  
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	int n, ans = 0;
+	cin >> n;
+	vector<pair<int,int>> v(n+1);
+	vector<int> dp(n+1);
+	for (int i=1; i<=n; i++) {
+		cin >> v[i].first >> v[i].second;
+		dp[i] = v[i].second;
+	}
+	
+	for (int i=2; i<=n; i++) {
+		for (int j=1; j<i; j++) {
+			if(i-j >= v[j].first)
+				dp[i] = max(v[i].second + dp[j], dp[i]);
+		}
+	}
+	
+	for (int i=1; i<=n; i++) {
+		if(i + v[i].first > n + 1)
+			continue;
+		ans = max(ans, dp[i]);
+	}
+	cout << ans;
+}
+```
+해당 문제는 주어진 날짜만큼 일이 주어지고 일에 해당되는 봉급을 최대한 많이 받을 수 있는 값을 구하는 문제이다. 처음에는 이중 포문을 통해서 브루트포스로 구해볼려고 했지만 마지막 예시에서 오답이 나와 어려움을 겪었다. 다시 생각해보니 dp[i]라는 것을 i번쨰 날짜에 가장 높은 봉급으로 설정한 뒤 각각의 값을 더해 max 값을 구했다.  
+
+[버그잡이 꿍](http://noj.am/6613)  
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 1e6*2;
+int fail[MAX];
+int idx[MAX];
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n;
+	string bug;
+	while(cin >> n >> bug) {
+		memset(fail, 0, sizeof(fail));
+		
+		for(int i=1,j=0; i<bug.length(); i++) {
+			while(j>0 && bug[i] != bug[j])
+				j = fail[j-1];
+			if(bug[i] == bug[j])
+				fail[i] = ++j;
+		}
+		cin.ignore();
+		for (int t=0; t<n; t++) {
+			string str;
+			getline(cin,str);
+			
+			char ans[MAX];
+			int k = 0;
+			
+			for(int i=0,j=0; i<str.length(); i++) {
+				idx[k] = j;
+				ans[k++] = str[i];
+				while(j>0 && str[i] != bug[j])
+					j = fail[j-1];
+				if(str[i] == bug[j]) {
+					if(j == bug.length()-1) {
+						k -= bug.length();
+						j = idx[k];
+					}
+					else
+						j++;
+				}
+			}
+			ans[k] = '\0';
+			cout << ans << '\n';
+		}
+	}
+}
+```
+이 문제는 문장이 n만큼 주어지며, 버그 문장이 주어진다. 해당 버그 문장이 있는 부분을 제거하고 원 문장을 출력하는 문제이다. 처음부터 kmp 실패함수를 버그 문장에 적용하여 실패함수를 구하였다. 이후에 주어진 문장에서 kmp 알고리즘을 이용해서 겹치는 부분을 찾았다. 이때 벡터를 이용해서 해당 인덱스를 구한 뒤 벡터에서 pop_back() 연산을 통해 벡터에 해당 원 문장을 구하도록 하였다. 이러한 방법은 결국 시간초과라는 결과를 냈다.  
+
+이후에 다시 생각해보니 벡터의 pop_back() 연산을 이용하게 되면 거기서 시간이 크게 소요될 것 같아 char형 배열과 인덱스 배열을 하나 선언하여 인덱스를 유지하며, char형 배열에 원 문장을 추가해갔다. 이후 해당 버그 문장을 발견하게 되면 그 만큼의 인덱스를 줄이고 덮어씌어가는 형식으로 진행했다. 마지막으로 끝난 경우 마지막 인덱스에 널문자를 삽입해 뒤에 어떠한 문자가 있든지 무시하도록 설계했다.  
+
+그러자 원하는 만큼 시간을 줄일 수 있었다. 또한 getline 함수를 사용하면서 버퍼가 비워지지않아 fflush() 함수를 사용해보았지만 원하는 기능을 하지 못했다. 따라서 이 부분을 찾아보게 되어 cin.ignore()라는 함수를 통해서 버퍼를 비우고 문제의 필요한 값을 입력 받을 수 있었다.  
+
+---
