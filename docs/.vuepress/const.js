@@ -77,7 +77,8 @@ exports.Express_list = [
 exports.Docker_list = [
     'Dock/Docker.md',
     'Dock/Command.md',
-    'Dock/Image.md'
+    'Dock/Image.md',
+    'Dock/Compose.md'
 ]
 
 exports.SE_list = [
