@@ -38,18 +38,7 @@ sidebar: auto
 - PORTS : 컨테이너가 개방한 포트와 호스트에 연결한 포트로, 특별한 설정을 하지 않은 경우 출력되지 않는다.
 - NAMES : 컨테이너 고유한 이름으로 컨테이너 생성시 `--name` 옵션으로 이름을 설정하지 않으면 도커 엔진이 임의로 형용사와 명사를 조합해서 설정한다. id와 마찬가지로 중복이 안되고 `docker rename` 명령어로 이름을 변경할 수 있다.  
 
-::: tip  
-docker rename origianl-name changed-name
-:::
-
-### 원하는 항목만 보기
-
-::: tip
-docker ps --format 'table{{.Names}} \t 'table{{.Image}}  
-:::  
-이러한 명령어로 원하는 항목만 볼 수 있다. --format 옵션을 사용하여 Names와 Image 항목만 볼 수 있다. 이때의 `\t`는 탭 공백을 의미한다.  
-
-이외 모든 항목을 보고자 할때는 `docker ps -a`을 사용하면 된다. `-a`는 all을 뜻하며, 꺼져있는 컨테이너도 확인할 수 있다.  
+ex) `docker rename origianl-name changed-name`
 
 
 ## 도커 컨테이너의 생명 주기
