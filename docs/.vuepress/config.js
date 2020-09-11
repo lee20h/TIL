@@ -33,6 +33,10 @@ module.exports = {
         children: CONST.Docker_list
       },
       {
+        title: "Travis CI",
+        children: CONST.Travis_list
+      },
+      {
         title: "Software_Engineering",
         children: CONST.SE_list
       },
