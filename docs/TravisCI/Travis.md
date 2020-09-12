@@ -22,7 +22,7 @@ CI란? 지속적 통합(Continuous Integration, CI)은 지속적으로 퀄리티
 
 ## Github과 연결 순서
 
-1. [Travis CI 사이트](http://https://travis-ci.org) 이동
+1. [Travis CI 사이트](http://travis-ci.org) 이동
 2. github 연결하여 sign up
 3. 해당 레포지토리 활성화
 4. 이후 push시 자동으로 연동
