@@ -41,7 +41,7 @@ sidebar: auto
 ex) `docker rename origianl-name changed-name`
 
 ### 원하는 항목만 보기
-docker ps --format table{{.Names}} \t table{{.Image}}  
+`docker ps --format table.Names \t table.Image`  
 이러한 명령어로 원하는 항목만 볼 수 있다. --format 옵션을 사용하여 Names와 Image 항목만 볼 수 있다. 이때의 `\t`는 탭 공백을 의미한다. table앞에 `'`을 표시해야한다.
 
 이외 모든 항목을 보고자 할때는 `docker ps -a`을 사용하면 된다. `-a`는 all을 뜻하며, 꺼져있는 컨테이너도 확인할 수 있다.  

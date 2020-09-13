@@ -58,8 +58,12 @@ exports.JS_list = [
 ]
 
 exports.DB_list = [
-    'DB/Database.md'
-]
+  "DB/데이터 모델링의 이해.md",
+  "DB/데이터 모델과 성능.md",
+  "DB/SQL 기본.md",
+  "DB/SQL 활용.md",
+  "DB/SQL 최적화의 원리.md"
+];
 
 exports.Express_list = [
     'Express/Express.md',
@@ -93,4 +97,8 @@ exports.Network_list = [
 
 exports.Travis_list = [
     'TravisCI/Travis.md'
+]
+
+exports.Vuepress_list = [
+    'Vuepress/Vuepress.md'
 ]

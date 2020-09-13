@@ -8,7 +8,7 @@
           </div>
       </h1>
       <h2 class = "rightcontainer">
-        20h's TIL
+        매일 공부하고 돌아보자
       </h2>
   </div>
 </template>
@@ -24,7 +24,6 @@
 h1 {
   font-family: "Oswald";
   font-weight: 500;
-  border-bottom: 17px solid #5AA1E7;
   word-break: keep-all;
   font-size: 5rem;
 }

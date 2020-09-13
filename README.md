@@ -1340,3 +1340,57 @@ after_success:
 효율성 테스트에 묶여서 너무 아쉬웠다. 생각대로 제대로 구현했지만 정확도 테스트에 비해 효율성 테스트가 너무 어려웠기 때문인거 같다. 다시 힘내서 겨울 인턴 코테를 준비해볼려고한다.  
 
 ---
+
+- 13日  
+
+카카오 코테에서 막혔던 경험을 계속 곱씹어서 PS를 계속 공부해야할 필요가 있다고 느껴서 해시 문제중 하나를 가져왔다.  
+
+전화번호 목록
+```cpp
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int fail[21];
+
+bool cmp(string a, string b) {
+    return a.length() < b.length();
+}
+
+bool solution(vector<string> phone_book) {
+    bool answer = true;
+    sort(phone_book.begin(), phone_book.end());
+    
+    for (int t=0; t<phone_book.size(); t++) {
+        string str = phone_book[t];
+        for (int i=1,j=0; i<str.length(); i++) {
+            while(j > 0 && str[i] != str[j])
+                j = fail[j-1];
+            if(str[i]==str[j])
+                fail[i] = ++j;
+        }
+            for (int p=t+1; p<phone_book.size(); p++) {
+                for (int i=0,j=0; i<str.length(); i++) {
+                    while(j > 0 && phone_book[p][i] != str[j])
+                            j = fail[j-1];
+                    if(phone_book[p][i] == str[j]) {
+                        if(j == str.length()-1) {
+                            answer = false;
+                            return answer;
+                        }
+                        else
+                            j++;
+                    }
+                }
+            }
+    }
+    return answer;
+}
+```
+
+접두사가 겹치는 것이 있나 체크하는 문제로, naive하게 접근하면 느릴거 같아 KMP를 이용했다. KMP 부분을 접두사에 해당하는 길이만큼만 돌려서 체크하고 넘어가는 식으로 구현했다.  
+
+코딩테스트도 이와 같았다면 좋았겠지만 아쉬움만 남았다. 이후에는 Travis를 조금 더 살펴본 뒤, Spring 프레임워크에 대해 조금씩 공부를 시작할려고 한다.  
+
+---

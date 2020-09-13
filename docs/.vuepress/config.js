@@ -37,6 +37,10 @@ module.exports = {
         children: CONST.Travis_list
       },
       {
+        title: "Vuepress",
+        children: CONST.Vuepress_list
+      },
+      {
         title: "Software_Engineering",
         children: CONST.SE_list
       },
