@@ -88,7 +88,8 @@ exports.Docker_list = [
 exports.SE_list = [
     'SE/시스템 공학과 소프트웨어 공학.md',
     'SE/소프트웨어 개발의 일반적 공정 과정.md',
-    'SE/소프트웨어 개발에 대한 오해와 실체.md'
+    'SE/소프트웨어 개발에 대한 오해와 실체.md',
+    'SE/소프트웨어 개발 방법론.md'
 ]
 
 exports.Network_list = [
@@ -96,9 +97,23 @@ exports.Network_list = [
 ]
 
 exports.Travis_list = [
-    'TravisCI/Travis.md'
+    'TravisCI/Travis.md',
+    'TravisCI/AWS 연동.md'
 ]
 
 exports.Vuepress_list = [
     'Vuepress/Vuepress.md'
+]
+
+exports.Linux_list = [
+    'Linux/디렉토리와 파일.md'
+]
+
+exports.OSS_list = [
+    'OSS/오픈소스 소프트웨어의 역사.md',
+    'OSS/오픈소스를 왜 쓰는가.md'
+]
+
+exports.Distribute_list = [
+    'Distribute/클라우드 컴퓨터의 시작.md'
 ]

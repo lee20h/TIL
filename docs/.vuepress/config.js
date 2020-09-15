@@ -1,11 +1,16 @@
 var CONST = require("./const");
 
 module.exports = {
-  title: `Today 20h Learned`,
-  description: `Today I Learned`,
+  title: `Today I Learned`,
+  description: `오늘 공부한건 오늘 적자`,
   base: "/TIL/",
   dest: "build",
-  head: [],
+  head: [
+    ['link', {
+      rel: 'icon',
+      href: '/logo.png'
+    }]
+  ],
   themeConfig: {
     sidebar: [
       {
@@ -15,6 +20,10 @@ module.exports = {
       {
         title: "Operating_System",
         children: CONST.OS_List
+      },
+      {
+        title: "Linux",
+        children: CONST.Linux_list
       },
       {
         title: "JavaScript",
@@ -43,6 +52,14 @@ module.exports = {
       {
         title: "Software_Engineering",
         children: CONST.SE_list
+      },
+      {
+        title: "Distribute_Computing",
+        children: CONST.Distribute_list
+      },
+      {
+        title: "Open_Source_Software",
+        children: CONST.OSS_list
       },
       {
         title: "Program_Language",

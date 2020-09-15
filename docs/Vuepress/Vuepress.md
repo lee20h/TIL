@@ -2,7 +2,8 @@
 sidebar: auto
 ---
 
-# Vuepress [공식사이트](https://vuepress.vuejs.org/guide/)
+# Vuepress  
+[공식문서](https://vuepress.vuejs.org/guide/)  
 
 현재 TIL도 Vuepress를 통해서 만들어져있다. Vuepress란 Vue.js로 개발된 정적 사이트 생성기라고 생각하면 된다. 기본 테마를 제공하여 더 쉽게 개발을 할 수 있게 도와주며, Plugin API를 제공하여 Plugin을 제작하고 적용할 수 있다.  
 

@@ -3,9 +3,6 @@
       <h1>
           Today I Leanred
           <br>
-          <div class = "rightcontainer">
-            TIL
-          </div>
       </h1>
       <h2 class = "rightcontainer">
         매일 공부하고 돌아보자
