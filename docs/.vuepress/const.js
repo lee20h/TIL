@@ -115,5 +115,7 @@ exports.OSS_list = [
 ]
 
 exports.Distribute_list = [
-    'Distribute/클라우드 컴퓨터의 시작.md'
+    'Distribute/클라우드 컴퓨팅.md',
+    'Distribute/클라우드 컴퓨팅의 속성.md',
+    'Distribute/서비스 모델과 배포 모델.md'
 ]

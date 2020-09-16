@@ -2035,3 +2035,256 @@ void printDetails(double amount) {
 만약 두 명이 한 조가 되어 짝으로 프로그래밍을 하는 경우 개발자들이 서로 코드 검토를 하며, 검토시는 원작자 입장에서 객관적인 평가를 해주고 유용한 아이디어를 제안할 가능성이 높아 리팩토링할 기회가 높아진다.
 
 ---
+
+- 16日 
+
+# Network Layer
+
+![network_layer](./docs/.vuepress/public/images/Network/network_layer.jpg)  
+
+# Host-to-Host Delivery : Internetworking, Addressing and Routing
+
+## Internetworks
+
+![internetwork](./docs/.vuepress/public/images/Network/internetwork.jpg)  
+
+네트워크간의 연결을 맡아주는 부분이 internetwork라고 한다.  
+
+![network_layer_at_the_sources](./docs/.vuepress/public/images/Network/network_layer_at_the_sources.jpg)  
+
+위의 그림이 네트워크 레이어에서의 ip 패킷 흐름도라고 볼 수 있다. 라우터 측면에서의 흐름도 비슷하며, 초기엔 유닉스 머신으로, 라우터를 사용했다는 것만 기억해두자.  
+
+목적지 도달시에 헤더를 보고 오류 판단한다. 쪼개진 경우 모으는 Reassemble한 뒤 올려보낸다. 쪼개져 있지 않는다면 바로 올려보내는 모습을 볼 수 있다.  
+
+네트워크 계층에서의 Switching은 Packet switching을 사용하고 있고 Datagram approach를 사용한다.  
+
+![datagram_approach.jpg](./docs/.vuepress/public/images/Network/datagram_approach.jpg)  
+
+## Addressing
+
+IP주소는 32bit 주소로 전세계에서 공통적으로 사용한다.  
+IP주소를 십진수나 이진수 표기법으로 변환하는 것은 많이 해보았으니 넘긴다.  
+
+Classful addressing : A,B,C,D,E 5개의 클래스로 나눈다.  
+클래스를 나누는 기준은 Binary notation인 경우 상위비트로 나누게 된다.  
+
+| A | B | C | D | E |
+|---|---|---|---|---|
+| 0 | 10 | 110 | 1110 | 1111 | 
+
+이러한 식으로 비트 중 1이 언제 나오냐에 따라 나뉘게 된다. 따라서 클래스마다 이진수를 십진수로 바꾸게되면 십진수의 범위를 알 수 있게 된다.  
+
+| A | B | C | D | E |
+|---|---|---|---|---|
+| 0 ~ 127 | 128 ~ 191 | 192 ~ 223 | 224 ~ 239 | 240 ~ 255 | 
+
+4 byte ip 주소는 NetworkID 와 HostID 두 개로 나뉜다.  
+
+![ip_table](./docs/.vuepress/public/images/Network/ip_table.jpg)  
+
+A클래스는 네트워크 ID가 7비트이므로 network block는 2^7. 즉 128 블록을 가질 수 있으며, 0.0.0.0 ~ 127.255.255.255까지 사용이 가능하다. 네트워크 ID가 첫 바이트로, `네트워크ID.0.0.0`를 **Network Address**라고 한다. 호스트 ID는 나머지 비트인 24비트를 사용할 수 있으므로, 2^24개 사용이 가능하다. 추가적으로 A클래스는 대부분 낭비되고 있다.  
+
+B클래스는 네트워크 ID가 14비트이므로 network blcok는 2^14. 즉 16384 블록을 가질 수 있으며, 128.0.0.0 ~ 191.255.255.255까지 사용이 가능하다. 호스트 ID는 나머지 비트인 16비트를 사용할 수 있으므로, 2^16개 만큼 사용이 가능하다. B클래스 또한 낭비되고 있다.  
+
+C클래스의 숫자는 많은 기관에 비해 숫자가 부족하다. 네트워크 ID가 21비트 2^21 = 2097152 블록만큼 사용이 가능하다. 호스트 ID는 8비트로 2^8개 사용이 가능하다. 192.0.0.0 ~ 223.255.255.255까지 사용이 가능하다.  
+
+클래스로 주소를 나눈 이유는 네트워크 주소를 한 기관마다 하나를 할당해서 사용하려는 생각이였다. 하지만 IP주소가 부족해지고 있다는 것을 금방 알아차리게 되었다.  
+
+네트워크 주소와 네트워크 ID는 다르다. 네트워크 주소는 네트워크 ID와 호스트 ID를 갖되, 호스트 ID가 0인 주소이다.  
+
+### IP Level
+
+IP 주소는 2 레벨의 계층 구조를 가지고 있다. network id와 host id 두 개의 계층을 가지고 있다. 먼저 network id를 찾고 host를 찾는 구조를 가지고 있기 때문이다.  
+
+### Subnetwork
+
+주어진 네트워크를 서브네트워크로 나눠서 관리하게 되면 편할 수 있다. 예를 들어서 `141.14.0.0`의 네트워크 주소를 가진 네트워크에서 서브네트워크를 나누게 된다면, `141.14.0.0`, `141.14.64.0`, `141.14.128.0`, `141.14.192.0`와 같이 4등분하여 관리하게 된다면 더욱 수월해질 것이다. IP주소가 충분하다면 가능하다.  
+
+서브넷마스크를 이용해서 IP주소와 비트 &연산을 하게되면 네트워크 주소를 얻어 낼 수 있다. 디폴트마스크는 클래스마다 다르게 주어지는데 기본적으로는 A클래스는 `255.0.0.0` B클래스는 `255.255.0.0` C클래스는 `255.255.255.0` 이런식으로 주어지게 된다.  
+
+망관리자가 디폴트마스크를 조금 바꿔서 사용할 수도 있다. 서브넷마스크를 조금 더 편하게 사용할려고 `/`을 이용해서 표현할 수도 있다. 바로 비트만큼 써주는 것인데 `/8`, `/16`, `/24`와 같이 사용하면 된다. 예를 들어 Default Mask가 255.255.0.0라고 했을 때 Subnet Mask를 지정해주면 255.255.224.0으로 사용할 수 있다.  
+
+### DHCP(Dynamic Host Configuration Protocol)
+
+A, B, C 중 일정영역을 Private networks라고 한다. `10.0.0.0 ~ 10.255.255.255`, `172.16.0.0 ~ 172.31.255.255`, `192.168.0.0 ~ 192.168.255.255` 이러한 private ip address는 내부에서만 패킷 통신이 가능하지만, 외부 통신이 불가능하다. 이러한 내부망을 구성하기 위해서 private 주소를 할당해주는 프로토콜이 DHCP이다. 물론 public한 주소를 할당해주기도 하지만 그 부분은 고정 IP를 직접 할당해줘야한다. private 주소에서 인터넷을 접속하기 위해서는 **NAT**이 필요하다.  
+
+DHCP 클라이언트와 서버간의 흐름  
+DHCP 클라이언트가 네트워크에 `DHCP discover`를 보내고 DHCP 서버가 받아서 `DHCP offer`를 클라이언트에 보낸다. 이후 클라이언트가 `DHCP request`를 보낸뒤 서버가 마지막으로 `DHCP ACK`를 보내면서 마무리된다.  
+
+다음 그림으로 쉽게 이해해보자.  
+![DHCP-flow](./docs/.vuepress/public/images/Network/DHCP-flow.jpg)  
+
+### NAT(Network Address Translation)
+
+유무선 공유기에는 DHCP 서버와 NAT가 들어있다. DHCP 서버가 IP를 동적으로 할당해주고 NAT가 외부로 향하는 패킷을 고정 IP의 포트번호를 각각 할당해서 테이블에 기록한 뒤 패킷을 전송해준다.
+
+로컬에서는 로컬 주소를 가지고 있는 기기가 외부로 패킷을 보내게되면 Router가 부여받은 IP주소에 포트번호를 할당해줘서 NAT Translation table에 WAN과 LAN에서 들어오는 주소들을 기록해놓고 매핑하여 외부와 내부에 각각에 패킷을 전송해주는 역할이다.  
+
+포트번호는 16비트를 사용해서 상당히 많은 로컬주소를 연결해주고 있다. 하지만 이러한 NAT로 ip주소 부족을 다 채울수는 없으므로 IPv6를 이용해야한다.  
+
+## Routing
+
+### Routing Techniques
+
+라우팅 속도를 늘리기 위해 라우팅 테이블을 줄이고 검색 속도를 늘리기 위한 노력이 많이 있었다.
+
+Static vs Dynamic 알고리즘은 장단점이 명확하다. Dynamic은 매번 라우팅을 바꿔서 찾아주는 것이고, Static은 고정된 라우팅으로만 이뤄지는 것이다. Dynamic의 경우에는 트래픽 양이 많아지면 속도가 오히려 느려질 수 있으므로, 트래픽 양이 적을 때 효과적이다. 따라서 두 개의 알고리즘은 장단점이 명확하다.  
+
+## IP Datagram Format
+
+IP 32bit에 들어있는 정보  
+|  |  |  |  |
+|:-:|:-:|:-:|:-:|
+| ver | head(length) | type of service | length(전체 datagram 길이) |
+| 16-bit identifier || flag | flagment offset |
+| time to live(ttl) | upper layer | Internet Checksum ||
+| 32 bit source IP address |||
+| 32 bit destination IP address |||
+| Options (if any) ||| 
+| data (variable length, typically a TCP or UDP segment) |||
+
+TCP의 오버헤드는 20 bytes of TCP + 20 bytes of IP = 40bytes + app layer overhead
+
+---
+
+# 클라우드 컴퓨팅
+
+## 클라우드 컴퓨팅의 속성
+
+### Scalability & Elasticity
+
+- Scalability : 서비스의 규모에 맞춰 시스템 네트워크나, 프로세스가 규모에 맞게 조정이 될 수 있는 특성  
+
+- Elasticity : 수요에 맞춘 Scalability를 달성하는 시간  
+
+두 가지 특성을 달성하기 위해서 필요한 성격
+
+- Dynamic Provisioning : 요약하면 동적으로 서비스 동작 중에 자원을 준비하거나 업그레이드하는 것으로 이것을 만족해야 Scalability가 Elasticity하게 만족하는 것을 가능케한다.  
+
+따라서 클라우딩 시스템을 이용해야 서비스 수요 곡선에 맞춰서 공급 곡선도 어느 정도의 여유를 가지고 따라가면서 부족하지도 낭비하지도 않은 곡선을 그릴 수 있게 된다.
+
+- Multi-tenant Design : 정해진 인프라를 Utilization을 높여서 필요할 때 나눠서 사용하는 디자인이다. 이때 virtually partition을 통해서 같은 인프라지만 고립시켜서 서로 독립적으로 사용하게 한다.
+
+### Availability & Reliability
+
+- Availability : 서비스가 정상적으로 운영하는 정도. 예시로 Five Nines라는 말로 표현한다. 이 말은 99.999%의 Availability를 가진다고 한다.  
+
+- Reliability : 서비스에게 기대하는 품질로, 기능이 원하는 품질로 작동하는 상태를 표현하는 단어이다. Availability를 얘기할 때 Reliability를 포함하고 있다.  
+
+이러한 특성을 만족하기 위해 Fault Tolerance라는 개념이 달성되어야 한다.
+
+- Fault Tolerance : 여러가지 결함을 견뎌내는 특성으로 대부분 **이중화**(duplication)을 통해서 해결할려고 한다. 같은 서비스를 구동하는 예비 서버를 사용해서 결함이 일어났을 때 서비스를 계속 이용할 수 있도록 하는 Availability와 Reliability를 보장해주는 방법이다.  
+	기본 특성
+	- No single point of failure : SPOF란 시스템의 구성요소 중 핵심 부분 하나를 의미한다. 예를 들어 여러 서버를 구동하나, 하나의 DB를 이용하는 경우 DB가 문제가 생긴 경우 서비스에 영향을 미친다는 것이다. 또 다른 예시를 보면 Load Balancer가 요청을 받고 서버의 상태를 보고 서버에 분산해준다. 이때 Load Balancer에 문제가 생긴다면 다른 서버들이 괜찮더라도 서비스에 영향을 미친다. 이러한 서버들은 duplication이 어렵다는 문제가 있다.
+	- Fault detection and isolation(FDI) : 에러 발견을 빠르게 파악하는 구조와 내부적인 기능을 만드는 것(Fault detection)과 에러가 발생하더라도 다른 구조로 전파되지 않도록 하는 것(Fault Isolation). 따라서 문제가 생겨서 잘못된 요청을 받을 시 에러처리를 하지 않았다면 문제가 퍼져나갈 수 있다.
+	- Fault Containment : Fault가 난 서비스가 스스로 Fault를 점검하여 문제가 있을 시 다른 서비스로 API 요청 등을 보내지 않는 서비스를 뜻한다.  
+
+이중화(duplication)을 생각할 때는 무조건 모든 계층을 생각하여서 이중화해야 한다. 전력 공급원(물리적 서버)부터 서비스까지 모두 분리하여 복제해서 사용해야 Availability를 올릴 수 있다. 이때 클라우드 시스템을 사용하게되면 비용 효율적으로 달성할 수 있다.  
+
+### Manageability & Interoperability
+
+- Manageability : 서비스를 관리하기 쉬운 정도로 클라우드에서 DB 서버를 사용하게 된다면 Managed DB를 쓰게 된다. 하드웨어를 다 고른 뒤 DBMS와 업데이트, 백업 기간을 정하게 되면 DB 서버를 만들 수 있게 된다. 이후에 하드웨어 업그레이드도 편하게 사용할 수 있다.  
+
+- Interoperability : 상호 호환성으로, 다른 클라우드 시스템이나 머신이랑 동작할 수 있는 형태를 일반적인 인터페이스로 상호 작용할 수 있는 특성이다. AWS의 경우 API로써 다른 시스템과 상호 작용하기 편하게 되어있다.  
+
+두 가지 특성을 결합이 되면 Automation을 가능하게 한다. 클라우드에서 컨트롤이 가능한 것은 모두 자동화가 가능하다. 이것이 바로 Control Automation이다. 따라서 클라우드를 이용하면 소프트웨어를 가지고 모든 것을 컨트롤할 수 있는 시스템을 구성할 수 있다.  
+
+### Performance & Optimization
+
+- Performance : 물리 머신속 자원이 집중이 되는 경우 다른 서비스들은 성능이 떨어질 수 있다. 이러한 현상을 `Noise Neighborhood Side effect`라고 한다. 또한, IO 장치에서 문제가 있다. CPU나 메모리의 경우는 빠른 가상화가 가능하지만 Storage와 Network 장비 경우 속도가 느려 Performance 문제로 남아있다.
+
+이러한 Performance guarantees 문제를 해결하기 위해서 병렬화(Parallel computing)를 이용해서 해결하려고 한다.  
+
+### Accessibility & Portability
+
+- Accessibility : 서비스에 대해 접근이 쉬운 정도로, http를 통해서 해결이 됐다. 클라우드에서는 모든 서비스의 엔드포인트를 일반적인 http나 https로 사용하므로, 인터넷이 가능한 곳에는 어디서든 접근이 가능하다.
+
+- Portability : 이동성을 뜻하는데 웹 서비스를 사용하므로, 특정한 기기에 종속적이지 않으며, 어떠한 장비든지 웹 서비스에 접근만 가능하다면 사용이 가능하다.
+
+## 클라우드 컴퓨팅의 이득
+
+### 기업에서의 이득
+
+- 초기 투자자본의 감소
+- 유지보수 비용의 감소
+
+앞의 두 가지는 클라우드의 초창기 이득이였지만, 이후에는 다음과 같은 이득에 집중했다.
+- **기업의 특성에 집중**
+- 자원(인적, 자본) 유용성 증가
+
+### 개인의 이득
+
+- 개인의 자원 절약
+- 여러 장비에서 접근 가능
+
+---
+
+# 클라우드 서비스 모델과 배포 모델
+
+## 서비스 모델
+
+- Infrastructure as a Service (Iaas)
+- Platform as a Service (Paas)
+- Software as a Service (Saas)
+
+| Enterprise IT |
+|---|
+| Applications |
+| Security |
+| Database |
+| Operating System |
+| Virtualization |
+| Servers |
+| Storage |
+| Networking |
+| Data Center |
+
+이러한 모양이 기존의 회사에서 사용하는 소프트웨어 스택이라고 생각하면 된다. 이를 토대로 서비스 모델들의 각각을 알아볼 수 있다.  
+
+### Infrastructure as a Service (Iaas)
+
+위의 소프트웨어 스택에서 CPU, 메모리, 네트워크, Storage 장치를 Virtualization해서 Resource Management Interface와 System Management Interface를 만들어 클라우드에서 제공하는 방식이다. 일반적으로는 OS까지 설치해서 제공한다.  
+
+
+### Platform as a Service (Paas)
+
+Applications를 제외하고 전부 클라우드에서 제공하는 방식이다. Platform 또한 다양한 형태로 제공될 수 있다. DB나 웹 서버가 소비자가 원하는 플랫폼이 아닐 수 있기 때문이다.
+프로그래밍 IDE에 경우에는 보는 관점에 따라 Paas, Saas 라 할 수 있다. 따라서 관점에 얽매이지말고 서비스의 형태를 잘 찾는 것이 중요하다.  
+
+### Software as a Service (Saas)
+
+클라우드에서 소프트웨어 스택을 모두 구현해서 유지보수까지 신경쓰지 않아도 되는 방식이다.  
+
+최근에는 물리서버 하나만 제공해주는 형식의 서비스도 이루어진다. 이것을 bare rental이라고 한다. 이외에도 엄청 다양한 서비스를 제공한다. AI as a Service, Block Chain as a Servcie 등 많이 이루어져서 구분이 모호해졌다.  
+
+## 배포 모델
+
+- Public Cloud
+- Private Cloud
+- Commuunity Cloud
+- Hybrid Cloud
+- Multi Cloud
+
+### Public Cloud
+
+공용 클라우드로, 누구든지 자원을 공유하면서 사용할 수 있고 그에 해당하는 돈만 지불하면 된다.  
+같은 종류의 인프라를 사용하고, 공통적인 정책, 여러 사람들이 공유할 수록 가격이 싸진다. 또한, 각 사용자 별로 자원의 사용량이 정해져있어서 서로 독립적인 특징을 가지고 있다. 
+
+### Private Cloud
+
+사용하는 사람들이 특정되는 클라우드로, 일반적으로 기업 내에 개발에 사용되는 클라우드다. 따라서 불특정 다수가 사용하는게 아니라 자원들을 공유해서 사용하게 된다.  
+다른 종류의 인프라를 사용할 수 있고, 각각의 부서에 맞춰 정책을 골라서 시행할 수 있다. 자원을 분리해 줄 수 있으며, 모든 권한을 줄 수 있다.  
+
+### Community Cloud
+
+두 개 이상의 Private Cloud를 교류 가능하게하는 클라우드의 형태이다.
+
+### Hybrid Cloud
+
+두 개의 Cloud가 긴밀하게 협조하는 클라우드 형태이다. 하나의 서비스를 서로 다른 클라우드에서 제공하는 기능을 사용하기 위해서 쓰는 클라우드이다.
+
+### Multi Cloud
+
+하이브리드 클라우드와 매우 흡사하나, 차이점을 보면 멀티 클라우드는 여러 벤더를 걸쳐서 이용하지만, 하이브리드 클라우드는 여러 배포 유형 사이에 통합이나 오케스트레이션(클라우드 마다 자원의 수요가 높은 클라우드의 공급을 높이는 것)이 이루어지는 경우를 하이브리드 클라우드라고 한다.  
+
+---
