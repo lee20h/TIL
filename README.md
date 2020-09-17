@@ -2288,3 +2288,173 @@ Applications를 제외하고 전부 클라우드에서 제공하는 방식이다
 하이브리드 클라우드와 매우 흡사하나, 차이점을 보면 멀티 클라우드는 여러 벤더를 걸쳐서 이용하지만, 하이브리드 클라우드는 여러 배포 유형 사이에 통합이나 오케스트레이션(클라우드 마다 자원의 수요가 높은 클라우드의 공급을 높이는 것)이 이루어지는 경우를 하이브리드 클라우드라고 한다.  
 
 ---
+
+- 17日  
+
+카카오 1차 코딩테스트에 떨어지고 다음을 위해서 계속 알고리즘을 공부해야겠다. 너무 부족한 것을 느껴 앞으로는 다른 공부보다 PS에 집중을 쏟아야겠다.  
+
+베스트앨범
+```cpp
+#include <string>
+#include <vector>
+#include <map>
+#include <algorithm>
+using namespace std;
+
+vector<int> solution(vector<string> genres, vector<int> plays) {
+    vector<int> answer;
+    map<string, int> m;
+    map<int, string> rev;
+    int len = genres.size();
+    
+    for (int i=0; i<len; i++) {
+        m[genres[i]] += plays[i];
+    }
+    int a = 0;
+    string s;
+    for (auto it = m.begin(); it != m.end(); it++) {
+        rev[-(it->second)] = it->first;
+    }
+    
+    for (auto it = rev.begin(); it != rev.end(); it++) {
+        vector<pair<int,int>> v;
+        for (int i=0; i<genres.size(); i++) {
+            if(genres[i] == it->second) {
+                v.push_back({-(plays[i]),i});
+            }
+        }
+        sort(v.begin(),v.end());
+        if(v.size() == 1)
+            answer.push_back(v[0].second);
+        else {
+            answer.push_back(v[0].second);
+            answer.push_back(v[1].second);
+        }
+    }
+    
+    return answer;
+}
+```
+map 컨테이너에 장르를 넣은 뒤 가장 많이 플레이 된 장르를 구하고 오름차순을 통해서 그 장르의 1-2번째 곡을 구한다.  
+
+셔틀버스
+```cpp
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int convert(string hour, string min) {
+    int h = stoi(hour) * 60;
+    int m = stoi(min);
+    return h + m;
+}
+
+string solution(int n, int t, int m, vector<string> timetable) {
+    string answer = "";
+    vector<int> crew;
+    for (int i=0; i<timetable.size(); i++) {
+        string str = timetable[i];
+        string hour = str.substr(0,2);
+        string min = str.substr(3,2);
+        crew.push_back(convert(hour,min));
+    }
+    sort(crew.begin(),crew.end());
+    
+    int start = 540;
+    int ans, idx = 0;
+    
+    for (int i=0; i<n; i++) {
+        int size = m;
+        for (int j=idx; j<crew.size(); j++) {
+            if(crew[j] <= start)
+                idx++, size--;
+            if(size == 0)
+                break;
+        }
+        
+        if(i == n-1) {
+            if(size == 0) {
+                ans = crew[idx-1]-1;
+            }
+            else {
+                ans = start;
+            }
+        }
+        start += t;
+        if(start >= 24 * 60)
+                break;
+    }
+    
+    int hour = ans/60;
+    int min = ans%60;
+    if(hour < 10)
+        answer = "0" + to_string(hour);
+    else
+        answer = to_string(hour);
+    answer += ":";
+    if(min < 10)
+        answer += "0" + to_string(min);
+    else
+        answer += to_string(min);
+    
+    
+    return answer;
+}
+```
+카카오 크루들이 타는 셔틀버스 시간에 맞춰서 콘이 언제 탈것인가 찾는 문제로, 구현을 어렵지 않았지만 시간을 조정하기가 쉽지 않았다. 먼저, 크루들의 셔틀 타는 시간을 전부 정렬한 뒤 셔틀에 최대 인원에 맞춰서 태운다. 이후 마지막 셔틀에서 인원이 다 찼다면 마지막 크루를 빼고 콘을 태운 뒤 마지막 크루 멤버보다 1분 더 일찍 태웠다고 한다. 인원이 안 찼다면 해당 시간에 콘을 태운다. 09:00부터 시작하며 23:59까지만 셔틀이 다니므로, 넘는 시간은 제외하고 해당 시간을 구하면 된다.  
+
+키패드 누르기
+```cpp
+#include <string>
+#include <vector>
+
+using namespace std;
+
+string solution(vector<int> numbers, string hand) {
+    string answer = "";
+    int left = 10, right = 12;
+    for (int i=0; i<numbers.size(); i++) {
+    	if(numbers[i] == 1 || numbers[i] == 4 || numbers[i] == 7) {
+    		answer += 'L';
+    		left = numbers[i];
+		}
+		else if(numbers[i] == 3 || numbers[i] == 6 || numbers[i] == 9) {
+			answer += 'R';
+			right = numbers[i];
+		}
+		else {
+            if(numbers[i] == 0)
+                numbers[i] = 11;
+            int tempRight = abs(right - numbers[i]);
+            int tempLeft = abs(left - numbers[i]);
+            int distRight = (tempRight/3) + (tempRight%3);
+            int distLeft = (tempLeft/3) + (tempLeft%3);
+            
+			if(distLeft > distRight) {
+				answer += 'R';
+				right = numbers[i];
+			}
+			else if (distLeft < distRight) {
+				answer += 'L';
+				left = numbers[i];
+			}
+			else {
+				if(hand == "right") {
+					answer += 'R';
+					right = numbers[i];
+				}
+				else {
+					answer += 'L';
+					left = numbers[i];
+				}
+			}
+		}
+	}
+    return answer;
+}
+```
+
+이 문제 또한 어렵지 않고 금방 해결할 수 있는 문제나, 계속 잘못된 방향으로 나아가는 생각을 멈추지 못했다. 처음에 생각난 방식대로 나아갔으면 빨리 해결했을텐데 아쉬움이 남는다. 보여주는 지문을 그대로 구현하면 된다. 해당 거리를 구하는 수식만 잘 생각했으면 됐다.  
+
+---
