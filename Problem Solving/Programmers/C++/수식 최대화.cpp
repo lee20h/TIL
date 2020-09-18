@@ -4,15 +4,16 @@
 #include <algorithm>
 using namespace std;
 
+bool check[101]; 
+
 long long solution(string expression) {
     long long answer = 0;
     char op[3]={'+','-','*'};
     sort(op,op+3);
     long long now=0;
     vector<long long> nums;
-    vector<long long> newnums; // 임시벡터
     vector<char> ops;
-    for(int i=0;i<expression.length();i++){
+    for(int i=0;i<expression.length();i++){ // 문자열 파싱 
         if(isdigit(expression[i])){
             now*=10;
             now+=expression[i]-'0';
@@ -23,13 +24,11 @@ long long solution(string expression) {
         }
     }
     nums.push_back(now);
-    int nsize = (int)nums.size();
-    vector<bool> check;
-    check.resize(nsize,false);
-    newnums.resize(nsize);
+    
+    vector<long long> newnums(nums.size());
     do{
-        fill(check.begin(),check.end(),0);
-        newnums.assign(nums.begin(),nums.end());
+        memset(check, false, sizeof(check));
+        newnums = nums;
         for(int i=0;i<3;i++){ // 연산자 우선순위
             for(int j=0;j<ops.size();j++){
                 if (ops[j]==op[i]){
@@ -49,7 +48,6 @@ long long solution(string expression) {
                         case '-' : newnums[k]-=newnums[t];
                             break;
                     }
-
                 }
             }
         }

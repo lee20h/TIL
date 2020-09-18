@@ -2458,3 +2458,175 @@ string solution(vector<int> numbers, string hand) {
 이 문제 또한 어렵지 않고 금방 해결할 수 있는 문제나, 계속 잘못된 방향으로 나아가는 생각을 멈추지 못했다. 처음에 생각난 방식대로 나아갔으면 빨리 해결했을텐데 아쉬움이 남는다. 보여주는 지문을 그대로 구현하면 된다. 해당 거리를 구하는 수식만 잘 생각했으면 됐다.  
 
 ---
+
+- 18日  
+
+수식 최대화
+```cpp
+#include <string>
+#include <cstring>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+bool check[101]; 
+
+long long solution(string expression) {
+    long long answer = 0;
+    char op[3]={'+','-','*'};
+    sort(op,op+3);
+    long long now=0;
+    vector<long long> nums;
+    vector<char> ops;
+    for(int i=0;i<expression.length();i++){ 
+        if(isdigit(expression[i])){
+            now*=10;
+            now+=expression[i]-'0';
+        }else {
+            nums.push_back(now);
+            now = 0;
+            ops.push_back(expression[i]);
+        }
+    }
+    nums.push_back(now);
+    
+    vector<long long> newnums(nums.size());
+    do{
+        memset(check, false, sizeof(check));
+        newnums = nums;
+        for(int i=0;i<3;i++){ 
+            for(int j=0;j<ops.size();j++){
+                if (ops[j]==op[i]){
+                    int k,t;
+                    for(k=j;k>=0;k--){
+                        if (!check[k]) break;
+                    }
+                    for(t=j+1;t<nums.size();t++){
+                        if (!check[t]) break;
+                    }
+                    check[t]=true;
+                    switch(op[i]){
+                        case '*' : newnums[k]*=newnums[t];
+                            break;
+                        case '+' : newnums[k]+=newnums[t];
+                            break;
+                        case '-' : newnums[k]-=newnums[t];
+                            break;
+                    }
+                }
+            }
+        }
+        newnums[0]= abs(newnums[0]); 
+        if (newnums[0] > answer) answer = newnums[0];
+    } while(next_permutation(op,op+3));
+    return answer;
+}
+```
+
+이 문제를 풀면서 이상한 습관이 든 것을 알았다. 바로, 시간을 최대한 효율적으로 쓸려고 완전 탐색같은 것을 시도할려고 하지 않는다는 것이다. 시간이 오래걸릴 것 같으면 시도를 아예 안하다보니 방향이 다른 쪽으로 잡히는 경우가 많다. 이 문제서도 또한 그렇다.  
+
+연산자의 우선순위가 바뀌었을 때 해당 연산의 절댓값의 최대를 구하는 문제이다. 이 문제에서 핵심은 next_permutation으로 가능한 순열만큼 완전 탐색하는 것이다. 문자열에서 연산자와 피연산자를 분리한 뒤 연산을 진행한다. 이 때 왜 연산자에서 sort를 돌리는지 모르겠다. 해당 부분은 다른 블로그 포스팅에서 받았지만 아직도 제대로 이해하지 못했다는 것이 문제다.  
+
+이후엔 연산자를 기준으로 앞 뒤의 피연산자들로 연산을 진행하고 절댓값중 최대를 구하는 것을 모든 순열에서 진행한다.  
+
+보석 쇼핑
+```cpp
+#include <string>
+#include <vector>
+#include <set>
+#include <map>
+using namespace std;
+
+vector<int> solution(vector<string> gems) {
+    vector<int> answer;
+    int left = 0, right = 0;
+    set<string> s;
+    map<string, int> m;
+    for (int i=0; i<gems.size(); i++) {
+        s.insert(gems[i]);
+    }
+    answer.push_back(0);
+    answer.push_back(gems.size()-1);
+    m[gems[0]]++;
+    while(left<=right) {
+        if(m.size() == s.size()) {
+        	if(answer[1] - answer[0] > right - left) {
+        		answer[1] = right;
+        		answer[0] = left;
+			}
+            m[gems[left]]--;
+            if(m[gems[left]] == 0)
+                m.erase(gems[left]);
+            left++;
+		}
+        else {
+            if(right + 1 >= gems.size()) break;
+            else{
+                m[gems[++right]]++;
+            }
+        }
+    }
+    answer[0]++;
+    answer[1]++;
+    return answer;
+}
+```
+보석종류를 모두 담는데 가장 작은 범위를 구하는 문제로, 바로 투 포인터를 떠올렸다. 그리고 set을 통해서 보석 종류 갯수를 구한 뒤 map을 통해 갯수를 셌다. 결국 구하는 것은 가장 작은 범위이므로, 처음에 answer 벡터에 가장 큰 범위를 넣고 투 포인터로 반복문을 돌렸다. map과 set의 사이즈가 같아지면 범위 안에 보석 종류가 다 있는 것이므로, 거기서 가장 작은 크기를 구하기 위해 left 값을 늘려가면서 범위를 구했다. 만약 left가 넘어가게 되면 종류가 사라지므로, erase를 통해서 없애줬다.  
+
+사이즈가 다른 경우에는 right를 증가시키면서 map의 해당 value도 증가시켜줬다. 하지만 right가 범위를 넘는 경우가 있으므로 예외처리가 필수적이다.  
+
+경주로 건설
+```cpp
+#include <string>
+#include <vector>
+#include <queue>
+using namespace std;
+
+int dx[4] = {0, 1, 0, -1};
+int dy[4] = {1, 0, -1, 0};
+
+int solution(vector<vector<int>> board) {
+    int answer = 1e9;
+    queue<pair<pair<int,int>, pair<int,int>>> q;
+    q.push({{0,0},{0,-1}});
+    board[0][0] = 1;
+    int n = board.size()-1;
+    while(!q.empty()) {
+        int y = q.front().first.first;
+        int x = q.front().first.second;
+        int cost = q.front().second.first;
+        int dir = q.front().second.second;
+        q.pop();
+        if(n == y && n == x) {
+            if(answer > cost)
+                answer = cost;
+        	continue;
+        }
+        for (int i=0; i<4; i++) {
+            int px = dx[i] + x;
+            int py = dy[i] + y;
+            
+            if(px < 0 || py < 0 || px == board.size() || py == board.size() || board[py][px] == 1)
+                continue;
+                
+            int pcost = 0;
+			if(dir == -1 || dir == i) 
+				pcost = cost + 100;
+			else
+				pcost = cost + 600;
+			
+			if(board[py][px] == 0 || board[py][px] >= pcost) {
+				board[py][px] = pcost;
+				q.push({{py,px},{pcost,i}});
+			}
+        }
+    }
+    
+    return answer;
+}
+```
+문제를 보자마자 bfs로 해결해야한다고 바로 떠올랐고, 여러 번 시도했지만 실패의 원인을 찾지 못해서 생각보다 오래걸렸다. 바로 그 이유는 cost를 제대로 못 세줬던 것이다. 그것이 실패의 원인이되어 계속 발목을 잡혔다.  
+
+그리고 새롭게 생각한 것이 x와 y를 움직일 때 사용한 인덱스를 queue에 넣어서 그것을 이용하여 직진인지 코너인지 구별했다. 이후 visited와 같은 bool 배열이 아닌 해당 값에 cost들의 합을 집어넣어 다른 길로 가지 않게끔 하였다. 그리고 해당 값보다 작다면 지나갈 수 있게하여 최솟값을 구했다.  
+
+---
