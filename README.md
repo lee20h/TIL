@@ -2630,3 +2630,56 @@ int solution(vector<vector<int>> board) {
 그리고 새롭게 생각한 것이 x와 y를 움직일 때 사용한 인덱스를 queue에 넣어서 그것을 이용하여 직진인지 코너인지 구별했다. 이후 visited와 같은 bool 배열이 아닌 해당 값에 cost들의 합을 집어넣어 다른 길로 가지 않게끔 하였다. 그리고 해당 값보다 작다면 지나갈 수 있게하여 최솟값을 구했다.  
 
 ---
+
+- 19日  
+
+동굴 탐험
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 2e5;
+
+bool check[MAX];
+int before[MAX];
+int hang[MAX];
+vector<int> v[MAX];
+
+void visit(int n) {
+	if(check[n])
+		return;
+	if(!check[before[n]]) {
+		hang[before[n]] = n;
+		return;
+	}
+	check[n] = true;
+	sol(hang[n]);
+	for(int i : v[n])
+		sol(i);
+}
+
+bool solution(int n, vector<vector<int>> path, vector<vector<int>> order) {
+	for(auto &it: path) {
+		v[it[0]].push_back(it[1]);
+		v[it[1]].push_back(it[0]);
+	}
+	for(auto &it: order)
+		before[it[1]] = it[0];
+	if(before[0])
+		return false;
+		
+	check[0] = true;
+	for(int i: v[0])
+		dfs(i);
+	for(int i=0; i<n; i++) {
+		if(!check[i])
+			return false;
+	}
+	return true;
+}
+```
+문제는 방을 들어갈 때 선행 순서가 있을 수 있으며, 그 순서에 의하여 전체 노드를 돌 수 있나 체크하는 문제이다. dfs와 bfs 둘 다 구현이 가능하나, dfs가 직관적이였다. 먼저 dfs를 다 돌면서 선행 조건이 있는데 해당 선행 조건을 들리지 않았다면 hang 배열에 달아놓고 리턴하여 다른 노드를 찾아간다. 이후 만약 자기를 선행 조건으로 삼는 방이 있다면 그 곳을 바로 들려준다. 이후엔 해당 노드에서 갈 수 있는 길을 모두 가준다.  
+
+이러한 방법으로 구현했다. 다른 블로그의 포스팅을 참고하게 되었는데, 이때 이전 값을 어떤 식으로 구해 놓을지 생각을 하지 못했다. O(n)의 시간복잡도로 충분히 빠르고 이해가 쉬운 직관적인 풀이를 통해서 도움을 받았다. 배열을 통해서 이전의 조건을 기입하고, 이후의 가야하는 것을 인덱스를 통해서 만든다는 것을 생각하지 못해서 아쉽다.  
+
+---
