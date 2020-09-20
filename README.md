@@ -2683,3 +2683,107 @@ bool solution(int n, vector<vector<int>> path, vector<vector<int>> order) {
 이러한 방법으로 구현했다. 다른 블로그의 포스팅을 참고하게 되었는데, 이때 이전 값을 어떤 식으로 구해 놓을지 생각을 하지 못했다. O(n)의 시간복잡도로 충분히 빠르고 이해가 쉬운 직관적인 풀이를 통해서 도움을 받았다. 배열을 통해서 이전의 조건을 기입하고, 이후의 가야하는 것을 인덱스를 통해서 만든다는 것을 생각하지 못해서 아쉽다.  
 
 ---
+
+- 20日  
+
+코드포스를 처음으로 등록하여 풀어보았다. 영어 문제라서 해석이 오래걸려서 많은 문제를 풀지 못해서 아쉬움이 남는다. 다음에도 도전해봐야겠다.  
+
+Codeforces Round #671 (Div. 2)
+
+A. Digit Game
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int t;
+	cin >> t;
+	while(t--) {
+		int d;
+		string n;
+		cin >> d >> n;
+		int bOdd = 0, bEven = 0, rOdd = 0, rEven = 0;
+		int e = 0;
+		for (int i=0; i<d; i++) {
+			if(i&1) {
+				if((n[i] - '0') & 1)
+					bOdd++;
+				else
+					bEven++;
+			}
+			else {
+				if((n[i] - '0') & 1)
+					rOdd++;
+				else
+					rEven++;
+			}
+		}
+		if(d & 1) {
+			if(rOdd > 0)
+				cout << 1 << '\n';
+			else
+				cout << 2 << '\n';
+		}
+		else {
+			if(bEven > 0)
+				cout << 2 << '\n';
+			else
+				cout << 1 << '\n';
+		}
+	}
+}
+```
+
+문제를 처음에 이해 못했으나, 돌아가면서 짝수번째 숫자 혹은 홀수번째 숫자에 마킹하는 게임으로, 마지막에 남은 숫자가 짝수냐 홀수냐로 경기의 승패가 갈리는 게임이다. 사용 안하는 변수도 있지만 구현하면서 적어논 그대로 사용했다.  
+
+D1. Sage's Birthday (easy version)
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 1e5;
+long long v[MAX], temp[MAX];
+
+int main() {
+	int n;
+	cin >> n;
+	for (int i=0; i<n; i++) {
+		cin >> v[i];
+	}
+	sort(v,v+n);
+	
+	int ans = 0;
+	
+	if(n&1) {
+		ans = n/2;
+		int idx = n-1;
+		for (int i=n-1; i>=0; i-=2)
+			temp[i] = v[idx--];
+		idx = 0;
+		for (int i=1; i<n; i+=2)
+			temp[i] = v[idx++];
+	}
+	else {
+		ans = n/2-1;
+		int idx = n-3;
+		temp[0] = v[n-2];
+		temp[n-1] = v[n-1];
+		for (int i=n-2; i>1; i-=2)
+			temp[i] = v[idx--];
+		idx = 0;
+		for (int i=1; i<n-2; i+=2)
+			temp[i] = v[idx++];
+	}
+	cout << ans << '\n';
+	for (int i=0; i<n; i++)
+		cout << temp[i] << ' ';
+}
+```
+
+영어에도 당황했지만 오타를 내서 풀지못하고 멈춰있던 문제이다. 이 문제 또한 어렵지 않게 풀 수 있으나, 오타를 찾지 못해 시간을 상당히 뺏겼다.  
+
+다음 contest부터는 천천히 문제를 읽어보고 시작할려고 한다.  
+
+---
