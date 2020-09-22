@@ -89,11 +89,14 @@ exports.SE_list = [
     'SE/시스템 공학과 소프트웨어 공학.md',
     'SE/소프트웨어 개발의 일반적 공정 과정.md',
     'SE/소프트웨어 개발에 대한 오해와 실체.md',
-    'SE/소프트웨어 개발 방법론.md'
+    'SE/소프트웨어 개발 방법론.md',
+    'SE/신속한 소프트웨어 개발을 위한 방법론.md'
 ]
 
 exports.Network_list = [
-    'Network/Roadmap.md'
+    'Network/Roadmap.md',
+    'Network/Network Layer.md',
+    'Network/Network Layer Protocol.md',
 ]
 
 exports.Travis_list = [
@@ -106,12 +109,15 @@ exports.Vuepress_list = [
 ]
 
 exports.Linux_list = [
-    'Linux/디렉토리와 파일.md'
+    'Linux/디렉토리와 파일.md',
+    'Linux/관리 권한 및 접근 권한.md'
 ]
 
 exports.OSS_list = [
     'OSS/오픈소스 소프트웨어의 역사.md',
-    'OSS/오픈소스를 왜 쓰는가.md'
+    'OSS/오픈소스를 왜 쓰는가.md',
+    'OSS/오픈소스 라이선스.md',
+    'OSS/오픈소스 소프트웨어 참여.md'
 ]
 
 exports.Distribute_list = [
