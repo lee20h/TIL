@@ -2820,7 +2820,7 @@ IP 패킷을 Datagram이라고 부르며, 구조는 이전에 본 부분과 같�
 
 ### Checksum 계산
 
-![checksum_calculation](./docs/.vuepress/public/images/Network//checksum_calculation.jpg)  
+![checksum_calculation](./docs/.vuepress/public/images/Network/checksum_calculation.jpg)  
 
 CRC가 막강한 에러체크를 할 수 있지만 어떤 프로토콜이 들어올지 모르기 때문에 유지한다. 덧셈 이후 1의 보수를 취해서 해당 값을 Checksum에 기입한다.
 
