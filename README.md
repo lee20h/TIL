@@ -3510,3 +3510,67 @@ Pull Request (PR)
 - Fork 해서 수행한 변경 내용을 다시 기존 저장소에 적용하고자 요청하는 것
 
 ---
+
+- 23日  
+
+프로그래머스
+
+튜플
+```cpp
+#include <string>
+#include <set>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+vector<int> solution(string s) {
+	vector<int> answer;
+        vector<int> tmp;
+        vector<pair<int, vector<int>>> vec;
+        int i = 0;
+        bool flag = false;
+        for (int j = 0; j < s.size(); j++) {
+            if (s[j] == '{') continue;
+            if (s[j] == '}' || s[j] == ',') {
+                if (flag) {
+                    int num;
+                    if (j - i == 1) num = s[i] - '0';
+                    else num = stoi(s.substr(i, j - i));
+                    tmp.push_back(num);
+                    if (s[j] == '}') { //{} 가 끝났다면
+                        vec.push_back(make_pair(tmp.size(), tmp));
+                        tmp.clear();
+                    }
+                    flag = false;
+                }
+            }
+            else {
+                if (!flag) { i = j; flag = true; }
+            }
+        }
+        sort(vec.begin(), vec.end());
+
+        set<int> chk;
+        for (pair<int, vector<int>> p : vec) {
+            for (int num : p.second) {
+                // 중복되지 않는 값만 넣어줌.
+                if (chk.find(num) == chk.end()) {
+                    chk.insert(num);
+                    answer.push_back(num);
+                }
+            }
+        }
+
+        return answer;
+    }
+```
+
+처음 풀이는 문자열을 각각을 정수형 벡터에 넣은 뒤 벡터의 크기를 통해 정렬을 하였다. 이후 벡터의 이전 인덱스는 현재 인덱스보다 크기가 작기 때문에 이전 인덱스에 들어있는 정수의 합과 현재 인덱스에 들어있는 정수의 합을 비교하면 그 차 만큼 answer벡터에 넣어주면 답이 나온다.  
+
+이러한 풀이 말고 다른 사람들의 풀이를 보다가 가져온 코드이다. 해당 코드는 보기만 해도 쉽게 이해가 되어서 저런식으로 코드를 명료하게 작성할 능력이 필요하다고 생각한다. 다음에는 논리 뿐아니라 코드도 보면 누구나 이해 가능하게 짤 수 있게 노력해봐야겠다는 생각이 들었다.  
+
+---
+
+- 24日
+
+
