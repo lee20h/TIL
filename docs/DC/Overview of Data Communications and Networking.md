@@ -3,6 +3,8 @@ sidebar: auto
 ---
 # Overview of Data Communications and Networking
 
+Data_Communications의 이미지 출처 : McGraw-Hill
+
 ## 데이터의 방향과 흐름
 - Simplex : 단방향  
 - Half-duplex : 반이중 통신  
