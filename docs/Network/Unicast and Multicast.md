@@ -10,7 +10,7 @@ sidebar: auto
 - Anycasting : `1:anyone of them` 방식
 
 
-![overlay_network](./docs/.vuepress/public/images/Network/overlay_network.jpg)
+![overlay_network](/TIL/images/Network/overlay_network.jpg)
 
 **Overlay network** : 응용 프로그램 입장에서 실제 물리적망(검은색) 외에 가상의 논리적 망(녹색)으로 간주 할 수 있다. 2의 지수승으로 점점 늘어날 수 있다. 새로운 인터넷 서비스를 제공할 때 마다 새로운 Overlay network 구성을 고려해 볼 수 있다.
 
