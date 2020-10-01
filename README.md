@@ -4491,3 +4491,45 @@ set-group-id (set group ID upon executin) 실행권한 :
 3. 따옴표가 중첩되면 밖에 따옴표가 효력을 갖는다.
 
 ---
+
+- 1日  
+
+기능개발
+```cpp
+#include <string>
+#include <vector>
+#include <queue>
+using namespace std;
+
+vector<int> solution(vector<int> progresses, vector<int> speeds) {
+    vector<int> answer; 
+    queue <int> q;
+    
+    int bound, rest, day, i, cnt = 0;
+    
+    for (i = 0; i < progresses.size(); i++) {
+        rest = 100 - progresses[i];
+        if (rest % speeds[i] == 0) day = rest/speeds[i];
+        else day = rest/speeds[i] + 1;
+        q.push(day);
+    }
+    
+    bound = q.front();
+    
+    while(!q.empty()) {
+        if (q.front() <= bound) {
+            cnt++;
+            q.pop();
+        }
+        else {
+            bound = q.front();
+            answer.push_back(cnt);
+            cnt = 0;
+        }
+    }
+    answer.push_back(cnt);
+    return answer;
+}
+```
+여러가지 풀이 방법 중 가장 직관적이고 좋은 방법을 찾아서 적어본다. 배포가 하루에 한번만 가능하고 앞에 있는 기능이 되야 뒤에 기능이 배포된다. 따라서 그 부분을 큐로 구현하면 큐의 front가 bound로 정하고 bound 초과하지 않으면 큐에서 기다리는 든 기능을 배포하면 된다. 그 과정을 반복하면 된다.  
+
