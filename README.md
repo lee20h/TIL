@@ -4533,3 +4533,77 @@ vector<int> solution(vector<int> progresses, vector<int> speeds) {
 ```
 여러가지 풀이 방법 중 가장 직관적이고 좋은 방법을 찾아서 적어본다. 배포가 하루에 한번만 가능하고 앞에 있는 기능이 되야 뒤에 기능이 배포된다. 따라서 그 부분을 큐로 구현하면 큐의 front가 bound로 정하고 bound 초과하지 않으면 큐에서 기다리는 든 기능을 배포하면 된다. 그 과정을 반복하면 된다.  
 
+---
+
+- 2日  
+
+다리를 지나는 트럭
+```cpp
+#include <string>
+#include <vector>
+#include <queue>
+using namespace std;
+
+int solution(int bridge_length, int weight, vector<int> truck_weights) {
+    int answer = 0;
+    
+    queue<int> q, bridge;
+    int total_weight = 0;
+    while(1) {
+        int size = bridge.size();
+        for (int i=0; i<size; i++) {
+            int len = bridge.front();
+            bridge.pop();
+            len--;
+            if(len == 0) {
+                total_weight -= q.front();
+                q.pop();
+                continue;
+            }
+            bridge.push(len);
+        }
+        
+        if(truck_weights.size() && total_weight + truck_weights[0] <= weight) {
+            total_weight += truck_weights[0];
+            bridge.push(bridge_length);
+            q.push(truck_weights[0]);
+            truck_weights.erase(truck_weights.begin());
+        }
+        answer++;
+        if(!truck_weights.size() && !q.size())
+            break;
+    }
+    return answer;
+}
+```
+
+3986. 좋은 단어
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, ans = 0;
+	cin >> n;
+	for (int i=0; i<n; i++) {
+		stack<char> st;
+		string s;
+		cin >> s;
+		for (int j=0; j<s.length(); j++) {
+			if(!st.empty() && st.top() == s[j]) {
+				st.pop();
+			}
+			else st.push(s[j]);
+		}
+		if(st.empty())
+			ans++;
+	}
+	cout << ans;
+} 
+```
+
+프로그래머스에서 다리를 지나는 트럭 문제로, 전형적인 큐 문제이다. 큐를 하나만 사용하는게 아니라 다리 무게 큐, 시간 큐를 통해 시간 초를 세주었다. 백준 온라인 저지에서 좋은 단어라는 문제로, 이 문제 또한 전형적인 스택 문제이다. 괄호 검사와 같이 스택에 넣고 스택의 탑과 비교하여 해당 문자가 같으면 팝해주는 식으로 진행한다. 다 끝난 뒤 스택이 비어있는 문장을 세어주면 된다.  
+
+요즘에 긴 연휴와 해커톤으로 인해 감이 많이 죽은 듯하다. 이젠 문제 풀이를 많이 해볼 생각이다. 코드포스와 프로그래머스 풀이를 많이 하고, 코드챌린지와 icpc 지역 예선을 하며 공부의 필요를 많이 느낀다.
