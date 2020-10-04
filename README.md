@@ -237,3 +237,26 @@ Working Directory -> (git add) Staging Area -> (git commit) Local Repository -> 
 Remote Repository -> (git fetch) Local Repository -> (git checkout or git merge) Working Directory
 
 ---
+
+- 4日
+
+프로그래머스 멀쩡한 사각형
+```cpp
+#include <cmath>
+
+long long solution(int w, int h) {
+    long long answer = 0;
+    for(int i = 1; i <= w; i++){
+        double pos = ceil((long long)h / (double)w * i);
+        int block = h - pos;
+        answer += block;
+    }
+    
+    answer = answer * 2;
+    return answer;
+}
+```
+
+해당 문제는 상당히 골치아팠다. 대칭을 생각해서 한쪽만 구한 뒤 2배를 한다는 생각으로 진행하였다. 그 중 y = (h/w)x 함수로 생각해보았다. 따라서 높이에서 그래프가 속한 정사각형의 제일 높은 위치를 빼주었다. 거기서 필요한 부분은 방정식의 x값이 늘어나면서 바뀌는 y의 값을 천장함수로 지정하여 정사각형의 높은 위치를 얻어야한다. 그래프로 생각하면 빨리 풀 수 있었던 문제로 보인다.  
+
+---
