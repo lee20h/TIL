@@ -114,7 +114,8 @@ exports.Vuepress_list = [
 exports.Linux_list = [
     'Linux/디렉토리와 파일.md',
     'Linux/관리 권한 및 접근 권한.md',
-    'Linux/Process and Redirection.md'
+    'Linux/Process and Redirection.md',
+    'Linux/유틸리티.md'
 ]
 
 exports.OSS_list = [
