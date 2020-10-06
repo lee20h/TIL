@@ -122,11 +122,14 @@ exports.OSS_list = [
     'OSS/오픈소스 소프트웨어의 역사.md',
     'OSS/오픈소스를 왜 쓰는가.md',
     'OSS/오픈소스 라이선스.md',
-    'OSS/오픈소스 소프트웨어 참여.md'
+    'OSS/오픈소스 소프트웨어 참여.md',
+    'OSS/git 초급.md',
+    'OSS/git 중급.md'
 ]
 
 exports.Distribute_list = [
     'Distribute/클라우드 컴퓨팅.md',
     'Distribute/클라우드 컴퓨팅의 속성.md',
-    'Distribute/서비스 모델과 배포 모델.md'
+    'Distribute/서비스 모델과 배포 모델.md',
+    'Distribute/AWS Computing Services.md'
 ]
