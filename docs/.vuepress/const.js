@@ -75,7 +75,8 @@ exports.Express_list = [
     'Express/Morgan.md',
     'Express/Body-parser.md',
     'Express/Http-errors.md',
-    'Express/Passport.md'
+    'Express/Passport.md',
+    'Express/Typescript.md',
 ]
 
 exports.Docker_list = [
