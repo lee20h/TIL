@@ -925,3 +925,287 @@ app.get('/', (req:Request, res:Response, next:NextFunction) => {
 자바스크립트를 사용한 express와의 차이는 타입스크립트로 자료형 명시와 콜백에서의 명시 이외에는 없는거 같다. 하지만 코드 작성 방식에 따라서 module로 사용하거나, 클래스를 사용하게 되면 전혀 다른 언어와 같이 보인다는 점이 있다. 그러한 방법은 낯설게만 느껴졌다.
 
 ---
+
+- 8日
+
+# React
+
+Velopert님의 강의를 듣고 정리하였습니다.
+
+## JSX
+
+1. Nested Element
+
+```jsx
+    /* 변경 필요 */
+render() {
+    return (
+        <h1>HI</h1>
+        <h2>I am Error</h2>
+    )
+}
+
+render() {
+    return (
+        <div>
+            <h1>Hi</h1>
+            <h2>Error is gone.</h2>
+        </div>
+    )
+}
+```
+
+2. JavaScript Expression
+
+```jsx
+/* Javascript 표현식은 {} 으로 감싸야한다. */
+render() {
+    let text = "hello React!";
+    return (
+        <div> {text} </div>
+    );
+}
+
+/* 추가적으로 If Else 문 JSX 사용 */
+render() {
+    return (
+        <p> { 1 == 1 ? 'True' : 'False'} </p>
+    )
+}
+```
+
+3. Inline Style
+
+```jsx
+/* JSX 안에서 style을 설정시 string 형식이 아닌 key가 camelCase인 객체 사용 */
+render() {
+    let style = {
+        color : 'aqua',
+        backgroundColor: 'back'
+    };
+
+    return (
+        <div> {style}React</div>
+    );
+}
+
+/* 클래스 사용 시 'className=' 사용 */
+render() {
+    return (
+        <div className='box'>React</div>
+    );
+}
+```
+
+4. Comments
+
+```jsx
+/* JSX에서 주석 사용시 {}으로 감싸줘야한다 */
+
+render() {
+    return (
+        <div>
+            {/* This is How You Comment */}
+            {/* Multi-line
+                Testing*/}
+                React
+        </div>
+    )
+}
+```
+
+## props
+
+- 컴포넌트 내부의 Immutable Data
+- JSX 내부에 { this.props.propsName }
+- 컴포넌트를 사용할 때, <> 괄호 안에 propsName="value"
+- this.props.children은 기본적으로 갖고 있는 props로, <component> -해당 값이 들어감- </component>
+
+1. 기본 값 설정
+
+- Compoent.defaultProps = { ... }
+
+```jsx
+class App extends React.Component {
+    render() {
+        return (
+            <div> {this.props.value} </div>
+        );
+    }
+};
+App.defaultProps = {
+    value: 0
+};
+```
+
+2. Type 검증
+
+- Component.propTypes = { ... }
+
+```jsx
+Class App extends React.Component {
+    render() {
+        retrun(
+            <div>
+                {this.props.value}
+                {this.props.secondValue}
+                {this.props.thirdValue}
+            </div>
+        );
+    }
+};
+App.propTypes = {
+    value: React.PropTypes.string,
+    secondValue: React.PropTypes.number,
+    thirdValue: React.PropTypes.any.isRequired
+};
+```
+
+## state
+
+- 유동적인 데이터
+- JSX 내부에 `{ this.state.stateName }`
+- 초기값 설정이 필수, 생성자(constructor)에서 `this.state = {}` 으로 설정
+- 값을 수정할 때에는 `this.setState({...})`, 렌더링 된 다음엔 `this.state =` 절대 사용하지 말 것
+
+### 예시
+
+```jsx
+class Counter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: 0
+    };
+    this.handleClick = this.handleClick.bind(this);
+  }
+  
+  handleClick() {
+    this.setState({
+      value: this.state.value + 1
+    });
+  }
+  
+  render() {
+    return (
+      <div>
+        <h2> {this.state.value} </h2>
+        <button onClick = {this.handleClick}> Press me </button>
+      </div>
+    );
+  }
+}
+
+class App extends React.Component {
+  render() {
+    return (
+      <Counter/>
+    );
+  }
+};
+
+ReactDOM.render(
+  <App></App>,
+  document.getElementById("root")
+);
+```
+
+1. 
+
+```jsx
+handleClick() {
+    this.setState({
+        value: this.state.value + 1
+    });
+}
+```
+
+2. 
+
+```jsx
+handleClick() {
+    this.state.value = this.state.value + 1;
+    this.forceUpdate();
+}
+```
+
+1과 2는 같은 기능을 하지만, 2번 코드의 경우에는 렌더링 된 후 stat.value를 대입하여 바꾸므로 사용을 지양해야한다.  
+
+
+## Component Mapping
+
+- Javascript Map : 파라미터로 전달 된 함수를 통하여 배열 내의 각 요소를 처리해서 그 결과로 새로운 배열을 생성한다.
+    - `arr.map(callback, [thisArg])`
+        - callback : 새로운 배열의 요소를 생성하는 함수로서, 다음 세가지 인수를 가진다.
+            - currentValue : 현재 처리되고 있는 요소
+            - index : 현재 처리되고 있는 요소의 index 값
+            - array : 메소드가 불러진 배열
+        - thisArg (선택항목) : callback 함수 내부에서 사용할 this 값을 설정
+
+```js
+var numbers = [1,2,3,4,5];
+var processed = numbers.map(function(num) {
+    return num*num;
+})
+
+||
+
+var processed = numbers.map((num) => {
+    return num*num;
+})
+```
+
+### 예제
+
+```jsx
+class ContactInfo extends React.Component {
+  render() {
+    return (
+      <div> {this.props.contact.name} {this.props.contact.phone} </div>
+    )
+  }
+}
+
+class Contact extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      contactData: [
+        {name: 'A', phone: '010-0000-0002'},
+        {name: 'B', phone: '010-0000-0003'},
+        {name: 'C', phone: '010-0000-0004'},
+        {name: 'D', phone: '010-0000-0005'}
+      ]
+    }
+  }
+  
+  render() {
+    const mapToComponent = (data) => {
+      return data.map((contact, i) => {
+        return (<ContactInfo contact={contact} key={i}/>);
+      });
+    }
+    
+    return (
+      <div>
+        {mapToComponent(this.state.contactData) }
+      </div>
+    );
+  }
+}
+
+class App extends React.Component {
+  render() {
+    return (
+      <Contact/>
+    );
+  }
+};
+
+ReactDOM.render(
+  <App></App>,
+  document.getElementById("root")
+);
+```
+
+---
