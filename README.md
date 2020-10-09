@@ -1209,3 +1209,97 @@ ReactDOM.render(
 ```
 
 ---
+
+- 9日
+
+삼각 달팽이
+```cpp
+#include <string>
+#include <cstring>
+#include <vector>
+using namespace std;
+int table[1002][1002];
+
+vector<int> solution(int n) {
+	vector<int> answer;
+    memset(table, -1, sizeof(table));
+	for (int i=1; i<=n; i++) {
+		for (int j=1; j<=i; j++) {
+			table[i][j] = 0;
+		}
+	}
+	int cnt = 1;
+	int y = 1, x = 1;
+	while(1) {
+		bool flag = true;
+		while(1) {
+			if(table[y][x] != 0)
+				break;
+			table[y++][x] = cnt++;
+			flag = false;
+		}
+		y--;
+		x++;
+		while(1) {
+			if(table[y][x] != 0)
+				break;
+			table[y][x++] = cnt++;
+			flag = false;
+		}
+		x-=2;
+		y--;
+		while(1) {
+			if(table[y][x] != 0)
+				break;
+			table[y--][x--] = cnt++;
+			flag = false;
+		}
+		x++;
+		y+=2;
+		if(flag)
+			break;
+	}
+	for (int i=1; i<=n; i++) {
+		for (int j=1; j<=i; j++) {
+            if(table[i][j] == -1 || !table[i][j])
+                continue;
+			answer.push_back(table[i][j]);
+		}
+	}
+    return answer;
+}
+
+```
+
+배열을 먼저 -1로 초기화 한 뒤 정수 n 만큼 배열을 0으로 초기화 했다. 따라서 -1인 부분은 경계선이며 0이 변경 가능한 지역이다. 따라서 아래, 오른쪽, 좌상 대각선 반복을 하되, 0이 아닌 곳을 만나게 되면 멈추도록 설계했다. 전체 큰 반복문은 내부 반복문의 조건에 한번도 맞지 않으면 탈출하도록 하여 해결했다.  
+
+해당 문제를 조금 깔끔하게 코딩하지 못한거 같다. 노력이 필요한 부분이다.  
+
+2 x n 타일링
+```cpp
+#include <string>
+#include <vector>
+
+using namespace std;
+
+const int MOD = 1e9+7;
+
+int solution(int n) {
+    int prev = 1;
+    int cur = 1;
+    for (int i=0; i<n-1; i++) {
+        int temp = (prev + cur) % MOD;
+        prev = cur;
+        cur = temp;
+    }
+    return cur;
+}
+```
+
+다이나믹 프로그래밍에서 대표적인 문제로, 2x1 타일과 1x2 타일로 구성한 가로길이가 주어지면 사용하는 경우의 수를 구하는 문제이다. 나는 바로 캐치하지 못하고 여러가지 경우의 수를 생각해보았다. 따라서 길이가 1, 2, 3 ... 인 예시를  쭉 생각해보았다. 그러자 피보나치와 같은 패턴을 보이는 것을 알 수 있었다. 그렇게 하여 해결할 수 있었다.  
+
+이 부분을 점화식으로 접근해보면, `P(n) = P(n-1) + p(n-2)`와 같이 나온다. 왜냐하면 n번째는 n-1번째에서 가능한 경우의 수는 세로 타일을 하나 넣는 경우다. 그리고 n-2번째에서 가능한 경우는 세로 타일 혹은 가로 타일을 얘기할 수 있다. n-2번째에서 가능한 세로타일을 넣는 경우는 n-1번째에서 이야기한 경우가 포함된 경우다. 따라서 n을 구하고자 할 때는 n-1인 부분과 n-2인 부분을 더해줘야 구할 수 있다고 볼 수 있다.  
+
+따라서 피보나치와 같은 점화식이 구해진다. 해당 점화식을 적용하게 되면 경우의 수를 하나하나 찾아 규칙을 찾은 것과 같다. 이제는 점화식을 먼저 찾아내서 코딩하는 습관을 들여야겠다.
+
+---
