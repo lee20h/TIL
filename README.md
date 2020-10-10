@@ -1303,3 +1303,103 @@ int solution(int n) {
 따라서 피보나치와 같은 점화식이 구해진다. 해당 점화식을 적용하게 되면 경우의 수를 하나하나 찾아 규칙을 찾은 것과 같다. 이제는 점화식을 먼저 찾아내서 코딩하는 습관을 들여야겠다.
 
 ---
+
+- 10日
+
+2020 한국 대학생 프로그래밍 대회 예선을 치뤘다. 3인 1팀으로 각 학교에서 치뤄지는데 전체 101등 학교 3등으로 마치게되었다. 하지만 많은 문제를 빠르게 풀지 못해서 아쉬움이 크다. 오히려 팀원들이 잘 풀어서 그 정도 결과가 나온 것 같다.  
+
+# MongoDB
+
+- Model : Schema를 감싸주는 역할  
+- Schema : 정보들을 집약해주는 역할
+- mongoose : Mongo DB ODM (Object Domcument Mapping) 중 하나로 가장 많이 사용한다.
+- ODM : 객체와 문서를 1:1로 매칭한다는 뜻으로 문서를 DB에서 조회할 때 자바스크립트 객체로 바꿔주는 역할을 한다.
+
+```js
+const mongoose = require('mongoose');
+mongoose.connect('mongodb+srv://root:root@boiler-plate.qbtrt.mongodb.net/<dbname>?retryWrites=true&w=majority', {
+    useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false
+}).then(() => {
+    console.log(`Mongoose Conected`);
+}).catch(err => {
+    console.log(err)
+})
+```
+
+mongoose를 이용하여 등록하는 코드인데, 사실 이 코드를 이용할려면 먼저 mongoDB에서 선 작업이 필요하다. 해당 connect 구문에서의 뒤에 주소를 가져오는 작업이다.  
+
+이후 모델과 스키마를 만들어주는 코드이다.  
+
+```js
+const mongoose = require('mongoose');
+
+const userSchema = mongoose.Schema({
+    name: {
+        type: String,
+        maxlength: 50
+    },
+    email: {
+        type: String,
+        trim: true,
+        unique: 1
+    },
+    password: {
+        type: String,
+        minlength: 3
+    },
+    lastname: {
+        type: String,
+        maxlength: 50
+    },
+    role: {
+        type: Number,
+        default: 0
+    },
+    image: String,
+    token: {
+        type: String
+    },
+    tokenExp: {
+        type: Number
+    }
+});
+
+const User = mongoose.model('User', userSchema);
+
+module.exports = { User }
+```
+
+이와 같이 먼저 Schema를 정의 한 뒤 모델을 그 Schema를 감싸서 모듈화시켜서 내보내게되면 다른 js파일에서 해당 모델을 사용할 수 있다.  
+
+## 회원가입
+
+body-parser 미들웨어와 postman이나 insomnia와 같이 rest api를 보낼 수 있는 툴로 클라이언트가 없는 상태에서 통신할 수 있게 하여 회원가입을 구현하고자 한다.
+
+### body-parser
+
+```js
+const bodyParser = require('body-parser);
+// application/x-www-form-urlencode
+app.use(bodyParser.urlencoded({extended: true}));
+// application/json
+app.use(bodyParser.json());
+```
+body-parser를 사용하게 되면 json형식으로 rest api를 이용하게 될 때 `req.body`와 같은 문법으로 받아서 쉽게 파싱할 수 있다.
+
+### rest api
+
+```js
+app.post('/register', (req, res) => {
+    const user = new User(req.body);
+    user.save((err, userInfo) => {
+        if(err)
+            return res.json({ success: false, err})
+        return res.status(200).json({
+            success: true
+        })
+
+    })
+})
+```
+
+body-parser 미들웨어를 사용하여 바로 User라는 모델에 post로 넘어오는 정보를 등록하는 모습이다. 성공하면 success를 true로 반환하고 실패했다면 success를 false로 반환한 뒤 에러를 출력한다.
