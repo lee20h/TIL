@@ -1317,7 +1317,7 @@ int solution(int n) {
 
 ```js
 const mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://root:root@boiler-plate.qbtrt.mongodb.net/<dbname>?retryWrites=true&w=majority', {
+mongoose.connect('', {
     useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false
 }).then(() => {
     console.log(`Mongoose Conected`);
@@ -1402,4 +1402,365 @@ app.post('/register', (req, res) => {
 })
 ```
 
-body-parser 미들웨어를 사용하여 바로 User라는 모델에 post로 넘어오는 정보를 등록하는 모습이다. 성공하면 success를 true로 반환하고 실패했다면 success를 false로 반환한 뒤 에러를 출력한다.
+body-parser 미들웨어를 사용하여 바로 User라는 모델에 post로 넘어오는 정보를 등록하는 모습이다. 성공하면 success를 true로 반환하고 실패했다면 success를 false로 반환한 뒤 에러를 출력한다.  
+
+---
+
+- 11日
+
+# Mongo DB
+
+## MongoURI 숨기기
+
+Mongoose를 사용할 때 MongoDb와 연결하기 위해서 MongoDB의 아이디와 비밀번호 그리고 클러스터와 데이터베이스 이름까지 다 노출되기 때문에 다른 파일로 관리를 하게 된다.  
+
+이때 node.js는 로컬과 배포시의 환경변수가 다른 점을 이용해서 URI를 다르게 잡아줄려고 한다.  
+
+`key.js`, `dev.js`, `prod.js` 3가지로 봐보자.
+
+key.js
+```js
+if(process.env.NODE_ENV == 'production') {
+    module.exports = require('./prod');
+} else {
+    module.exports = require('./dev');
+}
+```
+`process.env.NODE_ENV` 환경변수의 경우 로컬환경과 배포환경의 값이 다르다 따라서 `production`인 경우는 배포 하는 mongoURL을 달아주고, 아닌 경우에는 개발환경의 mongoURL을 달아줘서 사용하면 된다.  
+
+## node.js bcrypt 미들웨어
+
+[npm 패키지 사이트](https://www.npmjs.com/package/bcrypt)
+
+### 설치
+
+```
+npm install bcrypt
+```
+npm을 이용하여 미들웨어를 설치해준다.
+
+### 사용법
+
+설정
+```js
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+```
+
+비밀번호 암호화
+```js
+bcrypt.genSalt(saltRounds, function(err, salt) {
+    bcrypt.hash(, salt, function(err, hash) {
+        // DB에 비밀번호 속성 Hash값 저장
+    })
+})
+```
+
+### MongoDB와 사용
+
+통신이 오면 해당 모델로 저장을 하게 된다.
+```js
+app.post('/register', (req, res) => {
+    const user = new User(req.body);
+    user.save((err, userInfo) => {
+        if(err) return res.json({ success: false, err})
+        return res.status(200).json({
+            success: true
+        })
+
+    })
+})
+```
+
+스키마와 모델이 정의된 코드에서 bcrypt를 설정해준 뒤 mongoose에서 사용가능한 `pre()` 메소드를 통해서 통신이 왔을 때 save 직전에 비밀번호가 바뀌었다면, 해당 값을 암호화하여 저장하도록 하는 코드이다.
+```js
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
+const userSchema = mongoose.Schema({
+    name: {
+        type: String,
+        maxlength: 50
+    },
+    email: {
+        type: String,
+        trim: true,
+        unique: 1
+    },
+    password: {
+        type: String,
+        minlength: 3
+    },
+    lastname: {
+        type: String,
+        maxlength: 50
+    },
+    role: {
+        type: Number,
+        default: 0
+    },
+    image: String,
+    token: {
+        type: String
+    },
+    tokenExp: {
+        type: Number
+    }
+});
+
+userSchema.pre('save', function(next) {
+    let user = this;
+
+    if(user.isModified('password')) {
+        // 비밀번호 암호화
+        bcrypt.genSalt(saltRounds, function(err, salt) {
+            if(err) return next(err);
+    
+            bcrypt.hash(user.password, salt, function(err, hash) {
+                if(err) return next(err);
+                
+                user.password = hash;
+                next();
+            })
+        })
+    } else {
+        next();
+    }
+})
+
+const User = mongoose.model('User', userSchema);
+
+module.exports = { User }
+```
+
+또한, 비밀번호를 DB에 생성한 뒤 나중에 로그인하기 위해서 비밀번호를 비교하게 된다. 이때는 DB에 저장된 암호화시킨 비밀번호가 아닌 비교하기 위해 들어오는 비밀번호를 암호화시켜서 저장된 비밀번호와 비교하게 된다.  
+
+bcrypt에서의 솔트는 해쉬를 강화한다는 장치로 이해하면 좋다.  
+
+## JWT를 이용한 로그인
+
+JsonWebToken로, node에서 다음과 같이 설치한다.
+
+```
+npm install jsonwebtoken --save
+```
+
+그리고 JWT는 저번에 공부한 것과 같이 cookie, localstroage, session에 저장이 가능하다. 이번에는 cookie에 저장하는 방법으로 할 것이다.
+
+비밀번호 비교
+```js
+userSchema.methods.comparePassword = function(plainPassword, cb) {
+    // plainPassowrd와 encoded password 비교
+    bcrypt.compare(plainPassword, this.password, function(err, isMatch) {
+        if(err) return cb(err);
+        cb(null, isMatch);
+    })
+}
+```
+
+토큰 생성
+```js
+userSchema.methods.generateToken = function(cb) {
+    // jwt를 이용한 token 생성
+    const user = this;
+    const token = jwt.sign(user._id.toHexString(), 'secretToken');
+    user.token = token;
+    user.save(function(err, user) {
+        if(err) return cb(err);
+        cb(null, user);
+    })
+}
+```
+
+post를 통해서 요청을 받아서 `이메일 체크 -> 비밀번호 체크 -> 토큰 생성 후 쿠키 저장` 방식으로 진행한다.
+
+```js
+app.post('/login', (req, res) => {
+    // 이메일이 DB에 있나 체크
+    User.findOne({ email: req.body.email }, (err, user) => {
+        if(!user) {
+            return res.json({
+                loginSuccess: false,
+                message: "제공된 이메일에 해당하는 유저가 없습니다."
+            })
+        }
+        // 있다면 비밀번호가 맞나 체크
+        
+        user.comparePassword(req.body.password, (err, isMatch) => {
+            if(!isMatch) return res.json({loginSuccess: false, message: "비밀번호가 틀렸습니다."});
+            
+            // 맞으면 Token 생성
+            user.generateToken((err, user) => {
+                if(err) return res.status(400).send(err);
+    
+                // 토큰을 저장한다. 쿠키, 로컬스토리지, 세션
+                // 쿠키 저장
+                res.cookie("x_auth", user.token)
+                .status(200)
+                .json({ loginSuccess: true, userId: user._id});
+            })
+        })
+    })
+})
+```
+
+이 부분을 통해 알 수 있던 부분은 스키마에 메소드를 생성할 때 매개변수를 맞춰줘야하는데 이 부분을 콜백함수로 잡아주는 부분이 새로웠다.  
+
+그리고 쿠키에 경우에는 마지막에 `res.cookie("x_aut", user.token)` 부분을 통해서 쿠키를 저장할 수 있다는 것이다. 로컬 스토리지의 경우에는 클라이언트단에서 dom에 접근하여 저장하는 것만 사용해봐서 더욱 간단했다.  
+
+## Auth
+
+클라이언트의 토큰을 복호화했을 때 서버의 토큰과 같다면 인증이 통과하고 해당 토큰을 복호화해서 나온 id의 값이 같다면 해당 정보를 제공하는 것을 인증한다.
+
+```js
+app.get('/api/users/auth', auth, (req,res) => {
+    
+    // 미들웨어를 통과해 여기까지 온다면 인증은 통과됨
+
+    res.status(200).json({
+        _id: req.user._id,
+        isAdmin: req.user.role === 0 ? false : true,
+        isAuth: true,
+        email: req.user.email,
+        name: req.user.name,
+        lastname: req.user.lastname,
+        role: req.user.role,
+        image: req.user.image
+    })
+})
+```
+
+`./middleware/auth.js`
+```js
+const { User } = require('../models/User');
+
+let auth = (req, res, next) => {
+    // 인증 처리
+    
+    // 1. client cookie token 받기
+    const token = req.cookies.x_auth;
+    // 2. Token decode, 유저 찾기
+    User.findByToken(token, (err, user) => {
+        if (err) throw err;
+        if (!user) return res.json({ isAuth: false, error: true });
+        
+        // 요청시에 사용할 수 있게 요청값에 넣어준다.
+        req.token = token;
+        req.user = user;
+        next();
+    })
+    // 3. 유저 있으면 인증 o, 없으면 인증 x
+    
+}
+module.exports = { auth }
+```
+
+순서는 클라이언트 쿠키에 있는 토큰을 받은 뒤 해당 토큰을 복호화하여 유저를 찾아준다. 이후 찾게 된다면 통신에서 사용할 수 있게 요청값에 토큰과 유저를 넣어준다. `next()`를 통해서 미들웨어가 끝난 뒤 넘어갈 수 있게 해준다.  
+
+마지막으로 module로 auth를 만들어서 사용할 수 있게 한다. 
+
+mongoDB model User
+```js
+userSchema.statics.findByToken = function(token, cb) {
+    let user = this;
+
+    // token decode
+    jwt.verify(token, 'secretToken', function(err, decoded) {
+        // 유저 아이디로 찾은 뒤
+        // 클라이언트에서 가져온 token과 db의 token 비교
+        user.findOne({
+            "_id" : decoded,
+            "token": token
+        }, function(err, user) {
+            if(err) return cb(err);
+            cb(null, user);
+        })
+    })
+}
+```
+해당 메소드는 유저 스키마가 token을 복호화시킨 경우 유저아이디가 일치하는 것을 찾은 뒤 token을 비교한 뒤 맞다면 user 스키마를 콜백으로 보내주는 메소드이다.  
+
+## logout
+
+auth를 이용한 로그인 이후에는 로그아웃은 쉽다. 왜냐하면 로그인의 경우는 auth 미들웨어를 만들어서 token을 복호화하여 클라이언트 token과 db의 token을 비교하는 과정을 거치게 된다. token이 같아야 auth를 통과하고 그 이후의 내용을 진행한다.  
+
+로그인의 경우는 db에 저장된 token을 통해서 로그인 유무를 알 수 있었다. 따라서 로그아웃은 db의 해당 유저의 token을 초기화시키게 되면 로그아웃 상태로 체크할 수 있다.  
+
+따라서 다음 코드와 같이 만들게 되면 token을 초기화시킬 수 있다.
+
+```js
+app.get('/api/users/logout', auth, (req,res) => {
+    User.findOneAndUpdate({ _id: req.user._id},{ token: "" }, (err, user) => {
+        if (err) return res.json({success: false, err});
+        return res.status(200).send({
+            success: true
+        })
+    })
+})
+```
+
+auth 미들웨어를 먼저 거치기 때문에 로그인이 되어있어야 auth를 거쳐서 콜백함수를 진행할 수 있다. `findOneAndUpdate` 함수를 통해서 id를 찾고 token을 초기화 시킨다. 이 부분을 Insomnia를 통해서 통신을 해보니 확실히 알 수 있었다.  
+
+---
+
+# react 
+
+## Virtual DOM vs Real DOM
+
+- Real DOM : 여러 요소 중 하나의 요소를 업데이트한 경우 전체 요소를 모두 Reload해야 하는 Super Expensive한 작업
+
+- Virtual DOM : 여러 요소 중 하나의 요소를 업데이트한 경우 해당 요소만 DOM에서 Reload하는 작업
+
+### Virtual DOM
+
+1. JSX을 렌더링. 그러면 Virtual DOM이 Update
+
+2. Virtual DOM이 이전 virtual DOM에서 찍어둔 Snapshot과 비교를 해서 바뀐 부분 찾기 (diffing)
+
+3. 바뀐 부분만 Real DOM에서 바꿈
+
+## Creat React App
+
+예전엔 리액트 앱을 처음 실행하기 위해서 webpack이나 babel같은 것을 설정하기 위해서 많은 시간이 걸렸다. 하지만 이제는 `create-react-app`을 통해 바로 시작할 수 있다.
+
+### Babel
+
+최신 자바스크립트 문법을 지원하지 않는 브라우저들을 위해서 최신 자바스크립트 문법을 ES5 자바스크립트 문법로 변환하여  구형 브라우저에서도 실행 가능하게 함
+
+### Webpack
+
+많은 모듈들을 번들화시켜 간단하게 만들어주는 것으로, 상당히 복잡한 내용을 가지고 있으므로 여기서는 이 정도만 알아두자
+
+### 설치
+
+```
+npx create-react-app .
+```
+
+이전에는 `npm install -g create-react-app`를 사용하여 global 디렉토리에 다운로드 받았었다. 이제는 npx를 이용하여 다운 받지 않고 사용이 가능하다. 이 부분을 살펴보자
+
+## npx
+
+### npm
+
+npm (node package manager)는
+
+1. 레지스트리와 같은 저장소 역할을 한다.
+
+2. 어플리케이션을 실행하거나 빌드할 때 사용한다.
+
+package.json에 npm에 대한 정의가 있으므로 살펴보면 좋다.  
+
+npm을 통해서 install하는 경우 `-g` 옵션을 주지 않는다면 local로 다운로드 하게 된다. 이때는 `node_modules`라는 폴더에 쌓이게 된다.  
+
+`-g`옵션을 주게 되면 프로젝트를 넘어 컴퓨터에 저장을 하는 것이다. 예를 들어 리눅스의 경우 `/usr/local/bin`에 저장이 된다.  
+
+### npx
+
+원래는 create-react-app을 설치할 때는 `npm install -g create-react-app`을 다운을 받았으나, 이제는 npx를 이용하여 다운로드를 받지 않고 npm registry에 있는 것을 받아와서 설치할 수 있다.  
+
+이러한 방법의 장점은 disk storage를 낭비하지 않을 수 있으며, 항상 최신버전을 이용할 수 있다.  
+
+---
+
