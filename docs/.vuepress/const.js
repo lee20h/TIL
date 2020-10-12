@@ -92,7 +92,9 @@ exports.SE_list = [
     'SE/소프트웨어 개발에 대한 오해와 실체.md',
     'SE/소프트웨어 개발 방법론.md',
     'SE/신속한 소프트웨어 개발을 위한 방법론.md',
-    'SE/프로젝트 관리.md'
+    'SE/프로젝트 관리.md',
+    'SE/요구사항 분석과 모델링.md',
+    'SE/기능 모델링.md'
 ]
 
 exports.Network_list = [
