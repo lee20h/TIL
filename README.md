@@ -2219,3 +2219,308 @@ ex)
 - 구조적 설계는 응용분야의 관점에서 컴퓨터 관점으로 이동하여 구조적 분서의 결과에 살을 붙여가는 과정
 
 ---
+
+- 13日
+
+# C Programming on Linux
+
+## Vi
+
+### 라인 복사 및 삭제
+
+- 모든 명령어는 insert mode 에서 esc 키를 눌러 일반 모드로 나온 후, 수행
+- 라인 복사 명령 : yy
+    - 앞에 숫자를 입력하면, 현재 커서가 위치한 라인을 포함한
+아래의 다수 라인을 한번에 “레지스터”로 복사함
+- 라인 삭제 명령 : dd
+    - 앞에 숫자를 입력하면, 현재 커서가 위치한 라인을 포함한
+아래의 다수 라인을 한번에 “레지스터” 로 복사하고, 제거함
+- 레지스터의 붙여넣기 : p
+    - 현재 커서가 있는 곳에서부터 레지스터의 내용을 삽입함
+- VI Register
+    - VI에서 복사한 내용이 임시로 보관되는 공간.
+    - VI 프로그램 간에 공유됨.
+        - 따라서 VI가 종료되어도, 다시 VI를 수행하면 레지스터의 내용을 이용할 수 있음
+        - 이 기능은 한 파일의 내용을 복사해서 다른 파일에 붙여넣을 때 유용함
+
+### 라인 이동 및 관련 명령
+
+- 라인 이동
+    - 사용법 1: “:” 입력 후, 이동할 라인 숫자 입력
+    - 사용법 2: 라인 숫자를 입력하고 Shift + g
+- 관련 명령
+    - 라인의 맨 앞으로 이동하기: 0 (숫자 영)
+    - 맨 위로 이동하기: gg
+    - 맨 밑으로 이동하기: “:$” or “(입력없이) shift + g”
+    - 줄 번호 표시 하기 : “: set number”
+
+### 문자열 찾기 / 바꾸기
+
+- 문자열 찾기
+    - “/”를 입력하고 찾을 문자열 입력
+    - Enter 입력 후, 다음 단어, 이전 단어 검색
+        - 소문자 n: 다음 단어
+        - 대문자 N: 이전 단어
+    - 이전에 찾아본 문자열 불러오기
+        - “/”를 입력한 상태에서 위 아래 화살표 사용
+- 문자열 바꾸기
+    - :[범위]s/찾을문자열/바꿀문자열/[option]
+    - 범위: comma 를 이용해 범위 표현. % 는 전체 영역
+        - 예) 1,10: 첫 번째부터 10번째 라인 내에서 수행.
+    - 찾을 문자열에는 정규 표현식 사용 가능 (regular expression 으로 검색)
+    - Options
+        - g: 범위 내에서 바꾸기 수행
+        - c: 한 항목씩 물어보면서 수행
+        - i: 대소문자 무시
+    - 예) :%s/Protocol/protocol/gc
+
+### 기타
+
+- Undo/Redo (취소하기, 되돌리기)
+    - u: undo
+    - ^r: Redo (CTRL + r)
+- 세로 및 가로 블록 선택, 편집
+    - ^v: Visual block mode (CTRL + v)
+    - 모드 진입 후, 화살표로 선택 후, 편집 명령
+    - 예) 여러 라인에 있는 주석을 한번에 제거
+        - 세로 모드로 여러 주석 문자를 선택 후 delete
+    - 예) 여러 라인에 주석 한번에 넣기
+        - 세로 모드로 영역 선택 후, shift + i 로 입력 모드 진입
+        - 텍스트 입력 후, esc 를 두 번 누름
+- Read-only 파일의 저장
+    - :w 혹은 :wq 뒤에 ! 를 붙임 (force)
+- 외부 텍스트 붙여넣기 모드
+    - :set paste
+
+## nano
+
+- nano - Nano's ANOther editor, inspired by Pico
+    - 전통적으로 메일 클라이언트에서 사용하던 Pico 라는 편집기를 기반으로,
+    - Vi와 같이 여러 리눅스 배포판에서 기본 프로그램으로 사용함
+    - Vi와 비교: “사용하기 쉽다.”
+        - 대부분 단축키가 아래에 나열되어 있어 모르는 기능도 빠르게 활용할 수 있다.
+        - “검색하여 교체하기” (replace) 기능이 보다 편리하게 사용 가능 하다.
+        - 자동 들여쓰기 기능이 더 편리하다.
+- Comments
+    - Vi, nano 모두 기본 에디터이므로 간단한 사용 방법은 익혀두는 것이 좋다.
+    - Vi, nano 모두 간단한 편집 기능은 큰 차이 없으므로, 익숙한 도구를 쓰면 된다.
+    - 초심자가 처음 배운다면?
+        - Nano: 접근성이 높다
+        - Vi: 처음 배울 때 어려울 수 있지만, 보다 다양하고 강력한 기능들을 제공한다.
+    - (!) 결국 다양하고 많은 편집을 필요로 할 때는 윈도우 환경이 훨씬 편리함.
+        - 실제 파일은 리눅스에, 편집은 윈도우(or Mac)에서 수행하는 환경을 구축하는 것이 일반적
+
+## GCC: GNU Compiler Collection
+
+- GNU
+    - 유닉스 환경에서 필수적인 다양한 시스템 소프트웨어를 공개 SW 형태로 제작, 배포하는 그룹
+    - 1983년 부터 활동하며 다수의 SW를 배포하였고, 대다수 SW가 유닉스 환경에서 de facto standard 로 활용되고 있음
+        - De facto standard: 사실상의 표준. 관습, 관례, 제품이나 체계가 시장이나 일반 대중에게 독점적 지위를 가진 것
+    - GNU 패키지 목록
+        - 일상적으로 사용하는 다양한 명령어들이 포함되어 있음 (bash, grep, gzip, tar, …)
+
+- GCC: GNU Compiler Collection
+    - GNU SW 중 가장 유명한 SW의 하나로, 다양한 Architecture (CPU) 환경에서 다양한 언어를 지원함
+    - C, C++, Objective-C, Fortran, Ada, Go, and D
+    - 위 언어를 위한 라이브러리도 포함
+    - 상용 컴파일러와 비교해 성능이 낮다는 인식이 있었으나, 최근에는 많은 상용 레벨 SW를 위한 컴파일러로 널리 활용하고 있음
+        - Linux, MySQL, Apache 등등
+    - https://gcc.gnu.org/
+    - Git repository: official, github
+    - 설치 방법 (j-cloud 인스턴스에서는 수행할 필요 없음)
+        - 패키지 업데이트 후, SW 빌드를 위한 필수 패키지 설치. 개발을 위한 manpage 추가
+        - $ sudo apt update && sudo apt install    build-essential
+        - $ sudo apt-get install manpages-dev
+
+### 컴파일 환경
+
+- 컴파일이란
+    - 텍스트로 작성한 프로그램을 시스템이 이해할 수 있는 기계어로 변환하는 과정
+    - 보통 컴파일 과정과 라이브러리 링크 과정을 묶어서 수행하는 것을 의미
+
+### 사용 방법
+
+- $ gcc <source file>
+    - Output: 컴파일 성공 시, “a.out” executable file (실행 파일) 생성
+- Options
+    - “-o” : 생성된 실행 파일의 이름을 지정
+    - “-Wall” : 모든 레벨의 warning messages 출력
+    - “-O” : optimization 수행. “-O1”, “-O2”, “-O3” 와 같이 최적화 레벨을 지정할 수 있음
+        - https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
+    - “-l” : (소문자 L) 라이브러리 링크. Math, pthread 와 같이 명시적 링크가 필요한 경우
+        - 적절한 library 를 –l 옵션을 이용해 링크해주어야 함
+            - 예) math (-lm) , pthread (-lpthread)
+
+```
+$ gcc test.c
+$ ls
+a.out test.c
+```
+기본 실행파일명은 a.out
+
+```
+$ gcc -o test test.c
+$ ls
+test test.c
+```
+실행파일명 지정은 -o 옵션
+
+## Standard Input and Output
+
+### stdout and stderr
+
+- fprintf()
+    - printf() 와 유사하게 형식이 지정된 문자열 (formatted string)을 출력하되,
+    - 맨 앞의 인자로 출력 방향을 지정할 수 있음
+        - printf()는 fprintf()의 simple version. 실제로 fprintf(stdout, …) 으로 구현됨
+
+### stdin
+
+- Pipe 를 이용한 stdin 입력
+    - Scanf()는 본래 stdin 으로 부터 입력을 받는 함수
+    - Stdin 은 기본으로 console 을 통한 키보드 입력으로 연결되어 있음
+    - Pipe를 이용해 cat 의 수행 결과를 stdin 으로 입력받은 것
+- Stdin, stdout, stderr 의 redirection 을 이용해,
+여러 프로그램 간의 편리한 연동이 가능함
+
+## 명령행 인자
+
+- 명령행 : 사용자가 명령을 입력하는 행 (command line)
+- 명령행 인자 : 명령을 입력할 때 함께 지정한 인자(옵션, 옵션인자, 매개변수 등)
+    - 명령행 인자는 main 함수로 전달됨.
+    - Main 함수의 첫 번째 인자: 인자의 개수 (보통 int argc 로 선언함. Argument count)
+    - Main 함수의 두 번째 인자: 문자열로 된 인자들이 저장된 포인터 배열
+        - 보통 char *argv[] 또는 char **argv 로 선언함. Argument vector
+        - 명령어는 항상 첫 번째 인자
+        
+예) `int main(int argc, char *argv[])`
+
+- 포인터 배열?
+    - 다양한 길이의 문자열이 임의의 개수만큼 저장되는 경우,
+    - 포인터 배열로 다루는 것이 적합함
+
+---
+
+# AWS Storage Services 1: EBS, EFS
+
+| 요구 사항: | 추천 제품: | 
+|---|---|
+|Amazon EC2, 관계형 및 NoSQL 데이터베이스, 데이터 웨어하우징, 엔터프라이즈 애플리케이션, 빅 데이터 처리 또는 백업 및 복구를 위한 영구 로컬 스토리지|Amazon elastic Block Store(Amazon EBS)|
+|Linux 기반의 워크로드를 AWS 클라우드 서비스와 온프레미스 리소스에서 사용할 수 있도록 지원하는 간단하고 확장 가능하며 탄력적인 파일 시스템입니다. 이 제품은 애플리케이션을 중단하지 않고 온디맨드 방식으로 페타바이트 규모까지 확장하도록 구축되어 파일을 추가하고 제거할 때 자동으로 확장되고 축소되므로, 애플리케이션은 필요할 때 필요한 만큼 스토리지를 사용할 수 있습니다.|Amazon ElasticFile System(Amazon EFS)|
+|사용자 생성 콘텐츠, 활성 아카이브, 서버리스 컴퓨팅, 빅 데이터 스토리지 또는 백업 및 복구를 위해 인터넷 위치에서 데이터에 액세스할 수 있도록 지원하는 확장 가능하고 안정적인 플랫폼입니다.|Amazon Simple Storage Service(Amazon S3)|
+|아카이브 및 규제 준수를 위해 테이프를 대체할 수 있는 매우 저렴한 장기 스토리지 클래스| Amazon Glacier 및 Amazon S3 Glacier Deep Archive|
+|고성능 컴퓨팅, 기계 학습 및 미디어 데이터 처리 워크플로우와 같이 컴퓨팅 집약적 워크로드에 최적화된 완전관리형 파일 시스템으로, Amazon S3에 완벽하게 통합되어 있습니다.|Amazon FSx for Lustre|
+|Windows Server를 기반으로 구축된 완전관리형 네이티브 Microsoft Windows 파일 시스템으로, 이 제품을 사용하면 SMB 프로토콜 및 Windows NTFS, AD(ActiveDirectory) 통합, DFS(분산 파일 시스템)에 대한 전체 지원을 비롯하여, 파일 스토리지가 필요한 Windows 기반 애플리케이션을 AWS로 쉽게 이전할 수 있습니다. |Amazon FSx for Windows File Server|
+|버스팅, 계층화 또는 마이그레이션을 위해 Amazon 클라우드 스토리지로 온프레미스 환경을 보강해주는 하이브리드 스토리지 클라우드입니다.| AWS Storage Gateway|
+|유형 및 크기에 상관없이 모든 데이터를 AWS 클라우드로, 혹은 AWS 클라우드에서 이동하는 작업을 간소화 및 가속화할 수 있도록 지원하는 서비스 포트폴리오입니다.| 클라우드 데이터 마이그레이션 서비스|
+|클라우드뿐 아니라 온프레미스에서도 AWS Storage Gateway를 사용해 AWS 서비스 전체에서 데이터 백업을 손쉽게 중앙화하고 자동화할 수 있는 완전관리형 백업 서비스입니다.|AWS Backup|
+
+
+![image](https://user-images.githubusercontent.com/59367782/95824899-0adf4c00-0d6b-11eb-8136-7dcbe70d52ce.png)  
+
+## EBS와 EFS
+
+- EBS (Elastic Block Storage)
+    - Amazon EC2 인스턴스에 연결된 영구 볼륨에 블록 데이터를 저장하고 이를 처리
+    - 일반 HDD, SSD와 같은 블록 기반의 입출력을 지원하는 스토리지
+    - EC2 VM의 OS, 데이터를 저장하기 위한 저장장치로 사용됨
+    - 연간 고장률 AFR: 0.1%~0.2% (일반 HDD: 4%)
+- EFS (Elastic File System)
+    - 간편하고 확장 가능한 파일 시스템에 데이터를 저장 및 공유
+    - Ext4, NTFS와 같이 파일 시스템 access semantics 에 따른 FS 인터페이스를 제공하는 서비스
+    - 자체 고가용성, 내구성을 제공하도록 설계
+    - 용량 자동 확장 및 축소
+
+### EBS Pricing
+
+- Amazon EBS 범용 SSD(gp2) 볼륨
+    - $0.114 프로비저닝된 스토리지의 월별 GB당
+    - 예) 30GB 한달 쓰면? $3.342 = 약 4천원
+- Amazon EBS 프로비저닝된 IOPS SSD(io1) 볼륨
+    - $0.128 프로비저닝된 스토리지의 월별 GB당
+    - $0.067 프로비저닝된 월별 IOPS당
+- Amazon EBS 처리량 최적화 HDD(st1) 볼륨
+    - $0.051 프로비저닝된 스토리지의 월별 GB당
+- Amazon EBS 콜드 HDD(sc1) 볼륨
+    - $0.029 프로비저닝된 스토리지의 월별 GB당
+- Amazon S3에 대한 Amazon EBS 스냅샷
+    - $0.05 저장된 데이터의 월별 GB당
+
+### EFS Pricing
+
+- 표준 스토리지
+    - $0.33 월별 GB당
+- Infrequent Access 스토리지
+    - $0.0272 월별 GB당
+    - $0.011 전송량 기준
+- 프로비저닝된 처리량 유형
+    - $6.60 월별 MB/s
+    
+- 예) 30GB 한달: $9.9 (약 12,000원)
+- EBS보다 약 3배 가량 비쌈.
+    - EFS는 보다 고급의 기능을 제공하기 때문
+    - IA는 약 1/12 수준 (다만 계층 간 전송에 대해 요금 부과) 
+
+![image](https://user-images.githubusercontent.com/59367782/95834620-2866e280-0d78-11eb-9907-ba964f192c3c.png)
+
+## Block storage and File system
+
+- Block storage
+    - 512B 단위로 분할된, (sector)
+    - 0부터 시작하는 선형 주소 공간 (linear address space)에,
+    - 데이터를 읽거나 쓸 수 있는 스토리지 장치
+- File system
+    - 하나의 파일 시스템 내에서 각기 unique name 을 갖는,
+    - File 이라는 독립적인 개체에,
+    - 1B 단위로 분할된,
+    - 0부터 시작하는 선형 주소 공간 (linear address space)에,
+    - 데이터를 읽거나 쓸 수 있는 스토리지 시스템
+    - 일반적으로 블록 스토리지 장치의 상단에 위치함
+        - 실제 데이터는 블록 스토리지에 저장됨
+
+![image](https://user-images.githubusercontent.com/59367782/95825908-85f53200-0d6c-11eb-8002-2e3bd5ecf047.png)
+
+- Block storage (left)
+    - 데이터를 기록하기 위해 블록 스토리지 상의 주소를 직접 사용해야함
+- File system (right)
+    - 파일 시스템이 제공해주는 파일 이라는 추상적 개체를 이용
+    - 모든 데이터는 0부터 시작하는 독립된 주소 공간에 기록할 수 있음
+    - 실제 데이터가 기록되는 공간은 블록 스토리지이며,
+    - 파일의 주소 공간과 블록 스토리지 주소 공간 사이의 mapping 을 파일 시스템이 관리
+        - 이때 이 **매핑 정보** 또한 블록 스토리지에 저장되어야 함
+
+- Block storage 장단점
+    - (장점) 중간 계층을 거치지 않으므로 액세스가 빠르다.
+    - (단점) 같은 주소 공간을 다수가 공유하므로, 데이터 관리가 어려움
+        - 예) A와 B가 동시에 서로 다른 데이터를 0번 주소에 기록하려하면?
+- File system 장단점
+    - (장점) 파일마다 서로 주소 공간이 분리되어 있기 때문에, 서로 분리되어야 할 데이터를 쉽게 관리할 수 있음
+        - 예) 위의 예에서, A와 B는 서로 다른 파일의 주소 공간에 각각 접근하므로 문제가 없음
+    - (단점) 성능 저하
+        - 파일의 데이터가 실제 블록 스토리지 어느 주소에 위치하는지 변환이 필요 (mapping)
+        - 그러나 mapping 정보와 데이터의 메모리 캐싱을 통해 많은 부분 해소됨
+
+## 그외
+
+- S3 (Simple Storage Service)
+    - AWS의 가장 기본적인 Object based storage
+    - 일반적인 클라우드 스토리지와 동일함 (예. 네이버/다음 클라우드)
+    - 내구성: 99.999 999 999% (11-9)
+- Glacier (뜻: 빙하)
+    - 데이터 보관 및 백업을 위한 안전하고 내구성있는 스토리지
+    - 싸고 성능이 느림
+    - 연평균 99.999 999 999%의 내구성
+
+- AWS Storage Gateway
+    - 사용자가 기존에 사용하던 스토리지 인프라 및 데이터를 포함한, 모든 스토리지 서비스를 AWS 클라우드와 통합할 수 있도록 지원
+    - 파일, 볼륨, 테이프 인터페이스 지원
+    - NFS, iSCSI 인터페이스 지원
+
+- AWS Backup
+    - 완전관리형 백업 서비스
+    - 중앙 관리 및 자동화
+        - AWS Storage Gateway를 사용해 AWS 서비스 전체에서 데이터 백업을 손쉽게 중앙집중화하고 자동화
+        - AWS Backup 콘솔에서 클릭 몇 번이면 백업 일정과 보존 관리를 자동화하는 백업 정책을 생성할 수 있음
+
+
+---
