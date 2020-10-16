@@ -2554,3 +2554,18 @@ test test.c
 오늘은 짧으면서도 긴 시간을 캠프 참여하는데 시간을 보냈는데, 이 시간을 통해서 알던 내용도 다시 되짚어보고 실습을 통해서 제대로 Pull Request를 할 수 있게 배워갈 수 있었다. 내일도 이어서 하므로 더 배워갈 수 있었으면 좋겠다.
 
 ---
+
+- 16日
+
+# 2020 공개SW 온라인 체험캠프
+
+[Javascript tutorial.ko](https://github.com/javascript-tutorial/ko.javascript.info)에 Pull request를 날려 merge하는 작업,  
+[git tutorial](http://try.github.io/) 중 [git branch](https://learngitbranching.js.org/?locale=ko)을 통해서 git branch에 대해서 공부할 수 있었다. 그 중 git branch 명령어 중 git rebase와 git merge에 대해 집중적으로 설명해주었다. branch를 나누고 합치는 과정을 보여주며, 직접 learngitbranching에서 해가면서 배울 수 있었다.  
+
+오후에는 git에 대해 집중적으로 배울 수 있었던 반면에 오전에는 실무에서 필요하거나 앞으로 개발 공부하는데에 있어서 도움이 되는 사이트와 조언들을 해주셨다. 그 중 읽어보고 괜찮았던 사이트는 [프레임워크 공부를 멈춰라](https://medium.com/@jongyoungpark/%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8C%ED%81%AC-%EA%B3%B5%EB%B6%80%EB%A5%BC-%EB%A9%88%EC%B6%B0%EB%9D%BC-1afa37644474)라는 사이트로, 여러 프레임워크를 공부하기 보다는 본질에 대해 공부를 하는 것이 좋다고 하는 포스팅이였다. 거기서 추천해준 도서가 여러가지 있었는데 그 중 들어본 도서도 있지만 아예 처음 들어보는 도서도 있어서 새로웠다. 전에 쓴 내용처럼 클린 코드를 아직 다 읽지는 못했지만 읽으면서 느낀 점이 매우 많았었다. 따라서 다른 도서 또한 그 만큼 새로운 정보와 알아야하는 부분을 이야기 해줄 것이라 생각이 된다.  
+
+해당 프로그램은 오픈소스 소프트웨어 개발 수업에서 이어진 전북대학교 2020 공개SW 온라인 체험캠프로, 상당히 많은 것을 알 수 있었다. 실무에서 사용하는 내용과 알면 좋은 내용, git에 대해 겉핥기식으로 알던 지식을 조금 더 늘릴 수 있었다.
+
+---
+
+
