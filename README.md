@@ -2568,4 +2568,257 @@ test test.c
 
 ---
 
+- 17日
+
+# Concurrently
+
+웹을 개발하다보면 서버와 클라이언트를 한 환경에서 실행하는 경우가 있는데 이 때, 터미널 하나당 하나를 구동하게 되면 번거로울 때가 있다. 이 부분을 해결하기 위한 것이 Concurrently이다.  
+
+사용하기 위해선 먼저 설치가 필요하다.
+
+## 설치
+
+```
+$ npm install concurrently express --save
+```
+express를 제해도 상관 없는걸로 보인다.
+
+## 사용법
+
+루트 디렉토리에 들어있는 `package.json`을 수정해주면 된다. 다음과 같은 규칙을 적용하면 사용할 수 있다.
+
+```json
+"start" : "concurrently \"command1 arg\" \"command2 arg\" "
+```
+
+실제로 직접 프로젝트를 만들 때 사용한 부분을 봐보자. server와 client를 나눠서 유지하고 있었다. 이 때 루트 디렉토리에 server, client로 나뉘어진다. 이전까지는 루트 디렉토리에서 server를 실행하고 client 디렉토리로 접근하여 client를 실행하였다. 그 부분을 다음과 같이 변경하였다.
+
+```json
+"scripts": {
+    "start": "node ./server/index.js",
+    "backend": "nodemon ./server/index.js",
+    "dev": "concurrently \"npm run backend\" \"npm run start --prefix client\" "
+  }
+```
+
+server의 경우 다른 폴더에 있는 것을 상대경로로 명시하여 실행하였고, client의 경우에는 위에서 정의한 start와 겹치므로 `--prefix`를 통해 client 폴더를 정의해주고 해당 폴더에서 실행할 수 있게 마련했다.  
+
+이 외에도 폴더가 다른 경우 상대경로를 이용해 이동한 뒤 `&&` 연산을 둬서 이동한 뒤 해당 명령어를 사용할 수 있게 할 수 있다.  
+
+---
+
+# Redux
+
+Redux is a predictable state container for Javascript apps 즉. 상태 관리 라이브러리다.  
+
+컴포넌트간의 통신을 할 때 여러 다른 컴포넌트를 거쳐서 보내는 것이 아닌 다른 별도의 공간에 두고 그 공간을 통해서 통신하는 개념이다.
+
+## Props vs. State
+
+### Props
+
+1. Properties의 줄임말
+2. 컴포넌트간의 통신하는 방식
+3. 통신은 부모 컴포넌트에서 자식 컴포넌트 방향으로만
+4. 부모 컴포넌트에서 자식 컴포넌트로 넘어간 데이터는 바뀔 수 없다. 바꿀려면 새로 통신 되어야한다.
+
+```js
+<ChatMessages
+    messages={messages}
+    currentMember={member}
+/>
+```
+
+### State
+
+1. 부모 컴포넌트에서 자식 컴포넌트로 데이터를 보내는 방식이 아닌 컴포넌트 안에서 데이터를 전달하는 방식 (ex: 검색 창에서 글을 입력할 때 글이 변하는 것은 state를 바꾸는 것)
+2. State는 변할 수 있다.
+3. State가 변한 경우 re-render 된다.
+
+```js
+state = {
+    message: '',
+    attachFile: undefined,
+    openMenu: false,
+};
+```
+
+## Redux Data Flow
+
+strict unidirectional data flow로, 한 방향으로만 흐른다.  
+
+![image](https://user-images.githubusercontent.com/59367782/96329031-0923ca00-1084-11eb-8ce8-6f2266ea2988.png)
+(John Ahn님 자료)
+
+### Action
+
+객체 형식으로 일어난 일을 설명
+
+```js
+{ type: 'LIKE_ARTICLE', articleID: 42 }
+{ type: 'FETCH_USER_SUCCESS', response: { id: 3, name: 'Mary'} }
+{ type: 'ADD_TODO', text: 'Read the Redux docs.' }
+```
+
+### Reducer
+
+Action으로 인한 State가 변하는 것을 설명
+
+```js
+(previousState, action) => nextState
+```
+-> 이전 State과 action object를 받은 후 next state를 리턴한다.
+
+### Store
+
+애플리케이션의 State를 감싸주는 역할로, 여러 메소드가 존재한다. 이러한 메소드를 통해 State를 관리할 수 있다.
+
+## 설치
+
+1. redux
+2. react-redux
+3. redux-promise
+4. redux-thunk
+
+```
+$ npm install redux react-redux redux-promise redux-thunk --save
+```
+
+redux-thunk : dispatch에게 Function을 받는 방법을 알려줌  
+redux-promise : dispatch에게 Promise가 온 경우 대처할 방법을 알려줌  
+
+```js
+import { Provider } from 'react-redux';
+import { applyMiddleware, createStore } from 'redux';
+import promiseMiddleware from 'redux-promise';
+import ReduxThunk from 'redux-thunk';
+import Reducer from './_reducers';
+
+const createStoreWithMiddleware = applyMiddleware(promiseMiddleware, ReduxThunk)(createStore);
+
+ReactDOM.render(
+  <Provider
+    store={createStoreWithMiddleware(Reducer, 
+        window.__REDUX_DEVTOOLS_EXTENSION &&
+        window.__REDUX_DEVTOOLS_EXTENSION()
+      )}
+  >
+
+    <App />
+  </Provider>
+  
+  , document.getElementById('root')
+);
+```
+
+다음과 같이 사용하여서 redux를 설정해준다. 크롬에서 확장프로그램인 Redux Devtools를 다운로드 받고 `window.__REDUX_DEVTOOLS_EXTENSION`을 사용해준다.
+
+---
+
+# React Hooks
+
+## React Component
+
+### Class Component
+
+- Provide more features
+- More Code
+- More Complex Code
+- Slower Performance
+
+```js
+import React, { Component } from 'react'
+
+export default class Hello extends Component {
+    render() {
+        return (
+            <div>
+                hello world
+            </div>
+        )
+    }
+}
+```
+
+### Functional Component
+
+- Provide less features
+- Less Code
+- Simpler Code
+- Faster Performance
+
+```js
+import React from 'react';
+
+export default function Hello() {
+    return (
+        <div>
+            hello world
+        </div>
+    )
+}
+```
+
+![image](https://user-images.githubusercontent.com/59367782/96329768-ddf0a900-108a-11eb-843f-8f16477a8cb4.png)
+[출처](https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/)
+
+1. Constructor에서 State를 초기화
+2. Render에서 html dom에 알맞게 배치해줌 (jsx) 
+3. ComponentDidMount or Update를 통해 데이터를 가져오거나 설정하는 등 기능을 함
+
+Functional Component에서는 이러한 lifecycle을 모두 사용할 수 없다. 이러한 문제를 해결하기 위해 Hook이 개발되었다.  
+
+Class, Functional Component로 같은 기능을 하는 것을 hook를 사용하는 예를 보자.  
+
+Class Component
+```js
+import React, { Component } from 'react'
+import Axios from 'axios'
+
+export default class Hello extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { name: "" };
+    }
+
+    componentDidMount() {
+        Axios.get('/api/user/name')
+            .then(res => {
+                this.setState({ name: res.data.name })
+            })
+    }
+
+    render() {
+        return (
+            <div>
+                My name is {this.state.name}
+            </div>
+        )
+    }
+}
+```
+
+Funtional Component
+```js
+import React, { useEffect, useState } from 'react'
+import Axios from 'axios'
+
+export default function Hello() {
+    const [Name setName] = useState("") // constructor
+    useEffect(() => { // Mount
+        Axios.get('/api/user/name)
+            .then(res => {
+                setName(res.data.name)
+            })
+    }, [])
+
+    return ( // render
+        <div>
+            My name is {Name}
+        </div>
+    )
+}
+```
+
+---
 
