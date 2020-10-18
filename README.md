@@ -2822,3 +2822,124 @@ export default function Hello() {
 
 ---
 
+- 18日
+
+# react & node cookie 저장
+
+react & node로 회원가입 boiler-plate를 만드는 과정에서 로그인할 때 브라우저에 cookie 저장하는 부분이 있다. 이 부분에 있어 cors만 해결하면 된다고 생각했지만, 제대로 해결할 수 없었다.  
+
+어떤 부분이 문제인지 확인하기 위해 추적해보니 cookie 저장하는 부분이 작동하지 않는 것을 보았다. insomnia와 네트워크 탭에서의 헤더부분에서는 cookie가 제대로 설정되지만 브라우저에는 저장이 되지 않았다.  
+
+[참고 사이트](https://ssungkang.tistory.com/entry/React-axios-%EC%9D%98-withCredentials)을 통해서 react에서 axios로 통신을 할 때 `withCredentials` 이 속성을 true로 설정해주면 된다하여 다음과 같이 코드를 고쳤다.  
+
+```js
+export function loginUser(dataTosubmit) {
+    const request = axios.post('http://localhost:5000/login', dataTosubmit, { withCredentials: true })
+    .then(res => res.data)
+
+    return {
+        type: LOGIN_USER,
+        payload: request
+    }
+}
+```
+
+redux에서 action 부분의 코드인데 여기서 withCredentials를 true로 바꿔주면 브라우저에 쿠키가 저장된 것을 볼 수 있었다.  
+
+![image](https://user-images.githubusercontent.com/59367782/96366543-31462280-1183-11eb-81e9-840a4bc29d8f.png)
+
+```js
+const onClickHandler = () => {
+    axios.get('http://localhost:5000/logout', { withCredentials: true })
+        .then(res => {
+            console.log(res.data);
+            if(res.data.success) {
+                props.history.push('/login')
+            } else {
+                alert('로그아웃 실패')
+            }
+        })
+}
+```
+
+로그아웃 버튼을 누르게 되면 브라우저의 쿠키에 접근하여 jwt를 받아오고, db의 token과 비교하여 같으면 브라우저상의 쿠키 token과 db의 token을 지우는 방식으로 하였는데, 이 부분에서도 withCredentials 속성이 꺼져있어 브라우저로부터 쿠키를 받지 못하는 상황이 발생하였다. 이 부분도 속성을 켜주니 바로 해결이 가능했다.  
+
+처음에는 node에서 저장이 안되는 것 같아서 여러가지 시도를 해보면서 검색을 해보았지만 전혀 진전이 없었고, react에서는 무엇이 잘못된지 몰라서 검색을 통해 알 수 있었다. 아무래도 node에서 요청을 받아 처리를 하지만 대부분의 값들이 react에 저장되어 서로 통신을 막혔던 것 같다. 이 boiler-plate를 만들면서 cors에 대해서 조금 더 공부할 수 있었다.  
+
+---
+
+# react Auth
+
+react에서 auth를 위해 HOC를 사용해보고 공부한 점을 적어본다. HigherOrderComponent는 function로, Velopert님의 [블로그](https://velopert.com/3537)를 통해서 이해할 수 있었다.  
+
+이후 인증을 위해서 사용하는 HOC는 
+
+1. Auth라는 HOC을 만든 뒤 만든 컴포넌트를 다 넣는다.
+2. Auth가 Backend에 Request를 보낸다.
+3. Backend로부터 Auth에 속한 상태 정보를 가져온다.
+
+이런 식으로 각 컴포넌트마다 2~3번을 반복하며, 상태를 확인해 각 컴포넌트에 접근을 통제한다.  
+
+예를 들어 로그인한 유저는 로그인 페이지와 회원가입 페이지에 접근 할려하면 접근을 막는 방식이다.  
+
+```js
+<Switch>
+    <Route exact path="/" component={Auth(LandingPage, null) } />
+    <Route exact path="/login" component={Auth(LoginPage, false) } />
+    <Route exact path="/register" component={Auth(RegisterPage, false) } />
+</Switch>
+```
+HOC로 만든 Auth라는 컴포넌트안에 모든 페이지를 넣고 관리하는 식으로 만들었다.  
+
+Auth.js
+```js
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { auth } from '../_actions/user_action'
+
+export default function (SpecificComponent, option, adminRoute = null) {
+    // SpecificComponent : 컴포넌트 자체
+
+    // option : null => 아무나 출입 가능
+    // true => 로그인 유저만 출입가능
+    // false => 로그인 유저 출입불가
+
+    // adminRoute : 관리자만 출입
+
+    function AuthenticationCheck(props) {
+        const dispatch = useDispatch();
+
+        useEffect(() => {
+            dispatch(auth())
+                .then(res => {
+                    console.log(res);
+                    // 로그인 안한 상태
+                    if(!res.payload.isAuth) {
+                        if(option) {
+                            props.history.push('/login');
+                        }
+                    } else {
+                        // 로그인 한 상태
+                        if(adminRoute && !res.payload.isAdmin) {
+                            props.history.push('/');
+                        } else {
+                            if(!option) { // 로그인 한 경우 접근 불가
+                                props.history.push('/');
+                            }
+                        }
+                    }
+                });
+            
+        }, [])
+
+        return (
+            <SpecificComponent />
+        )
+    }
+    return AuthenticationCheck;
+}
+```
+
+backend에서 auth라는 요청이 날라오면 현재 클라이언트의 권한을 보내준다. 그 권한을 통해서 option에 3가지 조건을 둬서 컴포넌트의 접근을 통제하는 식으로 코딩을 하였다. HOC을 제대로 이해하지는 못했지만 인증을 위해서 하는 기능은 이해했으므로 이렇게 적어본다.
+
+---
