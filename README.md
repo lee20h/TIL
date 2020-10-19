@@ -2943,3 +2943,519 @@ export default function (SpecificComponent, option, adminRoute = null) {
 backend에서 auth라는 요청이 날라오면 현재 클라이언트의 권한을 보내준다. 그 권한을 통해서 option에 3가지 조건을 둬서 컴포넌트의 접근을 통제하는 식으로 코딩을 하였다. HOC을 제대로 이해하지는 못했지만 인증을 위해서 하는 기능은 이해했으므로 이렇게 적어본다.
 
 ---
+
+- 19日
+
+# AWS Storage Services 2 : S3
+
+## S3 : Simple Storage Service and Glacier
+
+Amazon S3 : 어디서나 원하는 양의 데이터를 저장하고 검색할 수 있도록 구축된 객체 스토리지
+
+### 장점
+
+Amazon에서 말하는 장점
+
+- 업계 최고의 성능, 확장성, 가용성, 내구성
+- 광범위한 비용 효율적 스토리지 클래스
+- 타의 추종을 불허하는 보안, 규정 준수, 감사 기능
+- 세부적인 데이터 제어를 위한 관리 도구
+- 분석을 위한 쿼리 인 플레이스 서비스
+- 지원성이 가장 높은 클라우드 스토리지 서비스
+
+### 특징
+
+- 2006년에 출시된 최초 AWS 서비스
+- 객체 기반의 무제한 파일 저장 스토리지
+- URL을 통해 손쉽게 파일 공유 가능
+- 99.999999999% 내구성
+- 정적 웹 사이트 호스팅 서비스 가능
+
+### Object Storage
+
+- Object = file + metadata + unique ID
+    - Metadata: 파일에 관한 추가적인 정보
+        - 이름, 크기, 날짜, 권한 등 기본적인 정보 외에도 사진이라면 해상도, 찍은 위치, 시간, 누가 포함되어있는지, 영화라면 러닝타임 등 다양한 정보를 포함함
+    - Unique ID
+        - 특정 domain에서 구분할 수 있는 ID 제공
+- Object에 대해 제공되는 서비스
+    - 내부: 가용성, 내구성의 강화, 중복방지(deduplication)와 계층적 스토리지 구성 등을 통한 저장장치의 효율적 사용
+    - 외부: 웹 기반의 API 제공, 버전 관리, 암호화, 모니터링, 백업
+
+### S3 Bucket
+
+- 파일들을 적재하는 단위
+    - 내부에 폴더를 생성 가능 (일반 스토리지 장치에서 파일 시스템과 유사)
+    - DNS 주소에 포함될 수 있는 형태의 이름을 가지며 변경 불가
+- OLD: 하나의 Region 내에서 unique name 을 갖고 구분함
+    - 예) Seoul region 의 hcpark1 bucket
+        - Seoul region 내에서는 같은 이름을 가질 수 없음
+        - 다른 region 에서는 가능
+- NEW: Global unique name
+    - Region 단위의 name space를 global로 확장
+    - 그러나 데이터가 실제 저장되는 리전은 설정해야 함
+
+[버킷 규제 및 제한](https://docs.aws.amazon.com/ko_kr/AmazonS3/latest/dev/BucketRestrictions.html)
+
+### S3 스토리지 옵션
+
+- Amazon S3 - 무제한 스토리지
+    - 99.99% 가용성 / 99.999999999% 내구성
+    - EBS에 대비 20%까지 가격이 저렴
+
+- Amazon S3 - Infrequent Access Storage
+    - S3와 같은 내구성 및 성능 / 99.9% 가용성
+    - 기존 S3 대비 58% 가격 절감 가능 / 최근 백업에 사용 가능
+
+- Amazon Glacier - 데이터 백업
+    - S3와 같은 내구성, 성능 및 가용성 / 3~5시간 내 데이터 꺼내기
+    - S3 표준 ㄷ내비 최고 77% 가격이 절며
+    - 아케이빙, 장기간 백업 및 오래된 로그 데이터
+
+밑으로 갈수록 사용하지 않고 보관하는 데이터를 넣는다.
+
+### New Storage Classes
+
+- Amazon S3 One Zone-Infrequent Access(S3 One Zone-IA)
+    - 단일 AZ에 데이터를 저장하며 비용이 S3 Standard-IA보다 20% 낮음
+    - 다른 S3 class는 최소 3개의 AZ에 저장하여 가용성, 복원력 높음
+- Amazon S3 Intelligent-Tiering(S3 Intelligent-Tiering)
+    - 성능 영향 또는 운영 오버헤드 없이 가장 비용 효과적인 액세스 계층으로 데이터를 자동으로 이동하여 비용을 최적화함
+    - 자주 접근하는 데이터에 대한 IA, Glacier로의 이동은 비용을 증대
+        - 따라서 액세스 패턴의 모니터링에 AI를 적용, 보다 최적의 관리 제공
+- Amazon S3 Glacier Deep Archive(S3 Glacier Deep Archive)
+    - 가장 저렴한 비용의 스토리지 클래스이며 1년에 한두 번 정도 액세스할 수 있는 데이터의 장기 보관 및 디지털 보존을 지원
+    - 규제 규정 준수 요건을 충족하기 위해 7-10년 이상 데이터 세트를 보관하는 고객(금융 서비스, 의료, 공공 부문) 대상
+
+### 수명 주기를 통한 비용 관리
+
+- 일반적인 수명 주기 시나리오의 설정
+    - 데이터는 우선 S3 standard 에 저장됨
+    - 30일 간 접근하지 않은 데이터는 자동으로 IA로 이전
+    - 90일 간 접근하지 않은 데이터는 자동으로 Glacier 로 이전
+- 문제점
+    - 일반적인 액세스 패턴은 소수의 데이터에 액세스가 집중되는 형태
+        - 80-20 Pareto 법칙: 80%의 액세스는 20%의 데이터에 집중됨
+        - 그렇다면, 20%의 데이터만 S3 standard에 상주하고, 나머지는 IA, Glacier에 저장되면서 비용이 절약될 수 있음
+- 그런데, 일반적이지 않다면?
+    - IA, Glacier로 이전된 데이터에 대한 액세스가 발생하면, 비싼 접근 요금을 물게되고, 이전으로 인한 비용도 요구되므로 비용 절약에 실패함
+    - 이러한 경우를 위해 Intelligent tiering 을 제공함. 추가 관리 비용을 지불해야 함
+
+### 비용
+
+![image](https://user-images.githubusercontent.com/59367782/96404600-41f3a880-1216-11eb-9aec-514092ab3bc8.png)
+
+비용이 쓴 만큼 나오지만, 특정한 서비스의 경우에는 여러가지 제약이 걸리며, 검색 요금도 생길 수 있다.  
+
+- 요청 요금
+    - S3 standard Select
+        - 간단한 SQL 식을 사용하여, 애플리케이션이 객체에서 일부 데이터만 가져올 수 있도록 하는 서비스
+    - S3 standard IA (Infrequent Access)
+        - IA는 저장 요금이 싼 대신, access 를 할 때는 비싼 요금을 지불해야 함
+    - S3 Glacier
+        - 백업용 서비스로 저렴함
+        - Deep archive는 20% 정도 더 저렴함
+
+- 데이터 전송 요금
+    - 퍼블릭 인터넷을 통해 수신 및 송신되는 데이터를 기준으로 네트워크 요금이 부과
+    - 인터넷 -> Amazon S3 데이터 수신은 무료
+    - Amazon S3 -> 인터넷 데이터 송신은 요금 부과
+    - 다른 모든 리전으로의 데이터 송신도 요금 부과
+
+- 가격 계산
+    - 전체 60 TB 데이터를 S3에 저장하면?
+        - 서울: 50 * 0.025 * 1024 + 10 * 0.024 * 1024 = 1280 + 245.76 = $1525.76 = 1,747,238.25원/월
+    - 저장된 파일 1,000,000개(60TB)를 전부 다운로드 받는다면?
+        - 요청 요금: GET 1,000,000회 x 0.00035/1000 = $0.35 = 394원
+        - Outbound traffic 60 TB
+            - ~10TB: 0.126 * 10,240 = $1290.24
+            - ~50TB: 0.122 * 40,960 = $4997.12
+            - ~100TB: 0.117 * 10,240 = $1198.8
+            - Total: $7485.44 = 857.5만원
+        - 실제 60TB의 트래픽이 발생하는 것은 대단히 큰 규모의 서비스
+        - **스토리지 보다는 네트워크 사용료가 훨씬 주의해야 할 요소**
+
+### 모니터링 및 리전간 복제
+
+- 모니터링
+    - CloudWatch: 지정 기간 동안 특정 S3 관련 지표를 관찰하고, 이벤트를 생성해 전달함
+    - CloudTrail: S3 에 수행된 API 호출이나 버킷 수준의 작업을 로그로 기록하는 서비스
+- 리전 간 복제
+    - 서로 다른 AWS 리전의 버킷 간 객체를 자동 비동기식으로 복사하는 버킷 수준 기능
+    - 필요성: 데이터의 지리적 분산, 지역에 따른 지연 시간 최소화 등
+    - 기능: 모든 객체 또는 특정 키 이름의 접두사를 가진 객체의 하위 집합 복제
+    - 동일 리전으로의 백업 생성도 가능
+
+---
+
+# Linux System Call
+
+## 시스템 프로그래밍
+
+- System Call: OS가 제공하는 기능들을 사용하는 것
+    - 하드웨어를 제어하거나,
+    - 다른 프로세스와의 통신을 수행하거나,
+    - 시스템 정보에 접근, 수정하거나,
+    - 시스템을 제어하는 기능 등
+- 대표적인 시스템 콜
+    - 화면 출력: printf() <- C 라이브러리. 내부에서 write() system call 사용
+    - 파일 제어: open(), close(), read(), write()
+    - 동적 메모리 할당: malloc() <- C 라이브러리. 내부에서 brk(), mmap() 사용
+    - 네트워크 통신: socket(), send(), receive()
+
+## System Call vs. Library function
+
+- 시스템 호출
+    - OS Kernel이 제공하는 서비스를 이용해 프로그램을 작성할 수 있도록 제공되는 프로그래밍 인터페이스
+    - 기본적인 형태는 C 언어의 함수 형태로 제공
+        - `리턴값 = 시스템호출명(인자, …);`
+    - C Library 가 이러한 형태로 편리하게 이용할 수 있게 제공해주는 것
+- 라이브러리 함수
+    - 라이브러리 : 미리 컴파일된 함수들을 묶어서 제공하는 특수한 형태의 파일
+        - `/lib`, `/usr/lib`에 위치하며 `lib*.a` 또는 `lib*.so` (static object) 형태로 제공
+    - 자주 사용하는 기능을 독립적으로 분리하여 구현해둠으로써 프로그램의 개발과 디버깅을 쉽게하고 컴파일을 좀 더 빠르게 할 수 있다
+    - OS 커널과 무관하게 단순한 C 코드를 수행
+        - 예) strcpy() : 문자열 복사를 위한 연산을 수행. 편의를 위한 라이브러리 함수
+- 두 가지 시스템 콜 호출 방법
+    - 직접 시스템콜 호출: 본래 시스템콜은 특수한 방식(trap)을 통해 호출하여야 함
+        - 이유1: 시스템콜의 코드가 일반 사용자가 접근할 수 없는 OS 커널 영역에 존재하기 때문
+        - 이유2: 시스템콜은 다수 존재하고, 번호로 구분하기 때문에 직관적이지 않음
+        - 굳이 하려면? : syscall() 함수 이용
+    - **라이브러리 함수 사용**
+        - C 라이브러리는 시스템콜을 간편히 사용할 수 있게 도와주는 여러 함수 제공
+        - 예) printf() : 화면 출력을 위해서는 본래 write() 시스템 콜을 사용해야 함
+        - **일반적으로 거의 모든 경우에 라이브러리 함수를 통해 시스템콜을 이용함**
+
+![image](https://user-images.githubusercontent.com/59367782/96449848-666c7680-1250-11eb-9968-46781fa0c72e.png)
+
+
+### syscall()의 사용
+
+```c
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/syscall.h>
+#include <stdio.h>
+
+int main() {
+        printf("My pid: %d\n", getpid());
+        printf("My pid: %d by syscall()\n", (int)syscall(39));
+        sleep(1);
+        return 0;
+}
+```
+
+- getpid()
+    - 현재 프로세스의 PID를 반환
+    - C 라이브러리 함수
+    - 이 정보는 OS가 관리하기 때문에, 시스템콜을 통해 수행됨
+    - 이때 sys_getpid 라는 이름의 시스템콜을 이용하며, 해당 시스템콜 번호는 39
+
+### man page에서의 섹션 구분
+
+![image](https://user-images.githubusercontent.com/59367782/96450868-bc8de980-1251-11eb-9e3d-f3746a2ee180.png)
+
+printf의 경우 section이 1과 3으로 나뉘어지므로 `$ man printf`와 `$ man 3 printf`로 나눠서 볼 수 있다.
+
+## Error handling
+
+### 시스템 호출의 오류 처리방법
+
+- **결과값: 성공하면 0을 리턴, 실패하면 -1을 리턴**
+- 실패 시, 전역변수 errno에 오류 코드 저장
+    - Extern 을 이용해 C 라이브러리와 사용자 프로그램이 전역 변수를 공유할 수 있음
+    - Extern: 해당 소스 파일의 외부에서 선언한 변수를 인용해서 사용하는 것
+- 오류 코드의 확인: errno 유틸리티 사용 <- `moreutils` 설치 후  `$ errno -l`
+- 예시
+```c
+#include <unistd.h>
+#include <stdio.h>
+#include <errno.h>
+
+extern int errno;
+
+int main() {
+        if (access("unix.txt", F_OK == -1) {
+                printf("errno=%d\n", errno);
+        }       
+        return 0;
+}  
+```
+
+### 라이브러리 함수의 오류 처리방법
+
+- 오류가 발생하면 NULL을 리턴, 함수의 리턴값이 int 형이면 -1 리턴
+- errno 변수에 오류 코드 저장
+- 예시
+```c
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+
+extern int errno;
+
+int main() {
+        FILE *fp;
+        if((fp = fopen("unix.txt", "r")) == NULL) {
+                printf("errno=%d\n", errno);
+                return 1;
+        }
+        fclose(fp);
+
+        return 0;
+}
+```
+
+
+- fopen()
+    - File stream 을 여는 C 라이브러리 함수
+    - 해당 파일이 없으면 에러가 나고, NULL 을 리턴
+
+### 보다 편리한 오류 처리
+
+- 오류 메시지 출력 : perror(3)
+- Errno 에 따라 에러 메시지를 출력함
+- 예시
+```c
+#include <unistd.h>
+#include <stdio.h>
+
+int main() {
+        if (access("unix.txt", F_OK) == -1) {
+                perror("my message");
+                return 1;
+        }
+        return 0;
+}
+```
+
+---
+
+# File: Low-level I/O
+
+## File
+
+### Volatile and Non-volatile storage devices
+
+- Primary storage: Main memory
+    - 주기억장치로 사용하는 DRAM 등의 휘발성 저장 장치
+    - 성능이 높지만, 적은 저장 공간 제공
+        - 프로그램 내의 변수와 같이 용량은 적지만 자주 접근하는 자료를 저장
+- Secondary storage: Storage devices
+    - 보조기억장치로 사용하는 HDD, SSD 등은 비휘발성 저장 장치
+    - 느리지만, 많은 저장 공간을 제공
+        - 시스템 종료 시에도 보관하여야 할 데이터를 적재하고, 시스템 재기동 시 다시 로드
+    - **일반적으로 파일(file)의 형태로 데이터를 저장함**
+
+### 파일과 파일 속성
+
+- 파일: 보조기억장치의 정보저장 단위로 자료의 집합
+    - **Collection of data**
+    - 0부터 시작하는 주소 공간에 1B 단위로 데이터를 저장하고, 접근할 수 있음
+- 파일의 속성 (attribute)
+    - 파일은 Data 와 Metadata 로 구성됨
+        - Data: 사용자가 저장하고자 하는 데이터
+        - **Metadata: 데이터의 속성이나 특징 등, 저장된 데이터를 설명하기 위한 추가적인 데이터**
+        - Metadata 를 주로 file attribute 라고 지칭함
+    - 대표적인 Metadata
+        - Name, Size, Creation time, Last modified time, Last access time, access control
+    - 추가적인 Metadata
+        - 사진: 찍은 날짜, 위치, 포함된 사람들 등등
+        - 영화: Runtime, 제목, 첫 상영 날짜, 출연 배우 등등
+    - 보다 다양한 정보가 요구됨에 따라 파일의 metadata 저장 방식도 발전하고 있음
+
+### File Operations
+
+- 파일에 대해 수행할 수 있는, OS가 제공하는 기본 동작
+    - Basic: **open, close, read, write**
+        - 파일을 사용하기 위해서는 우선 열어야 하고, (open)
+        - 사용을 완료한 후에는 닫아야 한다. (close)
+        - 이외의 데이터 접근 방법은 없음!
+            - Insert? Modification?
+            - 모두 Read and Write 로 구현하여야 함
+- Control
+    - Seek: 파일의 현재 위치 설정
+    - Truncate: 파일의 내용 삭제
+    - Delete (or remove, unlink, release): 파일 삭제
+    - Flush (or sync): 파일의 내용을 즉각 저장 장치에 기록
+    - 기타: mmap, poll, lock 등 공유 및 동기화를 위한 제어 방법들
+
+
+### Low- & High-level File I/O (Input and Output)
+
+- Low-level File I/O
+    - 파일을 다루기 위해 OS에서 제공하는 시스템콜들을 직접 사용
+    - 특수한 파일 (장치 파일 등)을 제어할 때 주로 사용함
+    - Open(), close(), read(), write(), lseek() 등
+- High-level File I/O
+    - C 라이브러리 등에서 제공하는 보다 편리한 파일 입출력 서비스
+    - Low-level file I/O 는 시스템콜 그 자체라면,
+    - High-level 은 시스템콜을 다양한 형태로 가공하여 편의성을 높인 것
+    - 예) fprintf() : 파일에 바로 원하는 형태의 문자열을 출력할 수 있음
+        - Low-level 에서는 우선 문자열을 원하는 형태로 가공한 후, write()를 사용해 문자열의 길이 등을 함께 전달하여 기록해야 함
+    - fopen(), fclose() 등, 이름이 유사하나 앞에 `f` 가 붙는 경우가 많음
+    - 라이브러리 내에서 성능 등의 이유로 버퍼를 이용하므로, 버퍼 기반 입출력 이라고 부르기도 함
+
+## Low-level File I/O
+
+### 파일 기술자
+
+- 파일 기술자
+    - 현재 프로세스를 통해 열려 있는 파일을 구분하는 정수값.
+        - OS가 해당 프로세스의 열린 파일들을 관리하기 위해 사용하는 테이블의 Index
+    - 저수준 파일 입출력에서 열린 파일을 참조하는데 사용
+    - 기본으로 지정된 파일 기술자들
+        - 0번 : 표준 입력, 1번 : 표준 출력, 2번 : 표준 오류
+
+![image](https://user-images.githubusercontent.com/59367782/96454638-1b099680-1257-11eb-940d-b4b760dd64c0.png)
+
+### 파일 생성과 열고 닫기
+
+- 파일 열기: open(2)
+```c
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+int open(const char *pathname, int flags);
+int open(const char *pathname, int flags, mode_t mode);
+```
+- Pathname 에 지정한 파일을 flags에 지정한 플래그 값에 따라 연다.
+    - Pathname 은 상대 주소, 절대 주소 모두 가능
+    - 만약 지정한 파일이 없고, flag 에 O_CREAT 가 설정된 경우 새로운 파일 생성
+- Return value
+    - **The new file descriptor (파일 기술자)**
+    - -1 on error
+
+
+- Flags: 파일을 어떤 모드로 열지 선택
+    - OR 연산(|)을 이용해 복합하여 사용 가능
+        - 예) O_RDWR|O_CREAT : 읽기/쓰기 모두 가능한 모드로 열고, 파일이 없는 경우 새로 생성함
+|종류| 기능|
+|---|---|
+|O_RDONLY| 파일을 읽기 전용으로 연다.|
+|O_WRONLY| 파일을 쓰기 전용으로 연다.|
+|O_RDWR| 파일을 읽기와 쓰기가 가능하게 연다.|
+|O_CREAT| 파일이 없으면 파일을 생성한다|
+|O_EXCL O_CREAT| 옵션과 함께 사용할 경우 기존에 없는 파일이면 파일을 생성하지만, 파일이 이미 있으면 파일을 생성하지 않고 오류 메시지를 출력한다.|
+|O_TRUNC| 파일을 생성할 때 이미 있는 파일이고 쓰기 옵션으로 열었으면 내용을 모두 지우고 파일의 길이를 0으로 변경한다.|
+|O_APPEND| 파일의 맨 끝에 내용을 추가하는 모드. (position 이 EOF: End-of-File 로 설정됨)|
+|O_NONBLOCK/O_NDELAY| 비블로킹(Non-blocking) 입출력|
+|O_SYNC/O_DSYNC| 저장장치에 쓰기가 끝나야 쓰기 동작을 완료|
+
+- mode : 옵션으로, 파일 접근권한을 지정할 수 있음
+    - 0644같이 숫자나 플래그 값으로 지정 가능 (앞에 0을 넣어 Octet 임을 표시)
+        - 예) `Mode = S_IRUSR | S_IWUSR; = 0600 소유자 RW`
+
+| 플래그 | 모드 | 설명 |
+|---|---|---|
+|S_IRWXU|0700|소유자 읽기/쓰기/실행 권한|
+|S_IWUSR|0400|소유자 읽기 권한|
+|S_IRUSR|0200|소유자 쓰기 권한|
+|S_IXUSR|0100|소유자 실행 권한|
+|S_IRWXG|0070|그룹 읽기/쓰기/실행 권한|
+|S_IRGRP|0040|그룹 읽기 권한|
+|S_IWGRP|0020|그룹 쓰기 권한|
+|S_IXGRP|0010|그룹 실행 권한|
+|S_IRWXO|0007|기타 사용자 읽기/쓰기/실행 권한|
+|S_IROTH|0004|기타 사용자 읽기 권한|
+|S_IWOTH|0002|기타 사용자 쓰기 권한|
+|S_IXOTH|0001|기타 사용자 실행 권한|
+
+
+- 파일 닫기: close(2)
+    - 파일의 사용이 끝나면 close()를 호출하여 파일을 명시적으로 닫아야 함
+        - 프로세스에서 열 수 있는 파일 개수가 제한되어 있으므로 이를 확보하기 위함
+        - 파일의 사용이 끝났음을 알려, 다른 프로세스가 파일을 수정하거나 제어할 수 있도록 함
+    - 주의! Close()를 수행한다고 해서 모든 데이터가 저장 장치에 기록이 완료된 것은 아님
+        - 데이터가 메모리 상에 남아있고, 저장 장치에는 기록이 되지 않은 상태일 수 있음
+- Return value
+    - Close() returns zero on success.
+    - On error, -1 is returned, and errno is set appropriately.
+        - 일반적으로 close()는 에러 체크를 하지 않음.
+        - Open() 시 에러 체크를 통해, 파일이 열려있다고 확신을 한 상태에서 작업하기 때문
+        - 하지만, 드물게 write()가 실패한 경우, close()에서 에러가 발생하여 이를 알릴 수 있으므로 close()에서도 에러 체크를 하는 것이 좋음
+
+- 예)
+```c
+#include <unistd.h>
+int close(int fd);
+```
+
+- 파일 생성 : creat(2)
+    - A call to creat() is equivalent to calling open() with flags equal to O_CREAT|O_WRONLY|O_TRUNC
+    - open 함수와 달리 옵션을 지정하는 부분이 없다.
+    - Creat() 함수로 파일을 생성하면 파일 기술자를 리턴하므로 별도로 open할 필요 없음
+- **이런건 배우지 말자. Open() 만 알면 된다!**
+    - Open() 에 파일 생성 flag이 없던 구버전 유닉스에서 사용
+
+- 예)
+```c
+#include <sys/stat.h>
+#include <fcntl.h>
+int creat(const char *path, mode_t mode);
+```
+
+### File Read and Write: Sequential Access
+
+- 파일은 기본적으로 데이터를 sequential 하게 접근하는 것을 가정
+    - Sequential access: 처음부터 순서대로 데이터를 읽음
+        - 예) 음악이나 영화 파일의 재생
+    - Random access: 임의의 위치에 저장된 데이터를 순서에 무관하게 접근
+        - 예) 성적 리스트에서 학번을 찾아 해당하는 성적을 확인하는 것
+- File access position
+    - OS는 파일에 대한 현재 읽고 쓰기 위한 위치 (position or offset)을 관리함
+        - 위치는 Byte 단위로 표현
+        - 이 정보는 OS가 관리하므로, 프로그램은 직접 수정할 수 없음 (system call 사용)
+- 파일을 열면 (open), position 은 0으로 설정됨
+- 이때, 파일을 읽거나 쓰면, 0번 주소부터 데이터를 읽거나 씀
+- 그리고 이때 읽거나 쓴 데이터의 양만큼 position 은 자동으로 이동함
+    - 예) 만약 80 B의 데이터를 읽은 다음에는 position 은 80 으로 변경됨
+- 이후 읽거나 쓰게 되면, 이동한 위치에서부터 다시 데이터를 접근함
+
+### 파일 읽기와 쓰기
+
+- 파일 읽기 : read(2)
+    - fd가 가리키는 파일에서,
+    - nbytes로 지정한 크기만큼 바이트를 읽어서,
+    - buf에 저장
+- Return value
+    - 실제로 읽어온 바이트 개수를 리턴
+    - 리턴값이 0이면 파일의 끝에 도달했음을 의미
+- 파일의 종류에 상관없이 무조건 바이트 단위로 읽어온다.
+- 예)
+```c
+#include <unistd.h>
+ssize_t read(int fd, void *buf, size_t nbytes);
+```
+
+- 파일 쓰기 : write(2)
+    - fd가 지정하는 파일에,
+    - buf가 가리키는 메모리로부터,
+    - nbytes로 지정한 크기만큼 쓰기
+- Return value
+    - 실제로 쓰기를 수행한 바이트 수를 리턴
+
+- 예)
+```c
+#include <unistd.h>
+ssize_t write(int fd, const void *buf, size_t nbytes);
+```
+
+### 파일 오프셋 지정
+
+- 파일 오프셋 위치 지정 : lseek(2)
+    - offset으로 지정한 크기만큼 오프셋을 이동시킨다.
+    - offset의 값은 whence값을 기준으로 해석한다.
+![image](https://user-images.githubusercontent.com/59367782/96456850-0b3f8180-125a-11eb-9b21-1e027f7f51ca.png)
+    - 파일 오프셋의 현재 위치를 알려면?
+        - `cur_offset = lseek(fd, 0, SEEK_CUR);`
+
+- 예)
+```c
+#include <sys/types.h>
+#include <unistd.h>
+off_t lseek(int fd, off_t offset, int whence);
+```
+
+---
