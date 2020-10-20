@@ -1,6 +1,4 @@
----
-sidebar: auto
----
+
 
 # Network Layer
 
@@ -10,7 +8,7 @@ sidebar: auto
 
 ## Internetworks
 
-![internetwork](/TIL/images/Network/internetwork.jpg)  
+![internetwork](/TIL/images/Network/Internetwork.jpg)  
 
 네트워크간의 연결을 맡아주는 부분이 internetwork라고 한다.  
 
@@ -76,7 +74,7 @@ DHCP 클라이언트와 서버간의 흐름
 DHCP 클라이언트가 네트워크에 `DHCP discover`를 보내고 DHCP 서버가 받아서 `DHCP offer`를 클라이언트에 보낸다. 이후 클라이언트가 `DHCP request`를 보낸뒤 서버가 마지막으로 `DHCP ACK`를 보내면서 마무리된다.  
 
 다음 그림으로 쉽게 이해해보자.  
-![DHCP-flow](/TIL/images/Network/DHCP-flow.jpg)  
+![DHCP-flow](/TIL/images/Network/DHCP_flow.jpg)  
 
 ### NAT(Network Address Translation)
 

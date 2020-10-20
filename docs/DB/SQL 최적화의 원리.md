@@ -1,6 +1,4 @@
----
-sidebar: auto
----
+
 
 # SQL 최적화의 원리
 **옵티마이저(Optimizer)**

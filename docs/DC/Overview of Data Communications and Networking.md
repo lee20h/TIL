@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 # Overview of Data Communications and Networking
 
 Data_Communications의 이미지 출처 : McGraw-Hill

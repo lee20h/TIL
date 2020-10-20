@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 
 # Circuit Switching and Telephone Network
 

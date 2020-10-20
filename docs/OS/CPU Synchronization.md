@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 # CPU Synchronization
 
 ## Race Condition

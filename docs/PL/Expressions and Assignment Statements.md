@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 # Expressions and Assignment Statements
 
 들어가기 앞서, 명령형 언어는 assignment가 제일 중요하다. 하지만 이로인해 Side effect가 발생한다.  

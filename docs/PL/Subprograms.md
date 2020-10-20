@@ -1,6 +1,4 @@
----
-sidebar: auto
----
+
 # Subprograms
 
 1) **Procedure** (리턴 X)  

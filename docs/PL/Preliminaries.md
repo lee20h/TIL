@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 # Preliminaries
 
 ## 언어를 평가하는 요소

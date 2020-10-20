@@ -1,6 +1,6 @@
----
+  
 sidabar: auto
----
+  
 # body-parser
 
 post로 요청된 body를 쉽게 추출할 수 있는 모듈이다. 추출된 결과는 request객체(IncomingMessage 타입)에 body 속성으로 저장된다. Magicsora에서는 URL-encoded form body parser만 사용한다.

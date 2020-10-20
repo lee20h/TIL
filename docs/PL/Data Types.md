@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 # Data Types
 
 1) **표현**

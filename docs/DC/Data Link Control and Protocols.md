@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 
 # Data Link Control and Protocols
 

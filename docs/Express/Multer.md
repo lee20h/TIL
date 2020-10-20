@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 # Multer Module
 보통 JSON 형식으로 된 데이터는 AJAX로든 폼 태그로든 쉽게 업로드할 수 있습니다. 이미지 업로드를 도와주는 multer 모듈이 있다.
 

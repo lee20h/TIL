@@ -1,6 +1,4 @@
----
-sidebar: auto
----
+
 # Logger API : Morgan
 ## 설치
 

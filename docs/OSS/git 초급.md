@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 
 # Git 초급
 

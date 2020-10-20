@@ -4,13 +4,7 @@ module.exports = {
   title: `Today I Learned`,
   description: `오늘 공부한건 오늘 적자`,
   base: "/TIL/",
-  dest: "build",
-  head: [
-    ['link', {
-      rel: 'icon',
-      href: '/logo.png'
-    }]
-  ],
+  dest: 'build',
   themeConfig: {
     sidebar: [
       {

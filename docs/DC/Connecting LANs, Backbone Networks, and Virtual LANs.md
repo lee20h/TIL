@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 
 # Connecting LANs, Backbone Networks, and Virtual LANs
 

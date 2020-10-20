@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 # CORS (Cross Origin Resource Sharing)
 
 ## 이슈

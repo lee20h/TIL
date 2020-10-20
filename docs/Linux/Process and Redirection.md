@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 
 # Process and Redirection
 

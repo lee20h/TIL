@@ -1,6 +1,4 @@
----
-sidebar: auto
----
+
 
 # Network Layer Protocols: ARP, IPv4, ICMPv4, IPv6 and ICMPv6  
 

@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 
 # System Call
 
@@ -45,7 +45,7 @@ sidebar: auto
 
 ### syscall()의 사용
 
-```c
+```cpp
 #define _GNU_SOURCE
 #include <unistd.h>
 #include <sys/types.h>
@@ -82,7 +82,7 @@ printf의 경우 section이 1과 3으로 나뉘어지므로 `$ man printf`와 `$
     - Extern: 해당 소스 파일의 외부에서 선언한 변수를 인용해서 사용하는 것
 - 오류 코드의 확인: errno 유틸리티 사용 <- `moreutils` 설치 후  `$ errno -l`
 - 예시
-```c
+```cpp
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
@@ -102,7 +102,7 @@ int main() {
 - 오류가 발생하면 NULL을 리턴, 함수의 리턴값이 int 형이면 -1 리턴
 - errno 변수에 오류 코드 저장
 - 예시
-```c
+```cpp
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
@@ -131,7 +131,7 @@ int main() {
 - 오류 메시지 출력 : perror(3)
 - Errno 에 따라 에러 메시지를 출력함
 - 예시
-```c
+```cpp
 #include <unistd.h>
 #include <stdio.h>
 

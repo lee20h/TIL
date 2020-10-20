@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 # http-errors
 
 ## 설치

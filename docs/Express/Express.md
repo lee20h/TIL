@@ -1,6 +1,4 @@
----
-sidebar: auto
----
+
 # Express
 
 ## 설치

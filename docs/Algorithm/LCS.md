@@ -1,6 +1,4 @@
----
-sidebar: auto
----
+
 # LCS
 LCS는 두 가지로 나뉘어진다. 
 

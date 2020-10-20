@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 # Names, Bindings, and Scopes  
 
 명령형언어는 폰노이만 아키텍쳐를 추상한다.  

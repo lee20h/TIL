@@ -1,6 +1,3 @@
----
-sidebar: auto
----
 
 # File: Low-level I/O
 
@@ -166,6 +163,7 @@ int close(int fd);
 int creat(const char *path, mode_t mode);
 ```
 
+
 ### File Read and Write: Sequential Access
 
 - 파일은 기본적으로 데이터를 sequential 하게 접근하는 것을 가정
@@ -194,7 +192,7 @@ int creat(const char *path, mode_t mode);
     - 리턴값이 0이면 파일의 끝에 도달했음을 의미
 - 파일의 종류에 상관없이 무조건 바이트 단위로 읽어온다.
 - 예)
-```c
+```cpp
 #include <unistd.h>
 ssize_t read(int fd, void *buf, size_t nbytes);
 ```
@@ -207,7 +205,7 @@ ssize_t read(int fd, void *buf, size_t nbytes);
     - 실제로 쓰기를 수행한 바이트 수를 리턴
 
 - 예)
-```c
+```cpp
 #include <unistd.h>
 ssize_t write(int fd, const void *buf, size_t nbytes);
 ```
@@ -222,8 +220,180 @@ ssize_t write(int fd, const void *buf, size_t nbytes);
         - `cur_offset = lseek(fd, 0, SEEK_CUR);`
 
 - 예)
-```c
+```cpp
 #include <sys/types.h>
 #include <unistd.h>
 off_t lseek(int fd, off_t offset, int whence);
+```
+
+### 예시
+
+1. 새 파일 열고 닫기
+```cpp
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+int main() {
+        int fd;
+        char name[] = "unix.txt";
+        mode_t mode;
+
+        mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+
+        fd = open(name, O_CREAT, mode);
+        if (fd == -1) {
+                perror("Creat");
+                exit(1);
+        }
+
+        printf("%s is opened! fd = %d\n", name, fd);
+        close(fd);
+
+        return 0;
+} 
+```
+
+2. O_EXCL 플래그 사용하기
+```cpp
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+int main() {
+        int fd;
+        char name[] = "unix.txt";
+        mode_t mode;
+
+        mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
+
+        fd = open(name, O_CREAT|O_EXCL, mode);
+        if (fd == -1) {
+                perror("Creat");
+                exit(1);
+        }
+
+        printf("%s is opened! fd = %d\n", name, fd);
+        close(fd);
+
+        return 0;
+}
+```
+
+3. 파일 읽기
+```cpp
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+int main(int argc, char* argv[]) {
+        int fd, count;
+        char buf[80];
+
+        if(argc != 2) {
+                printf("< Usage: ./file3 filename >\n");
+                return 1;
+        }
+        fd = open(argv[1], O_RDWR);
+        if (fd == -1) {
+                perror("Open");
+                exit(1);
+        }
+
+        printf("%s is opened! fd = %d\n", argv[1], fd);
+
+        while((count = read(fd, buf, 80)) > 0 ) {
+                printf("%d: %s\n", count, buf);
+        }
+        close(fd);
+        return 0;
+}
+```
+
+4. 파일 읽고 쓰기
+```cpp
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+int main(int argc, char* argv[]) {
+        int rfd, wfd, count;
+        char buf[80];
+
+        if(argc != 3) {
+                printf("< Usage: ./file4 file_for_read file_for_write >\n");
+                return 1;
+        }
+        rfd = open(argv[1], O_RDONLY);
+        if (rfd == -1) {
+                perror("Open file for read");
+                exit(1);
+        }
+        wfd = open(argv[2], O_RDWR|O_CREAT|O_EXCL, 0644);
+        if (wfd == -1) {
+                perror("Open file for write");
+                exit(1);
+        }
+        printf("%s and %s are opened! rfd = %d wfd = %d\n", argv[1], argv[2], rfd, wfd);
+
+        while((count = read(rfd, buf, 10)) > 0 ) {
+                write(wfd, buf, count);
+        }
+        close(rfd);
+        close(wfd);
+        return 0;
+}
+```
+
+5. 파일 오프셋 사용
+```cpp
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+        if ((count = read(fd, buf, 5)) <= 0) {
+                perror("Read Error");
+                exit(1);
+        }
+}       
+
+int main(int argc, char* argv[]) {
+        if(argc != 2) {
+                printf ("< Usage: ./file5 filename >\n");
+                return 1;
+        }
+
+        fd = open(argv[1], O_RDWR);
+        if (fd == -1) {
+                perror("Open");
+                exit(1);
+        }
+        printf("%s is opened! fd = %d\n", argv[1], fd);
+        read_five_bytes();
+        printf("\n%d: %s\n", count, buf);
+        printf("Current position: %ld\n", lseek(fd, 0, SEEK_CUR));
+ 
+        lseek(fd, 1, SEEK_SET);
+        read_five_bytes();
+        printf("\n%d: %s\n", count, buf);
+        printf("Current position: %ld\n", lseek(fd, 0, SEEK_CUR));
+
+        lseek(fd, 2, SEEK_SET);
+        read_five_bytes();
+        printf("\n%d: %s\n", count, buf);
+        printf("Current position: %ld\n", lseek(fd, 0, SEEK_CUR));
+
+        close(fd);
+
+        return 0;
+}
 ```

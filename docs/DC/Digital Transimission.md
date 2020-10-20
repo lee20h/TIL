@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 # Digital Transimission
 ## Line coding  
 Binary data를 Digital signal로 변환하는 과정  

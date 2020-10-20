@@ -3396,6 +3396,7 @@ int close(int fd);
 int creat(const char *path, mode_t mode);
 ```
 
+
 ### File Read and Write: Sequential Access
 
 - 파일은 기본적으로 데이터를 sequential 하게 접근하는 것을 가정
@@ -3424,7 +3425,7 @@ int creat(const char *path, mode_t mode);
     - 리턴값이 0이면 파일의 끝에 도달했음을 의미
 - 파일의 종류에 상관없이 무조건 바이트 단위로 읽어온다.
 - 예)
-```c
+```cpp
 #include <unistd.h>
 ssize_t read(int fd, void *buf, size_t nbytes);
 ```
@@ -3437,7 +3438,7 @@ ssize_t read(int fd, void *buf, size_t nbytes);
     - 실제로 쓰기를 수행한 바이트 수를 리턴
 
 - 예)
-```c
+```cpp
 #include <unistd.h>
 ssize_t write(int fd, const void *buf, size_t nbytes);
 ```
@@ -3452,10 +3453,206 @@ ssize_t write(int fd, const void *buf, size_t nbytes);
         - `cur_offset = lseek(fd, 0, SEEK_CUR);`
 
 - 예)
-```c
+```cpp
 #include <sys/types.h>
 #include <unistd.h>
 off_t lseek(int fd, off_t offset, int whence);
 ```
+
+### 예시
+
+1. 새 파일 열고 닫기
+```cpp
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+int main() {
+        int fd;
+        char name[] = "unix.txt";
+        mode_t mode;
+
+        mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+
+        fd = open(name, O_CREAT, mode);
+        if (fd == -1) {
+                perror("Creat");
+                exit(1);
+        }
+
+        printf("%s is opened! fd = %d\n", name, fd);
+        close(fd);
+
+        return 0;
+} 
+```
+
+2. O_EXCL 플래그 사용하기
+```cpp
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+int main() {
+        int fd;
+        char name[] = "unix.txt";
+        mode_t mode;
+
+        mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
+
+        fd = open(name, O_CREAT|O_EXCL, mode);
+        if (fd == -1) {
+                perror("Creat");
+                exit(1);
+        }
+
+        printf("%s is opened! fd = %d\n", name, fd);
+        close(fd);
+
+        return 0;
+}
+```
+
+3. 파일 읽기
+```cpp
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+int main(int argc, char* argv[]) {
+        int fd, count;
+        char buf[80];
+
+        if(argc != 2) {
+                printf("< Usage: ./file3 filename >\n");
+                return 1;
+        }
+        fd = open(argv[1], O_RDWR);
+        if (fd == -1) {
+                perror("Open");
+                exit(1);
+        }
+
+        printf("%s is opened! fd = %d\n", argv[1], fd);
+
+        while((count = read(fd, buf, 80)) > 0 ) {
+                printf("%d: %s\n", count, buf);
+        }
+        close(fd);
+        return 0;
+}
+```
+
+4. 파일 읽고 쓰기
+```cpp
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+int main(int argc, char* argv[]) {
+        int rfd, wfd, count;
+        char buf[80];
+
+        if(argc != 3) {
+                printf("< Usage: ./file4 file_for_read file_for_write >\n");
+                return 1;
+        }
+        rfd = open(argv[1], O_RDONLY);
+        if (rfd == -1) {
+                perror("Open file for read");
+                exit(1);
+        }
+        wfd = open(argv[2], O_RDWR|O_CREAT|O_EXCL, 0644);
+        if (wfd == -1) {
+                perror("Open file for write");
+                exit(1);
+        }
+        printf("%s and %s are opened! rfd = %d wfd = %d\n", argv[1], argv[2], rfd, wfd);
+
+        while((count = read(rfd, buf, 10)) > 0 ) {
+                write(wfd, buf, count);
+        }
+        close(rfd);
+        close(wfd);
+        return 0;
+}
+```
+
+5. 파일 오프셋 사용
+```cpp
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+        if ((count = read(fd, buf, 5)) <= 0) {
+                perror("Read Error");
+                exit(1);
+        }
+}       
+
+int main(int argc, char* argv[]) {
+        if(argc != 2) {
+                printf ("< Usage: ./file5 filename >\n");
+                return 1;
+        }
+
+        fd = open(argv[1], O_RDWR);
+        if (fd == -1) {
+                perror("Open");
+                exit(1);
+        }
+        printf("%s is opened! fd = %d\n", argv[1], fd);
+        read_five_bytes();
+        printf("\n%d: %s\n", count, buf);
+        printf("Current position: %ld\n", lseek(fd, 0, SEEK_CUR));
+ 
+        lseek(fd, 1, SEEK_SET);
+        read_five_bytes();
+        printf("\n%d: %s\n", count, buf);
+        printf("Current position: %ld\n", lseek(fd, 0, SEEK_CUR));
+
+        lseek(fd, 2, SEEK_SET);
+        read_five_bytes();
+        printf("\n%d: %s\n", count, buf);
+        printf("Current position: %ld\n", lseek(fd, 0, SEEK_CUR));
+
+        close(fd);
+
+        return 0;
+}
+```
+
+---
+
+- 20日
+
+# fetch와 axios의 차이
+
+## fetch
+![image](https://user-images.githubusercontent.com/59367782/96558187-468f8e00-12f6-11eb-8b56-be66440cf490.png)
+
+## axios
+![image](https://user-images.githubusercontent.com/59367782/96558250-5a3af480-12f6-11eb-9871-0f7e45e3cbc6.png)
+
+(사진 출처: John Ahn님)
+
+## 결론
+
+둘 다 데이터를 가져오게 되는데, fetch의 경우 json형태로 볼려면 `.json()`메소드를 통해서 변환을 한 뒤 이용해야한다. 따라서 에러 핸들링 하는 부분도 달라진다.  
+
+axios의 경우는 가져올 때 json형태로 가져오기 때문에 한 단계를 더 생략할 수 있어서 편의성에 있어서 axios가 더 편하다.
+
+&&
+
+컴퓨터 네트워크 시험 공부 (Network Layer, Layer Protocol, Unicast & Multicast, Transport Layer)  
 
 ---

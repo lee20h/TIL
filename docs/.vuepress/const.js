@@ -138,5 +138,6 @@ exports.Distribute_list = [
     'Distribute/클라우드 컴퓨팅의 속성.md',
     'Distribute/서비스 모델과 배포 모델.md',
     'Distribute/AWS Computing Services.md',
+    'Distribute/Load test for Web services.md',
     'Distribute/AWS Storage Service.md'
 ]

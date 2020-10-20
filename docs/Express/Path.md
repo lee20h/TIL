@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 # Path Module
 Path 모듈은 파일과 Directory 경로 작업을 위한 Utility를 제공한다.
 

@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 # Signals
 ## Analog Signal
 무한한 숫자의 값을 가짐, 주기적인 Signal을 사용  

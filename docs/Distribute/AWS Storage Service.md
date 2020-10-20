@@ -1,6 +1,3 @@
----
-sidebar: auto
----
 
 # AWS Storage Services
 

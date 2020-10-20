@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 
 
 # SQL 기본

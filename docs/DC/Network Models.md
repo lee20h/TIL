@@ -1,6 +1,4 @@
----
-sidebar: auto
----
+
 # Network Models  
 
 각각의 Layer에서는 Low Layer에서 일어나는 일들에 관심이 없다.  

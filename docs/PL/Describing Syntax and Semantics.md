@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 # Describing Syntax and Semantics 
 
 ## 구문과 의미

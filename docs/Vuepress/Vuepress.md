@@ -1,6 +1,4 @@
----
-sidebar: auto
----
+
 
 # Vuepress  
 [공식문서](https://vuepress.vuejs.org/guide/)  

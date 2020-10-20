@@ -1,6 +1,4 @@
----
-sidebar: auto
----
+
 # Analog Transmission
 Modulation of digital data  
 Binary data -> band-pass  

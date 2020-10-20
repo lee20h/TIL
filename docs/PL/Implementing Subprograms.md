@@ -1,6 +1,4 @@
----
-sidebar: auto
----
+
 # Implementing Subprograms
 
 Call을 하게 되면 context switch에서 PCB에 저장해서 다시 복원하듯이 런타임 스택에 저장(push) 후 끝나면 다음 주소값으로 return(pop)하게 된다.  

@@ -1,6 +1,6 @@
----
-sidebar: auto
----
+  
+ 
+  
 # Main Memory  
 메모리에 프로세스를 할당할 때, 메모리를 관리하는 내용이라고 볼 수 있다.  
 ![Multiple-partition](/image/OS/Multiple-partition.JPG)  
