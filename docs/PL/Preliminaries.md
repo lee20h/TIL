@@ -3,6 +3,8 @@
   
 # Preliminaries
 
+전북대학교 편기현 교수님의 프로그래밍언어론 수업 정리입니다.
+
 ## 언어를 평가하는 요소
 1) Readability (주관적일 수 있다)  
 	- simplicity

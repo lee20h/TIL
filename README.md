@@ -1,7 +1,7 @@
 # 📙 Today I Learned  
 ## 규칙  
 * 기억에 남는 내용 기록 후 [정적 웹페이지](https://lee20h.github.io/TIL/)에 정리
-* 쓸데없는 Commit 지양
+* Github Action으로 배포
 * markdown으로 작성
 * 문제 풀고 [Problem Solving](https://github.com/lee20h/TIL/tree/master/Problem%20Solving) 폴더에 모으기
 
@@ -3654,5 +3654,16 @@ axios의 경우는 가져올 때 json형태로 가져오기 때문에 한 단계
 &&
 
 컴퓨터 네트워크 시험 공부 (Network Layer, Layer Protocol, Unicast & Multicast, Transport Layer)  
+
+---
+
+- 21日
+
+# 컴퓨터 네트워크 시험 공부 (Network Layer, Layer Protocol, Unicast & Multicast, Transport Layer)  
+- [웹 참고](https://lee20h.github.io/TIL/Network/Roadmap.html#%EC%9D%B8%ED%84%B0%EB%84%B7%EC%9D%B4%EB%9E%80-%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80)  
+
+# 데이터베이스 SQL 복습
+
+외래키 제약조건 중 CASCADE부분을 학교 강의 과제로써 수행했다. ERR 관계도와 테이블과 튜플을 다 주어준 뒤 ERR 관계도 중 가장 큰 집합에 속하는 테이블의 튜플을 지울 경우 해당하는 튜플이 속한 테이블에서 지워지는 것을 보여야 했다. 따라서 트리거링이 아닌 외래키 제약조건 중 On Delete 부분을 CASCADE로 설정함으로써 해결하였다.  
 
 ---

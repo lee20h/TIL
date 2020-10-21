@@ -2,6 +2,8 @@
 
 # Roadmap
 
+전북대학교 편기현 교수님의 컴퓨터 네트워크 수업 정리입니다.
+
 ## 인터넷이란 무엇인가?  
 
 Computing devices : hosts, end-system(PC, Workstation, server). 네트워크 앱이 실행된다.  

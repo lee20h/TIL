@@ -42,12 +42,14 @@ MTU(Maximum length of data to be encapsulated in a frame) : IP 패킷의 최대 
 
 예시를 들어서 보자. 4000 byte datagram, MTU = 1400 bytes  
 
-| | length = 4000 | ID = x | flag 3bit | offset = 0 13bit | ~ |  
+ | length = 4000 | ID = x | flag 3bit | offset = 0 13bit | ~ |  
+|---|----|---|---|---|
 이러한 datagram이 있을 때 fragmentation을 통해서 쪼갠다.  
 
-| | length = 1400 | ID = x | fragflag = 1 3bit | offset = 0 13bit | ~ |  
-| | length = 1400 | ID = x | fragflag = 1 3bit | offset = 175 13bit | ~ |  
-| | length = 1200 | ID = x | fragflag = 0 3bit | offset = 350 13bit | ~ |  
+ | length = 1400 | ID = x | fragflag = 1 3bit | offset = 0 13bit | ~ |  
+|---|---|---|---|---|
+ | length = 1400 | ID = x | fragflag = 1 3bit | offset = 175 13bit | ~ |  
+ | length = 1200 | ID = x | fragflag = 0 3bit | offset = 350 13bit | ~ |  
 
 fragflag로 fragmentation이 일어났는지 확인할 수 있다.  offset*8 = byte offset 크기를 8의 배수로 쪼개서 offset을 지정해줘서 13비트 안에 사용할 수 있게한다.  
 
@@ -90,9 +92,9 @@ IPv4는 32bit이지만, IPv6는 128bit를 가진다. IPv4보다 전체적으로 
 더 나아가 `FDEC:0:0:0:0:BBFF:0:FFFF` => `FDEC::BBFF:0:FFFF` 로 고치기도 한다.  
 
 ### Format  
-||||||
-|---|---|---|---|---|
+
 | ver | PRI | Flow label | | |
+|---|---|---|---|---|
 | Payload length | | Next header | Hop limit |
 | Source address | | | |
 | Destination address | | | |

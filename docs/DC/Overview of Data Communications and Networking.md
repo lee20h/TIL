@@ -3,6 +3,8 @@
   
 # Overview of Data Communications and Networking
 
+전북대학교 편기현 교수님의 데이터통신 수업 정리입니다.
+
 Data_Communications의 이미지 출처 : McGraw-Hill
 
 ## 데이터의 방향과 흐름
