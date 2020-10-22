@@ -3667,3 +3667,115 @@ axios의 경우는 가져올 때 json형태로 가져오기 때문에 한 단계
 외래키 제약조건 중 CASCADE부분을 학교 강의 과제로써 수행했다. ERR 관계도와 테이블과 튜플을 다 주어준 뒤 ERR 관계도 중 가장 큰 집합에 속하는 테이블의 튜플을 지울 경우 해당하는 튜플이 속한 테이블에서 지워지는 것을 보여야 했다. 따라서 트리거링이 아닌 외래키 제약조건 중 On Delete 부분을 CASCADE로 설정함으로써 해결하였다.  
 
 ---
+
+- 22日
+
+PS를 주로 하면 보냈으나 대부분 쉬운 문제를 해결하였다. 그 중 막힌 문제를 보자.  
+
+소수찾기
+```cpp
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+using namespace std;
+
+const int MAX = 1e7;
+bool isprime[MAX];
+
+
+int solution(string numbers) {
+    int answer = 0;
+    isprime[0] = isprime[1] = true;
+    for (int i=2; i<=10000; i++) {
+        for (int j=2; i*j<=MAX; j++)
+            isprime[i*j] = true;
+    }
+    sort(numbers.begin(),numbers.end());
+    
+    set<int> s;
+    do {
+    	int idx = 1;
+    	while(idx <= numbers.size()) {
+    		string str;
+    		for (int i=0; i<idx; i++) {
+    			str += numbers[i];
+			}
+    		s.insert(stoi(str));
+            idx++;
+		}	
+	}while(next_permutation(numbers.begin(), numbers.end()));
+	
+    set<int>::iterator it;
+	for (it = s.begin(); it != s.end(); it++) {
+        if(!isprime[*it])
+            answer++;
+    }
+	
+    return answer;
+}
+
+```
+
+소수 찾기 문제는 주어진 숫자들을 가지고 만들 수 있는 값들 중 소수를 찾는 문제로, 완전 탐색으로 볼 수 있다. 에라토스테네스의 체와 next_permutation을 사용하여 해결하였다. 하지만 next_permutation을 생각했으나 오해한 점이 하나 있다. 정해진 범위를 가지고 전부 순열을 구하는 부분이 아니라, 범위에서 주어진 값을 전부 내림차순으로 바꾸게 되면 끝나느 것이였다.  
+
+따라서 내 논리대로 할려면 처음에 정렬을 한 뒤 next_permutation을 시행했어야했다. 이 부분에 대해 알고 있지 않아서 답을 구하지 못했다.  
+
+큰 수 만들기
+```cpp
+#include <iostream>
+#include <string>
+ 
+using namespace std;
+ 
+string solution(string number, int k) {
+    string answer = "";
+    for (int i = 0, index = -1; i < number.length() - k; i++) {
+        char max = 0;
+        for (int j = index + 1; j <= k + i; j++) {
+            if (max < number[j]) {
+                index = j;
+                max = number[j];
+            }
+        }
+        answer += max;
+    }
+    return answer;
+}
+```
+주어진 숫자를 순서를 유지한 채로 몇 개의 숫자를 뺐을 때 가장 큰 수를 구하는 문제로, 머리로는 되나 코드로 구현하지 못해 블로그의 도움을 받았다.  
+
+먼저 해당 자릿수를 구한 뒤 그 만큼의 값 중 가장 큰 값을 먼저 찾고 그다음 뒷 값 중 큰 값을 찾아서 하나하나 넣어주었다.  
+
+가장 큰 수
+```cpp
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+bool cmp(string a, string b) {
+    return a+b > b+a;
+}
+
+string solution(vector<int> numbers) {
+    string answer = "";
+    vector<string> v;
+    int Sum = 0;
+    for (int i=0; i<numbers.size(); i++) {
+        v.push_back(to_string(numbers[i]));
+        Sum += numbers[i];
+    }
+    if(!Sum)
+        return "0";
+    
+    sort(v.begin(), v.end(), cmp);
+    
+    for (int i=0; i<v.size(); i++)
+        answer += v[i];
+    return answer;
+}
+```
+문자열에서 어떻게 더하냐에 따라 값이 달라지는 특성을 이용하여 가장 큰 값을 찾는 문제인데, 금방 코딩했으나 cmp()의 조건을 잡는데 잘못 디뎌서 오래 걸렸다. 하지만 생각해보니 그냥 기준을 바꿔서 앞뒤로 더한 값을 서로 비교하면 되는 것이였다.  
+
+---

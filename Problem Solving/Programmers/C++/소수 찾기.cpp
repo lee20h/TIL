@@ -1,24 +1,40 @@
 #include <string>
 #include <vector>
-
+#include <set>
+#include <algorithm>
 using namespace std;
 
-const int MAX = 1e6+1;
-bool PrimeArray[MAX];
+const int MAX = 1e7;
+bool isprime[MAX];
 
-int solution(int n) {
+
+int solution(string numbers) {
     int answer = 0;
-    for (int i = 2; i <= n; i++)
-	    PrimeArray[i] = true;
-    for (int i = 2; i * i <= n; i++) {
-        if (PrimeArray[i])
-            for (int j = i * i; j <= n; j += i)
-                PrimeArray[j] = false;
-	}
+    isprime[0] = isprime[1] = true;
+    for (int i=2; i<=10000; i++) {
+        for (int j=2; i*j<=MAX; j++)
+            isprime[i*j] = true;
+    }
+    sort(numbers.begin(),numbers.end());
     
-    for (int i=2; i<=n; i++) {
-        if(PrimeArray[i])
+    set<int> s;
+    do {
+    	int idx = 1;
+    	while(idx <= numbers.size()) {
+    		string str;
+    		for (int i=0; i<idx; i++) {
+    			str += numbers[i];
+			}
+    		s.insert(stoi(str));
+            idx++;
+		}	
+	}while(next_permutation(numbers.begin(), numbers.end()));
+	
+    set<int>::iterator it;
+	for (it = s.begin(); it != s.end(); it++) {
+        if(!isprime[*it])
             answer++;
     }
+	
     return answer;
 }
