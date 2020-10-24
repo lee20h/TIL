@@ -3789,3 +3789,119 @@ string solution(vector<int> numbers) {
 네이버와 같이 큰 사이트에서 분산을 부담을 나누기위해서 사용하는 방법은 바로 **Overlay Network**이다. 가상으로 망을 잡아서 2의 거듭제곱으로 갯수가 늘어난다. 이 부분을 잊어버려서 틀려서 아쉬웠다.
 
 ---
+
+- 24日
+
+# PS
+
+- 쿼드압축 후 세기
+```cpp
+#include <string>
+#include <vector>
+
+using namespace std;
+
+vector<vector<int>> v;
+
+void div(int size, int y, int x, vector<int> &answer) {
+	bool zero = true, one = true;
+	for (int i=y; i<y+size; i++) {
+		for (int j=x; j<x+size; j++) {
+			if(v[i][j])
+				zero = false;
+			else if(!v[i][j])
+				one = false;
+		}
+	}
+	if(zero) {
+		answer[0]++;
+		return;
+	}
+	if(one) {
+		answer[1]++;
+		return;
+	}
+	
+	div(size/2, y, x, answer);
+	div(size/2, y+size/2, x, answer);
+	div(size/2, y, x+size/2, answer);
+	div(size/2, y+size/2, x+size/2, answer);
+}
+
+vector<int> solution(vector<vector<int>> arr) {
+    vector<int> answer(2, 0);
+    v = arr;
+    div(arr.size(), 0, 0, answer);
+    return answer;
+}
+```
+
+분할 정복을 이용하여 푸는 문제로 백준의 색종이 접기 문제와 유사하다. 평소에는 분할정복을 해결할 때 가로 세로 시작과 끝을 전부 매개변수로 던져서 해결하였는데, 다른 사람의 풀이를 참고하여 풀어보았다. 이 분은 매개변수 size를 가지고 훨씬 적은 매개변수로 해결하였다. 시작 점을 먼저 저장하고 그 다음에 이중 포문에서 만난 점이 시작 점과 끝까지 동일하다면 그 범위는 전부 해당 값과 같다고 진행하는 식으로 하였으나, 이번에는 나오고나서 1과 0의 boolean으로 해보았다.  
+
+두 풀이 모두 괜찮으나, 분할정복의 함수 매개변수는 현재 것이 조금 더 코드가 간결해보이며, 내부의 내용은 시작점을 가지고 하는 것이 더 한 눈에 이해가 되는 코드인 것 같다.
+
+- 카펫
+```cpp
+#include <string>
+#include <vector>
+
+using namespace std;
+
+vector<int> solution(int brown, int yellow) {
+    vector<int> answer;
+    int size = brown + yellow;
+    vector<int> divisor;
+    for (int i=1; i<size; i++) {
+        if(size%i == 0) {
+            divisor.push_back(i);
+        }
+    }
+    
+    int w, h;
+    for (int i=divisor.size()-1; i>0; i--) {
+        bool flag = false;
+        w = divisor[i];
+        for (int j=divisor.size()-1; j>0; j--) {
+            h = divisor[j];
+            if(w*h == size) {
+                int temp = w*2 + (h-2)*2;
+                if(brown != temp)
+                    continue;
+                flag = true;
+                answer.push_back(w);
+                answer.push_back(h);
+                break;
+            }
+        }
+        if(flag)
+            break;
+    }
+    return answer;
+}
+```
+
+먼저 약수를 구한 뒤 약수들의 조합을 하되, 약수끼리 곱했을 때 갈색과 노란색 카펫의 합이 나와야하며, 갈색의 경우 테두리이기 때문에 테두리를 구하는 공식에 넣었을 때 동일한 값만 answer에 넣어주었다.
+
+- H-index
+```cpp
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int solution(vector<int> citations) {
+    int answer = citations.size();
+    sort(citations.begin(), citations.end());
+    int size = citations.size();
+    for (int i=0; i<size; i++) {
+        if(citations[i] >= answer)
+            break;
+        answer--;
+    }
+    return answer;
+}
+```
+해당 문제는 말을 이해하지 못해서 생각보다 오래걸렸다. 갯수의 최대가 아닌 논문 인용의 수의 최대를 생각하여 생각이 길어진 문제로, 오름차순으로 정렬된 논문 인용된 횟수가 적힌 배열과 논문의 갯수를 비교하여 answer의 값을 구하는 식으로 하였다.
+
+---
