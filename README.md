@@ -3905,3 +3905,188 @@ int solution(vector<int> citations) {
 해당 문제는 말을 이해하지 못해서 생각보다 오래걸렸다. 갯수의 최대가 아닌 논문 인용의 수의 최대를 생각하여 생각이 길어진 문제로, 오름차순으로 정렬된 논문 인용된 횟수가 적힌 배열과 논문의 갯수를 비교하여 answer의 값을 구하는 식으로 하였다.
 
 ---
+
+- 25日
+
+# PS
+
+어제에 이어서 PS 공부했다.
+
+- 가장 큰 정사각형
+```cpp
+#include <vector>
+#include <cmath>
+
+using namespace std;
+
+int solution(vector<vector<int>> board)
+{
+    int answer = 0;
+    for (int i=0; i<board.size(); i++) {
+        answer = max(answer, board[i][0]);
+    }
+    for (int i=0; i<board[0].size(); i++) {
+        answer = max(answer, board[0][i]);
+    }
+    for (int i=1; i<board.size(); i++) {
+        for (int j=1; j<board[i].size(); j++) {
+            if(board[i][j]) {
+                board[i][j] = min(min(board[i][j-1], board[i-1][j]), board[i-1][j-1]) + 1;
+                answer = max(board[i][j], answer);
+            }
+        }
+    }
+    return pow(answer,2);
+}
+```
+
+이차원 배열 board에 0 혹은 1의 값이 들어 있을 때 1로 이루어진 정사각형의 넓이를 구하는 문제이다. 접근을 LCS를 풀이하듯이 접근하였다. 보드가 주어지면 그 보드의 인덱스의 y방향으로 -1, x방향으로 -1, xy방향으로 -1 세 가지의 인덱스 중 가장 작은 값을 해당 인덱스에 넣는 방식으로 하였다. 이때 0부터 시작하게되면 배열의 범위를 넘어서기 때문에 (1,1)부터 시작하며, 0번째 행과 열은 따로 해준 뒤 answer 값의 제곱을 반환해주었다.  
+
+- 단체사진 찍기
+```cpp
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+using namespace std;
+
+int pos[26];
+
+int solution(int n, vector<string> data) {
+    int answer = 0;
+    vector<char> kf = {'A', 'C', 'F', 'J', 'M', 'N', 'R', 'T'};
+    do{
+        for(int i=0; i<kf.size(); i++)
+            pos[kf[i] - 'A'] = i;
+        bool flag = true;
+        
+        for (int i=0; i<data.size(); i++) {
+            int first = data[i][0] - 'A';
+            int last = data[i][2] - 'A';
+            char oper = data[i][3];
+            int diff = data[i][4] - '0';
+            int cmp = abs(pos[first] - pos[last]) - 1;
+            
+            switch(oper) {
+                case '=' : 
+                    if(cmp != diff)
+                        flag = false;
+                    break;
+                case '<' :
+                    if(cmp >= diff)
+                        flag = false;
+                    break;
+                case '>' :
+                    if(cmp <= diff)
+                        flag = false;
+                    break;
+            }
+            if(!flag)
+                break;
+        }
+        if(flag)
+            answer++;
+    }while(next_permutation(kf.begin(),kf.end()));
+    
+    return answer;
+}
+```
+
+언뜻 보면 떠오르지 않는 풀이의 문제였다. 카카오프렌즈들이 단체 사진을 찍고자하는데 누군가가 내민 조건들을 다 수합한 상태에서 찍을 수 있는 경우의 수를 구하는 문제이다. 이 때 카카오프렌즈들의 순서는 `next_permutation()`을 통해서 모든 경우의 수를 체크하였다. 이후 조건을 확인하기 위해서 pos배열로 알파벳들의 순서를 잡아준 뒤, 조건에 따라서 조건 제시자와 상대 사이의 카카오프렌즈가 몇 명 있는지 확인하여 조건과 맞나 비교하여주었다.  
+
+조건에 부합하지 않는다면 다음 순열로 넘어가고, 조건에 부합한다면 answer를 1씩 늘려주는 식으로 진행하였다.  
+
+- 땅따먹기
+```cpp
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int dp[2][4];
+
+int solution(vector<vector<int> > land)
+{
+    int answer = 0;
+    for (int i=0; i<4; i++)
+        dp[0][i] = land[0][i];
+    
+    for (int i=1; i<land.size(); i++) {
+        dp[i%2][0] = max(max(dp[(i-1)%2][1] + land[i][0], dp[(i-1)%2][2] + land[i][0]),dp[(i-1)%2][3] + land[i][0]);
+        dp[i%2][1] = max(max(dp[(i-1)%2][0] + land[i][1], dp[(i-1)%2][2] + land[i][1]),dp[(i-1)%2][3] + land[i][1]);
+        dp[i%2][2] = max(max(dp[(i-1)%2][1] + land[i][2], dp[(i-1)%2][0] + land[i][2]),dp[(i-1)%2][3] + land[i][2]);
+        dp[i%2][3] = max(max(dp[(i-1)%2][1] + land[i][3], dp[(i-1)%2][2] + land[i][3]),dp[(i-1)%2][0] + land[i][3]);
+    }
+    
+    for (int i=0; i<4; i++) {
+        answer = max(answer, dp[(land.size()-1) % 2][i]);
+    }
+    return answer;
+}
+```
+
+이차원 배열 land가 주어지고 열은 항상 4개로 고정되어 있다. 모든 행을 거치되, 이전의 행에서 밟은 열은 못 밟는다. 그때 총 밟은 숫자들의 합이 최대가 되게 해야하는 문제이다. 보면 매 행에서 이전 열을 제외하고 가장 큰 숫자를 넣으면 될 것 같지만 반례가 존재한다. 따라서 모든 부분을 체크해주면서 이전 값을 사용하기 위해서 DP로 구현하였다.  
+
+문제의 조건을 보면 이전 행만 조건에 쓰이기 때문에 dp를 작게 정의해 메모리를 아꼈다. 현재 인덱스의 값과 지금까지 더해온 값들과 더해주되, 자기자신의 열은 제외해서 그 값들 중 최대를 취한다. 이후에 다 진행이 되면 dp배열에 최댓값들이 남게 되는데 해당 배열에서 가장 큰 값을 리턴해주면 된다.  
+
+- 행렬의 곱셈
+```cpp
+#include <string>
+#include <vector>
+
+using namespace std;
+
+vector<vector<int>> solution(vector<vector<int>> arr1, vector<vector<int>> arr2) {
+    vector<vector<int>> answer;
+
+    for (int i=0; i<arr1.size(); i++) {
+        vector<int> v;
+        for (int j=0; j<arr2[0].size(); j++) {
+            int sum = 0;
+            for (int k=0; k<arr1[0].size(); k++) {
+                sum += arr1[i][k] * arr2[k][j];
+            }
+            v.push_back(sum);
+        }
+        answer.push_back(v);
+    }
+    return answer;
+}
+```
+
+행렬의 곱셈을 단순하게 코드로 표현하면 된다. 이 문제를 적은 이유는 운영체제 강의에서 듣기로는 이차원 배열에서 column-major인 연산을 하게 되면 cpu에서 캐싱을 하지 못해서 느려진다고 들었다. 따라서 조금 더 빠른 방법을 생각해보자해서 적어본다. 이차원 배열은 메모리가 row끼리 붙어있는데 arr2와 같이 접근하게 되면 locality가 떨어지게 된다.  
+
+```cpp
+for (int k=0; k<arr2.size(); k++) {
+    for (int i=0; i<arr1.size(); i++) {
+        for (int j=0; j<arr2[0].size(); j++) {
+            matrix[i][j] += arr1[i][k] * arr2[k][j];
+        }
+    }
+}
+```
+이러한 소스를 해당 문제에 적용을 하게 되면,
+
+```cpp
+#include <string>
+#include <vector>
+
+using namespace std;
+
+vector<vector<int>> solution(vector<vector<int>> arr1, vector<vector<int>> arr2) {
+    vector<vector<int>> answer(arr1.size(),vector<int>(arr2[0].size(), 0));
+
+    for (int k=0; k<arr2.size(); k++) {
+        for (int i=0; i<arr1.size(); i++) {
+            for (int j=0; j<arr2[0].size(); j++) {
+                answer[i][j] += arr1[i][k] * arr2[k][j];
+            }
+        }
+    }
+    return answer;
+}
+```
+속도도 빨라지고 한층 짧아진 것을 알 수 있다. 앞으로도 이차원 배열에 적용할 때 잘 생각해야겠다.
+
+[참고사이트](https://sosal.kr/878)
+
+---
