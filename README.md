@@ -4090,3 +4090,83 @@ vector<vector<int>> solution(vector<vector<int>> arr1, vector<vector<int>> arr2)
 [참고사이트](https://sosal.kr/878)
 
 ---
+
+- 26日
+
+# PS
+
+- N개의 최소공배수
+```cpp
+#include <string>
+#include <vector>
+#include <queue>
+using namespace std;
+
+int gcd(int a, int b) {
+    return b ? gcd(b, a%b) : a;
+}
+
+int solution(vector<int> arr) {
+    int answer = 0;
+    int mul = 1;
+    priority_queue<int> q;
+    for (int i=0; i<arr.size(); i++) {
+        mul *= arr[i];
+        q.push(arr[i]);
+    }
+    while(q.size() != 1) {
+        int num1 = q.top();
+        q.pop();
+        int num2 = q.top();
+        q.pop();
+        q.push(num1*num2/gcd(num1,num2));
+    }
+    answer = q.top();
+    return answer;
+}
+```
+
+각각의 최대공약수를 가지고 하는 것이 아닌 2개의 숫자를 가지고 최소공배수를 구하고 그 다음 수와 또 최소공배수를 구하는 식으로 반복하였다. 처음에는 전부를 가지고 하려하자 답이 안 나와서 시간을 많이 보냈었다.
+
+- 점프와 순간 이동
+```cpp
+#include <bitset>
+using namespace std;
+
+int solution(int n)
+{
+    int ans = 0;
+    bitset<30> bit = n;
+    for (int i=0; i<30; i++) {
+        if(bit[i])
+            ans++;
+    }
+    return ans;
+}
+```
+이 문제는 순간이동은 건전지가 안 들지만 점프는 움직인 거리만큼 건전지가 다는 문제로, 거리가 주어질 때 최소의 건전지를 들여서 가야한다. 생각해보면 순간이동으로 두 배를 간다는 것은 비트로 보면 비트 쉬프트 왼쪽으로 1한 것과 같다. 따라서 점프는 비트를 0에서 1로 바꾸는 행위이므로, 거리를 바이너리화 한 뒤 1의 숫자를 세주었다.
+
+- 예상 대진표
+```cpp
+int solution(int n, int a, int b)
+{
+    int answer = 1;
+    if(a<b) {
+        int temp = a;
+        a = b;
+        b = temp;
+    }
+    while(a-b > 1) {
+        a&1 ? a= a/2+1 : a= a/2;
+        b&1 ? b= b/2+1 : b= b/2;
+        answer++;
+    }
+    
+    return answer;
+}
+```
+이 문제 또한 상기시키기 위해 적어본다. 전혀 어렵지 않았지만 바로 떠오르지 못했기 때문에 적어볼려고 한다. 문제는 토너먼트에서 a와 b가 주어지면 a와 b가 주어질려면 몇 경기가 치뤄져야하나는 문제이다. 쉽게 생각하면 한번 경기할 때마다 1/2씩 줄어들고 둘이 만나기 전까진 다 이겨야하므로, 홀수면 2로 나눈 뒤 1을 더하고 짝수면 2로 나누기를 반복하면 된다.
+
+이외에도 많이 풀이를 했으나, 확실히 몇 주간 PS보단 전공과 웹 공부를 주로 하다보니 감을 잃은게 확실하다. 시험 중간중간에 자꾸 PS를 풀어줘서 리마인드하도록 해야겠다.
+
+---
