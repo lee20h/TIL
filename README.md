@@ -4170,3 +4170,81 @@ int solution(int n, int a, int b)
 이외에도 많이 풀이를 했으나, 확실히 몇 주간 PS보단 전공과 웹 공부를 주로 하다보니 감을 잃은게 확실하다. 시험 중간중간에 자꾸 PS를 풀어줘서 리마인드하도록 해야겠다.
 
 ---
+
+- 27日
+
+# PS
+
+- 뉴스 클러스터링
+
+```cpp
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+using namespace std;
+
+int solution(string str1, string str2) {
+    int answer = 0;
+    vector<string> v;
+    vector<string> v2;
+    for (int i=0; i<str1.length(); i++)
+        str1[i] = tolower(str1[i]);
+    for (int i=0; i<str2.length(); i++)
+        str2[i] = tolower(str2[i]);
+    
+    for (int i=1; i<str1.length(); i++) {
+        string temp;
+        if(('a' <= str1[i-1] && str1[i-1] <= 'z') && ('a' <= str1[i] && str1[i] <= 'z')) {
+            temp = str1.substr(i-1, 2);
+            v.push_back(temp);    
+        }
+    }
+    
+    for (int i=1; i<str2.length(); i++) {
+        string temp;
+        if(('a' <= str2[i-1] && str2[i-1] <= 'z') && ('a' <= str2[i] && str2[i] <= 'z')) {
+            temp = str2.substr(i-1, 2);
+            v2.push_back(temp);    
+        }
+    }
+    
+    if(v.empty() && v2.empty()) {
+        return 65536;
+    }
+    sort(v.begin(), v.end());
+    sort(v2.begin(), v2.end());
+    
+    vector<string> uni(v.size() + v2.size());
+    auto it = set_union(v.begin(),v.end(),v2.begin(),v2.end(),uni.begin());
+    uni.erase(it,uni.end());
+    vector<string> intersect(v.size() + v2.size());
+    it = set_intersection(v.begin(), v.end(), v2.begin(), v2.end(), intersect.begin());
+    intersect.erase(it, intersect.end());
+    
+    double temp = (double)intersect.size() / (double)uni.size();
+    answer = temp * 65536;
+    return answer;
+}
+```
+자카드 유사도를 구하기 위해서 교집합 / 합집합의 값을 구하는 문제이다. 그러기 위해 문자열을 조작하여 2개씩 나눠서 같은 값들을 체크해서 교집합과 합집합의 숫자를 찾아서 나눠주었다.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+short a, b, C[676], D[676];
+int solution(string A, string B) {
+    for(int i=1; i<A.size(); i++)
+        if(isalpha(A[i-1]) && isalpha(A[i]))
+            C[(A[i-1]&31)*26+(A[i]&31)]++;
+    for(int i=1; i<B.size(); i++)
+        if(isalpha(B[i-1]) && isalpha(B[i]))
+            D[(B[i-1]&31)*26+(B[i]&31)]++;
+    for(int i=0; i<676; i++) a+=min(C[i], D[i]), b+=max(C[i], D[i]);
+    return b ? a*65536/b : 65536;
+}
+```
+
+이후 다른 사람의 풀이로 `&31`을 통해서 대소문자 구별을 지운 다음 정적 배열로 해당하는 값들을 증가시켜줘서 교집합과 합집합의 카운트를 해준 뒤 연산을 하고 반환해주었다. 매우 참신했고 생각도 못한 방법으로, 전혀 생각하지 못한 방법이었다.
+
+---
