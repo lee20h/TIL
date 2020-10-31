@@ -96,7 +96,8 @@ exports.SE_list = [
     'SE/요구사항 분석과 모델링.md',
     'SE/기능 모델링.md',
     'SE/동적 모델링.md',
-    'SE/정보 모델링.md'
+    'SE/정보 모델링.md',
+    'SE/객체지향 분석기법.md'
 ]
 
 exports.Network_list = [
