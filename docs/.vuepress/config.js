@@ -12,14 +12,6 @@ module.exports = {
         children: CONST.AlgorithmList
       },
       {
-        title: "Operating_System",
-        children: CONST.OS_List
-      },
-      {
-        title: "Linux",
-        children: CONST.Linux_list
-      },
-      {
         title: "JavaScript",
         children: CONST.JS_list
       },
@@ -42,6 +34,14 @@ module.exports = {
       {
         title: "Vuepress",
         children: CONST.Vuepress_list
+      },
+      {
+        title: "Operating_System",
+        children: CONST.OS_List
+      },
+      {
+        title: "Linux",
+        children: CONST.Linux_list
       },
       {
         title: "Software_Engineering",

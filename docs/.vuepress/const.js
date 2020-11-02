@@ -105,7 +105,9 @@ exports.Network_list = [
     'Network/Network Layer.md',
     'Network/Network Layer Protocol.md',
     'Network/Unicast and Multicast.md',
-    'Network/Transport Layer.md'
+    'Network/Transport Layer.md',
+    'Network/Congestion Control and Quality of Service.md',
+    'Network/Application Layer.md'
 ]
 
 exports.Travis_list = [
@@ -124,7 +126,8 @@ exports.Linux_list = [
     'Linux/유틸리티.md',
     'Linux/C Programming on Linux.md',
     'Linux/system call.md',
-    'Linux/File.md'
+    'Linux/File.md',
+    'Linux/File2.md',
 ]
 
 exports.OSS_list = [
