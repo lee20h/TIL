@@ -107,7 +107,8 @@ exports.Network_list = [
     'Network/Unicast and Multicast.md',
     'Network/Transport Layer.md',
     'Network/Congestion Control and Quality of Service.md',
-    'Network/Application Layer.md'
+    'Network/Application Layer.md',
+    'Network/DNS.md'
 ]
 
 exports.Travis_list = [
@@ -128,6 +129,7 @@ exports.Linux_list = [
     'Linux/system call.md',
     'Linux/File.md',
     'Linux/File2.md',
+    'Linux/Dynamic Memory Allocation.md'
 ]
 
 exports.OSS_list = [
