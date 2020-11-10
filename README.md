@@ -1546,6 +1546,220 @@ reary = (int *)realloc(cary, 4*sizeof(int));
     - 현재 라인 번호를 출력
 - `__func__`
     - 함수 이름을 출력
-    - `__FUNCTION__` 이라는 동일한 기능의 매크로도 있으나, C 표준이 아니고, 몇몇 컴파일러에서 지원 (__func__는 C99)
+    - `__FUNCTION__` 이라는 동일한 기능의 매크로도 있으나, C 표준이 아니고, 몇몇 컴파일러에서 지원 (`__func__`는 C99)
+
+---
+
+- 10日
+
+# AWS Network Service
+
+## 네트워크 사전 지식
+
+- IP
+- Inbound/Outbound traffic (ingress/egress)
+- Subnet
+- CIDR (Classless Inter-Domain Routing)
+- Routing
+- DNS
+- VPN, NAT
+
+### Addressing: MAC
+
+네트워크 세그먼트의 데이터 링크 계층에서 통신을 위한 네트워크 인터페이스에 할당된 고유 식별자로 주로 네트워크 주소로 사용됨
+
+![image](https://user-images.githubusercontent.com/59367782/98638656-0065a180-236d-11eb-80f8-d1bcd5895d3e.png)
+
+
+### Addressing: IP
+
+네트워크와 노드의 주소를 표현한 방법 중 하나로, 전 세계를 연결해준 인터넷의 프로토콜이다.
+
+![image](https://user-images.githubusercontent.com/59367782/98639301-2a1ec880-236d-11eb-915f-181eeb689e81.png)
+
+
+### Routing
+
+라우팅 알고리즘의 목적은 패킷을 어디로 보낼지 결정하는 것이다. 각자가 분산된 독립적인 형태로 이루어져있다. 
+
+hop을 계산하여 보낼 수 있는 네트워크를 테이블화하여 라우팅 테이블을 작성한다. 라우팅 테이블은 네트워크의 주소와 hop을 매핑하여 작성된다. 이러한 테이블을 일정한 주기로 알려줘서 자신들이 패킷을 어디로 보낼 수 있는지 알 수 있다.
+
+- Routed Protocol: IP, IPX, Apple Talk
+- Routing Protocol: RIP, IGRP, EIGRP, OSPF, IS-IS, BGP, DBMPR, MOSPF, PIM Desne & Sparse
+
+### OSI 7 Layers
+
+![image](https://user-images.githubusercontent.com/59367782/98644376-b9c77580-2373-11eb-98e4-190faabba88f.png)
+
+레이어에 따라서 패킷에 헤더를 추가하거나 줄이는 식으로 패킷을 전송한다.
+
+![image](https://user-images.githubusercontent.com/59367782/98646491-cef1d380-2376-11eb-9191-d85260e8b9fc.png)
+
+### Network Class
+
+![image](https://user-images.githubusercontent.com/59367782/98646582-eb8e0b80-2376-11eb-85db-7fd840ea3a19.png)
+
+- 필요성: IP를 분할하여 각 기관 별로 배분하기 위함.
+- 단점
+    - C클래스는 너무 작고, B클래스는 너무 크다 -> IP 주소의 낭비
+    - 예) 전북대 직원은 2000명 내외. B클래스를 할당하면? 6만개 이상 IP는 낭비됨
+
+### Subnet
+
+![image](https://user-images.githubusercontent.com/59367782/98646714-1a0be680-2377-11eb-9167-f6ad46979a98.png)
+
+- 서브넷: 각 클래스 내에서 다시 네트워크를 분할하는 단위
+- 필요성: IP 할당의 낭비를 막고, 네트워크를 서로 구분해주기 위함
+- 장점: 주소 절약, 라우팅 테이블 크기 감소
+- 단점: 복잡하다.
+
+### CIDR: Classless Inter-Domain Routing
+
+- 비트 단위의 IP 주소 표준 분할 방식
+    - “Class 로 나눈 것 부터가 잘못!”
+    - 클래스 없이, IP 주소를 원하는 대로 분할할 수 있게 하자.
+
+![image](https://user-images.githubusercontent.com/59367782/98646881-622b0900-2377-11eb-98df-7f4f0969cc07.png)
+
+---
+
+# SMTP and FTP
+
+SMTP: Simple Mail Transfer Protocol  
+FTP: File Transfer Protocol
+
+## Electronic Mail
+
+### User Agent
+
+![image](https://user-images.githubusercontent.com/59367782/98677871-02e1ee80-23a1-11eb-9955-0f625b5cdfb5.png)
+
+### MIME (Multipurpose Internet Mail Extensions)
+
+- SMTP는 오직 7-bit ASCII 형식만 전송 가능
+    - Extended(혹은 Enhanced) SMTP는 8bit도 가능하지만, 호환성 문제
+    - 초기에 e-mail은 text만을 생각하기 때문
+
+- 7-bit로 표현하지 못하는 데이터를 전송을 하기 위해 MIME이 생겨남
+    - 한국어, 중국어, 프랑스어 등
+    - 비디오나 오디오 데이터 등
+
+- MIME은 SMTP를 대치하는 것이 아니라 보완하기 위함
+
+![image](https://user-images.githubusercontent.com/59367782/98678980-aed80980-23a2-11eb-8752-7f1e0b62be17.png)
+
+```
+Email Header
+---
+MIME-Version: 1.1
+Content-Type: type/subtype
+Content-Transfer-Encoding: encoding type - 7bit 변경 방법
+Content-id: message id
+Content-Description: textual explanation of nontextual contents
+---
+Email body
+```
+
+MIME이 EMail이 아닌 다른 곳에서도 쓰일 수 있으므로, encoding-type을 `7Bit`나 `Base64`, `Quoted-printable`을 사용해야 한다.
+
+### Base64
+
+![image](https://user-images.githubusercontent.com/59367782/98679677-b9df6980-23a3-11eb-8bd2-8cbf3caafa92.png)
+
+결과적으로 24비트가 32비트로 변환된다. 즉, 32/24 = 1.33이므로 33% 오버헤드가 발생한다.
+
+4bit -> 6bit로 바꾸기 때문에 64개의 매핑 테이블이 생긴다. 이 갯수 때문에 Base64라고 불린다.
+
+### Quoted-printable
+
+Non-ASCII 데이터, 즉 상위 비트가 1인 바이트만 3바이트로 변환한다. (`=`, 16진수 값의 ASCII 값)
+
+![image](https://user-images.githubusercontent.com/59367782/98679972-1b9fd380-23a4-11eb-8d2b-311698d14f03.png)
+
+Non-ASCII를 보면 상위 비트가 1이므로 16진수로 표현하면 `9D`이다.
+
+![image](https://user-images.githubusercontent.com/59367782/98680057-3a05cf00-23a4-11eb-8c2d-d4eb5ed83b99.png)
+
+전체 데이터 중 Non-ASCII **데이터의 비율이 작을 때** Base64 encoding보다 **효율적**이다.
+
+### E-mail 전달
+
+- E-mail의 실제 전달은 MTA(Mail Transfer Agent)가 맡음
+    - 예: UNIX의 경우 sendmail daemon 프로그램
+    - 메일을 보내기 위해서는 MTA client가 필요
+    - 메일을 수신하기 위해서는 MTA server가 필요
+    - MTA client와 MTA server는 SMTP 사용
+
+### Commands and responses
+
+![image](https://user-images.githubusercontent.com/59367782/98680546-e5af1f00-23a4-11eb-9ebf-1d72122e5ed2.png)
+
+예시 : telnet www.example.com port: 25
+- MTA server 포트는 25번
+- telnet을 이용하여 25번 포트에 TCP 연결
+- 키보드로 치는 것을 전송
+- telnet에서 ctrl-d를 누르면 TCP 종료
+
+```
+S: 220 www.example.com ESMTP Postfix - 서버응답
+C: HELO mydomain.com
+S: 250 Hello mydomain.com
+C: MAIL FROM:<sencder@mydomain.com> - Client
+S: 250 OK
+C: RCPT TO:<friend@example.com>
+S: 250 OK
+C: DATA
+S: 354 End data with <CR><LF>.<CR><LF>
+C: Subject: test message
+C: From: sender@mydomain.com
+C: To: friend@example.com
+C:
+C: Hello,
+C: This is a test.
+C: Goodbye.
+C: .
+S: 250 OK: queued as 12345
+C: QUIT
+S: 221 Bye
+```
+
+### MTA client and server
+
+A -> B 방향으로 메일을 보내면 ?
+
+```
+SMTP   | SMTP    SMTP    |                  |  SMTP     |   Mail Access Protocol (※No SMTP※)
+client | server  client  |                  |  server   |   IMAP, POP3
+A -> Mail Server ------> Internet ------> Mail server -> B
+```
+
+![image](https://user-images.githubusercontent.com/59367782/98681793-7cc8a680-23a6-11eb-8b0e-88fd37c4659a.png)
+
+### Mail Access Protocols
+
+- POP3 (Post Office Protocol version 3)
+    - Text로 이뤄짐
+- IMAP4 (Internet Mail Access Protocol version 4)
+- Web-based Mail
+    - naver나 Gmail 등
+    - 웹 브라우져 (IE, netscape)로 HTTP를 이용
+        - sending mail server에서 receiving mail server까지는 SMTP 사용
+
+## File Transfer
+
+FTP는 TCP를 사용하며 **2개의 TCP 연결**을 갖는다. Port 21를 이용한 제어를 위한 연결, Port 20을 이용하여 데이터를 전송하고 받는다.
+
+ASCII를 이용하여 TCP 연결은 한 뒤 데이터를 전송하기 때문에 구현은 어렵지 않지만 User Interface에 따라 달라지게 된다. 
+
+### Using the control connection
+
+![image](https://user-images.githubusercontent.com/59367782/98682938-d54c7380-23a7-11eb-9121-cef80001f9d2.png)
+
+
+port 20을 사용한 TCP 연결에서 200 ok를 받게 되면 데이터를 전송한다.
+
+![image](https://user-images.githubusercontent.com/59367782/98683006-e72e1680-23a7-11eb-99a6-07c97d5e2363.png)
+
+anonymous를 지원하므로 연결 상대가 허용하면 익명으로도 연결할 수 있다. 또한, **컨트롤 채널**로 **데이터를 주고 받는 방식**인 것을 기억하자.
 
 ---

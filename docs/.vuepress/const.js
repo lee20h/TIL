@@ -108,7 +108,8 @@ exports.Network_list = [
     'Network/Transport Layer.md',
     'Network/Congestion Control and Quality of Service.md',
     'Network/Application Layer.md',
-    'Network/DNS.md'
+    'Network/DNS.md',
+    'Network/SMTP and FTP.md'
 ]
 
 exports.Travis_list = [
@@ -149,5 +150,6 @@ exports.Distribute_list = [
     'Distribute/AWS Computing Services.md',
     'Distribute/Load test for Web services.md',
     'Distribute/AWS Storage Service.md',
-    'Distribute/AWS Database Services'
+    'Distribute/AWS Database Services.md',
+    'Distribute/AWS Network Service.md'
 ]
