@@ -140,7 +140,8 @@ exports.OSS_list = [
     'OSS/오픈소스 소프트웨어 참여.md',
     'OSS/git 초급.md',
     'OSS/git 중급.md',
-    'OSS/코드 분석.md'
+    'OSS/코드 분석.md',
+    'OSS/github features.md'
 ]
 
 exports.Distribute_list = [
