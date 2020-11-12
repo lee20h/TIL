@@ -1864,3 +1864,88 @@ Issue를 생성시 자동으로 프로젝트 To-do 섹션에 추가되는 기능
 
 ---
 
+- 12日
+
+# AWS Network Services: VPC, ELB, Route 53
+
+## AWS Network Servcies
+
+- Amazon VPC : Virtual Private Cloud로 자체 프라이빗 가상 네트워크를 통해 클라우드 리소스를 격리
+
+- Elastic Load Balancing : Load Balancing을 클라우드에서 여러 Amazon EC2 인스턴스 전체에 애플리케이션 트래픽을 자동으로 분산
+
+- Amazon Route 53 : Domain Name Service(DNS) 서비스로, 사용자 요청을 AWS 리소스로 연결할 수 있는 가용성과 확장성이 뛰어난 클라우드 DNS
+
+- AWS Direct Connect : AWS로의 전용 네트워크 연결한다. 사용자 네트워크와 Amazon VPC 간의 전용 네트워크 연결
+
+### AWS Direct Connect 
+
+- 사용자 서버에서 AWS로 전용 네트워크 연결을 설정
+    - AWS와 사용자의 데이터 센터, 사무실, 또는 코로케이션 환경 사이에 프라이빗 연결을 설정
+        - 인터넷 연결이 아님
+    - 네트워크 비용을 줄이고, 대역폭 처리량을 향상하며, 인터넷 기반 연결보다 일관된 네트워크 경험을 제공
+    - 사용자 서버에서 AWS 프라이빗 리소스에 액세스 가능
+        - 예: 프라이빗 IP 공간을 사용하는 Amazon Virtual Private Cloud(VPC)에서 실행되고 있는 Amazon EC2 인스턴스
+
+
+### AWS Direct Connect Pricing
+
+- 포트 요금 + 데이터 송신 요금
+
+![image](https://user-images.githubusercontent.com/59367782/98939980-9ea06580-252d-11eb-8216-7605b05ab505.png)
+
+- 참고자료
+    - [AWS VPC 소개](https://aws.amazon.com/ko/vpc/?hp=tile&so-exp=below)
+    - [AWS VPC 시작하기](https://aws.amazon.com/ko/vpc/?hp=tile&so-exp=below)
+    - [VPC Deep Dive (김상필 AWS solutions architect)](https://www.slideshare.net/awskorea/vpc-deep-dive?from_action=save)
+
+## AWS VPC (Virtual Private Cloud)
+
+### Network
+
+- Cloud network service
+    - 사용자의 가상 컴퓨팅 자원 간의 가상 네트워크를 구성하는 서비스
+    - 기본: IP 주소 범위, 서브넷, 라우팅, 게이트웨이 구성 등
+    - 확장: VPN, NAT 등
+- AWS Network
+    - Private: AWS 내부에서만 사용 가능한 주소
+        - 집 공유기에 연결된 내 노트북 IP (192.168.0.22)
+- Public: AWS 외부에서 연결 가능한 주소
+    - 내 노트북으로 port forwarding 을 설정해 외부에서 접속하도록 한 경우
+    - 외부 -> 공유기 (114.72.x.x / 192.168.0.1) -> 노트북 (114.72.x.x / 192.168.0.22)
+
+### VPC
+
+- VPC 서비스
+    - Amazon Web Services(AWS) 클라우드에 논리적으로 격리된 **가상 네트워크를 정의**하고, 그 내부에 AWS 리소스를 배치, 사용할 수 있음
+    - (Virtual IDC: __Internet Data Center__ 라고 생각할 수 있음)
+- 기능
+    - IP 주소 범위 선택, 서브넷 생성, 라우팅 테이블 및 네트워크 게이트웨이 구성 등 가상 네트워킹 환경을 제어
+    - IPv4, v6 지원
+    - 보안 기능 제공 (filtering, access control, h/w isolation)
+- 비용: 무료
+    - VPN, NAT 서비스 유료
+    - [AWS 비용 참고](https://aws.amazon.com/ko/vpc/pricing)
+
+### VPC를 이용한 네트워크 구성 예
+
+![image](https://user-images.githubusercontent.com/59367782/98940812-e5db2600-252e-11eb-8415-b57dfdd87eee.png)
+
+- 간단한 공용 웹 사이트 호스팅
+    - 블로그 또는 간단한 웹 사이트와 같은 기본 웹 애플리케이션을 VPC에 호스팅
+    - 웹 서버가 인터넷의 인바운드 HTTP 및 SSL 요청에 응답하도록 허용
+    - 동시에 웹 서버가 인터넷에 대한 아웃바운드 연결을 시작하지 못하도록 하는 보안 그룹 규칙을 만들어 웹 사이트를 보호
+        - 타 서버로 능동적으로 접근하지 못하게 하여 DDoS 등에 좀비 PC로 이용되는 것을 방지함
+
+- 다중 계층 웹 애플리케이션 호스팅
+    - 웹 서버, 애플리케이션 서버 및 데이터베이스 간에 액세스 및 보안 제한을 엄격하게 적용
+    - 2개의 서브넷: 공개적으로 액세스할 수 있는 서브넷과 비공개로 액세스할 수 있는 서브넷
+        - Public subnet: 웹 서버
+        - Private subnet: 어플리케이션 서버, DB
+            - Outbound access: NAT 게이트웨이 사용 (management console, update 등)
+- 서버와 서브넷 사이의 액세스를 제어
+    - 웹 서버가 (혹은 웹 서버만) App 서버 및 DB를 정상적으로 사용하도록,
+    - 네트워크 액세스 제어 목록과 보안 그룹에서 제공하는 인바운드 및 아웃바운드 패킷 필터링을 사용
+
+---
+
