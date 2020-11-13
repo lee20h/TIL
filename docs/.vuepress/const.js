@@ -97,7 +97,10 @@ exports.SE_list = [
     'SE/기능 모델링.md',
     'SE/동적 모델링.md',
     'SE/정보 모델링.md',
-    'SE/객체지향 분석기법.md'
+    'SE/객체지향 분석기법.md',
+    'SE/인터넷 쇼핑몰 유스케이스(Use Case).md',
+    'SE/인터넷 쇼핑몰 UML 모델링.md',
+    'SE/소프트웨어 설계 기법.md'
 ]
 
 exports.Network_list = [
