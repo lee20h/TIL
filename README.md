@@ -1445,7 +1445,7 @@ Caching overhead가 크면 적용하지 않지만 만약 overhead가 작다면 �
 ### 메모리 할당 영역
 
 - Code (text)
-    - 프로그램 코드가 복제되어 실행에 사용
+    - 프로그램 코드가 복제���어 실행에 사용
 - Data
     - Global and static local variables
 - Heap
@@ -2314,5 +2314,76 @@ int main() {
 
 - [자바스크립트 비동기 처리와 콜백 함수](https://joshua1988.github.io/web-development/javascript/javascript-asynchronous-operation/)
 - [자바스크립트 Promise 쉽게 이해하기](https://joshua1988.github.io/web-development/javascript/promise-for-beginners/)
+
+---
+
+- 15日
+
+# PS
+
+- 후보키
+
+```cpp
+#include <string>
+#include <vector>
+#include <unordered_set>
+using namespace std;
+
+bool check_minimality(const vector<int> &keys, const int bit) {
+    for (int i=0; i<keys.size(); i++) {
+        if((keys[i] & bit) == keys[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int solution(vector<vector<string>> relation) {
+    vector<int> keys;
+    int cnt = 0;
+    int tupleSize = relation.size();
+    int columnSize = relation[0].size();
+    
+    for (int bit=1; bit < (1 << columnSize); bit++) {
+        if(!check_minimality(keys, bit))
+            continue;
+        unordered_set<string> s;
+        
+        for (int i=0; i<tupleSize; i++) {
+            string key;
+            for (int j=0; j<columnSize; j++) {
+                if(bit & (1 << j)) {
+                    key += relation[i][j] + ' ';
+                }
+            }
+            s.insert(key);
+        }
+        
+        if(s.size() == tupleSize) {
+            keys.push_back(bit);
+            cnt++;
+        }
+    }
+    
+    
+    return cnt;
+}
+```
+
+후보키에 해당하는 튜플을 찾아서 갯수를 반환하는 문제이다. 비트마스킹을 통해서 문제를 해결한 코드이다. 문제를 해결할 때 다른 방법으로 접근하였으나, 다른 블로그를 보고 참고한 코드이다. 처음에는 이해가 되지 않았지만 계속 코드를 살펴봄으로써 이해가 되었다. 
+
+bit를 컬럼사이즈만큼 늘리면서 해당 비트값의 최소성을 체크하고 이후에 유일성을 체크하게 된다. set에 집어넣어 set의 사이즈가 튜플사이즈와 같다면 겹치는 튜플이 없다는 뜻이므로, 이 경우에 vector에 집어넣어서 관리를 한다. 이후에 bit를 이용한 for문에서 최소성을 체크할 때 vector의 값이 동일한게 있나 체크할 때 또 사용하게 된다.
+
+이후에는 vector의 크기를 반환하면 정답을 얻을 수 있었다.
+
+---
+
+# 편집 거리 알고리즘
+
+- [참고 블로그](https://hsp1116.tistory.com/41)
+
+이번 카카오 추천팀 인턴 코딩테스트에서 나온 문제 중에 이 알고리즘을 사용해서 풀어야하는 문제가 있었다. 알고리즘에 대해 알지 못해서 너무 돌아간 느낌이라 공부하고자 한다.
+
+LIS와 같이 DP를 사용하여 해결하는 알고리즘으로, 블로그를 통해 제대로 된 이해가 필요할 것 같다.
 
 ---
