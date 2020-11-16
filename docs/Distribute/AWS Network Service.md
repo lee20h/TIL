@@ -145,3 +145,62 @@ hop을 계산하여 보낼 수 있는 네트워크를 테이블화하여 라우�
 - 서버와 서브넷 사이의 액세스를 제어
     - 웹 서버가 (혹은 웹 서버만) App 서버 및 DB를 정상적으로 사용하도록,
     - 네트워크 액세스 제어 목록과 보안 그룹에서 제공하는 인바운드 및 아웃바운드 패킷 필터링을 사용
+
+## ELB (Elastic Load Balancing)
+
+### ELB
+
+- 들어오는 애플리케이션 트래픽을 자동으로 분산
+    - 대상: Amazon EC2 인스턴스, 컨테이너, IP 주소 등
+        - 단일 가용 영역 또는 여러 가용 영역에 분산 가능
+    - 애플리케이션의 내결함성 보장
+        - 고가용성, 자동 확장/축소, 보안
+    - 세 가지 로드 밸런서 제공
+
+### Application and Network Load Balancer
+
+- 차이점: 각각 L7 과 L4 계층에서 동작
+    - 프로토콜
+        - ALB: HTTP, HTTPS
+        - NLB: TCP
+    - 성능
+        - 더 낮은 계층에서 동작하므로 **ALB에 비해 NLB의 처리 성능이 높음**
+- Classic LB
+    - L4, L7 으로 명확히 구분하기 전, 통합된 형태로 서비스하였음
+    - VPC 이전에 EC2-classic 이라 불리던 네트워크 서비스에서 사용됨
+    - VPC 사용 시에는 더 이상 사용을 권장하지 않음
+
+### ELB 특징
+
+- 고가용성
+    - 인스턴스의 상태를 주기적으로 점검하여, 정상 상태의 인스턴스에만 트래픽을 전달함
+
+- 탄력성
+    - Auto-scaling 과 통합 가능
+    - ELB 자체도 scale out 을 수행하여, 부하에 탄력적으로 대응함
+
+- 기타
+    - 보안: 보안 그룹으로 제어 가능
+    - 모니터링: CloudWatch 와 통합
+    - Hybrid load balancing: 사용자의 로컬 on premise 리소스와 통합 가능
+
+- ELB Scale-out
+    - ELB는 인스턴스를 기반으로 제공되는 서비스
+    - 인스턴스가 감당하지 못하는 수준의 트래픽이 몰리면, scale out 수행
+        - 추가 인스턴스를 생성해 처리함
+        - 생성까지 시간이 걸리므로 요청이 단기간에 급증하는 경우, 서비스 딜레이가 생길 수 있음
+
+- MultiAZ 로 로드 밸런싱을 하는 경우
+    - 각 AZ 별로 ELB 인스턴스가 생성됨
+    - AZ별로 같은 비율로 트래픽이 분배됨
+        - 따라서 각 AZ의 서비스 처리 성능은 유사하게 유지되어야 함
+
+### ELB 요금
+
+- Application Load Balancer
+    - 실행된 시간 또는 부분 시간 그리고 시간당 사용된 로드 밸랜서 용량 단위(LCU)에 대해 요금이 부과된다.
+
+- Network Load Balancer
+    - 실행된 시간 또는 부분 시간 그리고 시간당 Network Load Balancer에서 사용된 로드 밸랜서 용량 단위(LCU)에 대해 요금이 부과된다.
+
+- [AWS ELB 요금](https://aws.amazon.com/ko/elasticloadbalancing/pricing/)

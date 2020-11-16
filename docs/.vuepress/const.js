@@ -144,7 +144,8 @@ exports.OSS_list = [
     'OSS/git 초급.md',
     'OSS/git 중급.md',
     'OSS/코드 분석.md',
-    'OSS/github features.md'
+    'OSS/github features.md',
+    'OSS/Pull Request.md'
 ]
 
 exports.Distribute_list = [

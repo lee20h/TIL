@@ -1445,7 +1445,7 @@ Caching overhead가 크면 적용하지 않지만 만약 overhead가 작다면 �
 ### 메모리 할당 영역
 
 - Code (text)
-    - 프로그램 코드가 복제���어 실행에 사용
+    - 프로그램 코드가 복제�����어 실행에 사용
 - Data
     - Global and static local variables
 - Heap
@@ -2387,3 +2387,92 @@ bit를 컬럼사이즈만큼 늘리면서 해당 비트값의 최소성을 체�
 LIS와 같이 DP를 사용하여 해결하는 알고리즘으로, 블로그를 통해 제대로 된 이해가 필요할 것 같다.
 
 ---
+
+- 16日
+
+# Github: Pull Request
+
+## Pull Request
+
+- 내 변경사항을 공식 저장소에 반영요청
+    - 공식 저장소의 관리자(maintainer)가 나의 요청을 받아들이면?
+        - Merge를 수행해 줌
+
+- Pull Request 가 필요한 경우
+    - 오픈소스 프로젝트의 소스를 고친 경우
+        - 내가 변경한 소스가 다른 사람에게도 의미가 있는 경우 (개선, 버그수정 등)
+- Collaborate project에서 merge 권한 관리를 하고 싶을 때
+    - 예) master/release 브랜치로의 merge는 무조건 pull request를 사용하고, 팀장이 merge를 수행하기로 정함
+
+### Pull Request 수행
+
+- Collaborator 가 아닌 repository에 작업하는 방법
+    - GitHub의 remote repository 를 fork해, 내 계정에 remote repository 생성
+        - Fork: remote repository를 복제하는 명령
+- 이를 clone 하여 local repository 에서 작업
+
+---
+
+# AWS Network Services: VPC, ELB, Route 53
+
+## ELB (Elastic Load Balancing)
+
+### ELB
+
+- 들어오는 애플리케이션 트래픽을 자동으로 분산
+    - 대상: Amazon EC2 인스턴스, 컨테이너, IP 주소 등
+        - 단일 가용 영역 또는 여러 가용 영역에 분산 가능
+    - 애플리케이션의 내결함성 보장
+        - 고가용성, 자동 확장/축소, 보안
+    - 세 가지 로드 밸런서 제공
+
+### Application and Network Load Balancer
+
+- 차이점: 각각 L7 과 L4 계층에서 동작
+    - 프로토콜
+        - ALB: HTTP, HTTPS
+        - NLB: TCP
+    - 성능
+        - 더 낮은 계층에서 동작하므로 **ALB에 비해 NLB의 처리 성능이 높음**
+- Classic LB
+    - L4, L7 으로 명확히 구분하기 전, 통합된 형태로 서비스하였음
+    - VPC 이전에 EC2-classic 이라 불리던 네트워크 서비스에서 사용됨
+    - VPC 사용 시에는 더 이상 사용을 권장하지 않음
+
+### ELB 특징
+
+- 고가용성
+    - 인스턴스의 상태를 주기적으로 점검하여, 정상 상태의 인스턴스에만 트래픽을 전달함
+
+- 탄력성
+    - Auto-scaling 과 통합 가능
+    - ELB 자체도 scale out 을 수행하여, 부하에 탄력적으로 대응함
+
+- 기타
+    - 보안: 보안 그룹으로 제어 가능
+    - 모니터링: CloudWatch 와 통합
+    - Hybrid load balancing: 사용자의 로컬 on premise 리소스와 통합 가능
+
+- ELB Scale-out
+    - ELB는 인스턴스를 기반으로 제공되는 서비스
+    - 인스턴스가 감당하지 못하는 수준의 트래픽이 몰리면, scale out 수행
+        - 추가 인스턴스를 생성해 처리함
+        - 생성까지 시간이 걸리므로 요청이 단기간에 급증하는 경우, 서비스 딜레이가 생길 수 있음
+
+- MultiAZ 로 로드 밸런싱을 하는 경우
+    - 각 AZ 별로 ELB 인스턴스가 생성됨
+    - AZ별로 같은 비율로 트래픽이 분배됨
+        - 따라서 각 AZ의 서비스 처리 성능은 유사하게 유지되어야 함
+
+### ELB 요금
+
+- Application Load Balancer
+    - 실행된 시간 또는 부분 시간 그리고 시간당 사용된 로드 밸랜서 용량 단위(LCU)에 대해 요금이 부과된다.
+
+- Network Load Balancer
+    - 실행된 시간 또는 부분 시간 그리고 시간당 Network Load Balancer에서 사용된 로드 밸랜서 용량 단위(LCU)에 대해 요금이 부과된다.
+
+- [AWS ELB 요금](https://aws.amazon.com/ko/elasticloadbalancing/pricing/)
+
+---
+
