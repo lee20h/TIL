@@ -3,7 +3,7 @@
   
 # Overview of Data Communications and Networking
 
-전북대학교 편기현 교수님의 데이터통신 수업 정리입니다.
+전북대학교 편기현 교수님의 데이터통신 수업 정리입니다. McGraw-Hill 출판사 책을 이용해 공부했습니다.
 
 Data_Communications의 이미지 출처 : McGraw-Hill
 

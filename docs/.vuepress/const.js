@@ -112,7 +112,8 @@ exports.Network_list = [
     'Network/Congestion Control and Quality of Service.md',
     'Network/Application Layer.md',
     'Network/DNS.md',
-    'Network/SMTP and FTP.md'
+    'Network/SMTP and FTP.md',
+    'Network/HTTP and WWW.md'
 ]
 
 exports.Travis_list = [
