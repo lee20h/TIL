@@ -134,7 +134,8 @@ exports.Linux_list = [
     'Linux/system call.md',
     'Linux/File.md',
     'Linux/File2.md',
-    'Linux/Dynamic Memory Allocation.md'
+    'Linux/Dynamic Memory Allocation.md',
+    'Linux/Process Management.md'
 ]
 
 exports.OSS_list = [
