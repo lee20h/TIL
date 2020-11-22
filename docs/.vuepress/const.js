@@ -1,3 +1,7 @@
+exports.BookList = [
+    'book/book.md'
+]
+
 exports.AlgorithmList = [
     'Algorithm/그래프.md',
     'Algorithm/문자열 검색.md',

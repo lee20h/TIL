@@ -8,6 +8,10 @@ module.exports = {
   themeConfig: {
     sidebar: [
       {
+        title: "Book",
+        children: CONST.BookList
+      },
+      {
         title: "Algorithm",
         children: CONST.AlgorithmList
       },

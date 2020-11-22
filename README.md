@@ -3593,3 +3593,46 @@ pid_t wiat(int *wstatus);
         - Init 프로세스가 `wait()` 를 호출해서 정상 종료시켜 줌
 
 ---
+
+- 22日
+
+# PS
+
+압축
+```cpp
+#include <string>
+#include <vector>
+#include <unordered_map>
+#include <iostream>
+using namespace std;
+
+vector<int> solution(string msg) {
+    vector<int> answer;
+    unordered_map<string, int> m;
+    int cnt = 1;
+    for (int i=0; i<26; i++) {
+        string temp;
+        char c = 'A' + i;
+        temp += c;
+        m[temp] = cnt++;
+    }
+    
+    for (int i=0; i<msg.length(); i++) {
+        string str;
+        str += msg[i];
+        int idx = i;
+        while(m.find(str) != m.end()) {
+            str += msg[++idx];
+        }
+        i += idx - i - 1;
+        m[str] = cnt++;
+        str.pop_back();
+        answer.push_back(m[str]);
+    }
+    return answer;
+}
+```
+
+압축 알고리즘 중 LZW 압축 알고리즘을 구현한 것으로, 문자열을 한 문자당 매핑되는 값을 두기 위해서 map 컨테이너를 사용하였고 그 중 속도를 개선하기 위해서 unordered_map을 사용했다. map 컨테이너에서 처음 보는 문자인 경우 cnt 값을 늘려서 넣어주고 아닌 경우에는 그대로 answer 벡터에 넣어주었다. 조금 더 줄이기 위해서 다른 사람들의 코드를 참고했다. 처음 짠 코드는 너무 장황해서 보기가 힘들었다.
+
+---
