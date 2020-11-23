@@ -214,3 +214,77 @@ HTTP Request가 오게 되면 서버측에서 클라이언트에게 프로그램
 오늘날에는 Proxy server가 잘 동작하지 않는다.
 - Web Server가 dynamic document를 주로 생성하기 때문
 - 즉 동일한 HTTP Request에 대해 다른 HTTP Response가 돌아오는 경우가 많다. (caching한 데이터가 무용지물 됨)
+
+## Server-side Programming
+
+- 사용자 요구에 맞게 Dynamic 혹은 Active document를 생성하기 위해 서버쪽에서 행하는 프로그래밍
+- 결국 HTTP request 메시지를 수신할 때마다 서버에서 사용자 입력을 가지고 코드를 실행
+
+### 종류
+
+- CGI
+- PHP
+- JSP
+- ASP
+- Node.js
+- Go
+- ...
+
+### CGI
+
+![image](https://user-images.githubusercontent.com/59367782/99930171-7289ad80-2d93-11eb-8a8d-6f4b4ec507ca.png)
+
+- Web server가 test.pl에게 데이터를 넘겨주는 방법이 문제
+    - Web serve와 test.pl은 둘 다 process이므로 process communication 문제
+    - GET 방식이면 test.pl process의 환경 변수에 저장
+    - POST 방식이면 test.pl process의 표준 입력에 저장
+- 한 서버에 process 숫자가 100개 넘어서면 **scalability** 문제가 발생
+
+### PHP
+
+![image](https://user-images.githubusercontent.com/59367782/99930395-3b67cc00-2d94-11eb-81e7-eb215b14db4d.png)
+
+- Web server가 test.php를 직접 실행하므로 CGI와 같은 데이터 전달 문제가 없음
+- HTTP request가 많아져도 process 숫자가 증가하지 않으므로 **scalability** 문제 완화
+
+### ASP
+
+![image](https://user-images.githubusercontent.com/59367782/99931063-8e428300-2d96-11eb-898a-767fbd3b606d.png)
+
+- 서버가 Microsoft 운영체제이어야만 하며 윈도우 운영체제의 보안문제에 취약
+- 윈도우 서버가 scalability가 좋지 않기 때문에 확장성 측면에서 다소 불리
+- 윈도우 서버가 유닉스 서버에 비해 설치가 쉽기 때문에 학원에서 많이 다룸
+    - 운영체제가 특정 한 회사에 한정되고 표준과 무관하므로 가급적 피하는 것이 좋음
+
+### JSP
+
+![image](https://user-images.githubusercontent.com/59367782/99931097-af0ad880-2d96-11eb-9760-4dd433286f95.png)
+
+- Web server가 test.jsp를 직접 실행하므로 CGI와 같은 데이터 전달 문제가 없음
+- Java 언어에 익숙한 사용자가 server side programming할 때 고려
+- 생성 -> 변환 -> 실행을 해야하기 때문에 서버 부하가 큼 (대략 PHP 방식보다 2-3배 느림)
+
+### Node.js
+
+![image](https://user-images.githubusercontent.com/59367782/99931141-d2358800-2d96-11eb-853a-ef07dcff3ac2.png)
+
+- Client 웹 페이지에 개발에 사용된 자바스크립트를 서버에도 사용
+    - 자바스크립트에 익숙한 개발자들이 서버 프로그래밍할 때 용이
+    - 비동기 I/O 사용 (I/O가 많은 작업을 처리할 때 유리)
+
+### Go
+
+![image](https://user-images.githubusercontent.com/59367782/99931189-f729fb00-2d96-11eb-90c3-65aa50922960.png)
+
+- Google이 networked server, tools, system programming에 적합하게 **단순(simplicity)**하고 고성능을 목적으로 개발
+- 새로운 언어인 GO를 배워야 하는 부담이 존재
+- 클래스 계층구조를 없애고 복잡한 객체는 composition으로 생성
+- 일반적으로 현재 **가장 고성능**
+
+### Performance 비교
+
+- 일반적으로 (GO , Node.js )-> (PHP, ASP) -> JSP -> CGI
+- 각 sider-side programming은 계속 성능 개선을 하고 있으므로 유의
+    - CGI -> FastCGI, PHP -> ReactPHP (event-driven), … 
+- 응용의 특성 (예: I/O 요구 특성)에 따라 성능이 달라질 수 있음
+- 프로젝트의 특성(예: 보안, 호환성 유지 등)에 따라 맞는 것을 선택

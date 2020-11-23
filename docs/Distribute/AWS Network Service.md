@@ -204,3 +204,62 @@ hop을 계산하여 보낼 수 있는 네트워크를 테이블화하여 라우�
     - 실행된 시간 또는 부분 시간 그리고 시간당 Network Load Balancer에서 사용된 로드 밸랜서 용량 단위(LCU)에 대해 요금이 부과된다.
 
 - [AWS ELB 요금](https://aws.amazon.com/ko/elasticloadbalancing/pricing/)
+
+
+## AWS Route 53 (DNS Service)
+
+- 참고 자료
+    - [Route 53 설명서](https://docs.aws.amazon.com/route53/index.html)
+    - [Route 53 개발자 메뉴얼](http://docs.aws.amazon.com/ko_kr/Route53/latest/DeveloperGuide/route53-dg-ko_kr.pdf)
+
+### DNS
+
+- 도메인 이름과 IP 간의 연결을 담당하는 서비스
+- [AWS DNS 설명](https://aws.amazon.com/ko/route53/what-is-dns/)
+
+
+### DNS related concepts
+
+- 최상위 도메인(Top-Level Domain)
+    - .com, .org 등 도메인 이름의 마지막 부분. 두 가지 유형의 TLD 존재
+    1. 일반적인 최상위 도메인: 웹사이트의 내용과 연관되어 명명된 도메인
+        - 예) .edu
+    2. 지리적 최상위 도메인: 웹사이트의 지리적 영역과 연관되어 명명된 도메인
+        - 예) .kr
+- 도메인 등록 기관
+    - 특정 최상위 도메인을 가진 도메인을 판매할 권리를 소유한 기관
+- 도메인 등록 대행자
+    - 국제인터넷주소관리기구(ICANN)가 인증한, 특정 최상위 도메인(TLD) 등록을 처리하는 회사.
+    - 예) Amazon Registrar, Inc.는 .com, .net, .org 도메인의 등록 대행자
+
+### AWS Route 53
+
+- 클라우드 DNS 서비스
+    - 최종 사용자와 웹서비스와의 연결을 담당
+        - 53은 DNS service port
+- 기능
+    - 기본 DNS 기능, 트래픽 관리, 도메인 이름 등록, 상태 확인
+        - 공개 DNS 레코드를 생성하고 관리함으로써 서비스 상태에 따라 동적으로 도메인 이름과 IP의 연결을 변경 가능
+- 비용: 종량 과금제 (pay-per-use)
+    - 호스팅 영역, 트래픽 흐름, 쿼리 당 요금제 적용
+    - [AWS 요금 정책](https://aws.amazon.com/ko/route53/pricing/)
+
+![image](https://user-images.githubusercontent.com/59367782/99928163-42d6a780-2d8b-11eb-8e46-87cf8b4e2b37.png)
+
+
+### Rotue 53의 특징
+
+- 가중치 기반 규칙 (1:1, 1:10)
+- 장애 조치 규칙 (Primary, Slave)
+- 지리 위치 규칙 (USA, Asia)
+- 지연시간 규칙 (Region-based)
+- 다중 응답 규칙 (Random)
+- 엔드포인트
+    - 최종 도달점 (S3, EC2 등) 설정
+
+### DNS 서비스
+
+- 단순히 도메인 이름과 IP 주소 간의 변환 기능만 제공하는 것이 아니라, DNS를 활용한 서비스 전달 경로의 설정이 가능함
+    - 사용자는 동일한 Domain name으로 접근하고,
+    - 지역에 따라, 혹은 가용 상태에 따라 서로 다른 Region, AZ에서 실제 서비스를 제공함
+- 최상위 레벨의 Load balancing, traffic management 역할을 수행할 수 있음

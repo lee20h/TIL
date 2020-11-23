@@ -102,9 +102,11 @@ exports.SE_list = [
     'SE/동적 모델링.md',
     'SE/정보 모델링.md',
     'SE/객체지향 분석기법.md',
-    'SE/인터넷 쇼핑몰 유스케이스(Use Case).md',
+    'SE/인터넷 쇼핑몰 유스케이스.md',
     'SE/인터넷 쇼핑몰 UML 모델링.md',
-    'SE/소프트웨어 설계 기법.md'
+    'SE/소프트웨어 설계 기법.md',
+    'SE/자료흐름 중심 설계.md',
+    'SE/데이터베이스 설계.md'
 ]
 
 exports.Network_list = [
@@ -117,7 +119,8 @@ exports.Network_list = [
     'Network/Application Layer.md',
     'Network/DNS.md',
     'Network/SMTP and FTP.md',
-    'Network/HTTP and WWW.md'
+    'Network/HTTP and WWW.md',
+    'Network/Multimedia.md'
 ]
 
 exports.Travis_list = [
@@ -151,7 +154,8 @@ exports.OSS_list = [
     'OSS/git 중급.md',
     'OSS/코드 분석.md',
     'OSS/github features.md',
-    'OSS/Pull Request.md'
+    'OSS/Pull Request.md',
+    'OSS/Code Review.md'
 ]
 
 exports.Distribute_list = [
