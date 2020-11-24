@@ -142,7 +142,8 @@ exports.Linux_list = [
     'Linux/File.md',
     'Linux/File2.md',
     'Linux/Dynamic Memory Allocation.md',
-    'Linux/Process Management.md'
+    'Linux/Process Management.md',
+    'Linux/IPC.md'
 ]
 
 exports.OSS_list = [
