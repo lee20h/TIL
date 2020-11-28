@@ -4643,3 +4643,145 @@ int shmctl(int shmid, int cmd, struct shmid_ds *buf);
 학교에서 사용하는 lms를 만들고 관리하는 기업에서 실습을 진행할 때 느꼈던 클린 코드의 중요성과 이번에 리트머스 프로젝트에 기여하면서 느끼는 문서의 중요성은 나중에 실무를 하게 되었을 때 꼭 가지고 가야하는 부분이라고 생각된다. 이러한 부분을 조금 더 개선하기 위해서 클린 코드 책을 읽어보고 여러 개발자들의 협업에 대한 생각을 정리한 포스팅을 읽어보면서 나의 생각도 키워가야겠다.
 
 ---
+
+- 27日
+
+# PS
+
+방금그곡
+```cpp
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+bool cmp(pair<string, int> a, pair<string, int> b) {
+    return a.second > b.second;
+}
+
+string solution(string m, vector<string> musicinfos) {
+    string answer = "";
+    vector<pair<string, int>> v;
+    for (int i=0; i<m.length(); i++) {
+        if(m[i] == '#') {
+            string temp;
+            temp += tolower(m[i-1]);
+            string str = m.substr(0, i-1) + temp + m.substr(i+1);
+            m = str;
+        }
+    }
+    
+    for (int i=0; i<musicinfos.size(); i++) {
+        string start, end, title, music;
+        start = musicinfos[i].substr(0, 5);
+        end = musicinfos[i].substr(6, 5);
+        
+        bool flag = false;
+        for (int j=12; j<musicinfos[i].length(); j++) {
+            if(musicinfos[i][j] == ',') {
+                flag = true;
+                continue;
+            }
+            if(!flag) {
+                title += musicinfos[i][j];
+            }
+            else {
+                music += musicinfos[i][j];
+            }
+        }
+        
+        for (int j=0; j<music.length(); j++) {
+            if(music[j] == '#') {
+                string temp;
+                temp += tolower(music[j-1]);
+                string str = music.substr(0, j-1) + temp + music.substr(j+1);
+                music = str;
+            }
+        }
+        
+        int begin = stoi(start.substr(0,2)) * 60 + stoi(start.substr(3));
+        int last = stoi(end.substr(0,2)) * 60 + stoi(end.substr(3));
+        // if(last == 0) {
+        //     last = 24 * 60;
+        // }
+        int runtime = last - begin;
+        string total_music = music;
+        while(runtime > total_music.length()) 
+            total_music += music;
+        while(runtime < total_music.length())
+             total_music.pop_back();
+        
+        if(total_music.find(m) != string::npos) {
+            v.push_back({title, runtime});
+        }
+    }
+    stable_sort(v.begin(), v.end(), cmp);
+    if(!v.empty())
+        answer = v[0].first;
+    else
+        answer = "(None)";
+    return answer;
+}
+```
+
+주어진 조건에 따라서 문자열을 파싱하고 계산 한 뒤 `find()`를 통해서 조건에 부합하는 노래 제목만 벡터에 넣은 뒤 안정 정렬을 통해 노래 재생 시간이 긴 순으로 내림차순 정렬하였다. 그 이후 인덱스 첫번째를 리턴하게 했는데, 이 과정에서 오타로 인해 2시간 정도 허비하였다. 바로 정렬의 매개변수를 잘못 기입한 것이었다. 이후에는 끝나는 시간이 00:00이 되는 경우를 처리해줄려고 했으나, 저 부분이 없어야 오히려 정답 처리가 되어서 당황스러웠다. 문제의 오점인지 나의 생각이 잘못된건지 모르겠지만 아쉬운 판단이였다.
+
+---
+
+- 28日
+
+# PS
+
+프렌즈 4블록
+```cpp
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int solution(int m, int n, vector<string> board) {
+    int answer = 0;
+    bool erase = true;
+    
+    while(erase) {
+        bool arr[30][30] = {false,};
+        erase = false;
+        
+        for (int i=0; i<m-1; i++) {
+            for (int j=0; j<n-1; j++) {
+                if(board[i][j] == 'x')
+                    continue;
+                
+                char target = board[i][j];
+                if(board[i][j+1] == target && board[i+1][j] == target && board[i+1][j+1] == target) {
+                    arr[i][j] = true;
+                    arr[i+1][j] = true;
+                    arr[i][j+1] = true;
+                    arr[i+1][j+1] = true;
+                    erase = true;
+                }
+            }
+        }
+        for (int i=0; i<m; i++) {
+            for (int j=0; j<n; j++) {
+                if(arr[i][j]) {
+                    for(int k=i-1; k>=0; k--) {
+                        board[k+1][j] = board[k][j];
+                        board[k][j] = 'x';
+                    }
+                    
+                    answer++;
+                }
+            }
+        }
+    }
+    
+    
+    return answer;
+}
+```
+
+게임 구현사항을 구현하는 테스트로 2x2 블록이 같은 경우 해당 블록을 지운 뒤 블록이 얼마나 지워졌나 반환하는 문제였다. 처음에는 상당히 어렵게 생각하여 접근했으나, 완전탐색으로 다 훑으면서 2x2 블록이 전부 같은 블록인 경우 bool 배열로 체크해논 뒤 다시 한번 더 완전탐색으로 체크한 부분을 지운 뒤 위의 부분과 자리를 바꿔 위에 위치한 블록들이 아래로 내려오게 구현하였다.
+
+---
