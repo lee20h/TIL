@@ -4785,3 +4785,57 @@ int solution(int m, int n, vector<string> board) {
 게임 구현사항을 구현하는 테스트로 2x2 블록이 같은 경우 해당 블록을 지운 뒤 블록이 얼마나 지워졌나 반환하는 문제였다. 처음에는 상당히 어렵게 생각하여 접근했으나, 완전탐색으로 다 훑으면서 2x2 블록이 전부 같은 블록인 경우 bool 배열로 체크해논 뒤 다시 한번 더 완전탐색으로 체크한 부분을 지운 뒤 위의 부분과 자리를 바꿔 위에 위치한 블록들이 아래로 내려오게 구현하였다.
 
 ---
+
+- 29日
+
+# PS
+
+추석 트래픽
+```cpp
+#include <string>
+#include <vector>
+#include <iostream>
+using namespace std;
+
+int gettime(string line) {
+    int h = stoi(line.substr(11,2)) * 60 * 60 * 1000;
+    int m = stoi(line.substr(14,2)) * 60 * 1000;
+    int s = stoi(line.substr(17)) * 1000 + stoi(line.substr(20));
+    return h + m + s;
+}
+
+int getduring(string line) {
+    int sec = stod(line.substr(24)) * 1000;
+    return sec;
+}
+
+int solution(vector<string> lines) {
+    int answer = 1;
+    vector<int> endTime;
+    vector<int> duringTime;
+    for (int i=0; i<lines.size(); i++) {
+        endTime.push_back(gettime(lines[i]));
+        duringTime.push_back(getduring(lines[i]));
+    }
+    
+    int start, range;
+    for(int i=0; i<lines.size(); i++) {
+        int cnt = 1;
+        range = endTime[i] + 1000;
+        for (int j=i+1; j<lines.size(); j++) {
+            start = endTime[j] - duringTime[j] + 1;
+            if(start < range)
+                cnt++;
+        }
+        if (answer < cnt)
+            answer = cnt;
+    }
+    return answer;
+}
+```
+
+트래픽이 주어질 때 1초간 가장 많은 처리를 한 횟수를 찾는 문제이다. string을 파싱하여 시작과 끝나는 시간을 구하되 시간의 기준은 ms로 한다. 이후엔 1초를 기준으로 얼마나 많은 트래픽이 있나 확인해야 한다. 거기에 주어진 배열은 처음에 끝나는 시간을 기준으로 오름차순으로 정렬이 되어있기 때문에 끝나는 시간에서 1초를 더한 뒤 자기 자신을 제외하고 그 뒤에 트래픽들을 시작시간을 구한뒤 시작시간이 1초을 더한 기준과 크기를 비교한다. 만약 시작시간이 더 작다면 포함되기 때문에 트래픽 수를 증가시킨다. 이러한 과정을 반복 한 뒤 그 중 가장 큰 값을 취해서 반환한다.
+
+이 문제는 생각보다 오래걸렸다. 문자열 파싱은 금방하였으나, 이중포문을 통해서 일련의 과정을 적용할 때 오름차순으로 정렬되어 있으므로 시작시간이 기준보다 작지 않으면 해당 포문에서 break를 하는 오류를 범했다. 왜냐하면 오름차순이므로 그 뒤에는 적용되는 케이스가 없다고 착각했기 때문이다. 하지만, 트래픽의 실행시간이 각각 다르기 때문에 그렇게 생각하면 안되는 부분이였다. 오히려 뒷 부분에 있지만 실행시간이 길어서 포함이 될 수 있다는 것을 생각하지 못했다.
+
+---
