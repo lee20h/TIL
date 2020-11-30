@@ -106,7 +106,9 @@ exports.SE_list = [
     'SE/인터넷 쇼핑몰 UML 모델링.md',
     'SE/소프트웨어 설계 기법.md',
     'SE/자료흐름 중심 설계.md',
-    'SE/데이터베이스 설계.md'
+    'SE/데이터베이스 설계.md',
+    'SE/디자인 패턴.md',
+    'SE/사용자 인터페이스.md'
 ]
 
 exports.Network_list = [
@@ -120,7 +122,8 @@ exports.Network_list = [
     'Network/DNS.md',
     'Network/SMTP and FTP.md',
     'Network/HTTP and WWW.md',
-    'Network/Multimedia.md'
+    'Network/Multimedia.md',
+    'Network/Network Security Protocols.md'
 ]
 
 exports.Travis_list = [
