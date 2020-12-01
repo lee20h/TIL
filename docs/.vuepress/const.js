@@ -170,5 +170,6 @@ exports.Distribute_list = [
     'Distribute/Load test for Web services.md',
     'Distribute/AWS Storage Service.md',
     'Distribute/AWS Database Services.md',
-    'Distribute/AWS Network Service.md'
+    'Distribute/AWS Network Service.md',
+    'Distribute/Auto Scaling.md'
 ]
