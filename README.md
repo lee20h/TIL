@@ -507,3 +507,171 @@
 
 - 2日
 
+# PS
+
+자물쇠와 열쇠
+```cpp
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+int key_size, lock_size,allsize;
+
+vector<pair<int,int>> print_v(vector<vector<int>> &temp){
+    vector<pair<int,int>> v;
+    for(int i=0; i<temp.size(); i++){
+        for(int j=0; j<temp[i].size(); j++){
+            if(temp[i][j]==1){
+                v.push_back(make_pair(i,j));
+            }
+        }
+    }
+    return v;
+}
+
+vector<vector<int>> turn(vector<vector<int>> &key){
+    int key_size= key.size();
+    vector<vector<int> > temp(key_size, vector<int>(key_size));
+
+    for(int x=0; x<key_size; x++){
+        for(int y=0; y<key_size; y++){
+            temp[y][(key_size-1) - x] = key[x][y];
+        }
+    }
+    return temp;
+}
+
+bool check(vector<vector<int>> &map){
+    for(int i= key_size ; i<key_size+lock_size; i++){
+        for(int j= key_size; j<key_size+lock_size; j++){
+            if(map[i][j]!=1) return false;
+        }
+    }
+    return true;
+}
+
+bool solution(vector<vector<int>> key, vector<vector<int>> lock) {
+    bool answer = false;
+    key_size = key.size();
+    lock_size = lock.size();
+    allsize = 2*key_size+ lock_size;
+    vector< vector<int>> map(allsize, vector<int>(allsize));
+    for(int i= 0; i<lock_size; i++){
+        for(int j = 0; j<lock_size; j++){
+            map[i+key_size][j+key_size] = lock[i][j];
+        }   
+    }
+    vector<vector<pair<int,int>>> keys;
+
+    keys.push_back(print_v(key));
+    for(int i=0; i<3; i++){
+        key = turn(key);
+        keys.push_back(print_v(key));
+    }
+    for(int k=0; k<keys.size(); k++){
+        for(int i=0; i<=key_size+lock_size; i++){
+            for(int j=0; j<=key_size+lock_size; j++){
+                for(int g=0; g<keys[k].size(); g++){
+                    pair<int,int> p = keys[k][g];
+                    int x = p.first + i;
+                    int y = p.second + j;
+                    if(map[x][y]==0){
+                        map[x][y] =1;
+                    }else{
+                        map[x][y] =2;
+                    }
+                }
+                if(check(map)) return true;
+                for(int g=0; g<keys[k].size(); g++){
+                    pair<int,int> p = keys[k][g];
+                    int x = p.first + i;
+                    int y = p.second + j;
+                    if(map[x][y]==2){
+                        map[x][y] = 1;
+                    }else if(map[x][y] == 1){
+                        map[x][y] = 0;
+                    }
+                }
+            }
+        }
+    }
+    return answer;
+}
+```
+
+문제를 이해하는데 제일 오래 걸렸다. key와 lock 크기가 같다고 생각해서 짰던 것이 틀렸다. 그래서 생각하기 어려워서 포스팅을 기반으로 공부를 했다. 먼저 lock과 key*2 크기의 이차원 벡터를 선언하고 중앙에 lock 벡터를 넣었다. 이후에는 key에서 열쇠부분의 좌표를 keys벡터에 집어 넣은 뒤 keys 벡터를 기반으로 값들을 전부 더해주고 check() 함수에서 체킹한 뒤 거짓이라면 더해준 값을 다시 원복귀 시키는 반복을 한다.
+
+이 문제는 생각보다 이해하기도 어려웠고 다른 사람의 코드를 보고도 이해하기 어려웠던 문제인거 같다. 따로 다시 생각해본 결과 시간복잡도는 두 벡터의 크기가 20이하 이므로 생각을 안해도 되었고, 크기를 붙여서 생각하지 못했던게 큰거 같다.
+
+---
+
+- 3日
+
+- [C언어 바이너리 파일 전송 예제](https://www.enqdeq.net/125)
+
+---
+
+# PS
+
+풍선 터뜨리기
+```cpp
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int left[1000001], right[1000001];
+
+int solution(vector<int> a) {
+    int answer = 0;
+    left[0] = a[0];
+    right[a.size()-1] = a[a.size()-1];
+    for(int i=1; i<a.size(); i++)
+        left[i] = min(left[i-1],a[i]);
+    for(int j=a.size()-2; j>=0; j--)
+        right[j] = min(right[j+1],a[j]);
+        
+    if(a.size()<3)
+		answer = a.size();
+    else {
+        answer = 2;
+        for(int i=1; i<a.size()-1; i++)
+            if(!(a[i]>left[i-1] && a[i]>right[i+1]))
+				answer++;
+    }
+    return answer;
+}
+```
+
+```cpp
+#include <string>
+#include <vector>
+#include <stack>
+
+using namespace std;
+int solution(vector<int> a) {
+    int answer = a.size();
+    stack<int> stack;
+    for(int comp : a){
+        while(!stack.empty() && comp < stack.top()){
+            stack.pop();
+            if(!stack.empty())
+                answer--;
+        }
+        stack.push(comp);
+    }
+    return answer;
+}
+```
+
+```
+임의의 인접한 두 풍선을 고른 뒤, 두 풍선 중 하나를 터트립니다.
+터진 풍선으로 인해 풍선들 사이에 빈 공간이 생겼다면, 빈 공간이 없도록 풍선들을 중앙으로 밀착시킵니다.
+여기서 조건이 있습니다. 인접한 두 풍선 중에서 번호가 더 작은 풍선을 터트리는 행위는 최대 1번만 할 수 있습니다. 즉, 어떤 시점에서 인접한 두 풍선 중 번호가 더 작은 풍선을 터트렸다면, 그 이후에는 인접한 두 풍선을 고른 뒤 번호가 더 큰 풍선만을 터트릴 수 있습니다.
+```
+
+DP를 이용해서 해결한 부분과 다른 사람이 해결한 코드 중에서 가장 이해하기 쉽고 명료한 코드를 기록하려한다. DP는 먼저 왼쪽 기준과 오른쪽 기준으로 저장 한 뒤 조건을 둬서 해결한 반면에 스택은 O(n)으로 해결할 수 있었다. 스택이 비어 있으면 push하고 스택이 비어있지 않다면 현재 인덱스와 stack의 top과 비교하여 작으면 전부 비우는 식으로 진행하였다.
+
+---
