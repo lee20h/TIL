@@ -35,7 +35,7 @@ exports.PL_list = [
     'PL/Describing Syntax and Semantics.md',
     'PL/Names Bindings and Scopes.md',
     'PL/Data Types.md',
-    'PL/Expressions and Assignment Statements.md',
+    'PL/Nodeions and Assignment Statements.md',
     'PL/Statement Level Control Structure.md',
     'PL/Subprograms.md',
     'PL/Implementing Subprograms.md',
@@ -69,18 +69,19 @@ exports.DB_list = [
     'DB/SQL 최적화의 원리.md'
 ];
 
-exports.Express_list = [
-    'Express/Express.md',
-    'Express/Template Engine.md',
-    'Express/CORS.md',
-    'Express/Sequelize.md',
-    'Express/Path.md',
-    'Express/Multer.md',
-    'Express/Morgan.md',
-    'Express/Body-parser.md',
-    'Express/Http-errors.md',
-    'Express/Passport.md',
-    'Express/Typescript.md',
+exports.Node_list = [
+    'Nodejs/Express.md',
+    'Nodejs/Templae Engine.md',
+    'Nodejs/CORS.md',
+    'Nodejs/Sequlize.md',
+    'Nodejs/Path.md',
+    'Nodejs/Multer.md',
+    'Nodejs/Morgan.md',
+    'Nodejs/body-parser.md',
+    'Nodejs/Http-errors.md',
+    'Nodejs/Passport.md',
+    'Nodejs/Typescript.md',
+    'Nodejs/mocha.md'
 ]
 
 exports.Docker_list = [
