@@ -70,18 +70,18 @@ exports.DB_list = [
 ];
 
 exports.Node_list = [
-    'Nodejs/Express.md',
-    'Nodejs/Templae Engine.md',
-    'Nodejs/CORS.md',
-    'Nodejs/Sequlize.md',
-    'Nodejs/Path.md',
-    'Nodejs/Multer.md',
-    'Nodejs/Morgan.md',
-    'Nodejs/body-parser.md',
-    'Nodejs/Http-errors.md',
-    'Nodejs/Passport.md',
-    'Nodejs/Typescript.md',
-    'Nodejs/mocha.md'
+    'nodejs/Express.md',
+    'nodejs/Templae Engine.md',
+    'nodejs/CORS.md',
+    'nodejs/Sequlize.md',
+    'nodejs/Path.md',
+    'nodejs/Multer.md',
+    'nodejs/Morgan.md',
+    'nodejs/body-parser.md',
+    'nodejs/Http-errors.md',
+    'nodejs/Passport.md',
+    'nodejs/Typescript.md',
+    'nodejs/mocha.md'
 ]
 
 exports.Docker_list = [
