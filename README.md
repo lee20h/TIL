@@ -909,3 +909,56 @@ int solution(vector<vector<int>> triangle) {
 구현은 직접 만든 코드를 기능마다 구현 방식을 설명을 하였고 테스트는 단위 테스트와 통합 테스트를 프레임워크와 라이브러리의 힘을 빌려서 마무리 지었다. 처음으로 한 TDD 프로젝트였기 때문에 많이 어색하고 접하는 것이 많았다.
 
 ---
+
+- 6日
+
+# PS
+
+N으로 표현
+```cpp
+#include <string>
+#include <vector>
+#include <set>
+#include <algorithm>
+using namespace std;
+
+int solution(int N, int number) {
+    int answer = 0; 
+    if(N == number) {
+        return 1;
+    }
+    vector<set<int>> arr(8);
+    for(int i=0; i<8; i++){
+        int n = N;
+        int cnt = i;
+        while(cnt > 0){
+            cnt--;
+            n *= 10;
+			n += N;
+        }
+        arr[i].insert(n);
+    }
+    
+    for(int i=1; i<8; i++){
+        for(int j=0; j<i; j++){
+            for(auto x : arr[j]){
+                for(auto y : arr[i-j-1]){
+                    arr[i].insert(x+y);
+                    arr[i].insert(x*y);
+                    arr[i].insert(x-y);
+                    if(y)
+                        arr[i].insert(x/y);
+                }
+            }
+        }
+        if(arr[i].find(number) != arr[i].end()){
+            return i+1;
+        }
+    }
+    return -1;
+}
+```
+
+N으로 표현 가능한 1~8자리 수 중에서 사칙연산을 통해 number를 나타낼 수 있는가를 찾는 문제이다. 먼저 8개의 벡터에 N, NN, NNN ... 쭉 넣은 뒤 그 값들끼리 사칙연산을 한 뒤 결과를 같은 set에 집어넣어서 중복을 제거한 뒤 find를 통해 찾도록 하였다. 이러한 방법 외에도 깊이가 8까지 밖에 안되므로 DFS를 통해서 풀어도 충분히 풀릴거 같다.
+
+---
