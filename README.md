@@ -962,3 +962,17 @@ int solution(int N, int number) {
 N으로 표현 가능한 1~8자리 수 중에서 사칙연산을 통해 number를 나타낼 수 있는가를 찾는 문제이다. 먼저 8개의 벡터에 N, NN, NNN ... 쭉 넣은 뒤 그 값들끼리 사칙연산을 한 뒤 결과를 같은 set에 집어넣어서 중복을 제거한 뒤 find를 통해 찾도록 하였다. 이러한 방법 외에도 깊이가 8까지 밖에 안되므로 DFS를 통해서 풀어도 충분히 풀릴거 같다.
 
 ---
+
+- 7日
+
+# Travis CI & docker를 이용한 AWS Elastic beanstalk 배포
+
+- [해당 레포](https://github.com/lee20h/docker-travis-aws-config)
+
+## 흐름
+
+흐름은 다음과 같다.
+
+github에 commit하게 된다면 Travis Ci가 주어진 설정 파일대로 수행한다. 도커 설정파일을 이용하여 도커 이미지를 생성하고 그 이미지를 Travis CI가 연결된 AWS Elastic beanstalk에 넘겨주게 된다. 이렇게 되면 Elastic beanstalk에서 auto scailing을 적용하여 자동으로 인스턴스를 생성하여 앱에 접근할 수 있게 배포해준다. 또한 S3도 생성되어 S3에 해당 도커 이미지를 통해 만들어진 소스 코드들을 Travis CI에 의해 저장이 된다.
+
+---
