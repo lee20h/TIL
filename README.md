@@ -976,3 +976,13 @@ N으로 표현 가능한 1~8자리 수 중에서 사칙연산을 통해 number�
 github에 commit하게 된다면 Travis Ci가 주어진 설정 파일대로 수행한다. 도커 설정파일을 이용하여 도커 이미지를 생성하고 그 이미지를 Travis CI가 연결된 AWS Elastic beanstalk에 넘겨주게 된다. 이렇게 되면 Elastic beanstalk에서 auto scailing을 적용하여 자동으로 인스턴스를 생성하여 앱에 접근할 수 있게 배포해준다. 또한 S3도 생성되어 S3에 해당 도커 이미지를 통해 만들어진 소스 코드들을 Travis CI에 의해 저장이 된다.
 
 ---
+
+- 8日
+
+# AWS 배포환경 구축
+
+`CodeCommit -> CodeBuild -> EC2 Conatiner Registry -> Elastic beanstalk`
+
+이러한 부분을 CodePipeline으로 연결하여 CI/CD 툴로 CodeCommit에 소스를 커밋하게 되면 도커로 EB에 배포되는 흐름을 그렸다. 하지만 이 부분에서 AWS에 익숙하지 않은 이유도 있지만 원하는 흐름의 문서가 적어서 상당한 시간이 걸렸다. 현재는 Elastic beanstalk에 도커를 올리긴 했는데 에러가 있어서 문제가 있다. 따라서 배포가 안되고 있는데 이 부분을 해결해야한다.
+
+---
