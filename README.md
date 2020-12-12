@@ -1137,3 +1137,40 @@ github에 commit하게 된다면 Travis Ci가 주어진 설정 파일대로 수�
 컴퓨터네트워크 중 트랜스포트 계층과 어플리케이션 계층, 추가적으로 보안 프로토콜과 어플리케이션 계층의 프로토콜 등을 공부하여 시험을 봤다. 이미 알고 있는 내용도 있지만 자세하게는 처음 보는 내용도 많았다. 다시 보면서 리마인드하고 잊거나 다시 아는 내용은 기록해논 내용을 토대로 다시 공부하였다.
 
 ---
+
+- 12日
+
+# PS
+
+단속카메라
+```cpp
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+bool cmp(vector<int> a, vector<int> b) {
+    return a[1] < b[1];
+}
+
+int solution(vector<vector<int>> routes) {
+    int answer = 0;
+    vector<vector<int>> temp = routes;
+    sort(temp.begin(), temp.end(), cmp);
+    while(!temp.empty()) {
+        int pos = temp[0][1];
+        for(int i=0; i<temp.size(); i++) {
+            if(pos >= temp[i][0]) {
+                temp.erase(temp.begin()+i);
+                i--;
+            }
+        }
+        answer++;
+    }
+    return answer;
+}
+```
+
+그리디 알고리즘을 이용하여 풀이를 하였다. 문제는 수직선상에 카메라를 몇 대를 둬야 모든 차량을 감시할 수 있는지 여부이다. 시작지점과 끝지점도 포함해서 해야한다. 따라서 나는 차량 진출 지점을 기준으로 정렬을 한 다음 처음으로 나가는 차량을 기준으로 전에 진입한 차량들은 모두 한 카메라에 찍히기 때문에 진입하는 위치가 처음으로 나간 차량의 위치보다 앞서 있다면 모두 벡터에서 제거를 해주었다. 이후에는 이 과정을 반복하고 과정마다 반환값을 1씩 늘려서 해결하였다.
+
+---
