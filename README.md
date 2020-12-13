@@ -1174,3 +1174,21 @@ int solution(vector<vector<int>> routes) {
 그리디 알고리즘을 이용하여 풀이를 하였다. 문제는 수직선상에 카메라를 몇 대를 둬야 모든 차량을 감시할 수 있는지 여부이다. 시작지점과 끝지점도 포함해서 해야한다. 따라서 나는 차량 진출 지점을 기준으로 정렬을 한 다음 처음으로 나가는 차량을 기준으로 전에 진입한 차량들은 모두 한 카메라에 찍히기 때문에 진입하는 위치가 처음으로 나간 차량의 위치보다 앞서 있다면 모두 벡터에서 제거를 해주었다. 이후에는 이 과정을 반복하고 과정마다 반환값을 1씩 늘려서 해결하였다.
 
 ---
+
+- 13日
+
+# AWS Elastic Beanstalk 배포 환경 구성
+
+Elastic Beanstalk 배포 환경을 Code Pipeline을 이용한 배포 환경과 Travis CI를 이용한 배포 환경 두 가지를 나눠서 구현한 뒤 비교하였다.
+
+- 첫번째 환경: AWS CodeCommit, CodeBuild, CodePipeline, ECR, Elastic Beanstalk
+- 두번째 환경: Github, Travis CI, Docker, AWS Elastic Beanstalk
+- 동일 환경: Dockerfile, create-react-app 기본 환경
+
+두 환경 모두 git을 통해서 커밋하게 되면 CI/CD 툴에 의해서 테스트 후 이미지로 빌드되어 컨테이너에 저장되고 그 이미지를 Elastic Beanstalk에서 배포하는 방식이다. 확인결과 첫번째 환경 즉, AWS만을 이용하여 배포할 때 속도가 빨랐다. 그리고 AWS 환경이 잘 맞물려서 설정하기도 쉬웠다. 두번째 환경은 속도는 느리지만 Github과 Travis CI라는 AWS에 활용되는 툴을 사용하여 조금 더 익숙하게 환경 설정을 할 수 있었다. 만약 사용해보지 않았다면 첫번째 환경이 더 직관적으로 이해할 수 있을 듯하다.
+
+또한, Travis CI는 AWS 내부 툴이 아니기 때문에 IAM 액세스를 위해서 설정 값으로 저장을 해야했다. 하지만 컨테이너 이미지 파일을 다루는 ECR과 Docker의 경우에는 똑같은 Dockerfile을 사용해도 무방했다. 하지만 ECR의 경우 설정이 더 필요한 부분이 있어서 손이 많이 갔다.
+
+결론적으로 같은 Elastic Beanstalk를 사용한다면 해당 요금을 제외하면 Codecommit과 ECR의 경우 거의 무료로 사용할 수 있고, Build와 Pipeline도 프리티어에 크게 지원해주기 때문에 AWS만을 사용하여 환경 구성하는 것이 속도가 우세하다. 하지만, 내부끼리 연결하기는 쉽지만 연결 과정에서 설정 파일이 많이 필요하기 때문에 이 부분에 미숙하다면 설정파일을 많이 사용하지 않아도 되는 두번째 환경도 나쁘지 않다고 생각한다. 
+
+---
