@@ -1192,3 +1192,18 @@ Elastic Beanstalk 배포 환경을 Code Pipeline을 이용한 배포 환경과 T
 결론적으로 같은 Elastic Beanstalk를 사용한다면 해당 요금을 제외하면 Codecommit과 ECR의 경우 거의 무료로 사용할 수 있고, Build와 Pipeline도 프리티어에 크게 지원해주기 때문에 AWS만을 사용하여 환경 구성하는 것이 속도가 우세하다. 하지만, 내부끼리 연결하기는 쉽지만 연결 과정에서 설정 파일이 많이 필요하기 때문에 이 부분에 미숙하다면 설정파일을 많이 사용하지 않아도 되는 두번째 환경도 나쁘지 않다고 생각한다. 
 
 ---
+
+- 14日
+
+# AWS DevOps + ECR 배포 환경 구축
+
+## 결과물
+
+- [AWS DevOps와 ECR을 통한 Elastic Beanstalk 배포 환경 구축 및 타 환경과의 비교](https://www2.slideshare.net/ssuserd4f9ff/aws-devops-ecr-elastic-beanstalk-240070104)
+
+## 설정 파일
+
+- [레포지토리](https://github.com/lee20h/AWS-DevOps-ECR)
+
+---
+
