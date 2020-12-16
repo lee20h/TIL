@@ -1222,3 +1222,52 @@ Litmus Online Judge는 전북대학교 컴퓨터공학부 선배들이 만든 �
 EER도 작성과 테이블 구조 문서화를 하면서 느낀 점은 무조건 프로젝트에선 문서화가 정말 필요하다고 느꼈다. 소프트웨어공학에서 중요하다고 여기는 요구사항 명세서나 다른 문서와 같이 유지보수에는 무조건 문서로 이루어진 프로젝트의 내용이 필요하다. 문서화를 하기 위해 테이블 구조 분석도 하며, 소스에서 어떻게 사용되는지 확인해서 컬럼의 역할과 테이블의 역할을 확인했어야 했다. 이 부분에서 시간이 되게 많이 걸렸으며, 모든 사람이 이런 방식으로 시간을 사용하는 것을 막기 위해서 필요한 작업이라고 생각된다. 
 
 ---
+
+- 16日
+
+# PS
+
+- N-Queen
+
+```cpp
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int col[12];
+
+bool promising(int i) {
+    for(int j=0;j<i;j++)
+    {
+        if(col[j] == col[i] || abs(col[i]-col[j]) == (i-j))
+            return false;
+    }
+    return true;
+}
+
+int nQueen(int i, int n) {
+    int result = 0;
+    if(i == n)
+        result += 1;
+    else
+    {
+        for(int j=0;j<n;j++)
+        {
+            col[i] = j;
+            if(promising(i))
+                result += nQueen(i+1, n);
+        }
+    }
+    return result;
+}
+
+int solution(int n) {
+    int answer = nQueen(0, n);
+    return answer;
+}
+```
+
+전형적인 백트래킹 문제인 N-Queen 문제이다. 새로운 퀸과 기존의 퀸이 같은 행에 있거나 대각선에 있을 경우 false를 반환하여 nQueen 함수에 접근하지 못하게 했다. 조건에 부합하면 모든 행을 돌며 찾게하였다.
+
+---
