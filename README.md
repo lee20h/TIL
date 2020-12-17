@@ -1271,3 +1271,53 @@ int solution(int n) {
 전형적인 백트래킹 문제인 N-Queen 문제이다. 새로운 퀸과 기존의 퀸이 같은 행에 있거나 대각선에 있을 경우 false를 반환하여 nQueen 함수에 접근하지 못하게 했다. 조건에 부합하면 모든 행을 돌며 찾게하였다.
 
 ---
+
+- 17日
+
+# PS
+
+- 디스크 컨트롤러
+
+```cpp
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+bool cmp(pair<int, int> a, pair<int, int> b) {
+    if(a.second == b.second)
+        return a.first < b.first;
+    else
+        return a.second < b.second;
+}
+
+int solution(vector<vector<int>> jobs) {
+    int answer = 0;
+    int time = 0, begin = 0;
+    vector<pair<int,int>> v;
+    for (int i=0; i<jobs.size(); i++)
+        v.push_back({jobs[i][0], jobs[i][1]});
+    
+    sort(v.begin(), v.end(), cmp);
+    
+    while(!v.empty()) {
+        for(int i=0; i<v.size(); i++) {
+            if(v[i].first <= begin) {
+                begin += v[i].second;
+                time += begin - v[i].first;
+                v.erase(v.begin() + i);
+                break;
+            }
+            if(i == v.size()-1)
+                begin++;
+        }
+    }
+    return answer = time / jobs.size();
+}
+```
+
+디스크가 한번에 한 작업 밖에 못할 때 여러 스케쥴이 들어온 경우 가장 빠른 평균 속도를 찾는 문제이다. 작업마다 시작시간과 걸리는 시간이 jobs 벡터에 존재하는데 벡터를 편하게 사용하기 위해서 페어 벡터 하나를 선언하여 걸리는 시간을 오름차순으로 정렬하였다. 같은 경우에는 빨리 시작하는 작업이 앞으로 오도록 하였다. 이후에 시작 시간을 늘려 가면서 작업 시작시간과 비교를 하여 시작이 가능해야 그 작업을 수행하듯이 하였다.
+
+반복문의 핵심은 시작 시간이 0초부터 1초 씩 증가하면서 벡터와 비교를 하는 것인데, 만약 작업을 수행하게 된다면 작업을 수행한 만큼 시작 시간도 늘려서 유지한다. 총 시간을 구할 때는 각각의 수행 시간을 더하도록 한 뒤 결과값인 평균을 구하기 위해서 크기로 나눠 반환한다.
+
+---
