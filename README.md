@@ -1343,4 +1343,62 @@ Node.js란 브라우저 밖으로 Javascript를 꺼내서 활용할 수 있다. 
 
 Express.js는 프레임워크로, Node.js로 하고자 하는 원하는 목표를 쉽고 빠르게 할 수 있게 도와준다. Node.js로 서버를 구축할 때 크게 도움을 준다. 다른 언어로 치면 Python의 Django, Ruby의 Rails와 같은 것들이다. 또한 Express의 경우에는 최근에는 커밋이 되지 않고 있다. 그 말은 바로 거의 완성되었고 고칠게 딱히 없는 프레임워크라는 것이다.
 
+## NPM
+
+Node Package Manager의 준말로, 중앙 집중화 개념으로 각자의 패키지를 넣어놓는다. Node.js와 관련된 백엔드, 프론트엔드를 만드는 개발자들의 패키지를 담아놓는 역할을 한다. 이 NPM을 통해서 패키지들을 다운로드하고 업데이트도 가능하다. 물론 Express.js 또한 NPM을 통해서 다운로드할 수 있고 업데이트할 수 있다.
+
+---
+
+- 19日
+
+# PS
+
+- 이중우선순위큐
+
+```cpp
+#include <string>
+#include <vector>
+#include <deque>
+#include <algorithm>
+using namespace std;
+
+vector<int> solution(vector<string> operations) {
+    vector<int> answer;
+    deque<int> d;
+    for (int i=0; i<operations.size(); i++) {
+        char cmd = operations[i][0];
+        if(cmd == 'I') {
+            string num;
+            for(int j=2; j<operations[i].length(); j++) {
+                num += operations[i][j];
+            }
+            int n = stoi(num);
+            d.push_back(n);
+            sort(d.begin(), d.end());
+        }
+        else if (cmd == 'D') {
+            if(d.empty())
+                continue;
+            if(operations[i][2] == '-')
+                d.pop_front();
+            else
+                d.pop_back();
+        }
+    }
+    if(!d.empty()) {
+        answer.push_back(d[d.size()-1]);
+        answer.push_back(d[0]);
+    }
+    else {
+        answer.push_back(0);
+        answer.push_back(0);
+    }
+    return answer;
+}
+```
+
+operations 문자열 벡터에 저장된 ["I number", "D 1", "D -1"] 형식의 문자열을 받아서 해결해야하는 문제이다. I는 삽입, D는 삭제인데 양수 음수에 따라 최댓값이나 최솟값을 제거하면 된다.
+
+나는 deque을 이용하여 정렬한 뒤 delete 연산일 때 pop_back과 pop_front를 통해서 해결하였다.
+
 ---
