@@ -1402,3 +1402,46 @@ operations 문자열 벡터에 저장된 ["I number", "D 1", "D -1"] 형식의 �
 나는 deque을 이용하여 정렬한 뒤 delete 연산일 때 pop_back과 pop_front를 통해서 해결하였다.
 
 ---
+
+- 20日
+
+# PS
+
+- 입국심사
+
+```cpp
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+long long solution(int n, vector<int> times) {
+    long long answer = 0;
+    sort(times.begin(), times.end());
+    int size = times.size();
+    long long M = (long long)times.back() * n;
+    long long m = 1;
+    long long mid;
+    long long sum;
+    answer = M;
+    while(m <= M) {
+        mid = (M + m) / 2;
+        sum = 0;
+        for(int i=0; i<size; i++) 
+            sum += mid / times[i];
+        
+        if(sum < n)
+            m = mid + 1;
+        else {
+            if(mid <= answer)
+                answer = mid;
+            M = mid - 1;
+        }
+    }
+    return answer;
+}
+```
+
+입국 심사를 위해 심사관마다 걸리는 시간을 times 벡터에 주어지고 해결한다. 최소 시간은 1 최대 시간은 가장 느린 심사관이 모든 사람들을 심사하는 경우이다. 따라서 두 시간을 두고 이분 탐색으로 해결하여싿. 이때 long long 형변환이 이뤄져야한다.
+
+---
