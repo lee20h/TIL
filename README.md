@@ -1442,6 +1442,53 @@ long long solution(int n, vector<int> times) {
 }
 ```
 
-입국 심사를 위해 심사관마다 걸리는 시간을 times 벡터에 주어지고 해결한다. 최소 시간은 1 최대 시간은 가장 느린 심사관이 모든 사람들을 심사하는 경우이다. 따라서 두 시간을 두고 이분 탐색으로 해결하여싿. 이때 long long 형변환이 이뤄져야한다.
+입국 심사를 위해 심사관마다 걸리는 시간을 times 벡터에 주어지고 해결한다. 최소 시간은 1 최대 시간은 가장 느린 심사관이 모든 사람들을 심사하는 경우이다. 따라서 두 시간을 두고 이분 탐색으로 해결하였다. 이때 long long 형변환이 이뤄져야한다.
+
+---
+
+- 21日
+
+# PS
+
+- 순위
+
+```cpp
+#include <string>
+#include <vector>
+
+using namespace std;
+
+bool check[101][101];
+
+int solution(int n, vector<vector<int>> results) {
+    int answer = 0;
+    for(auto e: results)
+        check[e[0]][e[1]] = true;
+    
+    for (int k=1; k<=n; k++) {
+        for (int i=1; i<=n; i++) {
+            for (int j=1; j<=n; j++) {
+                if(check[i][k] && check[k][j])
+                    check[i][j] = true;
+            }
+        }
+    }
+    
+    for (int i=1; i<=n; i++) {
+        int cnt = 0;
+        for (int j=1; j<=n; j++) {
+            if(check[i][j] || check[j][i])
+                cnt++;
+        }
+        if(cnt == n-1)
+            answer++;
+    }
+    return answer;
+}
+```
+
+n명의 권투선수가 대회에 참여해서 선수끼리의 승패를 알 수 있을 때 정확하게 순위를 매길 수 있는 선수의 수를 return을 한다.
+
+해결하기 위해서 플로이드 워셜 알고리즘을 통해서 누군가를 거쳐서 승부가 날 수 있으므로 배열을 정리한 뒤 한 선수가 다른 선수들과의 승부를 통해서 순위가 결정이 될려면 주어진 n명보다 1이 적은 만큼 승부를 치뤄야한다. 따라서 승부를 n-1번한 선수를 찾아서 반환해주면 된다.
 
 ---
