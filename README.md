@@ -1492,3 +1492,87 @@ n명의 권투선수가 대회에 참여해서 선수끼리의 승패를 알 수
 해결하기 위해서 플로이드 워셜 알고리즘을 통해서 누군가를 거쳐서 승부가 날 수 있으므로 배열을 정리한 뒤 한 선수가 다른 선수들과의 승부를 통해서 순위가 결정이 될려면 주어진 n명보다 1이 적은 만큼 승부를 치뤄야한다. 따라서 승부를 n-1번한 선수를 찾아서 반환해주면 된다.
 
 ---
+
+- 22日
+
+# PS
+
+- 카카오프렌즈 컬러링북
+
+```cpp
+#include <vector>
+#include <queue>
+using namespace std;
+
+
+vector<vector<int>> pic;
+bool flag[101][101];
+int a, b;
+int pos[4] = {1,-1,0,0};
+int pos2[4] = {0,0,1,-1};
+int area_size;
+int size;
+void bfs(int s, int g) {
+	int count = 0; //블록의 갯수 
+	queue<pair<int,int>> que;
+	pair<int,int> p;
+	que.push({s,g});
+	
+	flag[s][g] = true;
+	int x;
+	int y;
+	while (!que.empty()) {
+		p = que.front();
+		que.pop();
+		count++;
+		for (int i=0; i<4; i++) {
+			x = p.second + pos[i];
+			y = p.first + pos2[i];
+			if(y < 0 || y > a-1 || x < 0 || x > b-1) continue;
+            if(pic[y][x] != pic[p.first][p.second]) continue;
+            if(!flag[y][x]) {
+                que.push({y, x});
+                flag[y][x] = true;
+            }
+		}
+		
+	}
+	area_size = max(area_size,count);
+}
+
+vector<int> solution(int m, int n, vector<vector<int>> picture) {
+    int number_of_area = 0;
+    int max_size_of_one_area = 0;
+    
+	area_size = 0;
+	size = 0;
+    a = m; 
+    b = n;
+    pic = picture;
+    for (int i=0; i<m; i++) {
+    	for(int j=0; j<n; j++) {
+    		flag[i][j] = false;    
+		}
+	}
+	for (int i=0; i<m; i++) {
+		for(int j=0; j<n; j++) {
+			if (!flag[i][j] && pic[i][j] != 0){
+				bfs(i,j);
+				size++;
+			}
+				
+		}
+	}
+    
+    number_of_area = size;
+    max_size_of_one_area = area_size;
+    vector<int> answer(2);
+    answer[0] = number_of_area;
+    answer[1] = max_size_of_one_area;
+    return answer;
+}
+```
+
+카카오프렌즈 컬러링북 문제를 복습해보았다. 모든 좌표에서 BFS를 돌리되, 방문 체크 배열과 현재 주어진 배열을 가지고 칠해진 부분과 전체 부분을 얻어낼 수 있다. BFS를 구현하는 부분을 다시 보고 공부할 수 있었다.
+
+---
