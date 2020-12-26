@@ -1721,3 +1721,62 @@ globalRouter.get(routes.home, videoHome);
 이런 식으로 Controller와 View를 분리할 수 있다. Controller는 Model 마다 하나씩 존재해야한다. Model의 경우 데이터베이스에서 정의하는 모델로, 각각 모델마다 컨트롤러를 따로 정의하여 사용한다.
 
 ---
+
+- 26日
+
+# MVC 패턴
+
+## View
+
+View를 담당하는 부분은 말 그대로 보여지는 부분이다. MVC패턴의 핵심은 Model에 해당하는 데이터, View에 해당하는 보여지는 부분, Controller에 해당하는 함수와 같은 기능들을 전부 소스단에서 분리를 하는 것이다.
+
+이로써 유지보수에 있어서 디버깅도 쉽고 문제 찾기에 큰 도움이 되며 여러 장점이 생긴다.
+
+여기서 해본 것은 express에서 view engine인 pug를 이용하여 view를 구성하는 것이다. template을 구성하고 template에서 필요한 부분을 고쳐가는 식으로 만들어보았다.
+
+### Pug
+
+Pug는 express의 view engine으로 html의 태그를 그대로 사용하는 특징이 있다. pug로 작성된 파일을 html로 변환시켜서 그대로 보여주게 되기 때문에 라우팅된 url마다 다르게 render해서 보여줄 수 있다.
+
+사용법은
+
+```
+$ npm install pug
+```
+
+이후 express 애플리케이션에 `app.set("view engine", "pug")`와 같이 설정하면 끝난다. 이후에는 views 폴더에 pug 파일을 작성하고 애플리케이션에서 작성된 파일의 이름을 render하게 되면 화면에 표시된다.
+
+pug 파일의 문법은 html에서 사용하는 태그와 같지만 `<p>content</p>`와는 다르게 `p content` 공백을 이용해서 태그를 나눈다. 그리고 들여쓰기를 통해서 태그의 포함을 표현한다.
+
+하나의 template를 생성한 뒤 `extends template.pug`로 연결하게 되면 다음과 같이 사용할 수 있다.
+
+- template.pug
+
+```pug
+doctype html
+html
+    head
+        title Clone Youtube
+    body
+        header
+            h1 Clone Youtube
+        main
+            block content
+        footer
+            span &copy; lee20h
+```
+
+- home.pug
+
+```pug
+extends layout/main
+
+block content
+    p Hello!!
+```
+
+이렇게 사용하게 되면 template.pug가 기반으로 block 태그만 직접 입력할 수 있게 템플릿을 직접 작성할 수 있다.
+
+html을 직접 사용하는 것보다 훨씬 편하고 빠른 view 작성이 될 수 있다.
+
+---
