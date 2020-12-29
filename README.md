@@ -1882,3 +1882,113 @@ Controller는 주로 함수를 뜻하며, 데이터들을 이용해서 행해지
 이 3가지를 사용할 땐 한 가지의 중심 파일을 두고 연결하여 변수처럼 사용하는 것이 좋다. 한 파일에 책임을 두고 사용하는 것이 좋기 때문이다.
 
 ---
+
+- 29日
+
+# Pug
+
+## Mixin
+
+Mixin은 Pug의 함수로, 반복되는 html 덩어리들을 함수 형태로 만들 수 있는 기능을 제공한다.
+
+다음과 같이 정의한다.
+
+```pug
+mixin func(args)
+```
+
+그 이후엔 일련의 정의를 해줘야한다. 예를 들어,
+
+```pug
+mixin list
+    ul
+        li list1
+        li list2
+        li list3
+        li list4
+```
+
+와 같은 덩어리를 만든 다음 mixins/list.pug로 저장을 한다.
+
+```pug
+include mixins/list
+
++list
++list
++list
+```
+
+이렇게 다른 pug파일에서 사용할 수 있다. 사용된 mixin과 함께 pug파일이 html파일로 변환되면 다음과 같다.
+
+```html
+<ul>
+    <li>list1</li>
+    <li>list2</li>
+    <li>list3</li>
+    <li>list4</li>
+</ul>
+<ul>
+    <li>list1</li>
+    <li>list2</li>
+    <li>list3</li>
+    <li>list4</li>
+</ul>
+<ul>
+    <li>list1</li>
+    <li>list2</li>
+    <li>list3</li>
+    <li>list4</li>
+</ul>
+```
+
+즉, mixin을 만든 뒤 다른 파일에서 include 해서 사용할 수 있게 된다. 이 때 사용은 `+mixin명`으로 사용하면 된다.
+
+만약 인자가 존재한다면 어떨지 예시로 봐보자.
+
+```pug
+mixin country(name)
+    li.country=name
+```
+
+```pug
+include mixins/country
+
+ul
+    +country('Korea')
+    +country('USA')
+    +country('Germany')
+```
+
+```html
+<ul>
+    <li class="country">Korea</li>
+    <li class="country">USA</li>
+    <li class="country">Germany</li>
+</ul>
+```
+
+인자로 객체를 받는 경우도 있다. 만약 render 과정에서 넘어온 객체를 받아 화면에 뿌려줘야하는 경우도 있다. 예시로 확인해보자.
+
+```pug
+mixin countryBlock(country={})
+    .countryBlock
+        h2.country__name=country.name
+        h4.country__language=country.language
+        h4.country__flower=country.flower
+```
+
+```pug
+include mixins/countryBlock
+
+.countries
+    each item in country
+        +countryBlock({
+            name:item.name
+            language:item.language
+            flower:item.flower
+        })
+```
+
+이렇게 사용하게 되면 country라는 객체를 받은 pug 파일이 mixin의 인자로 객체를 전달하여 반복적으로 화면에 뿌려주는 역할을 할 수 있다.
+
+---
