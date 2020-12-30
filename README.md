@@ -1992,3 +1992,94 @@ include mixins/countryBlock
 이렇게 사용하게 되면 country라는 객체를 받은 pug 파일이 mixin의 인자로 객체를 전달하여 반복적으로 화면에 뿌려주는 역할을 할 수 있다.
 
 ---
+
+- 30日
+
+# MongoDB 포터블 설치
+
+MongoDB에 대해서는 저번에 활용하여 조금은 이해하고 있다. 이전에는 Compass와 msi로 서버를 설치하여 사용했는데, 이번엔 포터블하게 설치하는 방법을 알아보았다.
+
+## 다운로드
+
+MongoDB 사이트에서 zip파일로 다운로드 받는다.
+
+- [다운로드 사이트](https://www.mongodb.com/try/download/community)
+
+압축을 해제한 뒤 원하는 경로로 이동한 뒤 data 폴더를 생성해준다.
+
+## 실행
+
+`mongod.exe --dbpath (경로\data)`을 기입하게 되면 data 폴더에 필요한 설정 파일들이 생기고 콘솔창에서 서버가 돌기 시작한다.
+
+윈도우에서는 MongoDB를 환경변수로 추가한다면 조금 더 편하게 실행할 수 있다.
+
+mongod가 실행된 상태에서 `mongo`를 치게 되면 다른 데이터베이스를 사용하듯이 접근할 수 있다.
+
+## 사용
+
+자바스크립트 프로젝트에서 사용할 때는 mongod로 서버만 실행한 상태에서 접근해서 사용하면 된다.
+
+---
+
+# Mongoose 사용
+
+Mongoose를 Node.js 프로젝트에서 사용할 때 연결과 설정에 대해서 알아보았다.
+
+## 설치
+
+`$ npm install mongoose`를 사용하여 원하는 프로젝트에 mongoose를 설치해준다.
+
+## 연결 설정
+
+```js
+import mongoose from "mongoose";
+
+mongoose.connect(
+  "mongodb://localhost:27017",
+  {
+    useNewUrlParser: true,
+    useFindAndModify: false
+  }
+);
+
+const db = mongoose.connection;
+
+const handleOpen = () => console.log("✅ Connected to DB");
+const handleError = error => console.log(`❌ Error on DB Connection: ${error}`);
+
+db.once("open", handleOpen);
+db.on("error", handleError);
+```
+
+db를 담당하는 자바스크립트 파일에 먼저 mongoose를 import한 뒤 `connect()`를 해준다.
+
+이후에는 `once()`를 통해서 연결을 해주고 에러처리를 위해서 다음과 같이 `on()`를 사용한다.
+
+이 때 연결에 들어가는 인자는 새로운 버전의 mongoose를 받을 때 에러를 막기 위해서 넣어주는 부분이다.
+
+그리고 url이 그대로 노출되는 걸 막기 위해서 dotenv를 사용한다.
+
+## dotenv
+
+.env 파일에 다음과 같이 추가해준다.
+
+```
+MONGO_URL="mongodb://localhost:27017"
+```
+
+```js
+import dotenv from "dotenv";
+dotenv.config();
+
+mongoose.connect(
+  process.env.MONGO_URL,
+  {
+    useNewUrlParser: true,
+    useFindAndModify: false
+  }
+);
+```
+
+이런식으로 설정한 뒤 .gitignore에 추가한다면, 우리의 연결 정보를 비밀로 유지할 수 있다.
+
+---
