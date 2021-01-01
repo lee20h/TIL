@@ -58,7 +58,9 @@ exports.DC_list = [
 ]
 
 exports.JS_list = [
-    'JS/Modern JavaScript.md'
+    'JS/Modern JavaScript.md',
+    'JS/babel.md',
+    'JS/mocha.md'
 ]
 
 exports.DB_list = [
@@ -66,12 +68,19 @@ exports.DB_list = [
     'DB/데이터 모델과 성능.md',
     'DB/SQL 기본.md',
     'DB/SQL 활용.md',
-    'DB/SQL 최적화의 원리.md'
+    'DB/SQL 최적화의 원리.md',
+    'DB/MongoDB 포터블.md',
+    'DB/Mongoose 연결.md',
+    'DB/Mongoose 모델.md'
 ];
 
 exports.Node_list = [
+    'nodejs/Nodejs.md',
+    'nodejs/MVC패턴.md',
     'nodejs/Express.md',
+    'nodejs/Middleware.md',
     'nodejs/Template Engine.md',
+    'nodejs/Pug.md',
     'nodejs/CORS.md',
     'nodejs/Sequelize.md',
     'nodejs/Path.md',
@@ -81,7 +90,6 @@ exports.Node_list = [
     'nodejs/Http-errors.md',
     'nodejs/Passport.md',
     'nodejs/Typescript.md',
-    'nodejs/mocha.md'
 ]
 
 exports.Docker_list = [
