@@ -217,3 +217,85 @@ $ npm i prettier eslint-plugin-prettier eslint-config-prettier -D
 - [Webpack이란?](https://nesoy.github.io/articles/2019-02/Webpack)
 
 ---
+
+- 5 日
+
+# Webpack
+
+## SCSS 예제
+
+```js
+const path = require("path");
+
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+const MODE = process.env.WEBPACK_ENV;
+const ENTRY_FILE = path.resolve(__dirname, "assets", "js", "main.js");
+const OUTPUT_DIR = path.join(__dirname, "static");
+
+const config = {
+  entry: ENTRY_FILE,
+  mode: MODE,
+  module: {
+    rules: [
+      {
+        test: /\.(scss)$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+          },
+          {
+            loader: "css-loader",
+          },
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: [
+                  [
+                    "autoprefixer",
+                    {
+                      browsers: "cover 99.5%",
+                    },
+                  ],
+                ],
+              },
+            },
+          },
+          {
+            loader: "sass-loader",
+          },
+        ],
+      },
+    ],
+  },
+  output: {
+    path: OUTPUT_DIR,
+    filename: "[name].js",
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: "[name].css",
+    }),
+  ],
+};
+
+module.exports = config;
+```
+
+`assets/js/main.js`를 Entry로 Static 폴더에 결과물을 작성한다. 이 때 main.js는 `import "../scss/style.scss";` 한 줄을 넣고 테스트를 해본다.
+
+entry, mode, module, output, plugin을 설정하고 webpack을 실행하면 해당 부분이 static 폴더에 생성된다. 명령어는
+
+```json
+"dev:assets": "cross-env WEBPACK_ENV=development webpack",
+"build:assets": "cross-env WEBPACK_ENV=production webpack"
+```
+
+이렇게 지정하였다. WEBPACK_ENV는 `webpack.config.js`의 MODE에 넣어준 문자열이고, cross-env는 문자열을 찾기 위해 도와주기 위해 설치한 패키지이다.
+
+module에서 rule은 밑에서부터 위로 실행이 된다. 따라서 SCSS를 sass -> postcss -> css 순서로 해석하여 output PATH에 넣어준다.
+
+---
