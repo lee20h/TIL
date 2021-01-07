@@ -343,3 +343,142 @@ int main() {
 이후 출력에는 자기 자신도 포함이 되므로 1을 제하여 출력해준다.
 
 ---
+
+- 7 日
+
+# Nodejs & MongoDB 로그인 구현
+
+Nodejs로 구현된 애플리케이션에서 MongoDB를 사용한 유저 로그인 구현으로, Mongoose ODM과 Passport, connect-mongo, express-session과 같은 서드파티를 사용하여 구현하였다.
+
+## 설정
+
+### DB 설정 파일
+
+```js
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+mongoose.connect(process.env.MONGO_URL, {
+  useNewUrlParser: true,
+  useFindAndModify: false,
+});
+
+const db = mongoose.connection;
+
+const handleOpen = () => console.log("✅ Connected to DB");
+const handleError = (error) =>
+  console.log(`❌ Error on DB Connection: ${error}`);
+
+db.once("open", handleOpen);
+db.on("error", handleError);
+```
+
+### app 설정
+
+```js
+app.use(
+  session({
+    secret: process.env.COOKIE_SECRET,
+    resave: true,
+    saveUninitialized: false,
+    store: new CookieStore({ mongooseConnection: mongoose.connection }),
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+```
+
+express-session을 이용하여 session을 정의하고 store 옵션의 경우에는 connect-mongo를 이용하여 서버가 재시작되더라도 쿠키 값을 저장할 수 있는 저장소로 마련했다. passport를 초기화하고 세션을 설정하여 로그인이 되면 쿠키 값을 브라우저에 저장할 수 있게 하였다.
+
+### Model 구현
+
+- User Model 구현
+
+```js
+import mongoose from "mongoose";
+import passportLocalMongoose from "passport-local-mongoose";
+
+const UserSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  avatarUrl: String,
+  facebookId: Number,
+  githubId: Number,
+});
+
+UserSchema.plugin(passportLocalMongoose, { usernameField: "email" });
+
+const model = mongoose.model("User", UserSchema);
+
+export default model;
+```
+
+mongoose를 이용하여 MongoDB 유저 스키마를 정의한 후 사용하게 되는데 이 때 플러그인으로 passport-local-mongoose를 사용하여 passport 서드파티 중 local 전략을 mongoose와 함께 사용하기 용이하게 하고, 유저를 구분하는 필드를 email로 지정해준다.
+
+### Passport 설정
+
+```js
+import passport from "passport";
+import User from "./models/User";
+
+passport.use(User.createStrategy());
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+```
+
+passport를 간단하게 사용하기 위해서 스키마의 전략을 자동으로 생성하게 한 후 serializeUser와 deserializeUser는 이미 정의된 스키마의 함수를 이용하여 간단하게 정의했다. 정의는 간단하지만 해당 부분을 설정함으로써 매우 편하게 유저 인증 과정을 진행할 수 있다.
+
+## 회원가입
+
+- 회원가입: post로 회원가입 요청이 온 경우 처리 하는 컨트롤러
+
+```js
+export const join = async (req, res, next) => {
+  const {
+    body: { name, email, password, password2 },
+  } = req;
+
+  if (password !== password2) {
+    res.status(400);
+    res.render("join", { pageTitle: "Join" });
+  } else {
+    try {
+      const user = await User({
+        name,
+        email,
+      });
+      await User.register(user, password);
+      next();
+    } catch (error) {
+      console.log(error);
+      res.redirect(routes.home);
+    }
+  }
+};
+```
+
+user 객체를 만든 뒤 User 스키마에 `register()`를 이용하여 한번에 유저를 생성할 수 있다.
+
+## 로그인
+
+- 로그인: 회원가입 후 post로 로그인 요청시 처리하는 컨트롤러
+
+```js
+export const login = passport.authenticate("local", {
+  failureRedirect: routes.login,
+  successRedirect: routes.home,
+});
+```
+
+passport 중 local 전략으로 인증을 하는 부분으로 성공시에는 홈, 실패시에는 로그인 화면으로 리다이렉트 하도록 컨트롤러를 짰다.
+
+## 결과
+
+서드파티들을 이용하여 이미 정의된 함수로 설정을 하게 되면, 훨씬 편하게 MongoDB를 이용하여 유저 로그인과 회원가입을 구현할 수 있다. 서드파티의 갯수가 많지만 여러 가지 기능을 기억하면 도움이 된다.
+
+그 중 가장 도움이 된 것은 역시 passport와 express-session일 것 같다. session을 설정하려면 필요한 express-session과 인증 과정을 편하게 해주는 passport는 다른 DBMS를 사용하더라도 필요할 것 같다.
+
+---
