@@ -575,6 +575,8 @@ int main() {
 
 흔히들 사용하는 서비스 중에서 Github 아이디를 통해서 가입하거나 로그인하여 해당 서비스를 진행하는 것을 보았을 것이다. 그 부분을 도와주는 서드파티로, Passport 전략 중 Gtihub을 선택해서 사용할 때 매우 편한 기능을 가진 서드파티이다.
 
+- [가이드라인](http://www.passportjs.org/packages/passport-github/)
+
 ## 설치
 
 ```
@@ -611,5 +613,49 @@ passport.use(
 cb의 경우에는 에러와 찾은 유저 혹은 생성한 유저를 파라미터로 넘기면 된다. 에러를 캐치하는 경우에는 `cb(error)` 등 에러만 넘기면 되며, 성공적으로 이뤄졌다면 찾은 유저 혹은 생성한 유저의 객체를 넣어주면 된다.
 
 이 부분을 Express의 Route를 적용하여 Callback과 passport-github을 분리하고 사용하는 콜백함수도 분리하여서 모듈로 가져다가 사용할 수 있다. 추가적으로 로그아웃은 `req.logout()`함수를 사용하면 passport에서 알아서 쿠키와 로그인 정보를 없애고 로그아웃을 가능하게 한다.
+
+---
+
+# passport-facebook
+
+passport로 facebook 아이디를 이용해서 인증을 할 수 있게 해주는 서드파티이다. 다른 서비스에 비해서 페이스북은 상당히 깐깐하다. 따라서 진행하면서 생긴 시행착오에 대해서 메모하려한다.
+
+- [가이드라인](http://www.passportjs.org/packages/passport-facebook/)
+
+## 설치
+
+```
+$ npm install passport-facebook
+```
+
+## 사용
+
+먼저 [페이스북 개발자](https://developers.facebook.com/)에 등록한 뒤 애플리케이션을 생성해야한다. 그 이후에 다른 passport 서드파티와 마찬가지로 클라이언트 ID와 Secret을 받아서 애플리케이션에 기입해준다. 이후에 콜백함수까지 passport의 템플릿에 맞춰서 작성하는 것까지 동일하다.
+
+```js
+passport.use(new FacebookStrategy({
+    clientID: FACEBOOK_APP_ID,
+    clientSecret: FACEBOOK_APP_SECRET,
+    callbackURL: "http://localhost:3000/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
+```
+
+따라서 여기까진 이전에 github에서 작성한 내용을 참고하여 사용하면 된다. 페이스북이 다른 서비스와 다른 점은 바로 https 보안 연결만 받아준다는 것이다. 따라서 콜백함수에서 리다이렉트되는 URL이 https여야한다는 것이다. 이말은 즉, 개발한 앱 자체가 보안 연결로 이뤄져야 한다는 말이다.
+
+테스트를 위해서 `localtunnel` 서드파티를 받아서 임시로 보안 연결 URL을 생성하여 페이스북 개발 앱 설정에 등록하였으나, 임시로 생성한 URL이라 그런건지 아니면 다른 이유인지는 확실치 않으나 악의가 있는 URL이라고 거절 당했다. 이외에도 애플리케이션을 라이브 모드로 바꿀려면 여러 URL을 기입해야하는데, 전부 https를 지원해야한다. 테스트를 위한 앱 외에 정식으로 출시한 후 보안 연결을 취득한 뒤 사용해야할 것 같다.
+
+다른 서드파티와 마찬가지로 passport가 원하는 설정 값을 다 기입했으나, 이러한 문제로 성공적으로 완료하지 못했다. 허나, 다른 카카오나 네이버, 구글과 같은 서비스와의 연결은 깃허브를 사용한 연결과 매우 흡사하므로 가이드라인을 참고하여서 진행하면 된다.
+
+- [passport-kakao](http://www.passportjs.org/packages/passport-kakao/)
+- [passport-naver](http://www.passportjs.org/packages/passport-naver/)
+- [passport-google](http://www.passportjs.org/packages/passport-google/)
+
+추가적으로 passport에서 다른 서비스와 연결하여 인증하는 부분은 OAuth 2.0을 모두 이용하는 것 같다.
 
 ---
