@@ -616,6 +616,8 @@ cb의 경우에는 에러와 찾은 유저 혹은 생성한 유저를 파라미�
 
 ---
 
+- 9 日
+
 # passport-facebook
 
 passport로 facebook 아이디를 이용해서 인증을 할 수 있게 해주는 서드파티이다. 다른 서비스에 비해서 페이스북은 상당히 깐깐하다. 따라서 진행하면서 생긴 시행착오에 대해서 메모하려한다.
@@ -633,17 +635,20 @@ $ npm install passport-facebook
 먼저 [페이스북 개발자](https://developers.facebook.com/)에 등록한 뒤 애플리케이션을 생성해야한다. 그 이후에 다른 passport 서드파티와 마찬가지로 클라이언트 ID와 Secret을 받아서 애플리케이션에 기입해준다. 이후에 콜백함수까지 passport의 템플릿에 맞춰서 작성하는 것까지 동일하다.
 
 ```js
-passport.use(new FacebookStrategy({
-    clientID: FACEBOOK_APP_ID,
-    clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: "http://localhost:3000/auth/facebook/callback"
-  },
-  function(accessToken, refreshToken, profile, cb) {
-    User.findOrCreate({ facebookId: profile.id }, function (err, user) {
-      return cb(err, user);
-    });
-  }
-));
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: FACEBOOK_APP_ID,
+      clientSecret: FACEBOOK_APP_SECRET,
+      callbackURL: "http://localhost:3000/auth/facebook/callback",
+    },
+    function (accessToken, refreshToken, profile, cb) {
+      User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+        return cb(err, user);
+      });
+    }
+  )
+);
 ```
 
 따라서 여기까진 이전에 github에서 작성한 내용을 참고하여 사용하면 된다. 페이스북이 다른 서비스와 다른 점은 바로 https 보안 연결만 받아준다는 것이다. 따라서 콜백함수에서 리다이렉트되는 URL이 https여야한다는 것이다. 이말은 즉, 개발한 앱 자체가 보안 연결로 이뤄져야 한다는 말이다.
@@ -657,5 +662,27 @@ passport.use(new FacebookStrategy({
 - [passport-google](http://www.passportjs.org/packages/passport-google/)
 
 추가적으로 passport에서 다른 서비스와 연결하여 인증하는 부분은 OAuth 2.0을 모두 이용하는 것 같다.
+
+---
+
+- 10 日
+
+# Passport-local-mongoose를 이용한 ChangePassword
+
+- [Passport-local-mongoose 레포지토리](https://github.com/saintedlama/passport-local-mongoose)
+
+Passport-local-mongoose 서드파티를 이용하여 MongoDB에 등록된 사용자의 패스워드를 변경할 때 사용하는 함수에 대해 알아보자. 이미 서드파티에서 개발자가 편리하게 이용하게 함수로 구현되어 제공된다. 다음과 같은 설명을 통해 함수를 이해할 수 있다.
+
+> changePassword(oldPassword, newPassword, [cb])
+>
+> > Changes a user's password hash and salt, resets the user's number of failed password attempts and saves the user object (everything only if oldPassword is correct). If no callback cb is provided a Promise is returned. If oldPassword does not match the user's old password, an IncorrectPasswordError is passed to cb or the Promise is rejected.
+
+## 비밀번호 변경
+
+사용자의 비밀번호를 변경하기 위해서는 먼저 현재 비밀번호와 새 비밀번호, 새 비밀번호 확인까지 3개의 필드에 값이 적힌다. 비밀번호는 저장될 때 Plain Text가 적히는게 아니라 Salt와 Hash에 의해 암호화된 텍스트로 변환된 값이 저장이 된다. 따라서 먼저, 현재 비밀번호를 받아 같은 Salt와 Hash에 의해서 암호화 시킨 뒤 비교를 하고 맞다면 변경을 하는 식으로 구현되어 있다. 만약 틀린다면 콜백함수에 의해서 처리되거나 콜백함수를 명시하지 않더라도 에러로 중단된다.
+
+따라서 개발자가 해결해야 하는 부분은 3가지 필드에서 넘어온 값 중 새 비밀번호와 새 비밀번호 확인 필드의 값들을 먼저 같은지 체크하고 그 값을 `changePassword(oldPassword, newPassword, [cb])`에 넣어줘야 한다. 현재 비밀번호 필드의 값과 MongoDB의 저장된 값을 비교하는 것은 함수에서 구현되어 있으므로 훨씬 편하게 비밀번호 변경을 구현할 수 있다.
+
+이 부분은 Passport 전략 중 local을 선택하여 MongoDB ODM 중 Mongoose를 사용할 때 편의를 주는 passport-local-mongoose 서드파티를 이용할 때로, passport의 다른 전략을 사용한다면 맞는 서드파티를 찾아서 API를 적용해야 한다.
 
 ---
