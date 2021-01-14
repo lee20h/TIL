@@ -1001,3 +1001,69 @@ app.get("/api/get", (req, res) => {
 ```
 
 ---
+
+- 14 日
+
+# Javascript Iterator
+
+ES6이 도입되면서 많은 개념들이 추가가 되었다. 그 중 다른 언어에서도 많이 사용되는 Iterator(반복자)에 대해 알아보자.
+
+- 레퍼런스
+  - [Javascript Iterator](https://dev-momo.tistory.com/entry/Javascript-Iterator)
+  - [Javascript와 Iterator](https://pks2974.medium.com/javascript%EC%99%80-iterator-cdee90b11c0f)
+
+## for-of
+
+자바스크립트는 원래 for-in을 통해 object를 순회하였다. 하지만 배열을 순회할 때는 불편한 점이 있고 forEach의 경우에도 프로그래머가 의도한 바로 사용하기 어렵다. 이러한 문제를 보완하기 위해서 ES6에서는 for-of를 도입했다.
+
+for-of의 장점은 밑에서 이야기할 Iterable한 객체. 즉, 열거가능한 객체라면 모두 사용할 수 있다.
+
+## Iterable
+
+Iterable은 객체의 멤버를 반복할 수 있는 객체로, 반복할 object에 [@@iterator] 메소드가 있다면 사용할 수 있다.
+
+다음과 같은 프로퍼티를 사용하면 된다.
+
+`object[Symbol.iterator]`
+
+위에서 이야기한 for-of가 바로 이 프로퍼티를 이용하여 순회하는 것이다.
+
+### Iterable 가진 객체
+
+- Array
+- TypedArray
+- String
+- Map
+- Set
+
+### Spread 문법
+
+Spread를 이용하면 iterable 객체를 쉽게 해체할 수 있다.
+
+```js
+let txt = "wow";
+console.log([...txt]); // ['w', 'o', 'w']
+```
+
+## Iterator
+
+Iterator는 객체를 `next()` 메소드로 순환 할 수 있다. 이 메소드의 반환자는 **done: boolean, value: any**를 포함해야 한다. 마지막 순서에서는 done을 true로 반환하게 된다.
+
+### 응용
+
+크기가 100이고 값이 모두 0인 초기화된 배열이 필요하다고 할 때, Iterator와 Spread를 이용해보자.
+
+```js
+const arr = [];
+for (let i = 0; i < 100; i++) {
+  arr.push(0);
+}
+console.log(arr);
+```
+
+```js
+const arr = [...Array(100).keys()].map((i) => 0);
+console.log(arr);
+```
+
+---
