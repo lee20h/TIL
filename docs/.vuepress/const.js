@@ -57,6 +57,7 @@ exports.DC_list = [
 
 exports.JS_list = [
   "JS/Modern JavaScript.md",
+  "JS/Iterator.md",
   "JS/babel.md",
   "JS/Eslint.md",
   "JS/Webpack.md",
