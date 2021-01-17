@@ -1140,3 +1140,149 @@ REST API로 엘리베이터의 정보와 승객의 정보를 받고 마지막으
 Nodejs로 받아서 해볼 생각인데, 현재로썬 C++이 아닌 다른 언어를 가지고 문제를 해결해본 적이 없어 꽤 긴 시간이 걸릴거라고 예상된다.
 
 이번 기회에 다른 언어로 풀이를 할 수 있을만큼 공부를 해봐도 좋을 것 같다.
+
+---
+
+- 17 日
+
+# REST API를 이용한 문제 풀이
+
+- Total Goals by a Team
+
+```js
+const axios = require("axios");
+
+let pages = 1;
+let goals = 0;
+
+async function getAwayTeamGoals(team, year) {
+  pages = 1;
+  do {
+    const result = await axios.get(
+      `https://jsonmock.hackerrank.com/api/football_matches?year=${year}&team2=${team}&page=${pages}`
+    );
+    let per_page = result.data.per_page;
+    const total_pages = result.data.total_pages;
+    if (total_pages === 0) return;
+
+    if (total_pages !== 1 && total_pages === pages) {
+      per_page = result.data.total - (total_pages - 1) * per_page;
+    } else if (total_pages === 1) {
+      per_page = result.data.total;
+    }
+    let idx = 0;
+    while (true) {
+      if (idx == per_page) {
+        break;
+      }
+
+      goals += result.data.data[idx++].team2goals * 1;
+    }
+
+    if (pages == result.data.total_pages) {
+      break;
+    }
+    pages++;
+  } while (true);
+}
+
+async function getHomeTeamGoals(team, year) {
+  pages = 1;
+  do {
+    const result = await axios.get(
+      `https://jsonmock.hackerrank.com/api/football_matches?year=${year}&team1=${team}&page=${pages}`
+    );
+    let per_page = result.data.per_page;
+    const total_pages = result.data.total_pages;
+    if (total_pages === 0) return;
+
+    if (total_pages !== 1 && total_pages === pages) {
+      per_page = result.data.total - (total_pages - 1) * per_page;
+    } else if (total_pages === 1) {
+      per_page = result.data.total;
+    }
+    let idx = 0;
+    while (true) {
+      if (idx == per_page) {
+        break;
+      }
+
+      goals += result.data.data[idx++].team1goals * 1;
+    }
+    if (pages === result.data.total_pages) {
+      break;
+    }
+    pages++;
+  } while (true);
+}
+
+async function main() {
+  const ws = fs.createWriteStream(process.env.OUTPUT_PATH);
+
+  const team = readLine();
+
+  const year = parseInt(readLine().trim(), 10);
+
+  await getHomeTeamGoals(team, year);
+  await getAwayTeamGoals(team, year);
+  ws.write(goals + "\n");
+
+  ws.end();
+}
+```
+
+주어진 문제의 목표는 파라미터로 축구 팀의 이름과 연도가 주어졌을 때, REST API로 정보를 받아와서 해당 팀이 주어진 연도에 골을 몇 번 넣었는지 세는 문제이다. request.js가 익숙치 않아서 axios를 사용하였고, Away일 때와 Home일 때 다른 url을 사용하므로 다른 함수로 구현하였다.
+
+json으로 넘어온 정보는 다음과 같다.
+
+- per_pages: 페이지마다 경기의 수
+- total_pages: 총 페이지
+- page: 현재 페이지
+- total: 총 경기 수
+- data[]
+  - year
+  - team1
+  - team2
+  - team1goals
+  - team2goals
+
+따라서 첫 페이지부터 마지막 페이지까지 반복하면서 REST API로 해당 팀의 Home일 때의 골 숫자와 Away일 때의 골 숫자를 각각 얻어와서 합쳐서 출력하도록 하였다.
+
+- Drawn Team
+
+```js
+const axios = require("axios");
+
+let cnt = 0;
+
+async function getDrawnTeam(year) {
+  let pages = 1;
+  for (let team1 = 0, team2 = 0; team1 < 10; team1++, team2++) {
+    const result = await axios.get(
+      `https://jsonmock.hackerrank.com/api/football_matches?year=${year}&team1goals=${team1}&team2goals=${team2}&page=${pages}`
+    );
+    cnt += result.data.total;
+  }
+}
+
+async function main() {
+  const ws = fs.createWriteStream(process.env.OUTPUT_PATH);
+
+  const year = parseInt(readLine().trim(), 10);
+
+  await getDrawnTeam(year);
+  ws.write(cnt + "\n");
+
+  ws.end();
+}
+```
+
+두번째 문제 역시 첫번째 문제와 같은 축구 경기를 이용한 문제였다. 이 문제에서는 연도만 주어지고, 해당 연도에 비긴 팀을 모두 찾는 문제이다. 처음에는 첫번째 문제와 같은 형식에서 url에서 team만 빼고 연도에 치뤄진 경기를 전부 받아서 골 수를 비교하려 했으나, 너무 많은 데이터의 양 때문에 시간초과 되었었다.
+
+이후에는 API를 조금 더 살펴봐서 파라미터로 team1goals와 같이 홈팀의 골 숫자를 보낼 수 있었다. 이것을 이용하여 홈팀과 어웨이팀의 골 수를 같게하여 반복하게 하였다. 단순히 테스트케이스 하나만 가지고 비교해도 170번 반복할 부분을 10번만 반복할 수 있게 고친다는 것은 효율성이 크게 늘어난다는 것을 볼 수 있다.
+
+여담으로 반복 횟수를 골 숫자 0~9까지 10번으로 가정한 이유는 처음에 문제를 접하고 데이터를 봤을 때, 가장 크게 넣은 골이 7~9골 사이로 봤기 때문에 10번으로 어림잡았다. 그리고 처음 풀었던 문제에서는 while문을 여러 번 사용하여 했으나, API로부터 받는 정보를 조금 더 이해한 뒤에는 for문을 통해서도 깔끔하게 구현할 수 있었다.
+
+카카오 엘리베이터 문제를 해결할려 했으나, request는 익숙치 않아서 axios를 한번 더 연습하기 위해서 풀어 본 문제였다.
+
+---
