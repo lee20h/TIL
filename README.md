@@ -1339,3 +1339,48 @@ updateAction()은 Action API를 호출할 때 같이 보내야하는 Commands �
 이후에는 지금까지 만든 객체와 API를 이용해서 흐름을 짜면 된다. 메인으로 사용할 함수를 하나 두고 엘리베이터 객체들과 호출들을 이미 한 것과 해야하는 것으로 나눠서 유지한 뒤 해결하려고 한다.
 
 ---
+
+- 20 日
+
+# 엘리베이터 문제
+
+문제의 흐름과 전체적인 알고리즘을 전부 작성했다. 하지만 전부 작성한 뒤 부딪힌 에러에 대해서 정리해볼려고 한다.
+
+## 에러
+
+```js
+if (this.status === `OPENED` && enter.length > 0) {
+  // 탈 사람이 있다면
+  let callId = [];
+  this.passengers.push([...enter]);
+  console.log(enter);
+  for (enterCall of enter) {
+    const idx = this.calls.findIndex(function (item) {
+      console.log(item);
+      return item === enterCall;
+    });
+    if (idx > -1) {
+      this.calls.splice(idx, 1);
+    }
+  }
+
+  callId.push("enter");
+  for (enterCall of enter) {
+    callId.push(enterCall.id);
+  }
+  return callId;
+}
+```
+
+### 에러메시지
+
+```
+(node:4216) UnhandledPromiseRejectionWarning: ReferenceError: enterCall is not defined
+    at Elevator.updateAction
+```
+
+enterCall이 정의가 되지 않았다는 내용인데, enter의 경우 array로 정의하고 for of로 접근하였는데 undefined가 처리 안되서 나는 에러일지도 몰라서 앞뒤로 undefined를 걸러주는 조건문을 삽입했었다.
+
+결과는 계속 에러가 출력되었다. 메인함수에서 call들을 정리하는 함수에서 막힌거라 진행이 멈췄다. 이후에는 에러를 정리하기 위해 노력했으나 하지못하여 다음에 다시 이어서 하려한다.
+
+---
