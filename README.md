@@ -1448,3 +1448,95 @@ commands: [
 이렇게 자꾸 많은 에러를 겪어가면서 생각이 든 부분은 문제와 조건을 제일 먼저 숙지를 해야하고 전체적인 흐름을 짤 때 다 고려해서 짜야하는 능력이 필요하다는 것을 느꼈다. 그리고 구현 언어에 대한 이해도가 많이 필요하다는 것을 느꼈다. 자바스크립트에 대해서는 Node.js로 서버를 만들고 DB와 연결하여서 쿼리를 날리는 정도만 많이 해봐서 자료구조를 이용한 문제에서 파싱하고 데이터를 얻어내는데에 있어서 매우 미숙하다는 것을 알앗다.
 
 ---
+
+- 24 日
+
+# PS
+
+- N진수 게임
+
+```cpp
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+using namespace std;
+
+string solution(int n, int t, int m, int p) {
+    string answer = "";
+    vector<char> v;
+    char c[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8' ,'9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    int num = t*m;
+    int su;
+    string temp;
+    for (int i=0; i<num; i++) {
+    	su = i;
+    	if(i==0) v.push_back('0');
+    	if(i<n) {
+    		while(su) {
+    			v.push_back(c[su%n]);
+    			su = su / n;
+			}
+		}
+    	else {
+    		while(su) {
+    			temp = c[su%n] + temp;
+
+    			su = su / n;
+			}
+			for (int j=0; j<temp.length(); j++)
+				v.push_back(temp[j]);
+		}
+		temp.clear();
+	}
+	int cnt = 1;
+	for (int i=0; i<num; i++) {
+		if(cnt==m+1) cnt = 1;
+		if(cnt==p) answer+=v[i];
+		cnt++;
+	}
+    return answer;
+}
+```
+
+예전에 풀었지만 다시 복습해볼려고 풀어본 문제이다. 하지만 많이 매끄럽지 않게 되서 다른 분의 포스팅을 보고 비교해볼려고 한다.
+
+```cpp
+// 진수 변환
+string cal(int d, int n) {
+    string res = "";
+    char code[]= {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+    while (d/n != 0) {
+        res = code[d%n] + res;
+        d /=n;
+    }
+    res = code[d%n] + res;
+    return res;
+}
+string solution(int n, int t, int m, int p) {
+    string answer = "";
+    string tmp = "";
+    for (int i =0; i <t*m ; i++) {
+         tmp += cal(i, n);
+    }
+    int cnt = 0;
+    // 튜브의 순서가 p 일 때, 배열의 순서는 p-1이다.
+    // m명의 사람이 있으므로, m 씩 더해야 한다.
+    // cnt를 이용해 말해야 하는 숫자 t와 값을 비교한다.
+    for (int i = p-1;  i < tmp.size(); i += m) {
+        answer += tmp[i];
+        if (cnt + 1 == t) break;
+        cnt += 1;
+    }
+    return answer;
+}
+```
+
+- [출처: DEV 황인태(intaehwang)](https://intaehwang.tistory.com/6)
+
+진수 변환을 함수로 돌려서 모든 순서를 tmp 문자열에 진수 변환하여 저장한 뒤 tmp 문자열에서 튜브 순서에 맞는 값만 찾아서 리턴해준다.
+
+내가 짠 코드는 다시 보면 상당히 이해하기 어려울 것 같다. 하지만 이 코드는 매우 명백하게 이해할 수 있어서 좋다. 따라서 이러한 코드를 짜도록 노력해야겠다. 다음에 이러한 문제를 봤을 때 시간도 줄이고 다른 사람들이 코드를 봐도 이해할 수 있게 작성하도록 공부를 더 해야한다.
+
+---
