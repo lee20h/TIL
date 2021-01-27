@@ -1589,3 +1589,86 @@ int main() {
 다 구현한 뒤 문제에 제출하면서 생각이 든 부분은 바로, 엘리베이터가 콜이 정해진 뒤 움직이기 시작하면 A -> B로 간다하였을 때 A와 B사이에 출발층과 도착층이 있으면 그 승객도 같이 태우는데 만약 A와 B가 완전히 같은 승객의 경우에는 태우지 않고 단 한 명씩만 태우고 내리게 된다. 따라서 이러한 문제만 수정된다면 2번 문제인 라이언 타워의 timestamp를 훨씬 줄일 수 있을거라고 생각한다.
 
 ---
+
+- 27 日
+
+# PS
+
+- `1600. 말이 되고픈 원숭이`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 200;
+
+int k, w, h;
+int arr[MAX][MAX];
+bool visited[MAX][MAX][30+2];
+
+int py[4] = {0, 0, 1, -1};
+int px[4] = {1, -1, 0, 0};
+int ky[8] = {-2, -1, 1, 2, 1, 2, -1 ,-2};
+int kx[8] = {-1, -2, -2, -1, 2, 1, 2, 1};
+
+int bfs(int y, int x) {
+	queue<pair<pair<int ,int>, pair<int, int>>> q;
+	q.push({{y,x},{0,0}});
+	visited[y][x][0] = true;
+
+	while(!q.empty()) {
+		int curY = q.front().first.first;
+		int curX = q.front().first.second;
+		int knight = q.front().second.first;
+		int cnt = q.front().second.second;
+		q.pop();
+
+		if(curY == h-1 && curX == w-1)
+			return cnt;
+
+		if(knight < k) {
+			for (int i=0; i<8; i++) {
+				int dy = curY + ky[i];
+				int dx = curX + kx[i];
+
+				if(0 < dy || 0 < dx || h >= dy || w >= dx)
+					continue;
+				if(!visited[dy][dx][knight+1] && !arr[dy][dx])
+					continue;
+
+
+				visited[dy][dx][knight+1] = true;
+				q.push({{dy,dx},{knight+1, cnt+1}});
+			}
+		}
+
+		for (int i=0; i<4; i++) {
+			int dy = curY + py[i];
+			int dx = curX + px[i];
+
+			if(0 < dy || 0 < dx || h >= dy || w >= dx)
+				continue;
+			if(!visited[dy][dx][knight] && !arr[dy][dx])
+				continue;
+
+			visited[dy][dx][knight] = true;
+			q.push({{dy,dx},{knight, cnt+1}});
+		}
+	}
+	return -1;
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cin >> k >> w >> h;
+
+	for (int i=0; i<h; i++) {
+		for (int j=0; j<w; j++) {
+			cin >> arr[i][j];
+		}
+	}
+
+	cout << bfs(0,0);
+}
+```
