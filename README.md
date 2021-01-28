@@ -1631,9 +1631,9 @@ int bfs(int y, int x) {
 				int dy = curY + ky[i];
 				int dx = curX + kx[i];
 
-				if(0 < dy || 0 < dx || h >= dy || w >= dx)
+				if(0 > dy || 0 > dx || h <= dy || w <= dx)
 					continue;
-				if(!visited[dy][dx][knight+1] && !arr[dy][dx])
+				if(visited[dy][dx][knight+1] || arr[dy][dx])
 					continue;
 
 
@@ -1646,9 +1646,9 @@ int bfs(int y, int x) {
 			int dy = curY + py[i];
 			int dx = curX + px[i];
 
-			if(0 < dy || 0 < dx || h >= dy || w >= dx)
+			if(0 > dy || 0 > dx || h <= dy || w <= dx)
 				continue;
-			if(!visited[dy][dx][knight] && !arr[dy][dx])
+			if(visited[dy][dx][knight] || arr[dy][dx])
 				continue;
 
 			visited[dy][dx][knight] = true;
@@ -1672,3 +1672,70 @@ int main() {
 	cout << bfs(0,0);
 }
 ```
+
+원숭이는 k번 체스의 나이트처럼 움직일 수 있고 나머지는 4방향으로 이동할 수 있다. 이 때 (0,0)에서 (w-1,h-1)까지 갈 수 있는 최소의 이동 수를 구하는 문제이다.
+
+BFS로 간단하게 나이트와 같이 움직이는 행동 패턴 수를 세서 일정 이상 넘어가면 4방향으로만 이동하게 한다. 나이트와 같이 움직일 수 있을 때도 4방향으로 가는 좌표도 같이 넣어줘야한다. 그래야 최소 동작수 를 알 수 있다.
+
+---
+
+- 28 日
+
+# PS
+
+- `1405. 미친 로봇`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 30;
+
+int py[4] = {0, 0, 1, -1};
+int px[4] = {1, -1, 0, 0};
+
+int n;
+double prob[4], ans;
+bool visited[MAX][MAX];
+
+
+void dfs(int y, int x, double chance) {
+	if(n == 0) {
+		ans += chance;
+		return;
+	}
+
+	visited[y][x] = true;
+	for (int i=0; i<4; i++) {
+		int dy = y + py[i];
+		int dx = x + px[i];
+
+		if(!visited[dy][dx]) {
+			n--;
+			dfs(dy, dx, chance * prob[i]);
+			visited[dy][dx] = false;
+			n++;
+		}
+	}
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout << fixed << setprecision(10);
+	cin >> n;
+
+	for (int i=0; i<4; i++) {
+		cin >> prob[i];
+		prob[i] *= 0.01;
+	}
+	dfs(15, 15, 1.0);
+	cout << ans;
+}
+```
+
+로봇이 4방향으로 움직이되 이미 지나간 곳을 또 지나가는 것을 복잡한 경로라고 한다. 단순한 경로만을 찾아서 확률을 구하는 문제이다. 이 때 동서남북으로 가는 확률을 각각 주어지고 이동 횟수도 주어진다. 따라서 DFS로 백트래킹을 구현하여 해결하려고 하였다.
+
+최대 14번 이동할 수 있으므로 한 방향으로만 움직일 수 있으니 배열의 크기를 30으로 주고 (15,15)에서 시작하도록 하였다. 또한 횟수 늘리고 줄임으로써 기저조건을 만들었다. 조건에 맞는다면 ans 변수에 다 더해줘서 확률을 구해주었다.
+
+---
