@@ -1739,3 +1739,73 @@ int main() {
 최대 14번 이동할 수 있으므로 한 방향으로만 움직일 수 있으니 배열의 크기를 30으로 주고 (15,15)에서 시작하도록 하였다. 또한 횟수 늘리고 줄임으로써 기저조건을 만들었다. 조건에 맞는다면 ans 변수에 다 더해줘서 확률을 구해주었다.
 
 ---
+
+- 29 日
+
+# PS
+
+- `1759. 암호 만들기`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<char> ch;
+vector<string> v;
+int l, c;
+
+bool vowel(char c) {
+	if(c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
+		return true;
+	return false;
+}
+
+void dfs(int cur, string str) {
+	if(str.length() == l) {
+		int cnt = 0;
+		for (int i=0; i<l; i++) {
+			if(vowel(str[i])) {
+				cnt++;
+			}
+		}
+		if(cnt >= 1 && l - cnt >= 2)
+			v.push_back(str);
+		return;
+	}
+
+	for(int i=cur+1; i<c; i++) {
+		str += ch[i];
+		dfs(i, str);
+		str.pop_back();
+	}
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cin >> l >> c;
+	for (int i=0; i<c; i++) {
+		char temp;
+		cin >> temp;
+		ch.push_back(temp);
+	}
+
+	sort(ch.begin(), ch.end());
+
+	for (int i=0; i<c; i++) {
+		string temp;
+		temp += ch[i];
+		dfs(i, temp);
+	}
+
+	for (int i=0; i<v.size(); i++) {
+		cout << v[i] << endl;
+	}
+}
+```
+
+주어진 문자들로 암호를 만들되 조건이 있다. 먼저 오름차순이며, 모음이 1개 이상 자음은 2개 이상 들어간 암호여야 한다. 암호들을 전부 출력하면 되는 문제이다.
+
+백트래킹을 생각하여 접근하였다. 먼저 정렬을 한 뒤 dfs함수를 통해서 암호를 만들어가며 암호의 크기가 주어진 값과 같아진다면 그 때 조건을 붙였다. 조건으로는 모음과 자음의 갯수 제한을 통과한 경우에만 벡터에 넣어서 출력해주었다.
+
+---
