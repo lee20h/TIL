@@ -1809,3 +1809,47 @@ int main() {
 백트래킹을 생각하여 접근하였다. 먼저 정렬을 한 뒤 dfs함수를 통해서 암호를 만들어가며 암호의 크기가 주어진 값과 같아진다면 그 때 조건을 붙였다. 조건으로는 모음과 자음의 갯수 제한을 통과한 경우에만 벡터에 넣어서 출력해주었다.
 
 ---
+
+- 30 日
+
+# PS
+
+- `1342 행운의 문자열`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	string s;
+	int ans = 0;
+
+	cin >> s;
+
+	sort(s.begin(), s.end());
+
+	do {
+		bool flag = false;
+		for(int i=1; i<s.size(); i++) {
+			if(s[i-1] == s[i]) {
+				flag = true;
+				break;
+			}
+		}
+		if(!flag)
+			ans++;
+	} while(next_permutation(s.begin(), s.end()));
+
+	cout << ans;
+
+
+}
+```
+
+인근의 문자가 연속되지 않는 문자열을 행운의 문자열이라고 하였을 때, 문자열의 문자를 재배치하여 행운의 문자열을 만들어야한다. 행운의 문자열의 갯수는 몇 개일까?
+
+먼저 순열로 접근하여 모든 순열의 수를 찾은 뒤 문자열을 하나하나 체크해서 값을 구하도록 하였다.
+
+---
