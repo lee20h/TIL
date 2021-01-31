@@ -1853,3 +1853,50 @@ int main() {
 먼저 순열로 접근하여 모든 순열의 수를 찾은 뒤 문자열을 하나하나 체크해서 값을 구하도록 하였다.
 
 ---
+
+- 31 日
+
+# PS
+
+- `1915. 가장 큰 정사각형`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 1002;
+
+char arr[MAX][MAX];
+int dp[MAX][MAX];
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int n, m;
+	int ans = 0;
+	cin >> n >> m;
+
+	for (int i=0; i<n; i++) {
+		for (int j=0; j<m; j++) {
+			cin >> arr[i][j];
+		}
+	}
+
+	for (int i=1; i<=n; i++) {
+		for (int j=1; j<=m; j++) {
+			if(arr[i-1][j-1] == '1') {
+				dp[i][j] = min({dp[i-1][j], dp[i][j-1], dp[i-1][j-1]}) + 1;
+				ans = max(dp[i][j], ans);
+			}
+		}
+	}
+
+	cout << ans * ans;
+}
+```
+
+주어진 배열 중 1로 된 가장 큰 정사각형의 넓이를 구하는 문제이다. DP를 이용해서 푸는 문제로 가장 큰 정사각형의 넓이를 구하기 위해서 한 변의 길이를 구하는 방법을 먼저 구한다. `dp[i][j] = min({dp[i-1][j], dp[i][j-1], dp[i-1][j-1]}) + 1` 즉, 현재 위치를 정사각형의 맨 오른쪽 아래 가장자리라고 가정하고 좌, 상, 좌상 부분의 값 중 더 작은 값을 취해서 1을 더하면 구할 수 있다.
+
+DP를 이용하는 배열과 원 배열은 분리하여서 사용해야하며 구해진 값은 정사각형의 한 변의 길이이므로 넓이를 구해주면 된다.
+
+---
