@@ -103,3 +103,56 @@ int main() {
 - [씹어먹는 C++](https://modoocode.com/303)
 
 ---
+
+- 2 日
+
+# PS
+
+- `2023. 신기한 소수`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> v;
+int obj;
+
+bool prime(int n) {
+	if(n == 0 || n == 1)
+		return false;
+
+	for(int i=2; i*i<=n; i++) {
+		if(n % i == 0)
+			return false;
+	}
+	return true;
+}
+
+void dfs(int n, int cnt) {
+	if(cnt == obj) {
+		cout << n << '\n';
+		return;
+	}
+
+	for (int i=1; i<10; i++) {
+		if(prime(n*10+i))
+			dfs(n*10+i, cnt+1);
+	}
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+
+	cin >> obj;
+
+	for (int i=1; i<=9; i++) {
+		if(prime(i))
+			dfs(i, 1);
+	}
+}
+```
+
+주어진 n의 숫자만큼 자릿수를 가진 숫자들 중 1~n자릿수가 전부 소수인 숫자를 출력하는 문제이다. 깊이우선탐색으로 숫자를 만들고 에라토스테네스의 체로 소수를 체크해줘서 n자리 숫자만큼 커지면 해당 값을 출력했다.
+
+---
