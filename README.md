@@ -155,4 +155,121 @@ int main() {
 
 주어진 n의 숫자만큼 자릿수를 가진 숫자들 중 1~n자릿수가 전부 소수인 숫자를 출력하는 문제이다. 깊이우선탐색으로 숫자를 만들고 에라토스테네스의 체로 소수를 체크해줘서 n자리 숫자만큼 커지면 해당 값을 출력했다.
 
+이 문제로 에라토스테네스의 체와 백트래킹을 다시 공부할 수 있었다.
+
+---
+
+- 3 日
+
+# PS
+
+- `2436. 공약수`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int gcd(int a, int b) {
+	return b? gcd(b, a%b) : a;
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+
+	int g, l, n;
+	long long a, b;
+	cin >> g >> l;
+
+	int num = l / g;
+
+	for (int i=1; i*i<=num; i++) {
+		if(num%i == 0 && gcd(i, num/i) == 1) {
+			n = i;
+		}
+	}
+
+	a = g * n;
+	b = g * (num/n);
+	cout << a << ' ' << b;
+}
+
+```
+
+최대 공약수와 최소 공배수가 주어졌을 때 해당 값을 구하기 위한 두 자연수를 구하는 문제이다. 최대 공약수란 두 수를 서로소가 나올 때 까지 나누었을 때 나온 공약수의 곱이며, 최소 공배수는 최대 공약수에 나머지 서로소의 값들을 곱해준 값이다. 따라서 두 값의 서로소들의 곱을 구한 뒤 그 값을 기준으로 약수를 구한다.
+
+약수를 구할 때는 서로소들의 곱의 제곱근까지만 약수를 구하며, 약수이면서 서로소들의 곱과 또 서로소인 값들을 찾아서 최대 공약수와 곱해주면 원하는 값을 찾을 수 있다.
+
+- `2589. 보물섬`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 50;
+
+int py[4] = {0, 0, 1, -1};
+int px[4] = {1, -1, 0, 0};
+
+char arr[MAX][MAX];
+int cache[MAX][MAX];
+int w, h;
+
+int bfs(int a, int b) {
+	int ans = 0;
+	queue<pair<int,int>> q;
+	q.push({a,b});
+	memset(cache, 0, sizeof(cache));
+	cache[a][b] = 1;
+	while(!q.empty()) {
+		int y = q.front().first;
+		int x = q.front().second;
+		q.pop();
+
+		for (int i=0; i<4; i++) {
+			int dy = y + py[i];
+			int dx = x + px[i];
+			ans = max(ans, cache[y][x]);
+			if(dy < 0 || dx < 0 || dy >= h || dx >= w)
+				continue;
+			if(arr[dy][dx] == 'W' || cache[dy][dx])
+				continue;
+			q.push({dy,dx});
+			cache[dy][dx] = cache[y][x] + 1;
+		}
+	}
+
+	return ans-1;
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int ans = 0;
+	cin >> h >> w;
+
+	for (int i=0; i<h; i++) {
+		for (int j=0; j<w; j++) {
+			cin >> arr[i][j];
+		}
+	}
+
+	for (int i=0; i<h; i++) {
+		for (int j=0; j<w; j++) {
+			if(arr[i][j] == 'L')
+				ans = max(ans,bfs(i, j));
+		}
+	}
+
+	cout << ans;
+}
+
+```
+
+지도의 크기와 지도에 각 타일에 육지와 바다가 주어진 다음에 육지와 육지 거리 중에서 가장 긴 부분이 보물상자가 있는 곳이라고 한다. 이 문제의 풀이를 너비우선탐색을 하되 주어진 출발점이 없으므로 모든 육지 지점에서 너비우선탐색을 하며, 가장 긴 지점을 찾았다.
+
+첫 시도는 boolean형 배열을 이용하여 매번 초기화를 시켜주면서 시간을 체크하고 queue 컨테이너에 좌표 뿐아니라 움직인 거리를 집어넣었었다. 하지만, 답은 나오나 시간초과였다.
+
+다음 시도는 boolean형 배열이 아닌 int형 배열을 가지고 움직인 거리를 적도록 하였다. queue 컨테이너에서 좌표만 표시하며 함수의 반환형을 int로 바꿨다. 그 부분을 바꿨더니 해결할 수 있었다.
+
 ---
