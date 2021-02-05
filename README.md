@@ -285,3 +285,77 @@ rest api 문제 1개, 객관식 1개, ps 문제 3개가 나왔는데 너무 어�
 지금 생각하면 1문제 제외하고는 시간 내에 해결할 수 있을 것 같다. 지식과 경험이 부족해서 원하는 만큼 해결하지 못한 경험을 할 수 있었다. 다음에도 이러한 내용이 나올 수 있으므로 조금 더 열심히 공부해서 도전해야겠다.
 
 ---
+
+- 5日
+  
+# Absoulte Path & Canonical Path
+
+- 레퍼런스: [absolute-path-vs-canonical-path](https://www.benjaminlog.com/entry/absolute-path-vs-canonical-path)
+
+유닉스 시스템에서 사용하는 경로 중 절대 경로에 대해서는 프로그래밍을 하면 많이 접해볼 상식이다. 하지만 canonical path에 대해서는 접해보지 못했는데 위의 글에서는 다음과 같이 설명한다.
+
+> Canonical Path는 어떤 파일의 경로를 나타내기 위한 유일한 심볼이다. 또한 Canonical path는 항상 절대경로이기도 하다. 물론 역은 성립하지 않는다.
+
+여기서 absoulte path와 비교를 하면서 설명을 더해보자.
+
+`/origin/file1`과 `/origin/../origin/file1`의 absoulte path는 다를까? 
+
+둘 다 absoulte path라고 할 수 있다. 즉, 많은 수의 absoulte path는 만들어질 수 있다.
+
+하지만 canonical path는 설명한 바와 같이 유일한 경로를 가진다. 여기서는 `/origin/file1` 이 한 경로만이 canonical path라고 할 수 있다.
+
+---
+
+# PS
+
+LeetCode에서 매달 진행하는 LeetCoding Challenge를 계속 참여하려고 한다. 저번에 본 코딩테스트에서 느낀 점은 영어 문제에 대해서 조건과 목표를 파악하는 부분이 너무 느리기 때문에 영어 문제에 대해 많이 접해볼려고 하며, 하루에 한 문제는 꼭 푸는 방향으로 나아갈 것이다.
+
+- Simpliy Path
+
+```cpp
+class Solution {
+public:
+    string simplifyPath(string path) {
+        vector<string> v;
+        string temp, ans;
+        for(int i=0; i<path.length(); i++) {
+            if(path[i] == '/') {
+                if(temp == ".") {
+                    temp.clear();
+                    continue;
+                }
+                else if(temp == "..") {
+                    if(v.size())
+                        v.pop_back();
+                }
+                else if(!temp.empty()) {
+                    v.push_back(temp);
+                }
+                temp.clear();
+            } else {
+                temp += path[i];
+            }
+        }
+        if(path[path.length()-1] != '/') {
+            if(temp == "..") {
+                if(v.size())
+                    v.pop_back();
+            }
+            else if(!temp.empty() && temp != ".") {
+                v.push_back(temp);
+            }
+        }
+        for (int i=0; i<v.size(); i++)
+            ans += '/' + v[i];
+
+        if(ans.empty())
+            ans = '/';
+
+		return ans;
+    }
+};
+```
+
+주어진 absolute path를 canonical path로 바꿔야하는 문제이다. 따라서 `.`은 무시하며 `..`의 역할만 주어진 채로 구현하였다. 이 때 `/`를 통해서 지금까지 들어온 문자열을 벡터에 넣어서 관리해주었다. 마지막에는 `/`가 나올 수도 있고 안 나올 수도 있다. 따라서 만약 마지막 값이 `/`가 아니라면 포문 내에서 사용한 논리 그대로 이어서 사용해주었다. 벡터 원소 값 앞에 `/`를 붙여서 반환해주면 마무리가 된다.
+
+---
