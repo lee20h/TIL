@@ -286,8 +286,8 @@ rest api 문제 1개, 객관식 1개, ps 문제 3개가 나왔는데 너무 어�
 
 ---
 
-- 5日
-  
+- 5 日
+
 # Absoulte Path & Canonical Path
 
 - 레퍼런스: [absolute-path-vs-canonical-path](https://www.benjaminlog.com/entry/absolute-path-vs-canonical-path)
@@ -298,7 +298,7 @@ rest api 문제 1개, 객관식 1개, ps 문제 3개가 나왔는데 너무 어�
 
 여기서 absoulte path와 비교를 하면서 설명을 더해보자.
 
-`/origin/file1`과 `/origin/../origin/file1`의 absoulte path는 다를까? 
+`/origin/file1`과 `/origin/../origin/file1`의 absoulte path는 다를까?
 
 둘 다 absoulte path라고 할 수 있다. 즉, 많은 수의 absoulte path는 만들어질 수 있다.
 
@@ -357,5 +357,89 @@ public:
 ```
 
 주어진 absolute path를 canonical path로 바꿔야하는 문제이다. 따라서 `.`은 무시하며 `..`의 역할만 주어진 채로 구현하였다. 이 때 `/`를 통해서 지금까지 들어온 문자열을 벡터에 넣어서 관리해주었다. 마지막에는 `/`가 나올 수도 있고 안 나올 수도 있다. 따라서 만약 마지막 값이 `/`가 아니라면 포문 내에서 사용한 논리 그대로 이어서 사용해주었다. 벡터 원소 값 앞에 `/`를 붙여서 반환해주면 마무리가 된다.
+
+---
+
+- 6 日
+
+# PS
+
+LeetCode
+
+- Binary Tree Right Side View
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+	void rightSideViewFunc(TreeNode *root, int level, int *maxLevel, vector<int> &v) {
+		if(root == NULL)
+			return;
+
+		if(*maxLevel < level) {
+			v.push_back(root->val);
+			*maxLevel = level;
+		}
+
+		rightSideViewFunc(root->right, level + 1, maxLevel, v);
+		rightSideViewFunc(root->left, level + 1, maxLevel, v);
+	}
+
+    vector<int> rightSideView(TreeNode* root) {
+        vector<int> v;
+        int maxLevel = 0;
+        rightSideViewFunc(root, 1, &maxLevel, v);
+        return v;
+    }
+};
+```
+
+이진트리가 주어졌을 때 가장 오른쪽에 있는 노드를 출력하는 문제이다. 주어진 구조체를 이용하면서 함수를 완성시켜야 하므로 DFS와 같이 구현하였다. 각 level을 보면서 해당 층에서 가장 먼저 접하는 값을 벡터에 넣어서 반환하도록 하였다. 이것이 가능한 이유는 함수에서 제일 먼저 루트의 오른쪽을 먼저 탐색하도록 하였기 때문이다.
+
+다른 사람들의 코드를 보다가 효율이 매우 좋은 코드를 보게 되어서 같이 올린다.
+
+```cpp
+class Solution {
+public:
+    vector<int> rightSideView(TreeNode* root) {
+        vector<int> ans;
+        if(root==NULL)
+            return ans;
+        queue<TreeNode*> q;
+        q.push(root);
+        int i;
+        while(!q.empty())
+        {
+            int n=q.size();
+            for(i=0;i<n;i++)
+            {
+                TreeNode* temp=q.front();
+                q.pop();
+                if(temp->left)
+                    q.push(temp->left);
+                if(temp->right)
+                    q.push(temp->right);
+                if(i==n-1)
+                    ans.push_back(temp->val);
+            }
+        }
+        return ans;
+    }
+};
+```
+
+이진트리의 각 층의 오른쪽 노드들을 얻기 위해서 내가 했던 방식과는 달리 큐를 이용한 방법으로 while문이 한번 끝날 때마다 이진트리의 한 층이 끝나는 것이다. 따라서 큐에는 현재 층의 노드들이 들어있으며, 왼쪽과 오른쪽의 자식 노드들을 큐에 집어 넣게 된다. 처음에 큐의 크기만큼 포문을 구성하여 한 층에서만 돌게 하였는데 이 때, 포문의 마지막 반복에는 무조건 해당 층의 오른쪽 노드가 오게 된다. 따라서 해당 노드를 모아서 반환해주면 된다.
+
+이진트리에 대해서 공부할 때, 강의와 책을 보고 배운 것을 이용하여 풀었다. 내가 푼 풀이도 성능 면에서는 나쁘지는 않다. 하지만, 같은 생각을 선택한 컨테이너에 따라서 성능이 확실히 달라지므로 선택할 수 있는 폭을 넓혀야겠다. 큐로 푼 풀이는 내가 생각하기에는 정말 좋은 풀이라고 생각된다.
 
 ---
