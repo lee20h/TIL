@@ -443,3 +443,94 @@ public:
 이진트리에 대해서 공부할 때, 강의와 책을 보고 배운 것을 이용하여 풀었다. 내가 푼 풀이도 성능 면에서는 나쁘지는 않다. 하지만, 같은 생각을 선택한 컨테이너에 따라서 성능이 확실히 달라지므로 선택할 수 있는 폭을 넓혀야겠다. 큐로 푼 풀이는 내가 생각하기에는 정말 좋은 풀이라고 생각된다.
 
 ---
+
+- 7 日
+
+# PS
+
+- Shortest Distance to a Character
+
+```cpp
+class Solution {
+public:
+    vector<int> shortestToChar(string s, char c) {
+        vector<int> v, ans;
+        for (int i=0; i<s.length(); i++) {
+            if(s[i] == c) {
+                v.push_back(i);
+            }
+        }
+        int idx= 0;
+        for (int i=0; i<s.length(); i++) {
+            if(idx != v.size()-1) {
+                if(abs(v[idx]-i) >= abs(v[idx+1]-i)) {
+                    idx++;
+                }
+            }
+            ans.push_back(abs(i-v[idx]));
+        }
+        return ans;
+    }
+};
+```
+
+문자열과 특정한 문자가 주어졌을 때 문자열 속에서 가장 가까운 특정한 문자의 거리를 문자마다 구해서 반환하는 문제이다.
+
+예를 들어 `nicemeetyou`가 주어졌을 때 문자는 `e`라고 가정한다. 그렇다면 원하는 정답 배열은 `32101001234`이다.
+
+먼저 특정한 문자가 문자열에 어떤 인덱스에 위치해있는지 구한다. 그렇게되면 문자열에서 몇번째 인덱스에서 특정한 문자가 나오는지 알고 있다. 따라서 문자열 인덱스에서 특정한 문자가 들어있는 인덱스를 빼 준 거릿값 만큼을 출력하면 된다. 이 때, 가장 가까운 특정한 문자를 찾아야하므로 현재 인덱스와 다음 인덱스 중 가까운 것을 취해서 빼줘야한다.
+
+- 여행경로
+
+```cpp
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+const int MAX = 1e5+1;
+
+bool visited[MAX];
+string ans = "abc";
+
+void dfs(vector<vector<string>> &tickets, string from, string path, int level) {
+    if(level == tickets.size()) {
+        if(path < ans)
+        	ans = path;
+        return;
+    }
+
+    for (int i=0; i<tickets.size(); i++) {
+        if(tickets[i][0] == from && !visited[i]) {
+            visited[i] = true;
+            dfs(tickets, tickets[i][1], path + tickets[i][1], level+1);
+            visited[i] = false;
+        }
+    }
+}
+
+vector<string> solution(vector<vector<string>> tickets) {
+    vector<string> answer, temp;
+    string start = "ICN";
+    sort(tickets.begin(), tickets.end());
+
+    dfs(tickets, start, start, 0);
+
+    for(int i=0; i<ans.length(); i+=3) {
+        answer.push_back(ans.substr(i,3));
+    }
+    return answer;
+}
+```
+
+DFS 문제로, 모든 여행지를 다 돌 수 있다고 가정하고 여행지들을 경유해서 돈다. 이 때, 도는 순서를 찾는 문제이다. 따라서 dfs를 통해서 쭈욱 따라가서 찾되, 똑같은 레벨의 여행지라면 사전 순으로 정렬되어야한다. 정렬 후 dfs 함수를 통해서 모든 값을 구한다.
+
+dfs 함수에서는 돌아보지 않은 여행지 중 출발 여행지가 같다면 dfs 함수를 호출하며, 총 찾은 숫자가 주어진 티켓과 같다면 모든 여행지를 경유한 것이므로 해당 값들 중 가장 사전적 정의가 앞서는 문자열을 가지고 파싱하여 반환한다.
+
+---
+
+# 토익
+
+토익을 치뤘는데 단지 졸업조건으로써 응시했다. 하지만 영어 레퍼런스를 읽는 정도라고 생각했지만 상당히 부족한걸 느꼈다. 영어 레퍼런스를 읽는 날이 많아질테니 앞으로 조금씩 영어 공부를 쭉 해나가야겠다.
+
+---
