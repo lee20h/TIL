@@ -534,3 +534,146 @@ dfs 함수에서는 돌아보지 않은 여행지 중 출발 여행지가 같다
 토익을 치뤘는데 단지 졸업조건으로써 응시했다. 하지만 영어 레퍼런스를 읽는 정도라고 생각했지만 상당히 부족한걸 느꼈다. 영어 레퍼런스를 읽는 날이 많아질테니 앞으로 조금씩 영어 공부를 쭉 해나가야겠다.
 
 ---
+
+- 8 日
+
+# PS
+
+- Peeking Iterator
+
+```cpp
+/*
+ * Below is the interface for Iterator, which is already defined for you.
+ * **DO NOT** modify the interface for Iterator.
+ *
+ *  class Iterator {
+ *		struct Data;
+ * 		Data* data;
+ *		Iterator(const vector<int>& nums);
+ * 		Iterator(const Iterator& iter);
+ *
+ * 		// Returns the next element in the iteration.
+ *		int next();
+ *
+ *		// Returns true if the iteration has more elements.
+ *		bool hasNext() const;
+ *	};
+ */
+
+class PeekingIterator : public Iterator {
+public:
+	PeekingIterator(const vector<int>& nums) : Iterator(nums) {
+	    // Initialize any member here.
+	    // **DO NOT** save a copy of nums and manipulate it directly.
+	    // You should only use the Iterator interface methods.
+
+	}
+
+    // Returns the next element in the iteration without advancing the iterator.
+	int peek() {
+        return Iterator(*this).next();
+	}
+
+	// hasNext() and next() should behave the same as in the Iterator interface.
+	// Override them if needed.
+	int next() {
+        return Iterator::next();
+	}
+
+	bool hasNext() const {
+        return Iterator::hasNext();
+	}
+};
+```
+
+Leetcode 오늘의 문제로 Iterator 클래스가 주어지고 이 클래스를 상속하는 PeekingIterator 클래스의 함수를 만들어주는 문제이다. 문제에서 여러 가지 조건을 주석을 통해서 넣어주었다. 나는 최대한 짧고 있는 함수를 이용하려고 하였다. 따라서 next와 hasNext는 있는 클래스에서 그대로 호출하였고 peek의 경우에만 현재 객체를 상위 클래스에 맞춰서 next 함수를 호출하여 다음 원소만 알아볼 수 있게 하였다.
+
+- `2174. 로봇 시뮬레이션`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 100 + 2;
+
+int board[MAX][MAX];
+
+int px[4] = {-1, 0, 1, 0};
+int py[4] = {0, 1, 0, -1};
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	int a, b, n, m;
+	int robot = 0, wall = 0, crashRobot = 0;
+	cin >> a >> b >> n >> m;
+	vector<pair<pair<int,int>, int>> v;
+	v.push_back({{0,0}, 0});
+	for (int i=1; i<=n; i++) {
+		int y, x, intDir;
+		char dir;
+		cin >> x >> y >> dir;
+		if(dir == 'N')
+			intDir = 1;
+		else if (dir == 'E')
+			intDir = 2;
+		else if (dir == 'S')
+			intDir = 3;
+		else
+			intDir = 0;
+		v.push_back({{x,y},intDir});
+		board[x][y] = i;
+	}
+
+	for (int i=0; i<m; i++) {
+		int num, repeat;
+		char cmd;
+
+		cin >> num >> cmd >> repeat;
+
+		if(wall || robot)
+			continue;
+
+		int dx = v[num].first.first;
+		int dy = v[num].first.second;
+		int dir = v[num].second;
+		while(repeat--) {
+
+			if(cmd == 'F') {
+				board[dx][dy] = 0;
+				dx += px[dir];
+				dy += py[dir];
+				if(dy < 1 || dx < 1 || dy > b || dx > a) {
+					wall = num;
+					break;
+				}
+				if(board[dx][dy]) {
+					robot = num;
+					crashRobot = board[dx][dy];
+					break;
+				}
+				board[dx][dy] = num;
+				v[num] = {{dx, dy}, dir};
+			}
+			else if(cmd == 'R') {
+				dir = (dir + 1) % 4;
+				v[num] = {{dx, dy}, dir};
+			}
+			else if (cmd == 'L') {
+				dir = (dir + 3) % 4;
+				v[num] = {{dx, dy}, dir};
+			}
+		}
+	}
+	if(wall)
+		cout << "Robot " << wall << " crashes into the wall";
+	else if(robot)
+		cout << "Robot " << robot << " crashes into robot " << crashRobot;
+	else
+		cout << "OK";
+}
+```
+
+좌표계가 조금 다르다는거만 빼면 천천히 구현해나가면 된다. y축이 반대로 되어있다는 것을 이용해서 좌표계를 눕혀서 생각했다. 따라서 원래 이차원 배열을 사용할 때 사용하는 좌표인 `arr[y][x]`를 `arr[x][y]`로 바꿔서 이용하였고 방향에 따른 움직임도 그러하게 90도 틀었다. 이후에는 벽에 부딪히는 것과 로봇 끼리 만나는 것을 구현해주기, 방향 틀기만 구현해주었다.
+
+---
