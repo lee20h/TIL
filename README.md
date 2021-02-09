@@ -677,3 +677,68 @@ int main() {
 좌표계가 조금 다르다는거만 빼면 천천히 구현해나가면 된다. y축이 반대로 되어있다는 것을 이용해서 좌표계를 눕혀서 생각했다. 따라서 원래 이차원 배열을 사용할 때 사용하는 좌표인 `arr[y][x]`를 `arr[x][y]`로 바꿔서 이용하였고 방향에 따른 움직임도 그러하게 90도 틀었다. 이후에는 벽에 부딪히는 것과 로봇 끼리 만나는 것을 구현해주기, 방향 틀기만 구현해주었다.
 
 ---
+
+- 9 日
+
+# PS
+
+- Convert BST to Greater Tree
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    void inorder(TreeNode* root, vector<int*>& nums) {
+        if(root != nullptr) {
+            inorder(root->left, nums);
+            nums.push_back(&root->val);
+            inorder(root->right, nums);
+        }
+    }
+    TreeNode* convertBST(TreeNode* root) {
+        vector<int*> nums;
+        inorder(root, nums);
+
+        for (int i=nums.size()-1; i>0; i--) {
+            *nums[i-1] += *nums[i];
+        }
+        return root;
+    }
+};
+```
+
+- [leetcode](https://leetcode.com/problems/binary-search-tree-to-greater-sum-tree/)
+
+같은 문제로 주소를 달았다.
+
+![예시](https://assets.leetcode.com/uploads/2019/05/02/tree.png)
+
+예제 사진과 같이 오른쪽 자식트리 -> 루트 -> 왼쪽 자식트리의 값을 경로에 따라 더해서 그대로 반환해주면 되는 문제이다.
+
+문제에서는 오른쪽부터 시작하는 것으로 보이나, 결국에는 왼쪽 자식들의 값이 다 더한 값이 되므로, 트리 순회중 중위 순회를 이용하여 순서를 좌->루트->우로 만들 수 있다면 매우 편하게 풀 수 있을 것 같다.
+
+따라서 중위 순회를 이용하여 벡터에 값을 넣어주며, 벡터의 인덱스로 접근할 수 있게 정수의 주소값을 자료형으로 삼았다. 이후에는 중위순회의 순서를 반대로 값을 더해가면 nums[0]에는 최종적으로 모든 값의 합이 담기게 되며, 그 경로의 값들 또한 잘 더해진다.
+
+---
+
+# 객체지향의 사실과 오해
+
+이번 설 연휴를 이용하여 사놓고 잠시 잊혀졌던 책을 읽어볼려고 한다. 바로, 객체지향의 사실과 오해라는 책이다. 이 책은 사람들이 객체지향이라는 패러다임에 대해서 흔히 가지게 되는 오해와 생각들을 이해하기 쉽게 정리해준다.
+
+그 중 하나는 바로 객체지향을 생각할 때 핵심을 클래스로 생각하게 되는데 객체지향에 있어서 핵심은 클래스가 아닌 적절한 책임을 수행하는 역할간의 유연하고 견고한 협력관계를 구축하는 것이다. 클래스는 단지 협력하는 객체를 만들 때 필요한 구현 매커니즘일 뿐이라는 것이다. 클래스가 중요하지 않은 것이 아니라 사람들이 핵심을 잘못 알고 있다는 점을 지적해준다.
+
+나는 객체지향에 대해서 배울 때 C++과 Java를 이용해서 클래스를 구축하고 캡슐화, 다형성 등 여러가지 용어에 대해서 배웠다. 하지만 책의 필자는 그것들이 중요한 것이 아니라고 얘기한다. 즉, 다른 것들은 구현하기 위한 수단일 뿐이고 객체지향의 목적과 핵심을 정확히 생각하라는 것이다.
+
+실생활과 빗대어서 객체에 대해 설명하는데 많은 생각을 하게 하였다. 클래스를 구현하고 그걸 토대로 객체지향 프로그래밍을 했다고 생각하였고 클래스를 사용함을써 나는 객체지향을 배웠다고 생각했다. 하지만 이 책은 몇 장 읽지 않았는데 그 부분이 오해였다고 말하니 다음에 이야기할 내용이 무엇인지 궁금해진다.
+
+---
