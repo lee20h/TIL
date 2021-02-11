@@ -851,3 +851,121 @@ public:
 이러한 내용이 상태를 캡슐화 해야하는 이유이다.
 
 ---
+
+- 11 日
+
+# PS
+
+- Valid Anagram
+
+```cpp
+class Solution {
+public:
+    bool isAnagram(string s, string t) {
+        int alpha[26], dif[26];
+        memset(alpha, 0, sizeof(alpha));
+        memset(dif, 0, sizeof(dif));
+        if(s.length() != t.length())
+            return false;
+
+        for (int i=0; i<s.length(); i++) {
+            alpha[s[i] - 'a']++;
+            dif[t[i] - 'a']++;
+        }
+
+        for (int i=0; i<26; i++) {
+            if(alpha[i] != dif[i])
+                return false;
+        }
+
+        return true;
+    }
+};
+```
+
+두 문자열이 주어졌을 때 Anagram인지 확인하는 문제이다. 처음에는 쉽게 해결하기 위해 next_permutation을 이용해서 같은 문자열이 있는지 체크했으나 테스트 케이스에 엄청 긴 문자열이 있어서 시간초과가 나왔다. 이후에는 알파벳 수를 센 뒤 숫자가 같으면 Anagram으로 판명하고, 만약 길이가 다르다면 문자의 갯수도 다르기 때문에 거짓을 반환했다.
+
+- `2631. 줄세우기`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+const int MAX = 200 + 1;
+
+int arr[MAX];
+int dp[MAX];
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+
+	int n, ans = 0;
+	cin >> n;
+	for (int i=1; i<=n; i++) {
+		cin >> arr[i];
+	}
+
+	for (int i=1; i<=n; i++) {
+		dp[i] = 1;
+		for (int j=1; j<=i; j++) {
+			if(arr[j] < arr[i] && dp[i] < dp[j]+1) {
+				dp[i] = dp[j] + 1;
+			}
+		}
+		if(ans < dp[i])
+			ans = dp[i];
+	}
+	cout << n - ans;
+}
+```
+
+1 ~ n까지의 숫자가 무작위로 주어질 때 오름차순으로 정렬하기 위한 최소의 움직임 수를 구하는 문제이다. 최소의 움직임을 알기 위해서는 LIS (최장 증가 부분 수열)을 구해야한다. 오름차순으로 정렬하기 위한 최소의 움직임을 구해야하는데 이미 증가 부분 수열로 된 부분은 건들일 필요가 없기 때문에 최장 증가 부분 수열 크기를 전체 크기에서 뺀 숫자가 정답이다.
+
+따라서 다이나믹 프로그래밍을 이용하여 최장 증가 부분 수열을 구한 뒤 전체 크기에서 그 크기를 빼주었다.
+
+- `2170. 선 긋기`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+
+	vector<pair<int,int>> v;
+	int n, ans = 0;
+	cin >> n;
+
+	for (int i=0; i<n; i++) {
+		int s, e;
+		cin >> s >> e;
+		v.push_back({s,e});
+	}
+
+	sort(v.begin(), v.end());
+
+	int start = v[0].first;
+	int end = v[0].second;
+
+	for(int i=1; i<v.size(); i++) {
+		if(v[i].first > end) {
+			ans += end - start;
+			start = v[i].first;
+			end = v[i].second;
+		}
+		else if(v[i].first < end && end < v[i].second)
+			end = v[i].second;
+	}
+	ans += end - start;
+
+	cout << ans;
+}
+```
+
+도화지에 선을 긋는 출발점과 도착점이 주어지게 되는데 이 값들을 가지고 선을 그은 총 길이를 구하는 문제이다. 이 때 겹치는 선은 하나로 생각해야한다.
+
+따라서 문제를 해결하기 위해 먼저 시작 지점을 기준으로 전부 정렬을 한 다음 선이 겹치는 경우와 안 겹치는 경우로 나누어서 해결하였다. 먼저 안 겹치는 경우에는 지금까지 그은 선들을 다 더해 값을 구한다. 그리고 새로 선을 시작하기 때문에 시작 지점과 도착 지점을 바꿔준다. 겹치는 경우에는 시작 지점은 그대로 두고 도착 지점을 계속 갱신해준다. 만약 계속 겹치게 긋다가 끝난다면 값을 더해주지 않기 때문에 마지막으로 도착 지점에서 시작 지점을 빼서 길이를 구해준다.
+
+---
