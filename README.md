@@ -998,3 +998,57 @@ Leetcode 오늘의 문제는 홀짝 나눠서 짝수일 땐 2로 나누고 홀�
 오늘은 해커랭크에서 자바스크립트를 이용해서 PS 문제를 풀어보았다. 조금이라도 익숙하게 사용하기 위해서 자바스크립트를 이용했지만 쉬운 난이도의 문제들이라서 빠르게 풀어나갔다. 이외에도 자주 자바스크립트를 이용해봐야겠다.
 
 ---
+
+- 13 日
+
+# PS
+
+- Shortest Path in Binary Matrix
+
+```cpp
+class Solution {
+private:
+    int px[8] = {0, 1, 1, -1, -1, -1, 0, 1};
+    int py[8] = {1, 0, 1, 1, 0, -1, -1, -1};
+    bool visited[100][100];
+
+public:
+    int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
+        int size = grid.size();
+        queue<pair<pair<int,int>,int>> q;
+        if(!grid[0][0])
+            q.push({{0,0}, 1});
+
+        while(!q.empty()) {
+            int y = q.front().first.first;
+            int x = q.front().first.second;
+            int cnt = q.front().second;
+            q.pop();
+
+            if(y == size-1 && x == size-1) {
+                return cnt;
+            }
+
+            for(int i=0; i<8; i++) {
+                int dy = y + py[i];
+                int dx = x + px[i];
+
+                if(dy < 0 || dx < 0 || dy >= size || dx >= size)
+                    continue;
+                if(grid[dy][dx] || visited[dy][dx])
+                    continue;
+
+                q.push({{dy,dx}, cnt+1});
+                visited[dy][dx] = true;
+            }
+        }
+        return -1;
+    }
+};
+```
+
+`n*n` 행렬이 있을 때 `[0,0]`에서 `[n-1,n-1]`까지 가는 최소 거리를 구하는 문제로, 단순한 8방향 BFS문제이다. 만약 불가능하다면 -1을 리턴하고 이외에는 제대로된 거리를 리턴해주면 된다.
+
+또한 JS로 해커랭크에서 계속적으로 문제 풀이를 하고 있다. 하지만 남길 정도의 난이도는 아니라서 금방금방 넘기고 있다. 미디움 이상부터는 기억에 남는 내용을 기록하려고 한다.
+
+---
