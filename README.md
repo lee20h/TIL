@@ -1052,3 +1052,84 @@ public:
 또한 JS로 해커랭크에서 계속적으로 문제 풀이를 하고 있다. 하지만 남길 정도의 난이도는 아니라서 금방금방 넘기고 있다. 미디움 이상부터는 기억에 남는 내용을 기록하려고 한다.
 
 ---
+
+- 14 日
+
+# PS
+
+- Is Graph Bipartite?
+
+```cpp
+class Solution {
+private:
+    int visited[100];
+    bool ansFlag;
+public:
+    void dfs(vector<vector<int>>& graph, int start, int color) {
+        if(ansFlag || visited[start])
+            return;
+
+        visited[start] = color;
+
+        for(int i=0; i<graph[start].size(); i++) {
+            if(color == visited[graph[start][i]]) {
+                ansFlag = true;
+                return;
+            }
+            else if(!visited[graph[start][i]]) {
+                if(color == 1)
+                    dfs(graph, graph[start][i], 2);
+                else
+                    dfs(graph, graph[start][i], 1);
+            }
+        }
+    }
+
+    bool isBipartite(vector<vector<int>>& graph) {
+        ansFlag = false;
+        memset(visited, 0, sizeof(visited));
+        for(int i=0; i<graph.size(); i++) {
+            if(!visited[i])
+                dfs(graph, i, 1);
+        }
+
+        return !ansFlag;
+    }
+};
+```
+
+주어진 그래프가 이진 그래프인지 확인하는 문제이다. 이진 그래프란, 두 가지 색이 존재할 때 한 정점에 빨간색을 칠했다고 가정하면 인접한 정점들은 모두 파란색을 칠해야한다. 이러한 방식으로 칠해져있을 때 모든 그래프 정점의 인접한 정점들의 색이 달라야 이진 그래프라고 할 수 있다.
+
+여기서는 풀이를 깊이우선탐색으로 진행하였다. visited 배열에서 방문하지 않으면 0으로 초기화되어 있고 방문시에는 1 혹은 2로 칠해져있다. 따라서 함수를 통해서 정점에 색깔을 칠한 뒤 깊이우선탐색으로 다음 정점에서는 현 정점과는 다른 색을 칠해야한다. 이러한 반복이 이뤄졌을 때 자기와 인접한 정점이 자기와 같은 색깔이라면 함수를 끝내고 boolean 값을 리턴하게 된다.
+
+이 때 반환된 값이 true라면 이진 그래프가 아니란 의미이므로, 목적은 반대로 반환해줘야한다.
+
+- [between-two-sets](https://www.hackerrank.com/challenges/between-two-sets)
+
+```js
+function getTotalX(a, b) {
+  const min = Math.min(...a);
+  const max = Math.max(...b);
+  const result = [];
+  const funcA = (item, x) => x % item === 0;
+  const funcB = (item, x) => item % x === 0;
+
+  for (let i = min; i <= max; i++) {
+    if (a.every((el) => funcA(el, i)) && b.every((el) => funcB(el, i))) {
+      result.push(i);
+    }
+  }
+
+  return result.length;
+}
+```
+
+a와 b 두 배열이 주어지는데 이 때, a 배열의 모든 원소에 나누어 떨어지면서 b 배열의 모든 원소에 나눌 수 있는 숫자를 찾아야한다. 따라서 a 배열의 최소 공배수 부터 b 배열의 최대 공약수까지 찾아보면 된다. 사이의 a의 공배수면서 b의 공약수인 수를 찾게되는데 이 때 `every()`를 사용하면 편하게 구현할 수 있다.
+
+- [Array.every()](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/every)
+
+배열 안의 모든 원소를 판별 함수를 통과하는지 체크해주는 메서드이다. 이 때 빈 배열도 true로 반환해준다는 점을 기억해주면 좋을 것 같다. 따라서 a와 b의 조건에 맞게 판별 함수를 만든 뒤 조건문을 통해서 부합하는 숫자를 찾아 result 배열에 등록하여 그의 맞는 숫자 갯수를 알 수 있다.
+
+every() 메서드를 처음보게 되어 사용하는 방법도 익힐 겸 기록해보았다. 자바스크립트에 내장된 메서드를 하나하나 알아가는 시간을 가지고 있어서 응용하면 남들이 알아보기 편하고 쉽게 구현할 수 있는 코드가 나올 공부가 된다.
+
+---
