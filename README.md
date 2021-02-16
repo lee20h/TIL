@@ -1185,3 +1185,46 @@ public:
 문제가 영어라서 바로바로 눈에 들어오지 않아서 바로 테스트 케이스에 눈이 가버리고 말았다. 그래서 놓친 부분이 많아서 시간이 상당히 소모되었다. 이후에 해커랭크에서 진행되면 영어를 조금 더 열심히 읽어야겠다.
 
 ---
+
+- 16 日
+
+# PS
+
+- Letter Case Permutation
+
+```cpp
+class Solution {
+private:
+    vector<string> v;
+    int dif = 'a' - 'A';
+public:
+    void solve(string s, int idx, string temp) {
+        if(idx == s.length()) {
+            v.push_back(temp);
+            return;
+        }
+
+        solve(s, idx+1, temp + s[idx]);
+
+        if('a' <= s[idx] && s[idx] <= 'z') {
+            char upper = s[idx] - dif;
+            solve(s, idx+1, temp + upper);
+        }
+        else if('A' <= s[idx] && s[idx] <= 'Z') {
+            char lower = s[idx] + dif;
+            solve(s, idx+1, temp + lower);
+        }
+    }
+
+    vector<string> letterCasePermutation(string S) {
+        solve(S, 0, "");
+        return v;
+    }
+};
+```
+
+주어진 문자열 중 알파벳만 대소문자를 바꿔가면서 순열과 같이 만드는 문제이다. 원래 알파벳의 상태를 문자열에 붙여주고 소문자라면 대문자를, 대문자라면 소문자를 재귀 함수에 문자열을 붙이는 식으로 진행하였다.
+
+처음에는 여러 가지 시행착오가 있었는데, 그 중 하나는 문자열에 알파벳을 제외한 숫자도 있다는 것이였다. 문자열 길이를 비트로 변환해서 각 비트 별로 문자열 하나하나를 대입하여 대소문자를 넣어주려고 했으나, 숫자가 끼어있어서 터무니없이 긴 시간이 걸렸다. 결국에 도달한 것이 재귀함수를 이용한 풀이였다.
+
+---
