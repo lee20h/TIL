@@ -1228,3 +1228,151 @@ public:
 처음에는 여러 가지 시행착오가 있었는데, 그 중 하나는 문자열에 알파벳을 제외한 숫자도 있다는 것이였다. 문자열 길이를 비트로 변환해서 각 비트 별로 문자열 하나하나를 대입하여 대소문자를 넣어주려고 했으나, 숫자가 끼어있어서 터무니없이 긴 시간이 걸렸다. 결국에 도달한 것이 재귀함수를 이용한 풀이였다.
 
 ---
+
+- 17 日
+
+# PS
+
+- Container With Most Water
+
+```cpp
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+        int answer = 0;
+        int left = 0;
+        int right = height.size()-1;
+
+        while(left < right) {
+            int width = min(height[left], height[right]);
+            int temp = width * (right - left);
+            height[left] < height[right] ? left++ : right--;
+            answer = max(answer, temp);
+        }
+        return answer;
+    }
+};
+```
+
+주어진 그래프를 가지고 x좌표 중 두 곳을 골라서 너비로, x좌표에 해당하는 그래프의 길이 중 더 짧은 길이를 높이로 하는 넓이를 구해야한다. 이 때 넓이가 최대가 되는 값을 구하는 문제이다.
+
+제일 처음에는 이중포문을 통해서 모든 지점을 다 확인하여 값을 반환했으나, 시간초과가 일어났다. 그래서 다음에는 이진 탐색을 이용해서 그래프 전체에서 왼쪽과 오른쪽을 하나씩 좁혀가면서 가장 큰 넓이를 구하도록 하였다.
+
+---
+
+# Linux Shell Script
+
+bash 쉘에 대해서 기초적인 것을 적어보려고 한다.
+
+## 쉘이란?
+
+shell 은 운영체제의 커널과 사용자 사이를 이어주는 역할을 하며, shell은 상용자의 명령어를 해석하고 운영체제가 알아들을 수 있게 지시해준다.
+
+그 후에 운영체제는 shell 에게서 받은 지시를 해석하여 하드웨어를 위한 지시어로 바꾸어준다.
+
+## bash shell
+
+### echo
+
+```sh
+#! /bin/bash
+
+echo"print ~~"
+```
+
+print할 때 사용하는 명령어로 위와 같이 사용하면 된다.
+
+### 변수 사용
+
+```sh
+#! /bin/bash
+
+a=1
+b=5
+c="hello"
+
+echo"$a $b $c"
+```
+
+변수는 선언과 동시에 정의를 하면 되며, 호출은 펄과 유사하게 `$`를 사용해서 호출하면 된다.
+
+### 값 입력
+
+```sh
+#! /bin/bash
+
+echo -n "input something :"
+
+read input
+
+echo "$input"
+```
+
+### 사칙연산
+
+```sh
+#! /bin/bash
+
+a=1
+b=1
+
+result1 = `expr $a + $b`
+result2 = `expr $a - $b`
+result3 = `expr $a \* $b`
+result4 = `expr $a / $b`
+```
+
+사칙연산은 똑같이 하되 expr을 명시해야하며, 곱하기의 경우에는 백슬래쉬를 앞에 쓰고 사용해야한다.
+
+### 조건문
+
+- if
+
+```sh
+if [ 조건 ]; then
+    내용
+elif [ 조건 ]; then
+    내용
+else
+    문장
+fi
+```
+
+if문에 쓰이는 조건들은 전부 정해져있으며 그대로 사용해야한다.
+
+`[-z]`: 문자열의 길이가 0이면 참, `[-n]`: 문자열의 길이가 0이 아니면 참.
+
+이런식으로 정해진 조건들을 확인해야한다.
+
+- case
+
+```sh
+case 변수 in
+    경우 1)
+    ;;
+esac
+```
+
+### 반복문
+
+- for문
+
+```sh
+for 변수 in 반복조건
+    do
+        내용
+    done
+```
+
+- while문
+
+```sh
+while [ 값1 조건식 값2 ]
+    do
+        내용
+    done
+```
+
+- [레퍼런스](https://kangsecu.tistory.com/54)
+
+---
