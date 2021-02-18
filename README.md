@@ -1376,3 +1376,31 @@ while [ 값1 조건식 값2 ]
 - [레퍼런스](https://kangsecu.tistory.com/54)
 
 ---
+
+- 18 日
+
+# PS
+
+- Arithmetic Slices
+
+```cpp
+class Solution {
+public:
+    int numberOfArithmeticSlices(vector<int>& A) {
+        int size = A.size();
+        vector<int> dp(size);
+        int ans = 0;
+        for(int i=2; i<size; i++) {
+            if(A[i] - A[i-1] == A[i-1] - A[i-2]) {
+                dp[i] = dp[i-1] + 1;
+                ans += dp[i];
+            }
+        }
+        return ans;
+    }
+};
+```
+
+일정하게 증가하는 배열을 구하는 문제로, 배열의 길이는 3 이상이다. 따라서 이어지는 값을 더해주기 위해서 dp 벡터를 만들어서 이어줬다.
+
+---
