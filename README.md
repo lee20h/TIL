@@ -1404,3 +1404,47 @@ public:
 일정하게 증가하는 배열을 구하는 문제로, 배열의 길이는 3 이상이다. 따라서 이어지는 값을 더해주기 위해서 dp 벡터를 만들어서 이어줬다.
 
 ---
+
+- 19 日
+
+# PS
+
+- Minimum Remove to Make Valid Parentheses
+
+```cpp
+class Solution {
+public:
+    string minRemoveToMakeValid(string s) {
+        stack<int> st;
+        string answer;
+        for(int i=0; i<s.length(); i++) {
+            if(s[i] == '(') {
+                st.push(i);
+            }
+            else if(s[i] == ')') {
+                if(!st.empty())
+                    st.pop();
+                else
+                    s[i] = '+';
+            }
+        }
+        while(!st.empty()) {
+            s[st.top()] = '+';
+            st.pop();
+        }
+
+        for(int i=0; i<s.length(); i++) {
+            if(s[i] != '+')
+                answer += s[i];
+        }
+
+        return answer;
+    }
+};
+```
+
+문자열이 주어지는데 이 떄 잘못된 괄호가 있으면 전부 지우고 온전한 괄호만 포함한 채로 문자열을 반환하는 문제이다. 처음에는 닫힌 괄호에만 신경 썼더니 `))((`와 같은 예제에는 문제가 있었다.
+
+이후에 생각한 것은 문자열에서 문제있는 부분을 전부 `+`로 바꿔버리는 것이다. 그렇게하면 짝을 가지지 못한 괄호들을 전부 바꿀 수 있었다. 이후에 마지막에 반환하는 문자열에 그 부분을 포함하지 않으면 원하는 문자열을 얻을 수 있다.
+
+---
