@@ -1448,3 +1448,39 @@ public:
 이후에 생각한 것은 문자열에서 문제있는 부분을 전부 `+`로 바꿔버리는 것이다. 그렇게하면 짝을 가지지 못한 괄호들을 전부 바꿀 수 있었다. 이후에 마지막에 반환하는 문자열에 그 부분을 포함하지 않으면 원하는 문자열을 얻을 수 있다.
 
 ---
+
+- 20 日
+
+# PS
+
+- Roman to Integer
+
+```cpp
+class Solution {
+public:
+    int romanToInt(string s) {
+        int result = 0;
+        map<char, int> m;
+        m.insert({'I', 1});
+        m.insert({'V', 5});
+        m.insert({'X', 10});
+        m.insert({'L', 50});
+        m.insert({'C', 100});
+        m.insert({'D', 500});
+        m.insert({'M', 1000});
+
+        for(int i=0; i<s.length()-1; i++) {
+            int cur = m[s[i]];
+            int next = m[s[i+1]];
+
+            cur >= next ? result += cur : result -= cur;
+        }
+        result += m[s[s.length()-1]];
+        return result;
+    }
+};
+```
+
+로마자를 숫자로 변환하는 문제이다. 쉽게 생각해서 뒤에 나오는 문자가 현재 문자보다 크면 결과값에서 빼주고 크거나 같으면 더해주는 방식으로 풀어줬다. map을 이용하여 조금 더 직관적으로 해결하였다.
+
+---
