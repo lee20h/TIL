@@ -1516,3 +1516,41 @@ public:
 처음에는 이해하기 어려웠으나, 기능 두 가지를 활용하여 X보다 Y를 작게 만들어서 그 차이는 무조건 한 기능을 이용하기 때문에 그 과정을 이용한 것을 알 수 있었다.
 
 ---
+
+- 22 日
+
+# PS
+
+- Longest Word in Dictionary through Deleting
+
+```cpp
+class Solution {
+public:
+   bool isSubsequence(string s1, string s2){
+      int j = 0;
+      for(int i = 0; i < s1.size(); i++){
+         if(s2[j] == s1[i]){
+            j++;
+            if(j == s2.size()) break;
+         }
+      }
+      return j == s2.size();
+   }
+   string findLongestWord(string s, vector<string>& d) {
+      string ans = "";
+      for(int i = 0; i < d.size(); i++){
+         string x = d[i];
+         if(x.size() > ans.size() || (x.size() == ans.size() && (x < ans))){
+            if(isSubsequence(s, x)) ans = x;
+         }
+      }
+      return ans;
+   }
+};
+```
+
+주어진 문자열에서 문자들을 삭제해서 만들 수 있는 단어 중 가장 긴 단어를 d 배열에서 뽑아서 반환해야한다. 이 때 길이가 같다면 사전적 정의가 앞인 단어를 반환하면 된다.
+
+처음에 시도한 방법은 알파벳 수를 전부 세서 배열로써 가지고 갯수를 충족하나를 찾아주었다. 하지만, 여기서 간과한 점이 있었다. 바로, 문자열의 부분수열에 속해야하는 것이었다. 문자열에서 문자들을 삭제한다고 문자들의 자리가 재배열되지는 않는다. 따라서 같은 알파벳 숫자를 가지고 있는 것이아니라 부분수열중에서 가장 크기가 길면서도 사전적 정의가 앞에 위치한 단어를 찾아줘야하는 문제였다.
+
+---
