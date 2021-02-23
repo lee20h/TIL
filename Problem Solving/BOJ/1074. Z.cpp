@@ -4,29 +4,19 @@ using namespace std;
 int N, r, c, cnt;
 
 void sol(int size, int y, int x) {
-	if (size==2) {
-		if(y == r && x == c) {
-			cout << cnt;
-			return;
-		}
-		cnt++;
-		if(y == r&& x+1 == c) {
-			cout << cnt;
-			return;
-		}
-		cnt++;
-		if(y+1 == r&& x == c) {
-			cout << cnt;
-			return;
-		}
-		cnt++;
-		if(y+1 == r&& x+1 == c) {
-			cout << cnt;
-			return;
-		}
-		cnt++;
-		return;
-	}
+    if(y == r && x == c) {
+        cout << cnt;
+        return;
+    }
+    if(size == 1) {
+        cnt++;
+        return;
+    }
+    if(y > r || r >= y+size || x > c || c >= x+size) {
+        cnt += size * size;
+        return;
+    }
+        
 	sol(size/2,y,x);
 	sol(size/2,y,x+size/2);
 	sol(size/2,y+size/2,x);

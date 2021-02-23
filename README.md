@@ -1595,3 +1595,48 @@ public:
 요즘에는 정보처리기사 필기를 시험보기 위해서 공부 중인데, 과목 1,2을 위주로 공부중이다. 학교 강의로는 소프트웨어공학 과목에 속한 내용인데 학교 강의에서도 마찬가지로 외워야하는 항목들이 너무 많아서 조금 어려워하고 있다.
 
 ---
+
+- 23日
+
+# PS
+
+- `1074. Z`
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int N, r, c, cnt;
+
+void sol(int size, int y, int x) {
+    if(y == r && x == c) {
+        cout << cnt;
+        return;
+    }
+    if(size == 1) {
+        cnt++;
+        return;
+    }
+    if(y > r || r >= y+size || x > c || c >= x+size) {
+        cnt += size * size;
+        return;
+    }
+        
+	sol(size/2,y,x);
+	sol(size/2,y,x+size/2);
+	sol(size/2,y+size/2,x);
+	sol(size/2,y+size/2,x+size/2);
+	
+}
+
+int main() {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cin >> N >> r >> c;
+	sol(pow(2,N),0,0);
+}
+```
+
+재채점으로 인해 시간초과로 오답으로 나와 다시 풀이를 해보았다. 분할정복을 이용해서 풀이를 하였으나, 시간을 줄이기 위해서 분할 시에 크기가 1인 된 경우를 1개로 보고, 해당 사분면을 다 체크한 경우에는 사분면 크기만큼을 답에 더해주었다. 전에는 사분면이 아닌 하나하나를 전부 체크하여 시간이 부족하였던 것으로 보인다.
+
+---
