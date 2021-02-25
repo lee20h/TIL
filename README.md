@@ -1596,7 +1596,7 @@ public:
 
 ---
 
-- 23日
+- 24 日
 
 # PS
 
@@ -1621,12 +1621,12 @@ void sol(int size, int y, int x) {
         cnt += size * size;
         return;
     }
-        
+
 	sol(size/2,y,x);
 	sol(size/2,y,x+size/2);
 	sol(size/2,y+size/2,x);
 	sol(size/2,y+size/2,x+size/2);
-	
+
 }
 
 int main() {
@@ -1638,5 +1638,45 @@ int main() {
 ```
 
 재채점으로 인해 시간초과로 오답으로 나와 다시 풀이를 해보았다. 분할정복을 이용해서 풀이를 하였으나, 시간을 줄이기 위해서 분할 시에 크기가 1인 된 경우를 1개로 보고, 해당 사분면을 다 체크한 경우에는 사분면 크기만큼을 답에 더해주었다. 전에는 사분면이 아닌 하나하나를 전부 체크하여 시간이 부족하였던 것으로 보인다.
+
+---
+
+- 25 日
+
+# PS
+
+- Shortest Unsorted Continuous Subarray
+
+```cpp
+class Solution {
+public:
+    int findUnsortedSubarray(vector<int>& nums) {
+        int size = nums.size();
+        int left = -1, right = -1;
+        int max = -10e5;
+        int min = 10e5;
+
+        for(int i=0; i<size; i++) {
+            if(max < nums[i])
+                max = nums[i];
+            else if(max > nums[i])
+                left = i;
+        }
+
+        for(int i=size-1; i>=0; i--) {
+            if(min > nums[i])
+                min = nums[i];
+            else if(min < nums[i])
+                right = i;
+        }
+
+        if(left == -1)
+            return 0;
+        return abs(right - left - 1);
+    }
+};
+```
+
+주어진 배열을 오름차순으로 바꿔야할 때, 가장 적게 옮겨서 오름차순을 만들 수 있는 횟수를 구하는 문제이다. 따라서 왼쪽과 오른쪽에서 각각 최댓값과 최솟값을 이용해서 해당 값이 역전되는 인덱스를 찾아서 인덱스 사이의 거리를 구하였다.
 
 ---
