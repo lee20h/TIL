@@ -1680,3 +1680,37 @@ public:
 주어진 배열을 오름차순으로 바꿔야할 때, 가장 적게 옮겨서 오름차순을 만들 수 있는 횟수를 구하는 문제이다. 따라서 왼쪽과 오른쪽에서 각각 최댓값과 최솟값을 이용해서 해당 값이 역전되는 인덱스를 찾아서 인덱스 사이의 거리를 구하였다.
 
 ---
+
+- 26 日
+
+# PS
+
+- Validate Stack Sequences
+
+```cpp
+class Solution {
+public:
+    bool validateStackSequences(vector<int>& pushed, vector<int>& popped) {
+        stack<int> st;
+        int idx = 0;
+        for(int i=0; i<pushed.size(); i++) {
+            st.push(pushed[i]);
+
+            while(!st.empty() && st.top() == popped[idx]) {
+                st.pop();
+                idx++;
+            }
+        }
+        if(st.empty())
+            return true;
+        else
+            return false;
+    }
+};
+```
+
+스택을 다루는 문제 중에서 자주 풀어본 문제로, push 리스트와 pop 리스트가 있는 경우 push 리스트의 순열로 pop 리스트가 구성되어있다. 이 때 push 리스트로 pop 리스트가 만들어질 수 있는지 체크하는 문제이다.
+
+따라서 push 리스트에 순서에 맞게 스택에 집어넣으면서 pop 리스트를 구현할 수 있나 확인하였다. 가능하면 다 pop을 하여 스택이 비워진 경우에는 참을 반환하고 아닌 경우에는 거짓을 반환하게 하였다.
+
+---
