@@ -1714,3 +1714,101 @@ public:
 따라서 push 리스트에 순서에 맞게 스택에 집어넣으면서 pop 리스트를 구현할 수 있나 확인하였다. 가능하면 다 pop을 하여 스택이 비워진 경우에는 참을 반환하고 아닌 경우에는 거짓을 반환하게 하였다.
 
 ---
+
+- 28 日
+
+# PS
+
+- Divide Two Integers
+
+```cpp
+class Solution {
+public:
+    int divide(int dividend, int divisor) {
+        int ans = 0;
+        if(divisor==INT_MIN)
+            return dividend==INT_MIN ? 1 : 0;
+        if(dividend==INT_MIN) {
+            if(divisor==-1) return INT_MAX;
+            if(divisor==1) return INT_MIN;
+            ans++;
+            dividend+=abs(divisor);
+        }
+
+        int x=abs(dividend);
+        int y=abs(divisor);
+        bool sgn = (dividend<0)^(divisor<0);
+        int b=1;
+        while(x>0)
+        {
+            if(x>=y)
+            {
+                x-=y;
+                ans+=b;
+                if(y>>30) continue;
+                b<<=1;
+                y<<=1;
+            }
+            else
+            {
+                if(divisor>x) break;
+                b>>=1;
+                y>>=1;
+            }
+        }
+        return sgn?-ans:ans;
+    }
+};
+```
+
+- [레퍼런스](https://purealgo.tistory.com/42)
+
+case 1) x ≤ y ∗ b
+
+x에서 y _ b를 빼내고, ans에 b를 더해준다. 그 후, b에 2를 곱한다.  
+이 때, y _ b가 INT_MAX보다 커지려고 하면 곱하지 않는다.
+
+case 2) else  
+이때, x가 처음의 divisor보다 작아졌을 경우, 다 나눴으므로 반복문을 종료한다.  
+아니라면, b에 2를 나눈다.
+
+- Maximum Frequency Stack
+
+```cpp
+class FreqStack {
+    private:
+       map<int, int> cnt;
+       map<int, stack<int>> st
+       int maxFreq = 0;
+    public:
+       FreqStack() {
+          maxFreq = 0;
+          cnt.clear();
+          st.clear();
+       }
+       void push(int x) {
+          cnt[x]++;
+          maxFreq = max(maxFreq, cnt[x]);
+          st[cnt[x]].push(x);
+       }
+       int pop() {
+          int maxKey = maxFreq;
+          int x = st[maxKey].top();
+          st[maxKey].pop();
+          if(st[maxKey].size() == 0){
+             st.erase(maxKey);
+             maxFreq--;
+          }
+          cnt[x]--;
+          return x;
+       }
+};
+```
+
+스택의 값 중 가장 많이 삽입된 순서대로 pop을 하면서 해당 값을 반환하는 빈도 스택을 만드는 문제이다. 여기서는 map 2개를 사용하여 하나는 해당 값의 빈도, 나머지 하나는 같은 빈도를 가진 값들을 모은 스택이 된다.
+
+따라서 push 메서드는 해당 값의 빈도 수를 늘리고 최대 빈도수를 저장한다. 그리고 해당 빈도수에 맞는 스택에 해당 값을 넣어준다.
+
+pop 메서드는 최대 빈도 수의 스택 중 top 값을 반환하되, 해당 스택이 다 줄어들면 스택을 지워준다.
+
+---
