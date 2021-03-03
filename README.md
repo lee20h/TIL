@@ -369,3 +369,26 @@ public:
 set을 이용해서 중복된 값을 찾고 배열의 합과 1~n의 합을 이용해서 차이 값을 구해준다.
 
 ---
+
+- 3 日
+
+# PS
+
+- Missing Number
+
+```cpp
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+        long long int diff = accumulate(nums.begin(), nums.end(), 0);
+        long long int sum = (nums.size() * (nums.size()+1)) / 2;
+        return sum - diff;
+    }
+};
+```
+
+벡터 중 빠진 숫자를 찾는 문제이다. 0 ~ n-1까지의 숫자가 주어지고 빠진 숫자를 찾으면 된다.
+
+따라서 벡터의 크기만큼의 합을 구하고 주어진 벡터들의 합을 구해서 그 차이를 반환하면 된다.
+
+---
