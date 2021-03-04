@@ -392,3 +392,42 @@ public:
 따라서 벡터의 크기만큼의 합을 구하고 주어진 벡터들의 합을 구해서 그 차이를 반환하면 된다.
 
 ---
+
+- 4 日
+
+- Intersection of Two Linked Lists
+
+```cpp
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        ListNode *ptr1 = headA;
+        ListNode *ptr2 = headB;
+        if(!ptr1 || !ptr2)
+            return nullptr;
+        while (ptr1 != ptr2) {
+            ptr1 = ptr1->next;
+            ptr2 = ptr2->next;
+            if (ptr1 == ptr2)
+                return ptr1;
+            if (ptr1 == NULL)
+                ptr1 = headB;
+            if (ptr2 == NULL)
+                ptr2 = headA;
+        }
+        return ptr1;
+    }
+};
+```
+
+연결리스트 두 개가 있을 때 두 리스트가 겹쳐질 때를 찾는 문제이다. 따라서 리스트들을 끝까지 보낸 다음 마지막에 null이라면 다른 리스트의 헤드를 붙여서 두 리스트가 같도록 한 뒤, 끝까지 간 경우에는 두 리스트의 크기가 같아지므로 마지막에는 null이 나오게 된다. 이 때 같이 null이라면 해당 null을 리턴하면 된다. 이외에는 이미 겹쳐졌으므로 현재 구조체를 바로 리턴해주면 된다.
+
+---
