@@ -431,3 +431,55 @@ public:
 연결리스트 두 개가 있을 때 두 리스트가 겹쳐질 때를 찾는 문제이다. 따라서 리스트들을 끝까지 보낸 다음 마지막에 null이라면 다른 리스트의 헤드를 붙여서 두 리스트가 같도록 한 뒤, 끝까지 간 경우에는 두 리스트의 크기가 같아지므로 마지막에는 null이 나오게 된다. 이 때 같이 null이라면 해당 null을 리턴하면 된다. 이외에는 이미 겹쳐졌으므로 현재 구조체를 바로 리턴해주면 된다.
 
 ---
+
+- 5 日
+
+# PS
+
+- Average of Levels in Binary Tree
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+private:
+    vector<pair<long,long>> v;
+public:
+    void level(TreeNode* node, int cnt) {
+        if(node == NULL)
+            return;
+        if(v.size() <= cnt) {
+            v.push_back({node->val, 1});
+        } else {
+            v[cnt].first += node->val;
+            v[cnt].second++;
+        }
+        level(node->left, cnt+1);
+        level(node->right, cnt+1);
+    }
+
+    vector<double> averageOfLevels(TreeNode* root) {
+        level(root, 0);
+        vector<double> ans;
+        for(int i=0; i<v.size(); i++) {
+            ans.push_back(double(v[i].first) / v[i].second);
+        }
+        return ans;
+    }
+};
+```
+
+이진 트리가 주어졌을 때 트리의 레벨에 값들의 평균을 구하는 문제이다. 따라서 재귀 함수를 이용하여 자식 노드들을 찾아갔으며, 벡터에 레벨에 맞춰서 해당 값을 다 더해준 뒤 평균을 구하도록 하였다.
+
+ICT 인턴십을 시작하여 거의 PS 위주로만 진행이 될 것 같다.
+
+---
