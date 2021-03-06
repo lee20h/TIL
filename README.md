@@ -483,3 +483,35 @@ public:
 ICT 인턴십을 시작하여 거의 PS 위주로만 진행이 될 것 같다.
 
 ---
+
+- 6 日
+
+# Short Encoding of Words
+
+```cpp
+class Solution {
+public:
+    int minimumLengthEncoding(vector<string>& words) {
+        set<string> s(words.begin(), words.end());
+        for (string word : words)
+            if (s.find(word) != s.end())
+                for (int i = 1; i < word.length(); i++) {
+                    s.erase(word.substr(i));
+                }
+        int ans = s.size();
+        for (string word : s)
+            ans += word.size();
+        return ans;
+    }
+};
+```
+
+주어진 단어들 마다 뒤에 `#`을 붙여서 문자열을 만들었을 때의 길이를 구하는 문제이다.
+
+단어 중 겹치는 단어가 있다면 그 중 큰 단어를 기준으로 하나만 체크하면 된다.
+
+따라서 set에 단어들을 넣은 뒤 단어를 인덱스 1부터 끝까지의 부분 문자열을 구해서 set에 있는지 확인한다.
+
+만약, 있다면 해당 단어를 set에서 지워준다. 그렇게하면 set의 크기는 `#`의 갯수이며, set의 남아있는 문자들은 문자열에 포함되는 문자들이다. 따라서 해당 문자 길이들을 잇는다면 답이 된다.
+
+---
