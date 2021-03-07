@@ -515,3 +515,66 @@ public:
 만약, 있다면 해당 단어를 set에서 지워준다. 그렇게하면 set의 크기는 `#`의 갯수이며, set의 남아있는 문자들은 문자열에 포함되는 문자들이다. 따라서 해당 문자 길이들을 잇는다면 답이 된다.
 
 ---
+
+- 7 日
+
+# PS
+
+- Design HashMap
+
+```cpp
+class MyHashMap {
+public:
+    vector<pair<int, int>> v;
+
+    MyHashMap() {
+        v;
+    }
+
+    void put(int key, int value) {
+        bool isExist = false;
+        for(int i=0; i<v.size(); i++) {
+            if(v[i].first == key) {
+                isExist = true;
+                v[i].second = value;
+                break;
+            }
+        }
+        if(!isExist) {
+            v.push_back({key, value});
+        }
+    }
+
+    int get(int key) {
+        for(int i=0; i<v.size(); i++) {
+            if(v[i].first == key) {
+                return v[i].second;
+            }
+        }
+        return -1;
+    }
+
+    void remove(int key) {
+        for(int i=0; i<v.size(); i++) {
+            if(v[i].first == key) {
+                v.erase(v.begin() + i);
+                break;
+            }
+        }
+    }
+};
+```
+
+hashMap을 구현하는 문제로, 문제에서 원하는 부분을 직관적으로 구현하였다.
+
+---
+
+# 정보처리기사 필기
+
+이번에 2021 정기 기사 1회 정보처리기사 필기에 응시하였다.
+
+전체적인 난이도는 낮았으며, 1-2 과목에 경우에는 과년도 문제와 매우 유사했다. 3-4 과목에 경우에는 대학에서 진행한 강의를 들었다면 매우 쉽게 풀 수 있었다. 그에 반해 5 과목은 들어본 내용도 있지만 헷갈리거나 처음 보는 내용이 꽤나 많았다.
+
+기출문제만 여러번 풀어보고 시험을 응시했던 거에 비해 높은 점수를 받을 수 있었다. 5 과목도 크게 틀린 부분은 없었지만 기억하면 나쁠 건 없어보였다.
+
+---
