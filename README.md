@@ -615,3 +615,125 @@ Google Cloud Platform에서 쿠버네티스 사용하는 것과 bitbucket의 파
 - `kubectl proxy`를 이용하면 쿠버네티스 대시보드로 확인할 수 있다.
 
 ---
+
+- 9 日
+
+# 쿠버네티스
+
+## 인그레스 설치
+
+GCP를 사용했을 때 인그레스 컨트롤러를 설치하는 법을 알아보자.
+
+### 인그레스 컨트롤러 설치
+
+`kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.44.0/deploy/static/provider/cloud/deploy.yaml`
+
+해당 명령어를 통해서 GCP에서 ingress contoller를 만들 수 있다.
+
+### 인그레스
+
+```yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: foo.bar.com
+      http:
+        paths:
+          - path: /foo
+            backend:
+              serviceName: svc1
+              servicePort: 80
+          - path: /bar
+            backend:
+              serviceName: svc2
+              servicePort: 80
+```
+
+인그레스 컨트롤러는 규칙을 관리하는 서버이므로 실제로 인그레스를 만들어야한다. 그러므로 yaml으로 인그레스를 정의한다. backend부분에서 해당 도메인과 서비스를 연결할 수 있다.
+
+---
+
+# PS
+
+- Add One Row to Tree
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* addOneRow(TreeNode* root, int v, int d) {
+        if(d==1){
+            TreeNode *ptr = new TreeNode(v, root, nullptr);
+            return ptr;
+        }
+
+        addRow(root, v, d-1);
+
+        return root;
+    }
+
+    void addRow(TreeNode* parent, int v, int dep){
+        if(!parent)
+            return;
+
+        if(dep==1){
+            TreeNode *temp;
+
+            temp = parent->left;
+            parent->left = new TreeNode(v);
+            parent->left->left = temp;
+
+            temp = parent->right;
+            parent->right = new TreeNode(v);
+            parent->right->right = temp;
+        }
+        else{
+            addRow(parent->left, v, dep-1);
+            addRow(parent->right, v, dep-1);
+        }
+    }
+};
+```
+
+d와 v가 주어지면 해당 depth에 v의 값을 다 넣어주는 문제이다.
+
+따라서 재귀를 통해서 해당 깊이에 도착하면 v의 값을 넣어주고 원래 깊이의 값을 자식으로 이어주면 된다.
+
+---
+
+# Go
+
+## Go PATH
+
+Window 기준 `C:/go` MAC 기준 `Local/go`으로 자동으로 만들어지는 디렉터리를 사용해야한다. 해당 폴더 안에 `/src/패키지명`을 통해서 golang을 사용할 수 있다. 컴파일은 오직 `main.go`만 가능하며, 나머지는 패키지를 동일하게 쓴다면 main에서 가져다가 쓸 수 있다.
+
+이 때 다른 언어에서 Export하는 것을 golang에서는 패키지 내의 대문자로 시작하는 함수에 대해서만 인정해준다. 즉, 다른 명시 필요없이 함수의 첫 자가 대문자면 해당 함수는 패키지 속 다른 파일에서 사용할 수 있다는 것이다.
+
+## 변수와 상수
+
+```go
+var name string = "lee20h"
+name := "lee20h"
+const name string = "lee20h"
+```
+
+코드로 먼저 이해하자면 위와 같다. 상수와 변수의 개념으로 JavaScript가 생각나는 문법이다. golang은 python이나 JS와 달리 타입형 언어로, 타입을 명시해줘야한다. 하지만 1번째 라인과 2번째 라인은 같은 의미를 뜻한다. var와 타입명을 축약시켜서 `:=`와 같이 사용할 수 있다는 것이다.
+
+앞으로는 많이 사용할 문법이므로 기억하면 좋다.
+
+---
