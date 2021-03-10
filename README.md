@@ -737,3 +737,53 @@ const name string = "lee20h"
 앞으로는 많이 사용할 문법이므로 기억하면 좋다.
 
 ---
+
+- 10 日
+
+# PS
+
+- Integer to Roman
+
+```cpp
+class Solution {
+public:
+    string intToRoman(int num) {
+         string m[] = {"", "M", "MM", "MMM"};
+         string c[] = {"", "C", "CC", "CCC", "CD", "D",
+                            "DC", "DCC", "DCCC", "CM"};
+         string x[] = {"", "X", "XX", "XXX", "XL", "L",
+                            "LX", "LXX", "LXXX", "XC"};
+         string i[] = {"", "I", "II", "III", "IV", "V",
+                            "VI", "VII", "VIII", "IX"};
+
+         string thousands = m[num/1000];
+         string hundereds = c[(num%1000)/100];
+         string tens =  x[(num%100)/10];
+         string ones = i[num%10];
+
+         string ans = thousands + hundereds + tens + ones;
+
+         return ans;
+    }
+};
+```
+
+정수를 로마 숫자로 변환하는 문제이다. 일의 자리부터 천의 자리까지 나눈 다음 맞는 로마자를 연결해주는 방식으로 구현하였다.
+
+---
+
+# RabbitMQ
+
+Devops에 대해 공부하면서 처음 접한 툴이다. 쉽게 말하면 메시지 큐를 사용하여 애플리케이션간의 결합도를 낮추거나 메시지를 전달하고 지연 시간이 생길 경우 요청을 위임하는 역할을 해준다.
+
+만약 메시지 시스템이 없다면 리얼 타임 애플리케이션을 만들 수 없다. 메시지 시스템의 엔드포인트를 통해서 주고 받게 되면 관리가 쉬워지고 모든 애플리케이션이 통합된 프로토콜과 데이터 폼을 사용하게 된다. 게다가 RabbitMQ는 오픈소스로 관리도 쉬운 장점이 있다.
+
+- Queue : 메세지를 담아놓는 Buffer
+- Exchnage : 메세지를 적절한 Queue로 옮기는 Routing 역할을 수행
+- Routing Key : Exchange가 Routing 할 때 사용하는 Key
+- Binding : Exchange와 Queue를 Link하는 것
+
+- [두다지님 블로그](https://blog.dudaji.com/general/2020/05/25/rabbitmq.html)
+- [튜토리얼](https://www.rabbitmq.com/getstarted.html)
+
+---
