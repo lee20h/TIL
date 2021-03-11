@@ -787,3 +787,36 @@ Devops에 대해 공부하면서 처음 접한 툴이다. 쉽게 말하면 메�
 - [튜토리얼](https://www.rabbitmq.com/getstarted.html)
 
 ---
+
+- 11 日
+
+# PS
+
+- Coin Change
+
+```cpp
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        int n = coins.size();
+        vector<int> dp(amount+1, amount+1);
+
+        dp[0] = 0;
+
+        for(int coin : coins) {
+            for (int j = coin; j <= amount; ++j) {
+                dp[j] = min(dp[j], dp[j - coin] + 1);
+            }
+
+        }
+
+        return dp[amount] > amount ? -1 : dp[amount];
+    }
+};
+```
+
+주어진 동전 액수를 가지고 가장 적은 동전 수로 amount만큼의 만드는 문제이다. 만약 존재하지 않는다면 -1을 반환한다.
+
+가장 적은 수를 구하기 위해 dp를 이용했다. coin을 기준으로 amount까지 값을 빼더라도 값을 구할 수 있는 지 확인하는 절차로 dp를 돌리게 되면 답이 나온다.
+
+---
