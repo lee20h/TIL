@@ -820,3 +820,110 @@ public:
 가장 적은 수를 구하기 위해 dp를 이용했다. coin을 기준으로 amount까지 값을 빼더라도 값을 구할 수 있는 지 확인하는 절차로 dp를 돌리게 되면 답이 나온다.
 
 ---
+
+- 12 日
+
+# PS
+
+- Check If a String Contains All Binary Codes of Size K
+
+```cpp
+class Solution {
+public:
+    bool hasAllCodes(string str, int k) {
+        set<string> s;
+        for(int i=0; i+k<=str.size(); i++) {
+            s.insert(str.substr(i,k));
+        }
+        return s.size() == 1 << k;
+    }
+};
+```
+
+주어진 바이너리 코드와 크기를 가지고 부분 문자열을 구한다고 했을 때 문자열의 갯수가 2^k 가 된다면 true를 반환해주는 문제였다.
+
+---
+
+# Kustomize
+
+쿠버네티스를 사용할 때 버전관리나 환경관리를 쉽게하기 위한 도구이다.
+
+```
+base
+  ├── Deployment
+  │── Kustomization
+  └──Overlay
+     │ ├── Kustomization
+     │ └── patch
+     │
+     .
+     .
+     .
+```
+
+base를 기준으로 Overlay가 나뉘어져서 각자 환경에 맞게 Service, Deployment, ingress 등 쿠버네티스의 object들을 유지할 수 있다.
+
+base에 주어진 오브젝트들을 다 사용할 수도 있고 몇 개만 사용할 수도 있으며 각자가 가진 patch를 통해서 버전이나 내용을 수정할 수 있다.
+
+`kubectl`에 추가해서 사용하며, 차트를 이용해서 배포하고 설치 및 패키징하는 Helm과 비슷하여 둘 중 하나를 골라 사용하는 경우가 많다.
+
+---
+
+- 13 日
+
+# PS
+
+- Binary Trees With Factors
+
+```cpp
+class Solution {
+private:
+    int MOD = 1e9 + 7;
+public:
+    int numFactoredBinaryTrees(vector<int>& A) {
+        sort(A.begin(), A.end());
+        map<int, long> dp;
+
+        long ret = 0;
+
+        for (int i=0; i<A.size(); i++) {
+            dp[A[i]] = 1;
+            for (auto it=dp.begin(); it!=dp.end(); it++) {
+                if (A[i] % it->first == 0 && dp.count(A[i]/it->first)) {
+                    dp[A[i]] = (dp[A[i]] + it->second * dp[A[i]/it->first]) % MOD;
+                }
+            }
+            ret = (ret + dp[A[i]]) % MOD;
+        }
+
+        return ret;
+    }
+
+};
+```
+
+주어진 배열을 이용해서 트리를 만드는데 리프노드가 아닌 노드들은 자식들의 곱이 되어야한다는 조건이 있다.
+
+따라서 맵을 통해서 해당 값을 이용하여 자신의 부모가 될 수 있는 경우의 수를 저장한다.
+
+---
+
+# CS 면접 준비
+
+## tree map과 hash map
+
+Tree map과 Hash map 자료구조가 있는데 두 map의 차이가 있다.
+
+### 시간복잡도
+
+- Tree map: O(logN)
+- Hash map: O(1)
+
+접근하는 시간복잡도를 기준으로 이러한 차이가 난다. 그렇다면 무조건 Hash map을 사용하는게 맞나 알아보자.
+
+### 차이점
+
+- Tree map은 Key를 정렬하지만, Hash map은 Key를 정렬하지 않는다.
+- Hash map의 경우에는 Hash의 사이즈에 의한 문제가 있다. 예를 들어 1과 100을 넣는다면 hash 사이즈가 적어도 1~100까지는 있어야 한다. 왜냐하면 그 사잇값이 안 들어온다는 보장이 없기 때문에 해당 공간이 있어야한다. 이 부분에 있어서 정확한 크기를 알아볼 필요가 있다.
+
+---
