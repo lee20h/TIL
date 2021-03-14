@@ -927,3 +927,44 @@ Tree map과 Hash map 자료구조가 있는데 두 map의 차이가 있다.
 - Hash map의 경우에는 Hash의 사이즈에 의한 문제가 있다. 예를 들어 1과 100을 넣는다면 hash 사이즈가 적어도 1~100까지는 있어야 한다. 왜냐하면 그 사잇값이 안 들어온다는 보장이 없기 때문에 해당 공간이 있어야한다. 이 부분에 있어서 정확한 크기를 알아볼 필요가 있다.
 
 ---
+
+- 14 日
+
+# PS
+
+- Swapping Nodes in a Linked List
+
+```cpp
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* swapNodes(ListNode* head, int k) {
+        ListNode *A = head, *B = head, *nodeK;
+        for (int i = 1; i < k; i++)
+            A = A->next;
+        nodeK = A;
+        A = A->next;
+        while (A)
+            A = A->next, B = B->next;
+        int temp = nodeK->val;
+        nodeK->val = B->val;
+        B->val = temp;
+        return head;
+    }
+};
+```
+
+연결리스트가 주어지고 정수가 하나 주어진다. 처음부터 정수번째와 끝에서부터 정수번째를 바꾼 연결리스트를 만드는 문제이다.
+
+따라서 해당 연결리스트 노드를 두 개를 찾은 다음 서로의 value를 바꿔준다.
+
+---
