@@ -968,3 +968,88 @@ public:
 따라서 해당 연결리스트 노드를 두 개를 찾은 다음 서로의 value를 바꿔준다.
 
 ---
+
+- 15 日
+
+# PS
+
+- Encode and Decode TinyURL
+
+```cpp
+class Solution {
+public:
+    map<string,string> m;
+    // Encodes a URL to a shortened URL.
+    string encode(string longUrl) {
+        string txt="tinyurl";
+        m[txt]=longUrl;
+        return txt;
+    }
+
+    // Decodes a shortened URL to its original URL.
+    string decode(string shortUrl) {
+        return m[shortUrl];
+    }
+};
+
+// Your Solution object will be instantiated and called as such:
+// Solution solution;
+// solution.decode(solution.encode(url));
+```
+
+주어진 URL을 tiny하게 만드는 문제이다. 문제 자체를 이해못하고 그냥 원래 값을 리턴하도록 만들었더니 Solve가 되었다. 다시 찾아보니 다음과 같은 방법을 원했던 것이었다.
+
+```cpp
+string idToShortURL(long int n)
+{
+    // Map to store 62 possible characters
+    char map[] = "abcdefghijklmnopqrstuvwxyzABCDEF"
+                 "GHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    string shorturl;
+
+    // Convert given integer id to a base 62 number
+    while (n)
+    {
+        shorturl.push_back(map[n%62]);
+        n = n/62;
+    }
+
+    // Reverse shortURL to complete base conversion
+    reverse(shorturl.begin(), shorturl.end());
+
+    return shorturl;
+}
+
+// Function to get integer ID back from a short url
+long int shortURLtoID(string shortURL)
+{
+    long int id = 0; // initialize result
+
+    // A simple base conversion logic
+    for (int i=0; i < shortURL.length(); i++)
+    {
+        if ('a' <= shortURL[i] && shortURL[i] <= 'z')
+          id = id*62 + shortURL[i] - 'a';
+        if ('A' <= shortURL[i] && shortURL[i] <= 'Z')
+          id = id*62 + shortURL[i] - 'A' + 26;
+        if ('0' <= shortURL[i] && shortURL[i] <= '9')
+          id = id*62 + shortURL[i] - '0' + 52;
+    }
+    return id;
+}
+```
+
+---
+
+# Kubectl
+
+쿠버네티스에서 ingress controller나 cert manager를 설치한 뒤 yaml로 사용자가 지정한 ingress 등을 올릴 때 발생한 오류에 대해서 적어보려고 한다.
+
+ingress controller를 설치한 뒤 `kubectl apply -f ingress.yaml`를 통해서 ingress를 쿠버네티스에 올리려고 한다. 이 때 자꾸 발생한 오류는 valid 관련 오류였다. 쉘 스크립트로 연결하여 yaml을 생성한 뒤 해당 파일을 쿠버네티스에 올리려고 하자 발생한 오류였다.
+
+신기하게도 쉘 스크립트를 두 번 실행하면 제대로 ingress가 올라가나, yaml 파일을 생성하자마자는 올라가지 않았다. 다른 사람들도 겪는 문제였는지 깃헙 이슈를 통해서 해결하였는데, ingress admission과 같은 vaild를 판단하는 부분을 삭제하라는 말이었다. apply전에 삭제하고 시도를 하니 제대로 진행되었다.
+
+cert manager도 마찬가지로 진행되었다. 쉘 스크립트를 통해 리다이렉션하여 바로 apply하거나 다른 툴을 통해서 yaml을 만든 뒤 apply하는 시도는 전부 에러로 실패하는 것 같다. valid를 판단하는 부분을 삭제해도 되는지 의문이지만 마땅한 방법을 찾지 못했다.
+
+---
