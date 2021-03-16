@@ -1053,3 +1053,30 @@ ingress controller를 설치한 뒤 `kubectl apply -f ingress.yaml`를 통해서
 cert manager도 마찬가지로 진행되었다. 쉘 스크립트를 통해 리다이렉션하여 바로 apply하거나 다른 툴을 통해서 yaml을 만든 뒤 apply하는 시도는 전부 에러로 실패하는 것 같다. valid를 판단하는 부분을 삭제해도 되는지 의문이지만 마땅한 방법을 찾지 못했다.
 
 ---
+
+- 16 日
+
+# PS
+
+- Best Time to Buy and Sell Stock with Transaction Fee
+
+```cpp
+class Solution {
+public:
+    int maxProfit(vector<int>& prices, int fee) {
+        int stock = INT_MIN;
+        int cash = 0;
+        for(int price : prices){
+            stock = max(stock, cash - price);
+            cash = max(cash, stock + price - fee);
+        }
+        return cash;
+    }
+};
+```
+
+사고 팔기를 반복하면서 가장 높은 이득을 볼 때를 찾는 문제이다.
+
+최적의 해를 찾아야하므로 사고파는 행위를 max인 부분을 취해서 답을 구했다.
+
+---
