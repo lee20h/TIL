@@ -1080,3 +1080,50 @@ public:
 최적의 해를 찾아야하므로 사고파는 행위를 max인 부분을 취해서 답을 구했다.
 
 ---
+
+- 17 日
+
+# PS
+
+- Generate Random Point in a Circle
+
+```cpp
+class Solution {
+private:
+    const double PI = M_PI;
+    double m_radius, m_x_center, m_y_center;
+public:
+    double uniform() {
+        return (double)rand() / RAND_MAX;
+    }
+    Solution(double radius, double x_center, double y_center) {
+      srand(time(NULL));
+      m_radius = radius;
+      m_x_center = x_center;
+      m_y_center = y_center;
+    }
+    vector<double> randPoint() {
+       double theta = 2 * M_PI * uniform();
+       double r = sqrt(uniform());
+        return vector<double>{
+            m_x_center + r * m_radius * cos(theta),
+            m_y_center + r * m_radius * sin(theta)
+        };
+    }
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution* obj = new Solution(radius, x_center, y_center);
+ * vector<double> param_1 = obj->randPoint();
+ */
+
+```
+
+원 안의 임의의 점을 찍는 문제로 보인다. 이 문제를 풀기에 앞서 제대로 이해하지 못해서 여러 블로그를 통해 코드를 내 식대로 바꾸어보았다.
+
+코사인과 사인을 이용하여 해당 좌표를 찾는 것을 보이는데 이 때 rand를 통해서 얻고자 하는 부분이 무엇인지 제대로 이해하지 못했다.
+
+조금 더 시간을 두고 문제를 지켜봐야 할 필요가 있다.
+
+---
