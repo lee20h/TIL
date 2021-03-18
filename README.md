@@ -1127,3 +1127,57 @@ public:
 조금 더 시간을 두고 문제를 지켜봐야 할 필요가 있다.
 
 ---
+
+- 18 日
+
+# PS
+
+- Wiggle Subsequence
+
+```cpp
+class Solution {
+public:
+    int wiggleMaxLength(vector<int>& nums) {
+        int n = nums.size();
+        if(!n)
+            return 0;
+        int up=1;
+        int down=1;
+        for(int i=1; i<n; i++){
+            if(nums[i] > nums[i-1])
+                up = down+1;
+            else if(nums[i] < nums[i-1])
+                down = up+1;
+        }
+        return max(up, down);
+    }
+};
+
+```
+
+Wiggle Subsequence의 최대 길이를 구하는 문제이다. wiggle은 i-1번째에서 i번째 원소를 뺀 값이 양수 음수같이 계속 바뀌는 수열이다.
+
+그 중 가장 긴 값을 구해야하므로 위 아래 진동하는 값 중 큰 값을 반환한다.
+
+---
+
+# K8s Cert-manager
+
+쿠버네티스에서 https 통신을 위해서는 인증이 필요하는데 갱신과 인증을 도와주는 부분을 해주는 Cert-Manager라는 것이 필요하다.
+
+Cert-Manager를 설치하고 letsencrypt를 설치하여 ingress와 연결하여 https 통신을 가능하게 한다.
+
+흐름을 그대로 적어보려고 한다.
+
+- Ingress Controller
+- 기본 Ingress
+- DNS와 Ingress IP와 연결
+- Cert-Manager
+- letsencrypt (ClusterIssuer)
+- Ingress에 tls 입력하여 Ingress 갱신
+
+`kubectl describe certificate letsencrypt`를 통해서 인증서를 확인할 수 있으며, 발급까지는 몇 분 정도의 시간이 필요하다.
+
+- [참고](https://velog.io/@lhbbbb/%EC%B4%88%EB%B3%B4%EA%B0%9C%EB%B0%9C%EC%9E%90%EC%9D%98-Kubernetes-%EC%82%AC%EC%9A%A9%ED%95%B4%EB%B3%B4%EA%B8%B0-3feat.-GCP)
+
+---
