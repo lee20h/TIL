@@ -1181,3 +1181,33 @@ Cert-Manager를 설치하고 letsencrypt를 설치하여 ingress와 연결하여
 - [참고](https://velog.io/@lhbbbb/%EC%B4%88%EB%B3%B4%EA%B0%9C%EB%B0%9C%EC%9E%90%EC%9D%98-Kubernetes-%EC%82%AC%EC%9A%A9%ED%95%B4%EB%B3%B4%EA%B8%B0-3feat.-GCP)
 
 ---
+
+- 19 日
+
+# PS
+
+- Keys and Rooms
+
+```cpp
+class Solution {
+private:
+    bool visited[1001];
+public:
+    void dfs(int node, vector<vector<int>>& rooms) {
+        if(visited[node])
+            return;
+        visited[node] = true;
+        for(int i=0; i<rooms[node].size(); i++) {
+            dfs(rooms[node][i], rooms);
+        }
+    }
+    bool canVisitAllRooms(vector<vector<int>>& rooms) {
+        dfs(0, rooms);
+        for(int i=0; i<rooms.size(); i++) {
+            if(!visited[i])
+                return false;
+        }
+        return true;
+    }
+};
+```
