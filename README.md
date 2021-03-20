@@ -1211,3 +1211,113 @@ public:
     }
 };
 ```
+
+방마다 키가 주어지는데 해당 키가 있어야 방에 들어갈 수 있다. 0번 방에서 시작해서 모든 방을 돌면 true를 반환하는 문제이다.
+
+dfs로 풀이를 했으며, 가장 고전적인 그래프를 생각하면서 해결하였다.
+
+키를 이웃한 노드라고 생각했으며 키가 있으면 접근이 가능하므로 접근하면서 visited 배열을 체크했다. 마지막에는 visited 배열을 전체를 돌면서 false인 값이 있나 확인하는 작업을 거치면 끝이다.
+
+---
+
+# CloudSQL Proxy
+
+클라우드 상에서 쿠버네티스를 이용한 아키텍쳐 중 한 가지에 대해 적어보려고 한다. 사이드카 패턴을 이용한 CloudSQL Proxy이다.
+
+쿠버네티스에서 여러 컨테이너들을 가지고 있을 때 만약 같은 데이터베이스에 접근하려고하면 어떤 식으로 할 수 있을까 생각해보자
+
+컨테이너 상에서 데이터베이스에 연결을 하려면 데이터베이스의 정보를 다 pod마다 가지고 접근을 해야할 것이다. 이 때 각 컨테이너들은 자기 자신의 localhost에 접근하듯이 데이터베이스에 요청을 할 수 있다면 어떨까?
+
+컨테이너들에서 구현하기도 쉽고 컨테이너들은 단지 로컬로 접근할 뿐이고 그 뒤에서 일어나는 일은 모른다.
+
+이러한 기능은 CloudSQL Proxy를 이용하면 가능하다. 각 컨테이너들에 사이드카 패턴으로 옆에 작은 부속물처럼 데이터베이스에 대한 키를 가진 부분을 가지고 있으며 해당 키들이 데이터베이스에 인증하고 접근하는 역할을 한다. 컨테이너들은 이러한 과정을 모른체 키를 가진 부분에 요청을 할 뿐이다.
+
+구현은 GKE에서는 두 가지 방법을 제시한다. 첫번째로는 iam 역할로 workload가 가능한 권한을 줘서 권한으로써 접근하게 하는 방법과 두번째는 권한이 있는 역할의 키를 내려받아 쿠버네티스의 시크릿으로 등록하고 볼륨에 마운트하여 볼륨에 접근 가능한 컨테이너들은 전부 데이터베이스에 접근을 가능하게 하는 방법이다.
+
+두 방법 모두 GKE에선 문서로 정리되어 있어 보고 따라할 수 있다.
+
+- 참고자료
+  - [gruuuuu님 디자인 패턴 글](https://gruuuuu.github.io/cloud/design-pattern/#)
+  - [GKE 문서](https://cloud.google.com/sql/docs/mysql/connect-kubernetes-engine?hl=ko#proxy)
+
+---
+
+- 20 日
+
+# 2021 LINE 공채 코딩테스트
+
+일정은 1시 ~ 3시 코딩테스트 이후 3시 20분 ~ 5시 20분 단계별 코딩테스트으로 진행되었다.
+
+코딩테스트의 경우에는 늦게 시작하여 시간이 부족하였다. 테스트케이스 2개만 주어지고 제출하는 방식이며 문자열을 가지고 노는 문제들이 많았다.
+
+문자열 문제의 경우에는 금방 넘어갔지만 수학 문제에서 여전히 막히고 말았다. 시간이 부족하게 느껴질 정도의 난이도는 아니였는데 수학에서 삼천포로 빠지는 경우가 많은 것 같다.
+
+코딩테스트는 4문제, 단계별 코딩테스트는 3문제로 1번부터 3번까지 조건을 붙여가는 식으로 진행되었다. 코딩테스트는 2문제, 단계별 코딩테스트는 3문제 해결하였는데 코딩테스트 남은 문제들이 매우 아쉬웠다.
+
+집에 늦게 들어와서 시작하여 시간을 많이 쏟지 못한 점도 있지만 그보다 수학 문제에서 오래 시간이 끌렸다는 점이 아쉬웠다.
+
+전체적인 난이도는 어렵지는 않았지만 숨겨진 테스트케이스를 다 통과할 수 있나 싶을 정도로 테스트 케이스가 많을 것 같다. 게다가 여타 코테와 다른 점은 문자열 문제가 매우 많아서 나로써는 풀기 용이했다.
+
+평소에 문자열 문제을 주로 해결하다보니 cpp로 빠르게 해결해나간거 같다.
+
+---
+
+# PS
+
+- Design Underground System
+
+```cpp
+class UndergroundSystem {
+public:
+    UndergroundSystem() {
+
+    }
+    map<pair<string, string>, pair<int, int>> travels;
+    map<int, pair<string, int>> persons;
+
+    void checkIn(int id, string stationName, int t) {
+        persons[id] = make_pair(stationName, t);
+    }
+
+    void checkOut(int id, string stationName, int t) {
+        if(persons.find(id) != persons.end()){
+            string start = persons[id].first;
+            int startTime = persons[id].second;
+            int sum = 0, count = 0;
+            pair<string, string> travel = make_pair(persons[id].first, stationName);
+            if(travels.find(travel) != travels.end()){
+                sum += travels[travel].first;
+                count += travels[travel].second;
+            }
+            sum += (t - startTime);
+            count += 1;
+            travels[travel] = make_pair(sum, count);
+            persons.erase(id);
+        }
+    }
+
+    double getAverageTime(string startStation, string endStation) {
+        pair<int, int> p = travels[make_pair(startStation, endStation)];
+        int sum = p.first, count = p.second;
+        return (double)sum/count;
+    }
+};
+
+/**
+ * Your UndergroundSystem object will be instantiated and called as such:
+ * UndergroundSystem* obj = new UndergroundSystem();
+ * obj->checkIn(id,stationName,t);
+ * obj->checkOut(id,stationName,t);
+ * double param_3 = obj->getAverageTime(startStation,endStation);
+ */
+```
+
+역에서 역으로 이동할 때 역 이동 평균 시간을 구하는 문제로, 클래스의 맞는 함수를 구현하는 문제이다.
+
+체크인하는 사람과 체크 아웃하는 사람들이 주어지는데 이 때 사람들은 id로 구별이 된다. 도착 시간에서 출발 시간을 빼는 식으로 구하며, 만약 승객이 여러명이라면 승객마다의 이동시간을 모두 구하여 나누어지는 방식으로 구한다.
+
+그러기 위해서 map을 이용해서 사람들의 정보와 이동하는 정보를 담아서 체크아웃할 때 정리해준다.
+
+이후 평균 시간을 구하는 함수에서 정리한 정보를 가지고 평균 시간을 구해주면 된다.
+
+---
