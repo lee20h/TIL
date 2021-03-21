@@ -1321,3 +1321,31 @@ public:
 이후 평균 시간을 구하는 함수에서 정리한 정보를 가지고 평균 시간을 구해주면 된다.
 
 ---
+
+- 21 日
+
+# PS
+
+- Reordered Power of 2
+
+```cpp
+class Solution {
+public:
+    bool reorderedPowerOf2(int N) {
+        string res1 = to_string(N);
+        sort(res1.begin(), res1.end());
+        for (int i=0; i<30; i++) {
+            string res2 = to_string(1 << i);
+            sort(res2.begin(), res2.end());
+            if (res1 == res2) return true;
+        }
+        return false;
+    }
+};
+```
+
+정수 N이 주어졌을 때 해당 값을 재배열 했을 때 2의 제곱값들을 재배열한 값과 같은 경우를 찾는 문제이다.
+
+따라서 주어진 정수를 문자열로 바꾼 뒤 정렬을 하면 2의 제곱들과 비교를 할 수 있다는 것이다. 그러한 방법으로 10^9까지 비교하기 위해서 2^29까지 비교하였다.
+
+---
