@@ -1349,3 +1349,80 @@ public:
 따라서 주어진 정수를 문자열로 바꾼 뒤 정렬을 하면 2의 제곱들과 비교를 할 수 있다는 것이다. 그러한 방법으로 10^9까지 비교하기 위해서 2^29까지 비교하였다.
 
 ---
+
+- 22 日
+
+# PS
+
+- Vowel Spellchecker
+
+```java
+class Solution {
+    public String[] spellchecker(String[] wordlist, String[] queries) {
+    	int n=wordlist.length;
+    	int m=queries.length;
+    	String[] ans=new String[m];
+    	Set<String> st=new HashSet<>();
+    	Map<String,Integer> map1=new HashMap<>();
+    	Map<String,Integer> map2=new HashMap<>();
+
+    	for(int i=0;i<n;i++) {
+    		st.add(wordlist[i]);
+    		String s1=wordlist[i].toLowerCase();
+    		String s2=change(s1);
+
+    		if(!map1.containsKey(s1))
+    			map1.put(s1, i);
+    		if(!map2.containsKey(s2))
+    			map2.put(s2, i);
+    	}
+
+    	for(int i=0;i<m;i++) {
+    		if(st.contains(queries[i])) {
+    			ans[i]=queries[i];
+    			continue;
+    		}
+
+    		String s1=queries[i].toLowerCase();
+    		String s2=change(s1);
+
+    		if(map1.containsKey(s1))
+    			ans[i]=wordlist[map1.get(s1)];
+    		else if(map2.containsKey(s2))
+    			ans[i]=wordlist[map2.get(s2)];
+    		else
+    			ans[i]="";
+    	}
+
+    	return ans;
+    }
+
+    private String change(String s) {
+
+    	StringBuilder str=new StringBuilder();
+
+    	for(int i=0;i<s.length();i++) {
+    		if(!check(s.charAt(i)))
+    			str.append(s.charAt(i));
+    		else
+    			str.append("#");
+    	}
+
+    	return str.toString();
+    }
+
+    private boolean check(char c) {
+
+    	return (c=='a' || c=='e' || c=='i' || c=='o' || c=='u');
+
+    }
+}
+```
+
+Java를 공부하기 위해서 이제 언어를 바꿔서 천천히 시작해보려고 한다.
+
+두 개의 문자열이 주어질 때 서로 매치되는 문자열끼리 모음을 제외하고 자음 위치와 갯수가 맞는지 확인하는 문제이다.
+
+대소문자 구별을 하며, 모음을 같은 문자로 대체했을 때 같은 문자는 같다고 볼 수 있으므로 그렇게 진행하였다.
+
+---
