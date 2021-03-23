@@ -1426,3 +1426,55 @@ Java를 공부하기 위해서 이제 언어를 바꿔서 천천히 시작해보
 대소문자 구별을 하며, 모음을 같은 문자로 대체했을 때 같은 문자는 같다고 볼 수 있으므로 그렇게 진행하였다.
 
 ---
+
+- 23 日
+
+# PS
+
+- 3Sum With Multiplicity
+
+```java
+class Solution {
+    public int threeSumMulti(int[] arr, int target) {
+        int MOD = 1000000007;
+        int count = 0;
+        for (int i=0; i<arr.length; i++) {
+            int temp = getPairsCount(arr.length, target-arr[i], arr, i+1);
+            count = (count+temp)%MOD;
+        }
+        return count;
+    }
+
+    public int getPairsCount(int n, int sum, int[] arr, int start) {
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i=start; i<n; i++) {
+            map.put(arr[i], map.getOrDefault(arr[i], 0)+1);
+        }
+
+        int count = 0;
+        for (int i=start; i<n; i++) {
+            if(map.get(sum-arr[i]) != null) {
+                count += map.get(sum - arr[i]);
+            }
+
+            if (sum-arr[i] == arr[i]) {
+                count--;
+            }
+        }
+
+        return count/2;
+    }
+}
+```
+
+정수 배열이 주어질 때 두 개의 원소를 더했을 때 정수 배열의 원소가 나오는 경우의 수를 구하는 문제이다.
+
+getOrDefault() 메서드는 map에 있는지 확인 한 후 있다면 해당 값을 리턴하고 아닌 경우에는 뒤에 나오는 숫자를 리턴해준다.
+
+메서드에 넣기 전에 숫자를 하나 먼저 뺀 뒤 map을 통해서 숫자들의 갯수를 넣어준 다음 map에 그 숫자가 존재한다면 카운트를 숫자만큼 늘려주는 식으로 진행한다.
+
+하지만 숫자가 같은 경우에는 중복이 되므로 1을 빼준다.
+
+반환은 카운트 값의 1/2를 반환하면 된다.
+
+---
