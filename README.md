@@ -1478,3 +1478,38 @@ getOrDefault() 메서드는 map에 있는지 확인 한 후 있다면 해당 값
 반환은 카운트 값의 1/2를 반환하면 된다.
 
 ---
+
+- 24 日
+
+# PS
+
+- Advantage Shuffle
+
+```java
+class Solution {
+    public int[] advantageCount(int[] A, int[] B) {
+        TreeMap<Integer, Integer> m = new TreeMap<>();
+        for (int i : A)
+            m.put(i, m.getOrDefault(i, 0) + 1);
+        int[] res = new int[A.length];
+        for (int i = 0; i < A.length; i++) {
+            Integer x = m.higherKey(B[i]);
+            if (x == null)
+                x = m.firstKey();
+            m.put(x, m.get(x) - 1);
+            if (m.get(x) == 0)
+                m.remove(x);
+            res[i] = x;
+        }
+        return res;
+    }
+}
+```
+
+A와 B가 주어진 다음 A 중 B의 해당 값보다 큰 값을 찾은 뒤 없다면 맨 앞의 값을 넣어준다. 이후에 쓴 값은 지워주는 식으로 진행한다.
+
+여기서는 TreeMap과 TreeSet을 사용하는 법에 대해서 공부했다. 둘 다 RedBlack Tree를 이용하는데 여러 메서드가 있고 메서드들을 익힐 수 있었다.
+
+- [레퍼런스](https://developer-syubrofo.tistory.com/12)
+
+---
