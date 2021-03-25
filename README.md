@@ -1513,3 +1513,185 @@ A와 B가 주어진 다음 A 중 B의 해당 값보다 큰 값을 찾은 뒤 없
 - [레퍼런스](https://developer-syubrofo.tistory.com/12)
 
 ---
+
+- 25日
+
+# PS
+
+- `1717. 집합의 표현`
+
+```java
+import java.util.*;
+
+public class Main {
+    static int[] parent;
+    static int[] root;
+    public static void main(String[] args) {
+        int n, m;
+        Scanner sc = new Scanner(System.in);
+        n = sc.nextInt();
+        m = sc.nextInt();
+        root = new int[n+1];
+        parent = new int[n+1];
+
+        for(int i=1; i<=n; i++) {
+            parent[i] = i;
+        }
+        int cmd, node1, node2;
+        for(int i=0; i<m; i++) {
+            cmd = sc.nextInt();
+            node1 = sc.nextInt();
+            node2 = sc.nextInt();
+            if(cmd == 0) {
+                union(node1, node2);
+            } else {
+                if (isSameParent(node1, node2)) {
+                    System.out.println("YES");
+                } else {
+                    System.out.println("NO");
+                }
+            }
+        }
+
+    }
+
+    public static int find(int x) {
+        if (x == parent[x]) {
+            return x;
+        }
+
+        return parent[x] = find(parent[x]);
+    }
+    public static void union(int x, int y) {
+        x = find(x);
+        y = find(y);
+
+        if (x != y) {
+            if (x < y) {
+                parent[y] = x;
+            } else {
+                parent[x] = y;
+            }
+        }
+    }
+    public static boolean isSameParent(int x, int y) {
+        x = find(x);
+        y = find(y);
+
+        if (x == y) {
+            return true;
+        }
+        return false;
+    }
+}
+```
+
+Disjoint Set 문제로 union find를 이용해서 해결하였다. 처음에는 배열을 두개 둬서 루트와 부모 배열 두 개를 사용하려했으나, 부모 배열 하나면 해결이 가능했다. 간단한 알고리즘이지만 바로 생각해내지 못한게 크다.
+
+- Pacific Atlantic Water Flow
+
+```java
+class Solution {
+    static int[] px = {0,0,1,-1};
+    static int[] py = {1,-1,0,0};
+    static boolean[][] pa;
+    static boolean[][] at;
+    static int n, m;
+    private void paDfs(int[][] matrix, int y, int x) {
+        pa[y][x] = true;
+        
+        for(int t=0; t<4; t++) {
+            int dy = y + py[t];
+            int dx = x + px[t];
+            
+            if(dy < 0 || dx < 0 || dy >= n || dx >= m)
+                continue;
+            if(pa[dy][dx])
+                continue;
+            if(matrix[dy][dx] >= matrix[y][x])
+                paDfs(matrix, dy, dx);
+        }
+    }
+    private void atDfs(int[][] matrix, int y, int x) {
+        at[y][x] = true;
+        
+        for(int t=0; t<4; t++) {
+            int dy = y + py[t];
+            int dx = x + px[t];
+            
+            if(dy < 0 || dx < 0 || dy >= n || dx >= m)
+                continue;
+            if(at[dy][dx])
+                continue;
+            if(matrix[dy][dx] >= matrix[y][x])
+                atDfs(matrix, dy, dx);
+        }
+    }
+    
+    public List<List<Integer>> pacificAtlantic(int[][] matrix) {
+        List<List<Integer>> res = new ArrayList<>();
+        if(matrix.length == 0 || matrix[0].length == 0)
+            return res;
+        n = matrix.length;
+        m = matrix[0].length;
+        
+        pa = new boolean[n][m];
+        at = new boolean[n][m];
+        
+        for(int i=0; i<n; i++) {
+            pa[i][0] = true;
+            at[i][m-1] = true;
+        }
+        for(int i=0; i<m; i++) {
+            pa[0][i] = true;
+            at[n-1][i] = true;
+        }
+        
+        for(int i=0; i<n; i++) {
+            paDfs(matrix, i, 0);
+            atDfs(matrix, i, m-1);
+        }
+        for(int i=0; i<m; i++) {
+            paDfs(matrix, 0, i);
+            atDfs(matrix, n-1, i);
+        }
+        
+        
+        for(int i=0; i<n; i++) {
+            for (int j=0; j<m; j++) {
+                if(pa[i][j] && at[i][j]) {
+                    List<Integer> pos = new ArrayList<>();
+                    pos.add(i);
+                    pos.add(j);
+                    res.add(pos);
+                }
+            }
+        }
+        
+        return res;
+        
+    }
+}
+```
+
+DFS문제로 Java 연습으로 풀어보았다.
+
+태평양과 대서양이 있는데 자기보다 작거나 같은 높이로 침범이 가능하다. 두 바다가 같은 곳을 침범하는 곳을 구하는 문제이다. 태평양은 좌상 대서양은 우하로부터 시작한다. 각 변들 또한 바다들의 시작 지점이다.
+
+태평양과 대서양 하나씩 boolean 배열을 할당해주고 갈 수 있는 곳을 모두 true로 체크한 뒤 두 바다가 둘 다 true로 기록된 공간을 반환해주도록 하였다.
+
+---
+
+# 2021 라인 공채 코딩테스트
+
+라인 공채 코딩테스트 결과를 받았다. 결과는 불합격이였다.
+
+코딩테스트 볼 때는 늦게 시작하고 아무 생각없이 보았지만 생각보다 풀리는 정도가 괜찮아서 은근 기대했었다.
+
+다른 사람들은 나와 비슷하게 제출하고 붙은 사람도 있는 것으로 보아 코드의 퀄리티 차이가 있었던 것 같다. 히든 케이스라던지 생각하지 못한 부분에서 오류가 있었다는 것이 있었다고 생각해야할 것 같다.
+
+매우 아쉽지만 이를 토대로 다시 공부할 수 있게 더 열심히 해야겠다. 다음주에는 카카오 커머스 공채에 도전을 해보며 여기서는 자바 언어만 사용해서 3문제를 해결해야하므로 자바를 공부하고 있다.
+
+
+
+---
