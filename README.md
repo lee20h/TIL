@@ -1514,7 +1514,7 @@ A와 B가 주어진 다음 A 중 B의 해당 값보다 큰 값을 찾은 뒤 없
 
 ---
 
-- 25日
+- 25 日
 
 # PS
 
@@ -1599,11 +1599,11 @@ class Solution {
     static int n, m;
     private void paDfs(int[][] matrix, int y, int x) {
         pa[y][x] = true;
-        
+
         for(int t=0; t<4; t++) {
             int dy = y + py[t];
             int dx = x + px[t];
-            
+
             if(dy < 0 || dx < 0 || dy >= n || dx >= m)
                 continue;
             if(pa[dy][dx])
@@ -1614,11 +1614,11 @@ class Solution {
     }
     private void atDfs(int[][] matrix, int y, int x) {
         at[y][x] = true;
-        
+
         for(int t=0; t<4; t++) {
             int dy = y + py[t];
             int dx = x + px[t];
-            
+
             if(dy < 0 || dx < 0 || dy >= n || dx >= m)
                 continue;
             if(at[dy][dx])
@@ -1627,17 +1627,17 @@ class Solution {
                 atDfs(matrix, dy, dx);
         }
     }
-    
+
     public List<List<Integer>> pacificAtlantic(int[][] matrix) {
         List<List<Integer>> res = new ArrayList<>();
         if(matrix.length == 0 || matrix[0].length == 0)
             return res;
         n = matrix.length;
         m = matrix[0].length;
-        
+
         pa = new boolean[n][m];
         at = new boolean[n][m];
-        
+
         for(int i=0; i<n; i++) {
             pa[i][0] = true;
             at[i][m-1] = true;
@@ -1646,7 +1646,7 @@ class Solution {
             pa[0][i] = true;
             at[n-1][i] = true;
         }
-        
+
         for(int i=0; i<n; i++) {
             paDfs(matrix, i, 0);
             atDfs(matrix, i, m-1);
@@ -1655,8 +1655,8 @@ class Solution {
             paDfs(matrix, 0, i);
             atDfs(matrix, n-1, i);
         }
-        
-        
+
+
         for(int i=0; i<n; i++) {
             for (int j=0; j<m; j++) {
                 if(pa[i][j] && at[i][j]) {
@@ -1667,9 +1667,9 @@ class Solution {
                 }
             }
         }
-        
+
         return res;
-        
+
     }
 }
 ```
@@ -1692,6 +1692,53 @@ DFS문제로 Java 연습으로 풀어보았다.
 
 매우 아쉽지만 이를 토대로 다시 공부할 수 있게 더 열심히 해야겠다. 다음주에는 카카오 커머스 공채에 도전을 해보며 여기서는 자바 언어만 사용해서 3문제를 해결해야하므로 자바를 공부하고 있다.
 
+- [자바 자료형 포스팅](https://blog.naver.com/PostView.nhn?blogId=ppuagirls&logNo=221560996691&parentCategoryNo=&categoryNo=42&viewDate=&isShowPopularPosts=true&from=search)
 
+---
+
+- 26 日
+
+# PS
+
+- Word Subsets
+
+```java
+class Solution {
+    public List<String> wordSubsets(String[] A, String[] B) {
+        List<String> ans = new ArrayList<>();
+        int[] find = new int[26];
+        for(String tmp : B) {
+            int[] count = new int[26];
+            for(int i=0; i<tmp.length();i++) {
+                count[tmp.charAt(i)-'a']++;
+            }
+            for(int i=0; i<26; i++) {
+                if(count[i] > find[i]) {
+                    find[i] = count[i];
+                }
+            }
+        }
+
+        for(String tmp : A) {
+            int[] check = new int[26];
+            for(int i=0; i< tmp.length(); i++) {
+                check[tmp.charAt(i)-'a']++;
+            }
+
+            int flag = 0;
+            for(int i=0; i<26; i++){
+                if(check[i] < find[i]) {
+                    flag = 1;
+                    break;
+                }
+            }
+            if(flag == 0) ans.add(tmp);
+        }
+        return ans;
+    }
+}
+```
+
+B에 주어진 문자들이 A에 다 들어있나 확인하는 문제이다. 따라서 B에 주어진 문자들을 그룹별로 세서 갯수를 기록한 다음 A의 문자열들과 비교하는 작업을 하면 된다.
 
 ---
