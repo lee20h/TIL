@@ -1742,3 +1742,41 @@ class Solution {
 B에 주어진 문자들이 A에 다 들어있나 확인하는 문제이다. 따라서 B에 주어진 문자들을 그룹별로 세서 갯수를 기록한 다음 A의 문자열들과 비교하는 작업을 하면 된다.
 
 ---
+
+- 27 日
+
+# PS
+
+- Palindromic Substrings
+
+```java
+class Solution {
+    public int countSubstrings(String s) {
+        if(s.equals("")) {
+            return 0;
+        }
+
+        int ans = 0;
+
+        char[] arr = s.toCharArray();
+
+        for(int i=0; i<s.length(); i++) {
+            String str = Character.toString(arr[i]);
+            ans++;
+            for(int j=i+1; j<s.length(); j++) {
+                str += Character.toString(arr[j]);
+                if(str.equals(new StringBuffer(str).reverse().toString()))
+                    ans++;
+            }
+        }
+
+        return ans;
+    }
+}
+```
+
+부분 문자열 중에 팰린드롬이 되는 문자열의 숫자를 구하는 문제이다.
+
+따라서 문자 하나를 기준으로 그 뒤로 문자를 계속 넣어가면서 팰린드롬이 되나 확인한다. 이 때 문자 하나는 그자체로 팰린드롬이므로 개수를 세어준다.
+
+---
