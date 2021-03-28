@@ -1780,3 +1780,51 @@ class Solution {
 따라서 문자 하나를 기준으로 그 뒤로 문자를 계속 넣어가면서 팰린드롬이 되나 확인한다. 이 때 문자 하나는 그자체로 팰린드롬이므로 개수를 세어준다.
 
 ---
+
+- 28 日
+
+# PS
+
+- Reconstruct Original Digits from English
+
+```java
+class Solution {
+    public String originalDigits(String s) {
+        StringBuffer str = new StringBuffer();
+
+        int[] count = new int[10];
+        for (int i = 0; i < s.length(); i++){
+            char c = s.charAt(i);
+            if (c == 'z') count[0]++;
+            if (c == 'w') count[2]++;
+            if (c == 'x') count[6]++;
+            if (c == 's') count[7]++; //7-6
+            if (c == 'g') count[8]++;
+            if (c == 'u') count[4]++;
+            if (c == 'f') count[5]++; //5-4
+            if (c == 'h') count[3]++; //3-8
+            if (c == 'i') count[9]++; //9-8-5-6
+            if (c == 'o') count[1]++; //1-0-2-4
+        }
+        count[7] -= count[6];
+        count[5] -= count[4];
+        count[3] -= count[8];
+        count[9] = count[9] - count[8] - count[5] - count[6];
+        count[1] = count[1] - count[0] - count[2] - count[4];
+
+        for (int i = 0; i <= 9; i++){
+            for (int j = 0; j < count[i]; j++){
+                str.append(i);
+        }
+    }
+
+        return str.toString();
+    }
+}
+```
+
+숫자의 스펠링들을 섞어서 문자열로 주어졌을 때 숫자로 보여주는 문제이다.
+
+숫자들의 대표적인 문자들을 보고 숫자들을 세어준 다음 겹치는 부분을 제해주는 식으로 진행했다. 처음에는 모든 문자를 받은 뒤 문자들을 맞는 매칭하여 풀이하였으나 너무 소스코드가 길어져서 새로 풀이해보았다.
+
+---
