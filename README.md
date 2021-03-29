@@ -1828,3 +1828,50 @@ class Solution {
 숫자들의 대표적인 문자들을 보고 숫자들을 세어준 다음 겹치는 부분을 제해주는 식으로 진행했다. 처음에는 모든 문자를 받은 뒤 문자들을 맞는 매칭하여 풀이하였으나 너무 소스코드가 길어져서 새로 풀이해보았다.
 
 ---
+
+- 29 日
+
+# PS
+
+- Flip Binary Tree To Match Preorder Traversal
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    List<Integer> res = new ArrayList<>();
+    int i = 0;
+    public List<Integer> flipMatchVoyage(TreeNode root, int[] v) {
+        return dfs(root, v) ? res : Arrays.asList(-1);
+    }
+
+    public Boolean dfs(TreeNode node, int[] v) {
+        if (node == null) return true;
+        if (node.val != v[i++]) return false;
+        if (node.left != null && node.left.val != v[i]) {
+            res.add(node.val);
+            return dfs(node.right, v) && dfs(node.left, v);
+        }
+        return dfs(node.left, v) && dfs(node.right, v);
+    }
+}
+```
+
+preorder로 이루어진 이진 트리가 주어졌을 때 어떤 노드에서 좌우 반전이 되었는지 확인하는 문제이다. 안되는 경우에는 -1을 리스트에 넣어 리턴한다.
+
+dfs를 구현하여 preorder와 같나 확인하기 위해서 배열에서의 값과 같은지 확인과 Boolean 반환형에 맞는 재귀함수를 만들어준다.
+
+---
