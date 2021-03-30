@@ -1875,3 +1875,49 @@ preorder로 이루어진 이진 트리가 주어졌을 때 어떤 노드에서 �
 dfs를 구현하여 preorder와 같나 확인하기 위해서 배열에서의 값과 같은지 확인과 Boolean 반환형에 맞는 재귀함수를 만들어준다.
 
 ---
+
+- 30 日
+
+# PS
+
+- Russian Doll Envelopes
+
+```java
+class Solution {
+    public int maxEnvelopes(int[][] envelopes) {
+    if(envelopes==null||envelopes.length==0)
+        return 0;
+
+    Arrays.sort(envelopes, new Comparator<int[]>(){
+        public int compare(int[] a, int[] b){
+            if(a[0]!=b[0]){
+                return a[0]-b[0];
+            }else{
+                return a[1]-b[1];
+            }
+        }
+    });
+    int max=1;
+    int[] arr = new int[envelopes.length];
+    for(int i=0; i<envelopes.length; i++){
+        arr[i]=1;
+        for(int j=i-1; j>=0; j--){
+            if(envelopes[i][0]>envelopes[j][0]&&envelopes[i][1]>envelopes[j][1]){
+                arr[i]=Math.max(arr[i], arr[j]+1);
+            }
+        }
+        max = Math.max(max, arr[i]);
+    }
+
+    return max;
+    }
+}
+```
+
+러시아 인형 마트료시카와 같이 정확히 감쌀 수 있는 범위의 숫자를 세는 문제이다.
+
+따라서 배열을 오름차순으로 정렬하며 같은 경우에는 뒤의 숫자가 작은 인덱스를 기준으로 오름차순으로 정렬하였다. 이후에는 이중 포문을 통해서 현재 인덱스보다 앞에 있는 배열을 확인하면서 두 숫자 모두 작은 경우 값을 늘려주면서 정답을 찾아간다.
+
+여기서는 java의 sort에 대해서 공부를 하였는데, Comparator를 만들어서 compare함수를 통해 비교함수를 만들어주는 부분을 기억해야겠다.
+
+---
