@@ -1921,3 +1921,77 @@ class Solution {
 여기서는 java의 sort에 대해서 공부를 하였는데, Comparator를 만들어서 compare함수를 통해 비교함수를 만들어주는 부분을 기억해야겠다.
 
 ---
+
+- 31 日
+
+# @kubernetes/client-node
+
+kubernetes에서 오브젝트를 생성하거나 무언가 명령을 내릴 때 필요한 것이 있다. 먼저 kubernetes Console에서 직접 생성하거나 수정, 삭제할 수 있다. 또, 테라폼과 같은 인프라스트럭쳐 언어를 사용할 수 있다. 마지막으로는 kubectl이라는 cli를 이용하여 yaml파일로 명세된 오브젝트를 주입하거나 수정할 수 있고 명령을 통해서 자세한 내용을 알 수 있다.
+
+이러한 부분을 넘어서 코드에서도 kubernetes 오브젝트를 생성할 수 있다. 그 대표적인 것이 node.js를 이용한 방법으로, npm 모듈인 @kubernetes/client-node를 이용하는 것이다.
+
+- [kubernetes client-libraries docs](https://kubernetes.io/ko/docs/reference/using-api/client-libraries/)
+- [npm @kubernetes/client-node](https://www.npmjs.com/package/@kubernetes/client-node)
+
+## Cluster 생성
+
+```js
+const k8s = require('@kubernetes/client-node');
+
+const cluster = {
+    name: 'my-server',
+    server: 'http://server.com',
+};
+
+const user = {
+    name: 'my-user',
+    password: 'some-password',
+};
+
+const context = {
+    name: 'my-context',
+    user: user.name,
+    cluster: cluster.name,
+};
+
+const kc = new k8s.KubeConfig();
+kc.loadFromOptions({
+    clusters: [cluster],
+    users: [user],
+    contexts: [context],
+    currentContext: context.name,
+});
+const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+...
+```
+
+## Namespace 생성
+
+```js
+const k8s = require("@kubernetes/client-node");
+
+const kc = new k8s.KubeConfig();
+kc.loadFromDefault();
+
+const k8sApi = kc.makeApiClient(k8s.CoreV1Api);
+
+var namespace = {
+  metadata: {
+    name: "test",
+  },
+};
+
+k8sApi.createNamespace(namespace).then(
+  (response) => {
+    console.log("Created namespace");
+    console.log(response);
+    k8sApi.readNamespace(namespace.metadata.name).then((response) => {
+      console.log(response);
+      k8sApi.deleteNamespace(namespace.metadata.name, {} /* delete options */);
+    });
+  },
+  (err) => {
+    console.log("Error!: " + err);
+  }
+);
+```
