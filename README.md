@@ -137,3 +137,63 @@ public boolean isPalindrome(ListNode head) {
 ListNode가 두개로 비교하는건 같지 않나 생각해본다.
 
 ---
+
+# PS
+
+- Ones and Zeroes
+
+```java
+class Solution {
+    public int findMaxForm(String[] strs, int m, int n) {
+        int[][] dp = new int[m+1][n+1];
+        for (int s = strs.length-1; s>=0;s--) {
+            int[] count = count(strs[s]);
+            for (int i=m;i>=0;i--)
+                for (int j=n;j>=0;j--)
+                    if (i >= count[0] && j >= count[1])
+                       dp[i][j] = Math.max(1 + dp[i-count[0]][j-count[1]], dp[i][j]);
+        }
+        return dp[m][n];
+    }
+
+    public int[] count(String str) {
+        int[] res = new int[2];
+        Arrays.fill(res, 0);
+        for (int i=0;i<str.length();i++) {
+            if (str.charAt(i) == '0') res[0]++;
+            else res[1]++;
+        }
+        return res;
+     }
+}
+```
+
+1과 0의 갯수가 정해졌을 때 문자열의 배열 중에서 1과 0의 갯수가 맞는 부분집합을 찾되, 가장 많은 배열의 원소가 선택되어야한다.
+
+따라서 해당 문자열의 0과 1의 갯수를 세어준 다음 dp를 통해서 0과 1의 갯수를 빼주면서 최대 갯수를 찾아준다.
+
+---
+
+# Kubernetes RBAC
+
+RBAC란 Role Based Access Control의 약자로 역할 기반으로 접근을 통제하는 것이다.
+
+- 레퍼런스
+  - [API연결로 확인하는 RBAC](https://bryan.wiki/291)
+  - [쿠버네티스 권한관리](https://arisu1000.tistory.com/27848)
+
+Rule들을 Role이나 ClusterRole에 정의하고 Service Account와 연결하는 RoleBinding 이나 ClusterRoleBinding을 통해서 RBAC를 이용한다.
+
+이 때 Role과 ClusterRole의 차이는 Role의 경우에는 한 Namespace에만 종속되지만 ClusterRole은 클러스터 어디서든 사용할 수 있다는 것이 차이점이다.
+
+Kubernetes의 API Server에 직접 REST API로 요청하는 모듈을 만들고 있는데 이 때 사용하는데 필요한 부분이라 공부를 진행하였다.
+
+API-Server에 직접적으로 REST API를 요청할 때 해당 Service Account의 Token이 필요하다. 토큰을 얻고 헤더에 넣어서 인증을 처리해주며, 원하는 API를 요청하는 식으로 모듈을 만들어가고 있다.
+
+이 때 API는 Job을 지우는 방법은 하나씩 지우거나, Namespace의 모든 JOb을 지우는 방법 2가지로 나뉘어진다. 또한 Job을 지운다고 Pod도 같이 지워지는 것이 아니라 직접 두번 API를 호출해야했다.
+
+또한 원하는 Job을 지우기 위해서는 먼저 get을 통해 Namespaec의 모든 Job을 받아온 뒤 거기서 원하는 이름의 Job을 정규표현식을 통해서 원하는 이름만 뽑아내서 지우는 API를 요청하는 식으로 진행한다면 조금 더 유틸리티가 올라가는 것을 볼 수 있다.
+
+API 레퍼런스에도 상당히 많고 이 부분에 있어서 많은 종류의 내용이 있으며 번역이 안된 부분이 많아 공부하는데 많은 시간이 필요했다.
+
+---
