@@ -197,3 +197,62 @@ API-Server에 직접적으로 REST API를 요청할 때 해당 Service Account�
 API 레퍼런스에도 상당히 많고 이 부분에 있어서 많은 종류의 내용이 있으며 번역이 안된 부분이 많아 공부하는데 많은 시간이 필요했다.
 
 ---
+
+- 3 日
+
+# 2021 카카오메이커스 신입 백엔드 개발자 코딩테스트
+
+4월 3일 13시 ~ 15시동안 진행한 코딩테스트로, JAVA언어만 지원 가능하다.
+
+문제는 총 3문제로 난이도는 백준 실버1 수준인 것 같다. 언어에 조금 더 익숙했더라면 더 빨리 풀 수 있었지 않을까 생각이 든다.
+
+문제 풀이는 한 시간 정도 걸렸고 cpp로만 공부를 진행했어서 바로 Java로 투영시키는게 오래 걸렸다.
+
+구현과 DFS를 이용해서 풀이를 진행했다.
+
+---
+
+# 2021 Dev-Matching: 웹 백엔드 개발자(상반기)
+
+프로그래머스에서 진행한 채용 프로그램으로 카카오 엔터프라이즈와 당근 마켓 두 회사에 지원을 했다.
+
+원래 사용하던 CPP을 사용하지 못하니 JavaScript로 진행하였는데 이게 문제가 있었다. 레퍼런스를 읽는 시간과 생각한 내용을 그대로 언어로 옮기지 못해서 220점을 맞았다. 두 문제 모두 전체적으로 풀이를 생각해냈는데 아쉽게도 매끄러운 코딩을 하지 못해서 좋지 않았던 것 같다.
+
+너무 아쉬운 진행이라 코테를 넘기지 못할 것 같다.
+
+---
+
+# PS
+
+- Longest Valid Parentheses
+
+```java
+class Solution {
+    public int longestValidParentheses(String str){
+        int n = str.length();
+        Stack<Integer> st = new Stack<>();
+        st.push(-1);
+
+        int result = 0;
+
+        for (int i = 0; i < n; i++) {
+            if (str.charAt(i) == '(')
+                st.push(i);
+
+            else {
+                if(!st.empty())
+                    st.pop();
+                if (!st.empty())
+                    result = Math.max(result, i - st.peek());
+                else
+                    st.push(i);
+            }
+        }
+        return result;
+    }
+}
+```
+
+유효한 부분문자열의 길이를 구하는 문제이다. 괄호의 갯수가 아닌 연속적인 유효한 부분문자열의 길이이므로 O(n)으로 쭉 훑으면서 가장 긴 길이를 반환해준다.
+
+---
