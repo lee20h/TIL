@@ -256,3 +256,49 @@ class Solution {
 유효한 부분문자열의 길이를 구하는 문제이다. 괄호의 갯수가 아닌 연속적인 유효한 부분문자열의 길이이므로 O(n)으로 쭉 훑으면서 가장 긴 길이를 반환해준다.
 
 ---
+
+- 4 日
+
+# PS
+
+- Design Circular Queue
+
+```java
+class MyCircularQueue {
+    final int[] a;
+    int front, rear = -1, len = 0;
+
+    public MyCircularQueue(int k) { a = new int[k];}
+
+    public boolean enQueue(int val) {
+        if (!isFull()) {
+            rear = (rear + 1) % a.length;
+            a[rear] = val;
+            len++;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deQueue() {
+        if (!isEmpty()) {
+            front = (front + 1) % a.length;
+            len--;
+            return true;
+        }
+        return false;
+    }
+
+    public int Front() { return isEmpty() ? -1 : a[front];}
+
+    public int Rear() {return isEmpty() ? -1 : a[rear];}
+
+    public boolean isEmpty() { return len == 0;}
+
+    public boolean isFull() { return len == a.length;}
+}
+```
+
+원형 큐를 구현하는 문제로 클래스만 구현하면 되는 문제이다. 따라서 배열로 가볍게 구현하였다. 물론 덱이나 다른 자료구조를 사용해도 좋을 것 같다.
+
+---
