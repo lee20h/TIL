@@ -426,3 +426,36 @@ func minOperations(n int) int {
 결국 직접 배포까지 하는 경험을 할 수 있었다. 하지만 Readme를 잘 쓰지 못해 아쉽긴 하지만 쿠버네티스의 아키텍쳐와 전반적인 부분에 대해서 공부를 할 수 있어 좋은 경험을 했다고 생각이 든다. 자바스크립트 상에서 파일에 접근하는 부분과 rest api에 인증과 http관련 지식도 얻을 수 있었다.
 
 ---
+
+- 7 日
+
+# 2021 상반기 백엔드 데브매칭
+
+결론적으로는 불합격이였다. 빠르게 해결한 뒤 제출했지만 아직 부족한 부분이 많아 체크하지 못한 부분이 수두룩 한듯 보였다. 아쉽지만 다음에는 더 잘할 수 있게 시도해보아야겠다.
+
+---
+
+# PS
+
+- Determine if String Halves Are Alike
+
+```java
+class Solution {
+    String vowels = "aeiouAEIOU";
+
+    public boolean halvesAreAlike(String S) {
+        int mid = S.length() / 2, ans = 0;
+        for (int i = 0, j = mid; i < mid; i++, j++) {
+            if (vowels.indexOf(S.charAt(i)) >= 0) ans++;
+            if (vowels.indexOf(S.charAt(j)) >= 0) ans--;
+        }
+        return ans == 0;
+    }
+}
+```
+
+모음이 시작하는 인덱스부터 다음 모음이나 문자열 끝까지의 갯수가 같은지 확인하는 문제이다. 같으면 true 틀리면 false를 반환하면 된다.
+
+따라서 모음이 있는지 확인한 뒤 절반만큼 확인하여 문제가 있는지 확인한ㄷ.
+
+---
