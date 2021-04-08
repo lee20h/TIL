@@ -459,3 +459,87 @@ class Solution {
 따라서 모음이 있는지 확인한 뒤 절반만큼 확인하여 문제가 있는지 확인한ㄷ.
 
 ---
+
+- 8 日
+
+# PS
+
+- Letter Combinations of a Phone Number
+
+```java
+class Solution {
+    public List<String> letterCombinations(String digits) {
+        LinkedList<String> ret = new LinkedList<String>();
+        if(digits.isEmpty()) return ret;
+        String[] mapping = new String[]{"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+        ret.add("");
+        while(ret.peek().length()!=digits.length()){
+            String remove = ret.remove();
+            String map = mapping[digits.charAt(remove.length())-'0'];
+            for(char c: map.toCharArray()){
+              ret.addLast(remove+c);
+            }
+        }
+        return ret;
+    }
+}
+```
+
+```go
+func letterCombinations(digits string) []string {
+	table := []string{"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+	ret := []string{};
+	if len(digits) > 0 {
+		help(&ret, digits, "", 0, table);
+	}
+	return ret
+}
+
+func help(ret *[]string, digits string, cur string, index int, table []string) {
+	if index == len(digits) {
+		*ret = append(*ret, cur);
+		return
+	}
+	tmp := table[digits[index]-'0'];
+	for _, t := range tmp {
+		help(ret, digits, cur+string(t), index+1, table);
+	}
+}
+```
+
+- [golang](https://www.codingnuri.com/golang-book/6.html)
+
+핸드폰 키패드와 같이 숫자가 주어질 때 가능한 알파벳들의 조합을 모두 반환하는 문제이다.
+
+여기서는 java로 큐 형태로 해결하였고 Golang은 재귀를 이용해서 해결하였다.
+
+Golang의 for문 문법중에 언더스코어를 이용한 문법을 찾아보게 되어서 링크를 같이 남긴다.
+
+---
+
+# Prometheus
+
+- [프로메테우스란? - FINDA 기술블로그](https://medium.com/finda-tech/prometheus%EB%9E%80-cf52c9a8785f)
+- [프로메테우스 - 조대협님 블로그](https://bcho.tistory.com/1372)
+
+Prometheus와 Grafana에 대해서 공부할 수있는 시간을 가졌다.
+
+프로메테우스는 대상 시스템으로 부터 메트릭이라하는 각종 모니터링 지표를 수집하여 저장하고 검색할 수 있는 시스템이다.
+
+구조가 간단해서 운영이 쉽고, 강력한 쿼리 기능을 가지고 있으며, 그라파나(Grafana) 를 통한 시각화를 지원한다.
+
+ELK스택의 키바나와 비교를 하자면 프로메테우스는 풀링을 통해 주기적으로 Exporter로부터 메트릭을 읽어오는 방식인 반면에 키바나는 푸쉬를 통해서 진행된다. 차이점은 푸쉬에 경우에는 서비스가 오토스케일링에 의해서 가변적일 때 유리하다. 풀링의 경우에는 가변적이라면 서비스의 주소를 받아오는 문제가 있다.
+
+이러한 부분을 해결해주는 것이 서비스 디스커버리라고 한다. 쿠버네티스상에서는 인그레스를 등록하고 DNS를 등록하게 되면 DNS로 접근 후 인그레스에서 서비스에 IP들에 접근을 할 수 있게 하는 식으로 해결한다.
+
+프로메테우스에는 두 가지 문제점이 있는데, 클러스터링 구조가 불가능해서 확장성과 가용성이 문제가 된다. 디스크를 키우는 하드웨어적인 부분으로 해결하려고하면 프로메테우스 인스턴스 하나 가지고는 여러 대상을 상대로 모니터링하기는 어렵다.
+
+프로메테우스가 수집한 매트릭에 대하여 2시간 동안 메모리에 상주시켜놓은 뒤 지나면 하드디스크로 옮기게 되는데 이 하드디스크에 점점 쌓이게되면 예전 기록은 사라지게 된다. 이러한 문제점으로 인해 타노스를 이용한다.
+
+타노스로 여러 프로메테우스 인스턴스들이 모으는 메트릭을 스케일이 가능한 스토리지에 저장해서 특정 인스턴스가 다운되어도 해당 메트릭을 볼 수 있게하거나 한 가지 타겟에 대하여 인스턴스를 갯수를 늘려서 HA 방식으로 관리할 수도 있다.
+
+그라파나는 여러 대상에 대하여 시각화하는 도구이다. 그 중 프로메테우스를 자주 사용하며 연결하면 그래프가 아닌 커스텀해서 사용자가 원하는 모양으로 시각화할 수 있다.
+
+그라파나의 경우에는 구조나 내용이 어렵지 않게 이해할 수 있다.
+
+---
