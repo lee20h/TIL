@@ -603,3 +603,70 @@ Prometheus를 스케일링하기 위한 오픈소스로, Prometheus는 가용성
 하지만 Prometheus와 grafana를 연결하였으나 Prometheus와 Thanos 연결하는 부분이 쉽지 않아서 난항을 겪고 있다. Object Storage도 AWS S3나 GCS를 이용해서 진행할 수 있어서 사람들이 구현해놓은 부분을 이용하려했으나 업데이트가 매우 빠르고 국내 자료가 많지 않아 많은 시간이 걸릴 것이라고 생각된다.
 
 ---
+
+- 10 日
+
+# PS
+
+- Longest Increasing Path in a Matrix
+
+```go
+package Leetcode
+
+var dir = [][]int{
+	{-1, 0},
+	{0, 1},
+	{1, 0},
+	{0, -1},
+}
+
+func longestIncreasingPath(matrix [][]int) int {
+	cache, res := make([][]int, len(matrix)), 0
+	for i := 0; i < len(cache); i++ {
+		cache[i] = make([]int, len(matrix[0]))
+	}
+	for i, v := range matrix {
+		for j := range v {
+			searchPath(matrix, cache, 0, i, j)
+			res = max(res, cache[i][j])
+		}
+	}
+	return res
+}
+
+func max(a int, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func isInIntBoard(board [][]int, x, y int) bool {
+	return x >= 0 && x < len(board[0]) && y >= 0 && y < len(board)
+}
+
+func searchPath(board, cache [][]int, lastNum, y, x int) int {
+	if board[y][x] <= lastNum {
+		return 0
+	}
+	if cache[y][x] > 0 {
+		return cache[y][x]
+	}
+	count := 1
+	for i := 0; i < 4; i++ {
+		nx := x + dir[i][0]
+		ny := y + dir[i][1]
+		if isInIntBoard(board, nx, ny) {
+			count = max(count, searchPath(board, cache, board[y][x], ny, nx)+1)
+		}
+	}
+	cache[y][x] = count
+	return count
+}
+```
+
+전형적인 BFS문제로 Golang을 이용해서 풀이를 해보았다.
+
+좌표에서 이어지는 값이 오름차순으로 이어지는 값들의 길이를 구하는 문제이다.
+
+---
