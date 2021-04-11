@@ -670,3 +670,44 @@ func searchPath(board, cache [][]int, lastNum, y, x int) int {
 좌표에서 이어지는 값이 오름차순으로 이어지는 값들의 길이를 구하는 문제이다.
 
 ---
+
+- 11 日
+
+# PS
+
+- Deepest Leaves Sum
+
+```go
+package Leetcode
+
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func deepestLeavesSum(root *TreeNode) int {
+	maxLevel, sum := 0, 0
+	dfsDeepestLeavesSum(root, 0, &maxLevel, &sum)
+	return sum
+}
+
+func dfsDeepestLeavesSum(root *TreeNode, level int, maxLevel, sum *int) {
+	if root == nil {
+		return
+	}
+	if level > *maxLevel {
+		*maxLevel, *sum = level, root.Val
+	} else if level == *maxLevel {
+		*sum += root.Val
+	}
+	dfsDeepestLeavesSum(root.Left, level+1, maxLevel, sum)
+	dfsDeepestLeavesSum(root.Right, level+1, maxLevel, sum)
+}
+```
+
+가장 레벨이 높은 노드들의 합을 더한 값을 반환하는 문제이다. C언어와 같이 주소를 넘겨 깊이를 판단하고 합계를 더하는 연산을 진행하였다.
+
+---
