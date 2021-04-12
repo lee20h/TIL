@@ -711,3 +711,54 @@ func dfsDeepestLeavesSum(root *TreeNode, level int, maxLevel, sum *int) {
 가장 레벨이 높은 노드들의 합을 더한 값을 반환하는 문제이다. C언어와 같이 주소를 넘겨 깊이를 판단하고 합계를 더하는 연산을 진행하였다.
 
 ---
+
+- 12 日
+
+# PS
+
+- Beautiful Arrangement II
+
+```go
+func constructArray(n int, k int) []int {
+    arr:= make([]int, 0, n)
+    i, j := 1, n;
+    for i <= j {
+        if k % 2 == 0 {
+            arr = append(arr, i)
+            i++
+        } else {
+            arr = append(arr, j)
+            j--;
+        }
+
+        if k > 1 {
+            k--
+        }
+    }
+    return arr
+}
+```
+
+배열을 정렬하되 인접한 원소들의 차의 값이 k로 일정한 배열을 구해야한다. 따라서 k의 홀짝을 주기로 1~n 사이의 값을 출력해주는 방향으로 갔다.
+
+투 포인터 느낌으로 돌아가면서 배열에 쌓아갔다.
+
+---
+
+# K8s Ingress
+
+RabbitMQ나 Grafana와 같은 소프트웨어는 TCP 기반으로 통신하기 때문에 쿠버네티스 상에서 http(s)만 연결이 가능한 Ingress로는 연결할 수 없다.
+
+대체적으로 load balancer를 이용해서 연결하지만 Ingress로 도메인 기반으로 연결하는 부분의 장점이 있다.
+
+하지만 공식 문서에서는 tcp나 udp 기반은 연결을 지원하지 않는다고 하며 nginx를 이용한 ingress controller에서 지원해주는 부분을 찾아서 구현하여 보았다.
+
+ingress nginx 공식 레퍼런스보다 [digitalocean](https://www.digitalocean.com/community/questions/how-to-expose-tcp-port-of-kubernetes-nginx-ingress-in-digitalocean-managed-kubernetes-2)에서 찾은 질문을 통해서 구현하였다.
+
+공식 레퍼런스를 보고 진행했을 때 안되었던 이유도 알 수 있고 무엇이 누락되었는지 알려주는 답변이라 보고 구현할 수 있었다.
+
+configmap을 이용하여 해당 tcp port를 http로 노출시키는 작업을 통해서 ingress로 tcp 연결을 할 수 있게 하였다. 이때 ingress ip에 port를 붙여서 접근하면 접속할 수 있었다.
+
+현재는 Rabbitmq만 열어봤으며 다음에는 다른 tcp로 통신하는 소프트웨어에 port를 통한 통신을 해봐야겠다.
+
+---
