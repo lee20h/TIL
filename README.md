@@ -893,3 +893,69 @@ Query Layer에 그라파나를 달아서 타노스 오브젝트들이 보내주�
 
 - [thanos.io/design](https://github.com/thanos-io/thanos/blob/main/docs/design.md)
 - [bitnami/thanos docs](https://docs.bitnami.com/kubernetes/infrastructure/thanos/administration/enable-metrics/)
+
+---
+
+- 14 日
+
+# PS
+
+- Partition List
+
+```go
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+
+func partition(head *ListNode, x int) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	var newHead, newTail, oldHead, oldTail *ListNode
+	for cur := head; cur != nil; cur = cur.Next {
+		if cur.Val >= x {
+			if oldHead == nil {
+				oldHead = cur
+			}
+			oldTail = cur
+		} else {
+			if newHead == nil {
+				newHead, newTail = cur, cur
+			} else {
+				newTail.Next = cur
+				newTail = cur
+			}
+			if oldTail != nil {
+				oldTail.Next = cur.Next
+			}
+		}
+	}
+	if newHead == nil {
+		return head
+	}
+	newTail.Next = oldHead
+	return newHead
+}
+```
+
+기준이 된 정수보다 크거나 같은 숫자들은 작은 숫자보다 인덱스를 뒤로 물려야하는 문제이다.
+
+따라서 뒤로 쭉 미뤄 둔채로 연결하는 식으로 진행했다.
+
+---
+
+# Thanos & Prometheus alertmanager
+
+타노스와 alertmanager를 연결하고 slack으로 알림을 보내는 식을 구현하였다.
+
+여기서 [google groups](https://groups.google.com/g/prometheus-users/c/vWJb3gx9CUQ?pli=1)를 통해 첫번째 사진의 아키텍처를 보고 감을 잡은 뒤 진행하였다.
+
+타노스의 thanos-rules와 프로메테우스의 prometheus-alertmanager이 연결되어있으므로 thanos-rules에 직접 alert rule을 정의하고 alertmanager에서 slack으로 조건에 따라 매트릭이 충족하게 된다면 알림을 보내는 식으로 구현하였다.
+
+이때는 [awesome-prometheus-alert](https://awesome-prometheus-alerts.grep.to/)를 통해서 직접 구현하는 것보다 promQL을 보고 인용하는 식으로 진행하였다. 잘 구현된 부분이 많아서 가져다 쓰면서 Thanos-rules에 맞게 변형시켜서 적용했다.
+
+---
