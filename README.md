@@ -959,3 +959,37 @@ func partition(head *ListNode, x int) *ListNode {
 이때는 [awesome-prometheus-alert](https://awesome-prometheus-alerts.grep.to/)를 통해서 직접 구현하는 것보다 promQL을 보고 인용하는 식으로 진행하였다. 잘 구현된 부분이 많아서 가져다 쓰면서 Thanos-rules에 맞게 변형시켜서 적용했다.
 
 ---
+
+- 15 日
+
+# PS
+
+- Fibonacci Number
+
+```go
+func fib(n int) int {
+    if n > 1 {
+        return fib(n-2) + fib(n-1);
+    } else if n == 1 {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+```
+
+단순한 피보나치 숫자를 구하는 문제이다.
+
+---
+
+# Grafana Loki
+
+Grafana Labs에서 나온 Loki라는 오픈소스 소프트웨어에 대해서 설명해보려고 한다.
+
+Loki는 Prometheus와 같은 방식으로 작동하며 다른 점은 Prometheu에서 Exporter로 수집하는 매트릭과는 달리 Loki는 Promtail에게서 로그를 받아온다.
+
+로그를 받아와서 Grafana에서 Dashboard 형태로 보여주며 K8s에서 Loki-stack을 이용해 Deployment와 같은 오브젝트에 등록된 Label을 이용해서 로그를 받아올 수 있다.
+
+Prometheus에 대한 개념을 확실히 한 뒤에 생각하면 역할이 확실히보여서 쉽게 이해할 수 있다. 또한 매트릭을 로그로 바꿔서 생각하면 Grafana를 통해서 쉽게 Dashboard로 표현할 수 있어서 괜찮은 소프트웨어라고 생각된다.
+
+---
