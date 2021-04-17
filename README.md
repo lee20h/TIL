@@ -1036,3 +1036,36 @@ Grafana에서 Loki를 이용해서 Dashboard를 구성할 필요가 있어서 �
 또한 프로메테우스에서 node나 kube-state에 대한 exporter가 아닌 redis-exporter를 사용하는 부분도 공부를 진행하려고 한다.
 
 ---
+
+- 17 日
+
+# PS
+
+- Number of Submatrices That Sum to Target
+
+```go
+func numSubmatrixSumTarget(matrix [][]int, target int) int {
+	m, n, res, sum := len(matrix), len(matrix[0]), 0, 0
+	for i := 0; i < n; i++ {
+		for j := i; j < n; j++ {
+			counterMap := map[int]int{}
+            counterMap[0] = 1
+			sum = 0
+			for row := 0; row < m; row++ {
+				for k := i; k <= j; k++ {
+					sum += matrix[row][k]
+				}
+				res += counterMap[sum-target]
+				counterMap[sum]++
+			}
+		}
+	}
+	return res
+}
+```
+
+테이블이 주어졌을 때 부분 배열의 합이 target과 같아지는 갯수를 구해주는 문제이다.
+
+O(n^4)로 테이블의 범위를 잡고 그 범위에서 부분을 더했을 때 target이 나오는 경우를 찾아주고 있다.
+
+---
