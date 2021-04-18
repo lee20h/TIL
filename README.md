@@ -1069,3 +1069,48 @@ func numSubmatrixSumTarget(matrix [][]int, target int) int {
 O(n^4)로 테이블의 범위를 잡고 그 범위에서 부분을 더했을 때 target이 나오는 경우를 찾아주고 있다.
 
 ---
+
+- 18 日
+
+# PS
+
+- Remove Nth Node From End of List
+
+```go
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+func removeNthFromEnd(head *ListNode, n int) *ListNode {
+    first, second := head, head
+	for i := 0; i < n; i++ {
+		first = first.Next
+	}
+
+    var prev *ListNode
+
+    for first != nil {
+		first = first.Next
+		prev = second
+		second = second.Next
+	}
+	if prev == nil {
+		temp := head.Next
+		head.Next = nil
+		head = tmp
+	} else {
+		prev.Next = second.Next
+		second.Next = nil
+	}
+	return head
+}
+```
+
+주어진 연결리스트에서 뒤에서 n번째를 제거한 연결리스트를 반환하는 문제이다.
+
+따라서 head의 주소를 가진 변수 두개를 가지고 순서를 찾은 뒤 해당 순서만 빼고 반환하는 방식으로 구현했다.
+
+---
