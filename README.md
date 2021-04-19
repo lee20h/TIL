@@ -1114,3 +1114,64 @@ func removeNthFromEnd(head *ListNode, n int) *ListNode {
 따라서 head의 주소를 가진 변수 두개를 가지고 순서를 찾은 뒤 해당 순서만 빼고 반환하는 방식으로 구현했다.
 
 ---
+
+- 19 日
+
+# PS
+
+- Combination Sum IV
+
+```go
+func combinationSum4(nums []int, target int) int {
+	dp := make([]int, target+1)
+	dp[0] = 1
+	for i := 1; i <= target; i++ {
+		for _, v := range nums {
+			if v <= i {
+				dp[i] += dp[i-v]
+			}
+		}
+	}
+	return dp[target]
+}
+```
+
+주어진 nums라는 배열의 원소를 가지고 몇개든지 더해서 target과 같은 숫자를 만드는 방법의 수를 구하는 문제이다.
+
+따라서 조합을 통해서 갯수를 구하면 되는데 다이나믹 프로그래밍을 이용할 수 있다.
+
+갯수에 상관없이 숫자를 사용하면 되므로 숫자의 종류를 가지고 이용하면 된다.
+
+---
+
+# Redis NPM
+
+로컬 환경에 따른 설정과 배포 환경에 따른 설정을 나눠서 유지할 수 있다. 이 때 원격에 설정을 저장해놓고 가져다가 쓸 수 있다는 것을 생각해보자
+
+MSA에서 어떠한 마이크로 서비스든지 모두 접근할 수 있으며 코드 레벨에서 가져다가 사용할 수 있는 환경 변수처럼 쓸 수 있는 원격 설정을 구현해보았다.
+
+Redis에 Hash Table을 이용하며 이미 만들어진 node-redis를 사용하지만 다른 설정을 몰라도 조금 더 용이하게 사용할 수 있게 묶어보았다.
+
+Redis를 여러 용도로 사용할 수 있지만 remote-config을 위한 모듈을 작성하고 배포해보았다.
+
+- [npmjs](https://www.npmjs.com/package/dtx-remote-config)
+
+---
+
+# K8s Deployment
+
+kubectl을 이용해서 deployment를 업데이트하거나 추가하는 내용을 공부해보았다.
+
+- kubectl set env deployment name
+- kubectl set image deployment name image
+- kubectl rollout history/undo deployment name
+
+deployment에 환경변수를 설정하는 명령어, 도커 이미지를 변경하는 명령어, 업데이트 내역을 보거나 롤백을 하는 명령어이다.
+
+deployment는 롤링 업데이트를 지원하여 pod이 여러 개인 경우 이전 버전의 replica 갯수를 천천히 줄여가며 새로운 버전의 replica를 늘려가는 방식으로 업데이르를 진행한다.
+
+쉽게 말해서 replica를 직접 이용하면 힘든 부분이 많아 이 부분을 자동화해서 추상화한 것이 바로 deployment라고 생각하면 된다.
+
+따라서 스케일업과 업데이트 등 여러 변화가 있을 때 시스템을 무장애로 유지할 수 있는 장점을 가진 오브젝트이다.
+
+---
