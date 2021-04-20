@@ -1175,3 +1175,47 @@ deployment는 롤링 업데이트를 지원하여 pod이 여러 개인 경우 �
 따라서 스케일업과 업데이트 등 여러 변화가 있을 때 시스템을 무장애로 유지할 수 있는 장점을 가진 오브젝트이다.
 
 ---
+
+- 20 日
+
+# PS
+
+- N-ary Tree Preorder Traversal
+
+```go
+/**
+ * Definition for a Node.
+ * type Node struct {
+ *     Val int
+ *     Children []*Node
+ * }
+ */
+
+func preorder(root *Node) []int {
+    res := []int{}
+    if root == nil {
+        return res
+    }
+
+    stack := []*Node{root}
+    for len(stack) > 0 {
+        r := stack[len(stack)-1]
+        stack = stack[:len(stack)-1]
+
+        res = append(res, r.Val)
+
+        tmp := []*Node{}
+        for _, v := range r.Children {
+            tmp = append([]*Node{v}, tmp...)
+        }
+        stack = append(stack, tmp...)
+    }
+    return res
+}
+```
+
+전위순회 방식으로 트리를 순회했을 때의 순서를 반환하는 문제이다.
+
+전위 순회를 반복문을 통해서 구하는 방법이다.
+
+---
