@@ -1219,3 +1219,58 @@ func preorder(root *Node) []int {
 전위 순회를 반복문을 통해서 구하는 방법이다.
 
 ---
+
+- 21 日
+
+# PS
+
+- Triangle
+
+```go
+func minimumTotal(triangle [][]int) int {
+    for i := 1; i < len(triangle); i++ {
+        triangle[i][0] += triangle[i-1][0]
+        triangle[i][len(triangle[i])-1] += triangle[i-1][len(triangle[i-1])-1]
+    }
+    for i := 2; i < len(triangle); i++ {
+        for j := 1; j < len(triangle[i])-1; j++ {
+            triangle[i][j] += min(triangle[i-1][j-1], triangle[i-1][j])
+        }
+    }
+    temp := triangle[len(triangle)-1][0]
+    for _, v := range triangle[len(triangle)-1] {
+        if v < temp {
+            temp = v
+        }
+    }
+    return temp
+}
+
+func min(a, b int) int {
+    if a < b {
+        return a
+    }
+    return b
+}
+```
+
+단순한 DP 문제로 행마다 값을 더했을 때 가장 적은 값을 구하기 위해서 DP로 선택지 중 작은 값을 선택했을 때로 제일 하단에 값을 구하고 그 중 가장 작은 값을 반환하면 되는 문제이다.
+
+---
+
+# OpenTracing
+
+Jaeger에 대해 알아보다가 목적인 OpenTracing에 대해서 알아보았다.
+
+MSA 형태의 서버가 늘어나면서 오류를 추적하는데에 있어서 어려움을 겪는다. 로그를 다 뒤져본다해도 어떤 부분에서 일어났는지 알기는 어려운 상황이 많으므로 그럴 때 설정되어 있다면 큰 도움을 주는 것이 OpenTracing이다
+
+로그를 뒤져보는 것이 아닌 Tracing ID를 통해서 한번에 문제가 되는 곳을 찾아볼 수 있고 순서와 응답과 호출 시간도 알 수 있어서 명료한 부분이 많다.
+
+하지만 설정하는 부분과 새로 알아야하는 부분이 많아서 그 부분이 tradeoff로 작용하는 것 같다.
+
+로그를 보는 부분과 에러를 추적하는 부분은 엄연히 다르다고 생각되어 OpenTracing도 분명 도움이 되는 것이라고 생각이 된다.
+
+- [OpenTracing? OpenTracing!](https://www.nurinamu.com/dev/2020/02/26/opentracing/)
+- [LINE 광고 플랫폼의 MSA 환경에서 Zipkin을 활용해 로그 트레이싱하기](https://engineering.linecorp.com/ko/blog/line-ads-msa-opentracing-zipkin/)
+
+---
