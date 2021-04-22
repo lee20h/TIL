@@ -1274,3 +1274,42 @@ MSA 형태의 서버가 늘어나면서 오류를 추적하는데에 있어서 �
 - [LINE 광고 플랫폼의 MSA 환경에서 Zipkin을 활용해 로그 트레이싱하기](https://engineering.linecorp.com/ko/blog/line-ads-msa-opentracing-zipkin/)
 
 ---
+
+- 22 日
+
+# PS
+
+- Brick Wall
+
+```go
+func leastBricks(wall [][]int) int {
+	m := make(map[int]int)
+	maxend := 0
+	for i := 0; i < len(wall); i++ {
+		sum := 0
+		for j := 0; j+1 < len(wall[i]); j++ {
+			sum += wall[i][j]
+			if v, ok := m[sum]; ok {
+				m[sum] = v + 1
+			} else {
+				m[sum] = 1
+			}
+			maxend = max(maxend, m[sum])
+		}
+	}
+	return len(wall) - maxend
+}
+
+func max(x, y int) int {
+	if x > y {
+		return x
+	}
+	return y
+}
+```
+
+이어지는 벽돌이 있을 때 가장 작은 부분을 찾는 문제이다. 경계선인 끝부분을 찾아서 그 부분의 갯수를 더해서 최대 만큼 겹치는 부분을 찾은 뒤 전체에서 빼주게 되면 값을 구할 수 있다.
+
+이러한 부분에서 map을 이용해서 직접 다 쌓은 뒤 가장 큰 값을 전체에서 제한 뒤 반환해주었다.
+
+---
