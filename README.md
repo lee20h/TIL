@@ -1313,3 +1313,47 @@ func max(x, y int) int {
 이러한 부분에서 map을 이용해서 직접 다 쌓은 뒤 가장 큰 값을 전체에서 제한 뒤 반환해주었다.
 
 ---
+
+- 23 日
+
+# PS
+
+- Count Binary Substrings
+
+```go
+func countBinarySubstrings(s string) int {
+	count, countZero, countOne := 0, 0, 0
+	prev := rune(s[0])
+
+	for _, r := range s {
+		if prev == r {
+			if r == '0' {
+				countZero++
+			} else {
+				countOne++
+			}
+		} else {
+			count += min(countZero, countOne)
+			if r == '0' {
+				countZero = 1
+			} else {
+				countOne = 1
+			}
+		}
+		prev = r
+	}
+
+	return count + min(countZero, countOne)
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+```
+
+부분문자열 중 0과 1의 갯수가 동일하게 있는 갯수를 세어주면 되는 문제이다.
+
+---
