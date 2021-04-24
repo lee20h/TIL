@@ -1357,3 +1357,78 @@ func min(a, b int) int {
 부분문자열 중 0과 1의 갯수가 동일하게 있는 갯수를 세어주면 되는 문제이다.
 
 ---
+
+- 24 日
+
+# PS
+
+- Critical Connections in a Network
+
+```cpp
+class Solution {
+public:
+    vector<vector<int>> edge;
+    vector<int> num;
+    vector<int> low;
+    vector<vector<int>> ans;
+
+    int t = 1;
+    int tarjan(int now, int before) {
+        int& ret = low[now];
+        num[now] = t++;
+        for (int i = 0; i<edge[now].size(); i++) {
+            int next = edge[now][i];
+
+            if (next == before) continue;
+            if (num[next] == -1) { // not visit yet
+                ret = min(ret, tarjan(next, now));
+
+                if (low[next] > num[now]) {
+                    ans.push_back({ now, next });
+                }
+            } else {
+                ret = min(ret, num[next]);
+            }
+        }
+        return ret;
+    }
+
+    vector<vector<int>> criticalConnections(int n, vector<vector<int>>& connections) {
+
+        edge = vector<vector<int>>(n);
+        num = vector<int>(n, -1);
+        low = vector<int>(n, n);
+
+		for (int i = 0; i<connections.size(); i++) {
+          int a = connections[i][0];
+          int b = connections[i][1];
+          edge[a].push_back(b);
+          edge[b].push_back(a);
+        }
+
+        tarjan(0, -1);
+
+        return ans;
+    }
+};
+```
+
+강한 결합을 찾고 강한 결합이 아닌 부분을 찾아서 반환하는 문제이다. golang으로 하기에는 아직 익숙치 않아서 cpp로 진행하였다.
+
+dfs는 시간초과로 타잔 알고리즘이라는 것을 이용했다.
+
+- [타잔 알고리즘](https://taesung1993.tistory.com/53)
+
+---
+
+# 네이버 2021 공채 코딩테스트
+
+프로그래머스에서 진행하는 2021 네이버 공채 코딩테스트에 참여하였다. 총 4문제로 2시간 동안 진행되었다.
+
+현재 거주하는데서 진행하였는데 인터넷이 불안정하여 자꾸 꺼져서 아쉬웠다.
+
+전체적으로 시간이 아쉬웠고 테스트케이스 한개와 효율성에서 부족했던 것 같아서 원하는 결과를 내지 못하였다.
+
+3솔 이하로 나와서 아쉬움이 남았다.
+
+---
