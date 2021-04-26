@@ -1463,3 +1463,53 @@ func rotate(m [][]int)  {
 요행을 바랬지만 결과는 딱 말해주는 것을 알게 되었다.
 
 ---
+
+- 26 日
+
+# PS
+
+- Furthest Building You Can Reach
+
+```go
+type IntHeap []int
+func (h IntHeap) Len() int           { return len(h) }
+func (h IntHeap) Less(i, j int) bool { return h[i] < h[j] }
+func (h IntHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h *IntHeap) Push(x interface{}) {
+	*h = append(*h, x.(int))
+}
+
+func (h *IntHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}
+
+func furthestBuilding(heights []int, bricks int, ladders int) int {
+    n := len(heights)
+
+    h := &IntHeap{}
+    heap.Init(h)
+
+    for i:=1; i<n; i++ {
+        if heights[i] - heights[i-1] > 0 {
+            heap.Push(h,heights[i] - heights[i-1])
+            if h.Len() > ladders {
+                cost := heap.Pop(h).(int)
+                if bricks < cost {
+                    return i-1
+                }
+                bricks = bricks - cost
+            }
+        }
+    }
+
+    return n-1
+}
+```
+
+min heap을 이용해서 해결하였다. 벽돌과 사다리가 주어진 부분만 조건으로 두고 나머지는 min heap을 이용하여서 진행하였다.
+
+---
