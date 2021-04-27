@@ -1513,3 +1513,44 @@ func furthestBuilding(heights []int, bricks int, ladders int) int {
 min heap을 이용해서 해결하였다. 벽돌과 사다리가 주어진 부분만 조건으로 두고 나머지는 min heap을 이용하여서 진행하였다.
 
 ---
+
+- 27 日
+
+# PS
+
+- Power of Three
+
+```go
+func isPowerOfThree(n int) bool {
+    if n == 0 {
+        return false
+    }
+    for true {
+        if n % 3 == 0 {
+            n = n / 3
+        } else {
+            if n == 1 {
+                return true
+            }
+            break;
+        }
+    }
+    return false
+}
+```
+
+3의 제곱수 인지 아닌지 체크하는 문제로 무조건 반복하면서 3을 소인수로 가지고 있나 체크한 뒤 아닌 경우엔 false를 리턴하며 몫이 1이 되는 경우는 바로 3의 제곱수이므로 true를 리턴하였다.
+
+---
+
+# Istio
+
+이스티오에 관련된 문헌과 포스팅들을 읽으면서 알아가고 있다.
+
+현재는 이스티오를 설치해보고 관련 애드온들 (kiali, prometheus, grafana, jaeger) 등을 활용하는 방법을 찾아보고 있으며, 기존의 k8s에서 적용했던 ingress들을 istio ingress gateway를 통과하여 gateway, virtual service를 통해서 로드밸런싱과 라우팅까지 하는 방향으로 바꾸는 것을 생각하고 있다.
+
+[Istio: Up and Running](http://www.kyobobook.co.kr/product/detailViewEng.laf?mallGb=ENG&ejkGb=ENG&barcode=9789352139125)이라는 책을 읽으면서 인터넷으로 여러 포스팅과 도큐멘트에서 놓친 것들을 다시 복기할 수 있도록 공부하고 있다.
+
+나중에 조금 더 지식이 단단해지면 쿠버네티스와 함께 같이 글로 정리해볼 것이다.
+
+---
