@@ -1554,3 +1554,60 @@ func isPowerOfThree(n int) bool {
 나중에 조금 더 지식이 단단해지면 쿠버네티스와 함께 같이 글로 정리해볼 것이다.
 
 ---
+
+- 28 日
+
+# PS
+
+- Unique Paths II
+
+```go
+func uniquePathsWithObstacles(obstacleGrid [][]int) int {
+ 	if len(obstacleGrid) == 0 {
+		return 0
+	}
+	n := len(obstacleGrid)
+	m := len(obstacleGrid[0])
+	paths := make([][]int, n+1)
+	for i := range paths {
+		paths[i] = make([]int, m+1)
+	}
+	if obstacleGrid[0][0] == 1 {
+		return 0
+	}
+	paths[1][1] = 1
+
+	for i := 1; i <= n; i++ {
+		for j := 1; j <= m; j++ {
+			if (i == 1 && j == 1) || obstacleGrid[i-1][j-1] == 1 {
+				continue
+			} else {
+				paths[i][j] = paths[i-1][j] + paths[i][j-1]
+			}
+		}
+	}
+	return paths[n][m]
+}
+```
+
+장애물이 있을 때 0,0에서 n,m까지 가는 경로를 구하는 문제이다. 먼저 bfs로 생각하였는데 bfs로 진행해도 괜찮을 법하지만 시간복잡도를 더 줄이는 방법을 생각해보았다.
+
+paths라는 배열을 두고 dp를 이용하여 이전 값에서 장애물을 제외하고 해당 지역까지 갈 수 있는 경우의 수를 전부 더해가면서 마지막까지 구하는 방식을 이용하였다.
+
+---
+
+# Istio Gateway Rewrite
+
+Kubernetes에서 사용하던 Ingress를 그대로 Istio Gateway와 Virtual Service로 바꾸고자 진행함에 있어서 걸린 부분이 바로 url rewrite이다. ingress에서는 $1, $2와 같이 정규표현식과 함께 규칙을 정할 수 있었는데, Gateway에서는 무조건 문자열을 통해서 표현해야했다.
+
+따라서 host를 `http://example.com/api`로 지정한 뒤 rewrite를 `/`로 잡고 적용해보니 `http://example.com/api//v1/~` 이런식으로 rewrite가 되었다. 과연 어떤식으로 해야할지 막막하여 돌아가던 중 찾게 된 내용은 다음과 같다.
+
+rewrite를 비워두는 것은 안되지만 ' '와 같이 공백을 두게 되면 해당 host부터 api까지 갈 수 있도록 사용할 수 있다는 것을 알게 되었다.
+
+또, istio에서 gateway를 이용한 cert-manager를 적용해보았는데, [너구리는 라쿤이 아니다님의 Istio cert-manager 연동](https://lcc3108.github.io/articles/2020-12/certmanager)포스팅을 보고 따라해보았다. 이전에 쿠버네티스에 적용하듯이 적용했지만 오타때문에 시간을 상당히 날려서 아쉬웠다.
+
+cert-manager를 dns가 적용된 상태에서 certificate만 활성화 된다면 바로 적용할 수 있다는 것을 알게 되었다.
+
+추가적으로 gateway는 ingress와 달리 처음부터 https를 명시하고 같이 열어두거나 redirect를 해주는 부분이 있어서 certificate를 활성화시키고 명세해야 작동한다는 것을 알 수 있었다.
+
+---
