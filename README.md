@@ -1611,3 +1611,79 @@ cert-manager를 dns가 적용된 상태에서 certificate만 활성화 된다면
 추가적으로 gateway는 ingress와 달리 처음부터 https를 명시하고 같이 열어두거나 redirect를 해주는 부분이 있어서 certificate를 활성화시키고 명세해야 작동한다는 것을 알 수 있었다.
 
 ---
+
+- 29 日
+
+# PS
+
+- Find First and Last Position of Element in Sorted Array
+
+```go
+func searchRange(nums []int, target int) []int {
+	return []int{lowerBound(nums, target), upperBound(nums, target)}
+
+}
+
+func lowerBound(nums []int, target int) int {
+	low, high := 0, len(nums)-1
+	for low <= high {
+        mid := (low + high) / 2
+		if nums[mid] > target {
+			high = mid - 1
+		} else if nums[mid] < target {
+			low = mid + 1
+		} else {
+			if (mid == 0) || (nums[mid-1] != target) {
+				return mid
+			}
+			high = mid - 1
+		}
+	}
+	return -1
+}
+
+
+func upperBound(nums []int, target int) int {
+	low, high := 0, len(nums)-1
+	for low <= high {
+        mid := (low + high) / 2
+		if nums[mid] > target {
+			high = mid - 1
+		} else if nums[mid] < target {
+			low = mid + 1
+		} else {
+			if (mid == len(nums)-1) || (nums[mid+1] != target) {
+				return mid
+			}
+			low = mid + 1
+		}
+	}
+	return -1
+}
+```
+
+정렬된 배열이 주어지고 target값의 인덱스가 어디서부터 어디까지인지 구하는 문제이다.
+
+이미 정렬된 배열이므로 이분탐색으로 구하며, upperbound와 lowerbound의 개념과 같으므로 함수로 구현하여 해결하였다.
+
+---
+
+# Istio Traffic Manage
+
+Istio에서 트래픽이 주어질 때 어떤 방향으로 지나가는지에 대해 공부해보았다.
+
+Kubernetes의 Ingress나 API Gateway를 사용하지 않고 Istio의 Ingress Gateway를 사용했을 때의 트래픽 흐름에 대해 정리해보려고 한다.
+
+먼저 트래픽이 Ingrss Gateway의 IP를 통해 들어오게 된다. 이후에 Gateway에서 명세한 hosts에 따라 Gateway가 나뉘어지게 된다. 이 때 Gateway는 Virtual Host와 같은 개념으로 보면 된다.
+
+https와 같은 보안 연결에 필요한 인증서를 다는 부분도 Gateway에서 명시해줘야한다.
+
+이후에는 Virtual Service로 가게 되는데 여기서도 연결된 Gateway에서 넘어오게 되고 Virtual Service에서 prefix나 exact를 이용해 맞는 uri를 매칭하여 Kubernetes의 서비스로 연결해준다.
+
+마지막에는 Destinaitoin Rule로 Pod의 가중치를 나눌 수 있으며 서킷브레이커와 같이 필요시에 사용할 수 있는 옵션도 많다.
+
+정리하자면 `Ingress Gateway -> Gateway -> Virtual Service -> (Destination Rule) -> Service`라고 할 수 있다. Destination Rule은 선택사항으로 생각할 수 있다.
+
+Gateway에서는 접속하는 Host와 Port를 명시하여 http, https와 같이 접근하는 Port를 명시하여 열어주고 Virtual Host에서 해당 URI를 통한 접근을 Service에 열려있는 Port를 연결하여 접근한 사람 입장에서는 http/https로 접근하기만 해도 원하는 서비스에 접근할 수 있다는 것이다.
+
+---
