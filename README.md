@@ -1687,3 +1687,53 @@ https와 같은 보안 연결에 필요한 인증서를 다는 부분도 Gateway
 Gateway에서는 접속하는 Host와 Port를 명시하여 http, https와 같이 접근하는 Port를 명시하여 열어주고 Virtual Host에서 해당 URI를 통한 접근을 Service에 열려있는 Port를 연결하여 접근한 사람 입장에서는 http/https로 접근하기만 해도 원하는 서비스에 접근할 수 있다는 것이다.
 
 ---
+
+- 30 日
+
+# PS
+
+- Powerful Integers
+
+```go
+import (
+	"math"
+)
+
+func powerfulIntegers(x int, y int, bound int) []int {
+	if x == 1 && y == 1 {
+		if bound < 2 {
+			return []int{}
+		}
+		return []int{2}
+	}
+	if x > y {
+		x, y = y, x
+	}
+	visit, result := make(map[int]bool), make([]int, 0)
+	for i := 0; ; i++ {
+		found := false
+		for j := 0; pow(x, i)+pow(y, j) <= bound; j++ {
+			v := pow(x, i) + pow(y, j)
+			if !visit[v] {
+				found = true
+				visit[v] = true
+				result = append(result, v)
+			}
+		}
+		if !found {
+			break
+		}
+	}
+	return result
+}
+
+func pow(x, i int) int {
+	return int(math.Pow(float64(x), float64(i)))
+}
+```
+
+x와 y가 주어졌을 때 Bound 이하인 값 중 x와 y의 제곱수를 더했을 때 나오는 값들을 모두 반환해주는 문제이다.
+
+먼저 작은 수를 기준으로 바깥 for문으로 감싸고 큰 수를 내부 for문으로 반복하여 제곱 값들을 모두 더해주었다.
+
+---
