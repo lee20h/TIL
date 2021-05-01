@@ -1737,3 +1737,34 @@ x와 y가 주어졌을 때 Bound 이하인 값 중 x와 y의 제곱수를 더했
 먼저 작은 수를 기준으로 바깥 for문으로 감싸고 큰 수를 내부 for문으로 반복하여 제곱 값들을 모두 더해주었다.
 
 ---
+
+- 1 日
+
+# PS
+
+- Prefix and Suffix Search
+
+```go
+type WordFilter struct {
+	input []string
+}
+
+func Constructor(words []string) WordFilter {
+	return WordFilter{input: words}
+}
+
+func (this *WordFilter) F(prefix string, suffix string) int {
+	for i := len(this.input) - 1; i >= 0; i-- {
+		if strings.HasPrefix(this.input[i], prefix) && strings.HasSuffix(this.input[i], suffix) {
+			return i
+		}
+	}
+	return -1
+}
+```
+
+prefix와 suffix가 주어졌을 때 인덱스를 구하는 문제로, strings에서 사용할 수 있는 HasPrefix와 HasSuffix를 이용해서 해당 접두사와 접미사가 존재하는지 true, false로 받아서 해결할 수 있다.
+
+strings를 이용하면 map을 사용하는거보단 속도가 느리지만 조금 더 편하게 사용할 수 있다.
+
+---
