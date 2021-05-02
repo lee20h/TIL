@@ -1768,3 +1768,83 @@ prefix와 suffix가 주어졌을 때 인덱스를 구하는 문제로, strings�
 strings를 이용하면 map을 사용하는거보단 속도가 느리지만 조금 더 편하게 사용할 수 있다.
 
 ---
+
+- 2 日
+
+# PS
+
+- Course Schedule III
+
+```go
+func scheduleCourse(courses [][]int) int {
+	taken := new(maxPQ)
+	heap.Init(taken)
+
+	myCs := cs(courses)
+	sort.Sort(myCs)
+
+	var date int
+	for _, c := range myCs {
+		heap.Push(taken, c[0])
+		date += c[0]
+		for date > c[1] {
+			date -= heap.Pop(taken).(int)
+		}
+	}
+
+	return taken.Len()
+}
+
+type maxPQ []int
+
+func (q maxPQ) Len() int {
+	return len(q)
+}
+
+func (q maxPQ) Less(i, j int) bool {
+	return q[i] > q[j]
+}
+
+func (q maxPQ) Swap(i, j int) {
+	q[i], q[j] = q[j], q[i]
+}
+
+func (q *maxPQ) Push(x interface{}) {
+	*q = append(*q, x.(int))
+}
+
+func (q *maxPQ) Pop() interface{} {
+	res := (*q)[len(*q)-1]
+	*q = (*q)[:len(*q)-1]
+	return res
+}
+
+type cs [][]int
+
+func (c cs) Len() int {
+	return len(c)
+}
+
+func (c cs) Less(i, j int) bool {
+	if c[i][1] == c[j][1] {
+		return c[i][0] < c[j][0]
+	}
+	return c[i][1] < c[j][1]
+}
+
+func (c cs) Swap(i, j int) {
+	c[i], c[j] = c[j], c[i]
+}
+```
+
+스케쥴 문제로 우선순위 큐로 생각해보다 막혀서 다른 사람의 코드를 인용해왔다.
+
+이 문제를 통해서 알게 된 점은 Golang에서 container/heap과 sort를 사용할 때는 커스텀하게 사용할 수 있게 Len, Less, Swap을 선언해야하고 heap의 경우에는 push, pop까지 정의해주고 사용해야한다.
+
+자료형도 자신이 원하는 내용으로 사용할 수 있으므로 어떻게보면 다른 언어보단 번거롭지만 더 유틸리티 있게 사용할 수 있다고 생각이 된다.
+
+따라서 sort와 heap에 원하는 방향에 맞게 설계한 후 스케쥴에 맞게 진행하는 방식으로 구현되어 있다.
+
+이 때 heap은 최대힙으로 우선순위 큐로 설계한 뒤 sort는 주어진 배열을 정렬을 위해 사용되었다.
+
+---
