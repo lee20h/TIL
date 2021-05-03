@@ -1848,3 +1848,31 @@ func (c cs) Swap(i, j int) {
 이 때 heap은 최대힙으로 우선순위 큐로 설계한 뒤 sort는 주어진 배열을 정렬을 위해 사용되었다.
 
 ---
+
+- 3 日
+
+# PS
+
+- Running Sum of 1d Array
+
+```go
+func runningSum(nums []int) []int {
+    size := len(nums)
+    sum := 0
+    for i := 0; i<size; i++ {
+        sum += nums[i];
+        nums[i] = sum
+    }
+    return nums
+}
+```
+
+이전 값들을 모두 더해서 현재 인덱스에 넣어주는 문제로 매우 쉽게 풀 수 있다.
+
+문제들을 생각할 때 golang으로 해결할 수 있으며 여러가지 방향으로 생각할 수 있게 노력하고 있다.
+
+다른 공부로는 이스티오를 위주로 많이 알아가고 있으며 아직 많이 부족하다는 걸 느낀다.
+
+따라서 Istio Up & Running 책을 다 읽는다면 쿠버네티스를 리마인드하는 느낌으로 다시 복기해보려 한다.
+
+---
