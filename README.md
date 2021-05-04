@@ -1876,3 +1876,39 @@ func runningSum(nums []int) []int {
 따라서 Istio Up & Running 책을 다 읽는다면 쿠버네티스를 리마인드하는 느낌으로 다시 복기해보려 한다.
 
 ---
+
+- 4 日
+
+# PS
+
+- Non-decreasing Array
+
+```go
+func checkPossibility(nums []int) bool {
+    flag := false
+    size := len(nums)
+    for i:=1; i<size; i++ {
+        if(nums[i-1] > nums[i]) {
+            if(flag) {
+                return false
+            } else {
+                if(i>1 && nums[i-2] > nums[i]) {
+                    nums[i] = nums[i-1]
+                }
+
+                flag = true
+            }
+        }
+    }
+    return true
+}
+```
+
+주어진 배열에서 숫자 하나만 바꿨을 때 오름차순이 되는지 확인하는 문제이다. 그래서 O(n)으로 배열을 전부 탐색하면서 이전 값이 다음 값보다 큰 경우가 두 번 이상 있는지 확인한다.
+
+원래 생각한 부분은 스택을 이용해서 하나하나 푸쉬하면서 현재 값과 스택의 top값을 비교한다. 그러면서 스택 top값보다 현재 값이 작은 경우에는 한번 스택을 pop해주면서 boolean 변수로 체크한다.
+
+한번 더 같은 상황이 발생하면 false를 끝까지 간다면 true를 반환해주면서 마무리한다.
+
+---
+
