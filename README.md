@@ -226,3 +226,84 @@ func jump(nums []int) int {
 따라서 계속 이동하면서 MAX의 값을 갱신해줘서 가는 동안 가장 높은 인덱스까지 이동한 경우 앞으로 가야할 위치와 리턴할 값을 올리면서 반복한다. 약간의 BFS와 비슷하게 진행된다고 생각된다.
 
 ---
+
+- 6 日
+
+# PS
+
+- Convert Sorted List to Binary Search Tree
+
+```go
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func sortedListToBST(head *ListNode) *TreeNode {
+	if head == nil {
+		return nil
+	}
+	if head != nil && head.Next == nil {
+		return &TreeNode{Val: head.Val, Left: nil, Right: nil}
+	}
+	middleNode, preNode := middleNodeAndPreNode(head)
+	if middleNode == nil {
+		return nil
+	}
+	if preNode != nil {
+		preNode.Next = nil
+	}
+	if middleNode == head {
+		head = nil
+	}
+	return &TreeNode{Val: middleNode.Val, Left: sortedListToBST(head), Right: sortedListToBST(middleNode.Next)}
+}
+
+func middleNodeAndPreNode(head *ListNode) (middle *ListNode, pre *ListNode) {
+	if head == nil || head.Next == nil {
+		return nil, head
+	}
+	p1 := head
+	p2 := head
+	for p2.Next != nil && p2.Next.Next != nil {
+		pre = p1
+		p1 = p1.Next
+		p2 = p2.Next.Next
+	}
+	return p1, pre
+}
+```
+
+정렬된 배열이 주어졌을 때 BST 이진 검색 트리로 변환하는 문제로, 생각하는데 Golang으로 만들기 아직 벅찬 부분이 있다. 다른 분의 소스를 참조하여 진행했다.
+
+결국에는 흐름을 찾아서 이해하듯이 공부하였다. 이 부분에 있어서는 더 공부가 필요하다.
+
+---
+
+# Istio Proxy Injection
+
+Istio Proxy (Envoy)를 Istio Service mesh에 주입하는 방법은 여러가지가 있다. 그 중 가장 편하다고 생각하는 Label을 붙여서 올라가는 Pod에 Istio-proxy를 삽입하는 방법을 사용했다.
+
+`kubectl label namespace {ns} istion-injection enabled`와 같이 사용하게 되면 Label을 적용하여 해당 namespace에 올라온 pod에 대해 istio-proxy를 컨테이너에 추가한다.
+
+여기서 겪었던 문제는 서비스 메시를 구성할 때 모든 서비스나 인프라에 대해서 적용하면 좋겠지만 모든 배포에 대해서 Proxy를 붙이다보니 드는 오버헤드가 생각보다 높다. 그래서 줄이는 방법을 구상한 것이 서비스 메시에 안 들어가도 되는 인프라가 있는 경우 빼주는 쪽으로 진행했다.
+
+올릴 때 namespace에 label을 disabled 시켜서 진행하였다. 하지만 며칠 못 가서 K8s 업데이트로 인해 인프라가 재시작되는 이슈가 생겼다. 이 때 재시작으로 인해 같은 네임스페이스에 들어있어서 istio-proxy가 붙게되고 그만큼의 오버헤드가 또 발생하였다.
+
+이러한 문제를 해결하기 위해서 helm을 통해서 필요한 서비스를 설치할 때 annotations에 `sidecar.istio.io/inject: "false"`를 등록하였다. helm을 통한 설치는 편하게 진행되지만 manifest에 대해서 모두 알지 못한 상태에서 진행되기 때문에 대부분의 설정 값을 알려면 values를 직접 찾아봐야한다.
+
+따라서 annotations을 붙이는 부분에서 상당한 시간이 필요했다. 모든 서비스가 같은 템플릿을 이용해서 annotations을 정리하지 않고 또한 한 차트에서도 여러 Deployment나 statefulset을 이용하기 때문에 하나하나 모두 annotations을 달아줘야했다.
+
+Istio가 분명 도움을 주는 부분도 많고 서비스를 구성하는데에 있어서 많은 역할을 하지만 그 만큼의 트레이드오프는 오버헤드라던지 공부같은 부분으로 나타나는 것 같다.
+
+---
