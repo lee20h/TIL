@@ -307,3 +307,40 @@ Istio Proxy (Envoy)를 Istio Service mesh에 주입하는 방법은 여러가지
 Istio가 분명 도움을 주는 부분도 많고 서비스를 구성하는데에 있어서 많은 역할을 하지만 그 만큼의 트레이드오프는 오버헤드라던지 공부같은 부분으로 나타나는 것 같다.
 
 ---
+
+- 7 日
+
+# PS
+
+- Delete Operation for Two Strings
+
+```go
+func minDistance(word1 string, word2 string) int {
+	m, n := len(word1), len(word2)
+	dp := make([][]int, m+1)
+	for i := range dp {
+		dp[i] = make([]int, n+1)
+	}
+	for i := range word1 {
+		for j := range word2 {
+			if word1[i] == word2[j] {
+				dp[i+1][j+1] = max(dp[i+1][j+1], dp[i][j]+1)
+			} else {
+				dp[i+1][j+1] = max(dp[i][j+1], dp[i+1][j])
+			}
+		}
+	}
+	return m + n - 2*dp[m][n]
+}
+
+func max(x, y int) int {
+	if x < y {
+		return y
+	}
+	return x
+}
+```
+
+두 문자열에 겹치는 길이를 구하는 문제로 쉽게 dp를 이용해서 진행하였다.
+
+---
