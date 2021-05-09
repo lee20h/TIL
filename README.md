@@ -405,3 +405,74 @@ Left ~ Right 값 중에 제곱근과 자기 자신이 펠린드롬인 값을 찾
 이런 식의 하드코딩보다 직접 구할 수 있어야하는데 많이 미숙한 부분이 많다고 느꼈다.
 
 ---
+
+- 9 日
+
+# PS
+
+- Construct Target Array With Multiple Sums
+
+```go
+import (
+	"container/heap"
+)
+type IntHeap []int
+
+func (h IntHeap) Len() int           { return len(h) }
+func (h IntHeap) Less(i, j int) bool { return h[i] < h[j] }
+func (h IntHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+
+func (h *IntHeap) Push(x interface{}) {
+	*h = append(*h, x.(int))
+}
+
+func (h *IntHeap) Pop() interface{} {
+	old := *h
+	x := old[0]
+	*h = old[1 : ]
+	return x
+}
+
+type MaxHeap struct {
+    IntHeap
+}
+
+func (h MaxHeap) Less(i, j int) bool { return h.IntHeap[i] > h.IntHeap[j] }
+
+func isPossible(target []int) bool {
+    h := &MaxHeap{}
+    size := len(target)
+    sum := 0
+    for i:=0; i<size; i++ {
+        sum += target[i]
+        heap.Push(h,target[i])
+    }
+    heap.Init(h)
+
+    for (*h).IntHeap[0] != 1 {
+        top := (*h).IntHeap[0]
+        h.Pop()
+        sum -= top
+        if top <= sum || sum < 1 {
+            return false
+        }
+        top %= sum
+        sum += top
+        h.Push(top)
+        heap.Init(h)
+    }
+    return true;
+}
+```
+
+이번 문제는 문제풀이보다도 Golang에 맞는 priority queue를 구현하는 것을 공부하는 부분이 매우 많았다.
+
+문제를 이해하는 것보다 우선순위 큐에 맞게 최소 힙이나 최대 힙을 구하려는게 쉽지 않았다.
+
+container/heap 패키지에서 type을 정의하고 interface로 Len, Less, Swap을 정의하여 MinHeap을 정의하고 사용할 Push와 Pop 함수를 정의했다. 현재는 최소힙을 구현한 상황이다.
+
+이제 최대힙으로 변경하여 사용하기 위해서 구조체를 사용하여 Less 함수를 만들어진 최소힙의 원소 중 큰 원소를 앞으로 가지고 오도록 바꿔서 사용하였다.
+
+그 와중에 Peek를 구현하지 않고 Pop을 첫 인덱스를 제거하고 첫 인덱스를 사용하여 Peek를 대신하여 이용했다.
+
+---
