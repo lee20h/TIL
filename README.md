@@ -476,3 +476,36 @@ container/heap 패키지에서 type을 정의하고 interface로 Len, Less, Swap
 그 와중에 Peek를 구현하지 않고 Pop을 첫 인덱스를 제거하고 첫 인덱스를 사용하여 Peek를 대신하여 이용했다.
 
 ---
+
+- 10 日
+
+# PS
+
+- Count Primes
+
+```go
+func countPrimes(n int) int {
+    isPrime := make([]bool, n)
+
+    for i := 2; i * i < n; i++ {
+        if isPrime[i] == true {
+            continue
+        }
+        for j := i * i; j < n; j += i {
+            isPrime[j] = true
+        }
+    }
+
+    cnt := 0
+    for i := 2; i < n; i++ {
+        if isPrime[i] == false {
+            cnt++
+        }
+    }
+    return cnt
+}
+```
+
+1 ~ n까지의 숫자 중 소수를 구하는 문제로 에라토스테네스의 체를 이용해서 해결하였다. 사용하는 방법에 따라서 시간복잡도가 크게 나뉘어져서 해당 알고리즘을 사용하여 해결하였다.
+
+---
