@@ -509,3 +509,36 @@ func countPrimes(n int) int {
 1 ~ n까지의 숫자 중 소수를 구하는 문제로 에라토스테네스의 체를 이용해서 해결하였다. 사용하는 방법에 따라서 시간복잡도가 크게 나뉘어져서 해당 알고리즘을 사용하여 해결하였다.
 
 ---
+
+- Maximum Points You Can Obtain from Cards
+
+```go
+func maxScore(nums []int, k int) int {
+    aux := make([]int, len(nums))
+    aux[0] = nums[0]
+    for i := 1; i < len(nums); i++ {
+        aux[i] = aux[i-1] + nums[i]
+    }
+    if len(nums) == k {
+        return aux[len(nums)-1]
+    }
+    max := aux[k-1]
+    for i := 1; i < k; i++ {
+        tmp := aux[k-i-1] + aux[len(nums)-1] - aux[len(nums)-1-i]
+        if tmp > max {
+            max = tmp
+        }
+    }
+
+    if max < aux[len(nums)-1] - aux[len(nums)-k-1] {
+        max = aux[len(nums)-1] - aux[len(nums)-k-1]
+    }
+    return max
+}
+```
+
+해당 인덱스까지의 합을 보여주는 aux라는 배열을 통해서 k개 만큼의 갯수를 유지하면서 가장 큰 값을 구하는 문제이다.
+
+슬라이딩 윈도우를 이용해서 해당 크기만큼만의 윈도우를 가지고 쭉 밀어가면서 가장 큰 값을 구하였다.
+
+---
