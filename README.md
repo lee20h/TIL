@@ -542,3 +542,61 @@ func maxScore(nums []int, k int) int {
 슬라이딩 윈도우를 이용해서 해당 크기만큼만의 윈도우를 가지고 쭉 밀어가면서 가장 큰 값을 구하였다.
 
 ---
+
+- 12 日
+
+# PS
+
+- Range Sum Query 2D - Immutable
+
+```go
+type NumMatrix struct {
+	Data [][]int
+	Sum  [][]int
+}
+
+func Constructor(matrix [][]int) NumMatrix {
+	d := NumMatrix{Data: matrix, Sum: make([][]int, len(matrix)+1)}
+	if len(matrix) == 0 || len(matrix[0]) == 0 {
+		return d
+	}
+    d.Sum[0]= make([]int, len(matrix[0])+1)
+	for i := 1; i <= len(matrix); i++ {
+		d.Sum[i] = make([]int, len(matrix[0])+1)
+		for j := 1; j <= len(matrix[0]); j++ {
+			d.Sum[i][j] = d.Sum[i-1][j] + d.Sum[i][j-1] - d.Sum[i-1][j-1] + d.Data[i-1][j-1]
+		}
+	}
+	return d
+}
+
+func (this *NumMatrix) SumRegion(row1 int, col1 int, row2 int, col2 int) int {
+	return this.Sum[row2+1][col2+1] - this.Sum[row1][col2+1] - this.Sum[row2+1][col1] + this.Sum[row1][col1]
+}
+
+
+/**
+ * Your NumMatrix object will be instantiated and called as such:
+ * obj := Constructor(matrix);
+ * param_1 := obj.SumRegion(row1,col1,row2,col2);
+ */
+```
+
+생성자를 통해 matrix를 넣고 호출 시에는 왼쪽 상단에서 오른쪽 하단까지의 좌표를 통해서 사각형을 받고 그 범위의 합을 모두 구해주는 식으로 진행하였다.
+
+---
+
+# Kubernetes HPA
+
+- [Kubernetes horizontal-pod-autoscale](https://kubernetes.io/ko/docs/tasks/run-application/horizontal-pod-autoscale/)
+- [Kubernetes. Pod AutoScaling - 이야기박스님](https://box0830.tistory.com/305)
+
+레퍼런스 사이트를 통해서 공부한 부분을 정리해본다.
+
+HPA(Horizontal Pod Autoscaler)는 CPU 사용량이나 사용자 정의 메트릭을 수집하여 메트릭들을 기준으로 조건을 둔 뒤 스케일업과 다운을 진행할 수 있게 한다.
+
+StatefulSet, Deployment, ReplicaSet, ReplicationController만 HPA를 통해 스케일업과 다운이 가능하다. Daemon Set의 경우에는 불가능하다.
+
+추가적으로 이야기박스님의 포스팅으로 조금 더 이해할 수 있는 사례를 통해서 이해도를 높여보았다.
+
+---
