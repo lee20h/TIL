@@ -659,3 +659,61 @@ func max(a,b int)int {
     return b
 }
 ```
+
+---
+
+- 18 日
+
+# PS
+
+- Find Duplicate File in System
+
+```go
+import "strings"
+func findDuplicate(paths []string) [][]string {
+    cache := map[string][]string {}
+    for _, path := range paths {
+        splits := strings.Split(path, " ")
+        base := splits[0]
+        for _, split := range splits[1:] {
+            i := strings.Index(split, "(")
+            fileName := split[:i]
+            contents := split[i+1:]
+            cache[contents] = append(cache[contents], base + "/" + fileName)
+        }
+    }
+    ret := make([][]string, 0)
+    for _, v := range cache {
+        if len(v) > 1 {
+            ret = append(ret, v)
+        }
+    }
+    return ret
+}
+```
+
+파일 경로가 주어졌을 때 괄호에 주어진 짝에 맞게 묶는 문제이다.
+
+파일 경로에 따라서 파일 이름과 컨텐츠를 나누고 map을 이용하여 컨텐츠에 맞는 부분을 쭉 잇는 식으로 진행하였다.
+
+그 뒤에는 반환형에 맞게 넣어줘서 반환하면 된다.
+
+---
+
+# Istio와 RabbitMQ
+
+이스티오가 적용된 MSA에서 데이터 파이프라인을 구축하는 부분을 Event Driven과 같은 방향으로 메세지 큐를 이용하였다.
+
+이 때 쿠버네티스 Job을 이용해서 데이터를 주고 받기 위해 메세지 큐를 사용하는 부분에서 문제가 생겨서 남길려고 한다.
+
+Job이 뜬 뒤 바로 RabbitMQ와의 연결을 시도하게 되는데 이스티오가 적용되어있으므로 사이드카를 연결하고 시타델에서 CA 인증을 통해서 TLS를 적용하게 된다.
+
+하지만 Job에서는 사이드카와 연결된 뒤 바로 RabbitMQ에 연결을 시도해서 RabbitMQ에서는 보안 연결이 아니라 거부하게 되는 것 같다.
+
+이러한 부분을 가설을 세우고 진행해보았는데 이스티오 사이드카 주입을 끈 상태로 같은 이미지로 진행하였을 때는 에러가 나오지 않고 주입 되었을 때만 에러가 나오는 것을 확인할 수 있었다.
+
+로그 상에서도 메시지 큐와의 연결 에러가 뜬 직후 시타델에 관한 로그가 찍혀나와서 어느 정도 가설이 맞다고 할 수 있을 것 같다.
+
+확실히 해결하기 위해서는 메시지 큐와의 연결을 시타델에서 인증을 부여한 후로 미루면 될 것 같은데 이 부분에 있어서는 좋은 방향이 떠오르지 않아서 일단은 잡에서는 서비스 메시를 주입하지 않는 방향으로 생각해보았다.
+
+---
