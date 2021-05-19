@@ -717,3 +717,33 @@ Job이 뜬 뒤 바로 RabbitMQ와의 연결을 시도하게 되는데 이스티�
 확실히 해결하기 위해서는 메시지 큐와의 연결을 시타델에서 인증을 부여한 후로 미루면 될 것 같은데 이 부분에 있어서는 좋은 방향이 떠오르지 않아서 일단은 잡에서는 서비스 메시를 주입하지 않는 방향으로 생각해보았다.
 
 ---
+
+- 19 日
+
+# PS
+
+- Minimum Moves to Equal Array Elements II
+
+```go
+import (
+    "math"
+    "sort"
+)
+
+func minMoves2(nums []int) int {
+    sort.Ints(nums)
+    ans := 0
+    avg := nums[len(nums)/2]
+
+    for _, val := range nums {
+        ans += int(math.Abs(float64(val - avg)))
+    }
+    return ans
+}
+```
+
+배열의 모든 숫자가 같은 숫자로 될 때 최소의 숫자를 구하는 문제이다.
+
+따라서 정렬을 한 뒤 가장 가운데 있는 숫자를 기준으로 모든 숫자의 차이를 구해서 더하는 식으로 진행하였다.
+
+---
