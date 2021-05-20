@@ -747,3 +747,57 @@ func minMoves2(nums []int) int {
 따라서 정렬을 한 뒤 가장 가운데 있는 숫자를 기준으로 모든 숫자의 차이를 구해서 더하는 식으로 진행하였다.
 
 ---
+
+- 20 日
+
+# PS
+
+- Binary Tree Level Order Traversal
+
+```go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func levelOrder(root *TreeNode) [][]int {
+	if root == nil {
+		return [][]int{}
+	}
+	queue := []*TreeNode{}
+	queue = append(queue, root)
+	curNum, nextLevelNum, res, tmp := 1, 0, [][]int{}, []int{}
+	for len(queue) != 0 {
+		if curNum > 0 {
+			node := queue[0]
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+				nextLevelNum++
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+				nextLevelNum++
+			}
+			curNum--
+			tmp = append(tmp, node.Val)
+			queue = queue[1:]
+		}
+		if curNum == 0 {
+			res = append(res, tmp)
+			curNum = nextLevelNum
+			nextLevelNum = 0
+			tmp = []int{}
+		}
+	}
+	return res
+}
+```
+
+이진트리에서 같은 레벨에 속한 노드들을 배열로 모은 뒤 이차원 배열로 반환해주는 문제이다.
+
+따라서 BFS와 같이 레벨별로 구해서 배열에 넣어서 반환하는 배열에 넣어주는 식으로 진행한다.
+
+---
