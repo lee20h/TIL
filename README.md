@@ -801,3 +801,48 @@ func levelOrder(root *TreeNode) [][]int {
 따라서 BFS와 같이 레벨별로 구해서 배열에 넣어서 반환하는 배열에 넣어주는 식으로 진행한다.
 
 ---
+
+- 21 日
+
+# PS
+
+- Find and Replace Pattern
+
+```go
+func findAndReplacePattern(words []string, pattern string) []string {
+	res := make([]string, 0, len(words))
+
+	m := matchPattern(pattern)
+	for _, s := range words {
+		if matchPattern(s) == m {
+			res = append(res, s)
+		}
+	}
+
+	return res
+}
+
+func matchPattern(s string) int64 {
+	var p, i int64
+	match := make(map[rune]int64)
+
+	for _, v := range s {
+		if match[v] == 0 {
+			i++
+			match[v] = i
+		}
+
+		p = p*10 + match[v]
+	}
+
+	return p
+}
+```
+
+알파벳들이 주어지는 문자열의 패턴을 구해서 알파벳들을 바꾸었을 때 같은 모양이 될 수 있는 문자열들을 구하는 문제이다.
+
+따라서 처음에 나온 알파벳들을 나온 순서대로 숫자로 매핑하여 바꿔주게 된다면 문자열의 패턴을 알 수 있다.
+
+이 때 rune 자료형을 이용하여 utf-8을 표현하며 map으로 나온 순서를 유지하도록 하였다.
+
+---
