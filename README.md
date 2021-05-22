@@ -846,3 +846,78 @@ func matchPattern(s string) int64 {
 이 때 rune 자료형을 이용하여 utf-8을 표현하며 map으로 나온 순서를 유지하도록 하였다.
 
 ---
+
+- 22 日
+
+# PS
+
+- N-Queens
+
+```go
+func solveNQueens(n int) [][]string {
+	res := make([][]string, 0)
+	sol := initialSolution(n)
+
+	backtrack(&res, sol, 0, n)
+	return res
+}
+
+func backtrack(res *[][]string, sol [][]byte, col int, n int) {
+	if col == n {
+		collectSolution(res, sol)
+		return
+	}
+	for i := 0; i < n; i++ {
+		if isValid(sol, i, col, n) {
+			sol[i][col] = 'Q'
+			backtrack(res, sol, col+1, n)
+			sol[i][col] = '.'
+		}
+	}
+}
+
+func initialSolution(n int) [][]byte {
+	res := make([][]byte, 0)
+	for i := 0; i < n; i++ {
+		tmp := make([]byte, n)
+		for j := range tmp {
+			tmp[j] = '.'
+		}
+		res = append(res, tmp)
+	}
+	return res
+}
+
+func collectSolution(res *[][]string, sol [][]byte) {
+	tmp := make([]string, 0)
+	for i := range sol {
+		tmp = append(tmp, string(sol[i]))
+	}
+	*res = append(*res, tmp)
+}
+
+func isValid(tmp [][]byte, row, col, n int) bool {
+	for i := 0; i < col; i++ {
+		if tmp[row][i] == 'Q' {
+			return false
+		}
+	}
+	for i, j := row, col; i >= 0 && j >= 0; i, j = i-1, j-1 {
+		if tmp[i][j] == 'Q' {
+			return false
+		}
+	}
+	for i, j := row, col; i < n && j >= 0; i, j = i+1, j-1 {
+		if tmp[i][j] == 'Q' {
+			return false
+		}
+	}
+	return true
+}
+```
+
+전형적인 N-Queen 문제로 유효한 자리인지 체크해가면서 맞는 위치를 골라가는 식으로 진행하였다.
+
+백트래킹을 진행하면서 세로를 기준으로 잡고 가로와 대각선에 퀸이 있는지 확인을 통해서 유효함을 체크한다.
+
+---
