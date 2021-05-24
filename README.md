@@ -1037,3 +1037,23 @@ func min(a, b int) int {
 DP를 이용하여 만드는 과정을 보여주고 있다.
 
 ---
+
+- 24 日
+
+# PS
+
+- To Lower Case
+
+```go
+import (
+    "strings"
+)
+
+func toLowerCase(s string) string {
+    return strings.ToLower(s)
+}
+```
+
+주어진 문자열을 모두 소문자로 바꾸는 문제이다. 다른 언어와 달리 golang에는 문자열 자체를 소문자로 바꿔주는 함수를 이용할 수 있다.
+
+---
