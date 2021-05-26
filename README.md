@@ -1111,3 +1111,30 @@ func evalRPN(tokens []string) int {
 후위연산을 하는 문제로 스택을 이용해서 해결할 수 있다.
 
 ---
+
+- 26 日
+
+# PS
+
+- Partitioning Into Minimum Number Of Deci-Binary Number
+
+```go
+func minPartitions(n string) int {
+    result := 0
+    for _, num  := range n{
+        m, _ := strconv.Atoi(string(num))
+        if m > result{
+            result = m
+        }
+    }
+    return result
+}
+```
+
+1과 0을 가지고 해당 문자열을 만들 수 있는지 찾는 문제이다.
+
+결국에는 해당 자릿수들 중 가장 큰 숫자를 가진것이 결과가 된다고 말할 수 있다.
+
+321 = 111 + 110 + 100와 같이 자릿수에서 가장 큰 숫자 만큼 반복하면 찾을 수 있다.
+
+---
