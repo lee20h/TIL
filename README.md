@@ -1138,3 +1138,46 @@ func minPartitions(n string) int {
 321 = 111 + 110 + 100와 같이 자릿수에서 가장 큰 숫자 만큼 반복하면 찾을 수 있다.
 
 ---
+
+- 27 日
+
+# PS
+
+- Maximum Product of Word Lengths
+
+```go
+func maxProduct(words []string) int {
+	wlen := len(words)
+	wtables := make([]int32, wlen)
+
+	for i := 0; i < wlen; i++ {
+		wtables[i] = helper(words[i])
+	}
+
+	max := 0
+	for i := 0; i < wlen; i++ {
+		for j := i + 1; j < wlen; j++ {
+			if wtables[i] & wtables[j] == 0 {
+				if prod := len(words[i]) * len(words[j]); prod > max {
+					max = prod
+				}
+			}
+		}
+	}
+	return max
+}
+
+func helper(word string) int32 {
+	var res int32
+	for i := 0; i < len(word); i++ {
+		res |= 1 << uint(26-(int(word[i])-int('a')))
+	}
+	return res
+}
+```
+
+겹치지않는 두 문자열의 길이 곱 중 가장 큰 값을 구하는 문제이다.
+
+겹치지 않는 경우를 찾아서 두 개의 곱이 가장 큰 값을 저장하여 반환하는 식으로 진행된다.
+
+---
