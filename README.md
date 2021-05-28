@@ -1181,3 +1181,41 @@ func helper(word string) int32 {
 겹치지 않는 경우를 찾아서 두 개의 곱이 가장 큰 값을 저장하여 반환하는 식으로 진행된다.
 
 ---
+
+- 28 日
+
+# PS
+
+- Maximum Erasure Value
+
+```go
+func maximumUniqueSubarray(nums []int) int {
+    res := 0
+    acc := 0
+    set := map[int]bool{}
+    l := -1
+    for _, value := range nums {
+        for set[value] {
+            l++
+            acc -= nums[l]
+            delete(set, nums[l])
+        }
+        acc += value
+        set[value] = true
+        res = max(res, acc)
+    }
+
+    return res
+}
+
+func max(a, b int) int {
+    if a < b { return b }
+    return a
+}
+```
+
+중복되지 않은 숫자들의 부분 문자열의 합 중 가장 큰 값을 구하는 문제이다.
+
+따라서 인덱스 처음부터 따라가되, 겹친 경우에는 빼면서 진행한다.
+
+---
