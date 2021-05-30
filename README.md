@@ -1219,3 +1219,82 @@ func max(a, b int) int {
 따라서 인덱스 처음부터 따라가되, 겹친 경우에는 빼면서 진행한다.
 
 ---
+
+- 29 日
+
+# PS
+
+- N-Queens II
+
+```go
+func totalNQueens(n int) int {
+    count := 0
+    cols := make([]bool, n)
+    for i := 0; i < len(cols); i++ {
+        cols[i] = false
+    }
+
+    d1 := make([]bool, 2*n)
+    d2 := make([]bool, 2*n)
+    for i := 0; i < len(cols); i++ {
+        d1[i] = false
+        d2[i] = false
+    }
+
+    dfs(0, cols, d1, d2, n, &count)
+
+    return count;
+}
+
+func dfs(row int, cols []bool, d1 []bool, d2 []bool, n int, count *int) {
+    if(row == n) {
+        *count++
+    }
+    for col := 0; col < n; col++ {
+        id1 := col - row + n;
+        id2 := col + row;
+        if cols[col] || d1[id1] || d2[id2] {
+            continue
+        }
+        cols[col] = true; d1[id1] = true; d2[id2] = true;
+        dfs(row + 1, cols, d1, d2, n, count)
+        cols[col] = false; d1[id1] = false; d2[id2] = false;
+    }
+}
+```
+
+N-Queen 문제에 이어서 가로세로 길이를 받아서 N-Queen의 가능한 수를 구하는 문제이다.
+
+---
+
+- 30 日
+
+# PS
+
+- Maximum Gap
+
+```go
+func maximumGap(nums []int) int {
+    res := 0
+    sort.Ints(nums)
+    prev := nums[0]
+    for _, val := range nums {
+        res = max(val - prev, res)
+        prev = val
+    }
+    return res
+}
+
+func max(a, b int) int {
+    if a < b {
+        return b
+    }
+    return a
+}
+```
+
+일차원 배열 중 인접한 숫자의 갭이 가장 큰 값을 반환하는 문제이다.
+
+따라서 정렬한 뒤 이전 값과 현재의 값의 차이 중 가장 큰 값을 반환하도록 하였다.
+
+---
