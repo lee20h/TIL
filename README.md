@@ -1298,3 +1298,38 @@ func max(a, b int) int {
 따라서 정렬한 뒤 이전 값과 현재의 값의 차이 중 가장 큰 값을 반환하도록 하였다.
 
 ---
+
+- 31 日
+
+# PS
+
+- Search Suggestions System
+
+```go
+func suggestedProducts(products []string, searchWord string) [][]string {
+	res := make([][]string, len(searchWord))
+	sort.Strings(products)
+	s := ""
+
+	for i, val := range searchWord {
+		s += string(val)
+		counter := 0
+		for _, product := range products {
+			if counter == 3 {
+				break
+			}
+			if strings.HasPrefix(product, s) {
+				counter++
+				res[i] = append(res[i], product)
+			}
+		}
+	}
+	return res
+}
+```
+
+주어진 문자열의 각 인덱스만큼의 길이를 전치사로 갖는 문자 3개 이하를 배열로 만들어서 반환하는 문제이다.
+
+생각을 그대로 golang으로 구현하면 위와 같이 될 수 있다.
+
+---
