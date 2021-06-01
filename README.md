@@ -1333,3 +1333,52 @@ func suggestedProducts(products []string, searchWord string) [][]string {
 생각을 그대로 golang으로 구현하면 위와 같이 될 수 있다.
 
 ---
+
+- 1 日
+
+# PS
+
+- Max Area of Island
+
+```go
+func maxAreaOfIsland(grid [][]int) int {
+    maxArea := 0
+    for y := 0; y < len(grid); y++ {
+        for x := 0; x < len(grid[y]); x++ {
+            if grid[y][x] > 0 {
+                if sum := sumIslandArea(grid, y, x); sum > maxArea {
+                    maxArea = sum
+                }
+            }
+        }
+    }
+    return maxArea
+}
+
+func sumIslandArea(grid [][]int, y int, x int) int {
+    sum := 1
+    grid[y][x] = 0
+
+    if y > 0 && grid[y-1][x] > 0 {
+        sum += sumIslandArea(grid, y-1, x)
+    }
+    if x <  len(grid[y])-1 && grid[y][x+1] > 0 {
+        sum += sumIslandArea(grid, y, x+1)
+    }
+    if y < len(grid)-1 && grid[y+1][x] > 0 {
+        sum += sumIslandArea(grid, y+1, x)
+    }
+    if x > 0 && grid[y][x-1] > 0 {
+        sum += sumIslandArea(grid, y, x-1)
+    }
+    return sum
+}
+```
+
+필드가 주어지고 가장 큰 넓이를 가진 섬의 크기를 반환하는 문제이다.
+
+따라서 DFS, BFS 두 가지 방법을 통해서 구할 수 있다고 생각된다.
+
+DFS로 가장 큰 값을 구하도록 진행하였다.
+
+---
