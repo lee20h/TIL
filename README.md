@@ -1382,3 +1382,45 @@ func sumIslandArea(grid [][]int, y int, x int) int {
 DFS로 가장 큰 값을 구하도록 진행하였다.
 
 ---
+
+- 2 日
+
+# PS
+
+- Interleaving String
+
+```go
+func isInterleave(s1 string, s2 string, s3 string) bool {
+	if len(s1)+len(s2) != len(s3) {
+		return false
+	}
+
+	dp := make([][]bool, len(s1)+1)
+	for i, _ := range dp {
+		dp[i] = make([]bool, len(s2)+1)
+	}
+	dp[0][0] = true
+
+	for i := 1; i <= len(s1); i++ {
+		dp[i][0] = dp[i-1][0] && s1[i-1] == s3[i-1]
+	}
+	for j := 1; j <= len(s2); j++ {
+		dp[0][j] = dp[0][j-1] && s2[j-1] == s3[j-1]
+	}
+
+	for i := 1; i <= len(s1); i++ {
+		for j := 1; j <= len(s2); j++ {
+			dp[i][j] = (dp[i-1][j] && s1[i-1] == s3[i-1+j]) ||
+				(dp[i][j-1] && s2[j-1] == s3[j-1+i])
+		}
+	}
+
+	return dp[len(s1)][len(s2)]
+}
+```
+
+s1과 s2가 재조합되었을 때 s3가 될 수 있으면 true, 아니면 false를 반환하는 문제이다.
+
+따라서 DP를 이용해서 s1과 s2가 가능한 경우를 골라서 true와 false를 밝혀가는 식으로 진행한다.
+
+---
