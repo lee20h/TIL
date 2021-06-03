@@ -1424,3 +1424,42 @@ s1과 s2가 재조합되었을 때 s3가 될 수 있으면 true, 아니면 false
 따라서 DP를 이용해서 s1과 s2가 가능한 경우를 골라서 true와 false를 밝혀가는 식으로 진행한다.
 
 ---
+
+- 3 日
+
+# PS
+
+- Maximum Area of a Piece of Cake After Horizontal and Vertical Cuts
+
+```go
+func maxArea(h int, w int, horizontalCuts []int, verticalCuts []int) int {
+    sort.Ints(horizontalCuts)
+    sort.Ints(verticalCuts)
+    hlen := len(horizontalCuts)
+    vlen := len(verticalCuts)
+    maxh := max(horizontalCuts[0], h - horizontalCuts[hlen-1])
+    maxv := max(verticalCuts[0], w - verticalCuts[vlen-1])
+
+    for i := 1; i < hlen; i++ {
+        maxh = max(maxh, horizontalCuts[i] - horizontalCuts[i-1])
+    }
+    for i := 1; i < vlen; i++ {
+        maxv = max(maxv, verticalCuts[i] - verticalCuts[i-1])
+    }
+
+    return (maxh * maxv) % 1000000007
+}
+
+func max(a, b int) int{
+    if a > b {
+        return a
+    }
+    return b
+}
+```
+
+절단면이 가로와 세로가 주어졌을 때 절단된 부분 들 중 가장 넓이가 큰 값을 구하는 문제이다.
+
+따라서 주어진 절단면들을 모두 정렬한 뒤 이전 값과 다음 값의 갭이 가장 큰 부분을 구한 뒤 넓이를 구하기 위해서 곱해주는 식으로 진행했다.
+
+---
