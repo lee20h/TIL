@@ -1463,3 +1463,32 @@ func max(a, b int) int{
 따라서 주어진 절단면들을 모두 정렬한 뒤 이전 값과 다음 값의 갭이 가장 큰 부분을 구한 뒤 넓이를 구하기 위해서 곱해주는 식으로 진행했다.
 
 ---
+
+- 7 日
+
+# PS
+
+- Min Cost Climbing Stairs
+
+```go
+func minCostClimbingStairs(cost []int) int {
+	for i := 2; i < len(cost); i++ {
+		cost[i] += min(cost[i-1], cost[i-2])
+	}
+	return min(cost[len(cost)-1], cost[len(cost)-2])
+}
+
+func min(a, b int) int {
+	if a > b {
+		return b
+	} else {
+		return a
+	}
+}
+```
+
+한 칸 혹은 두 칸씩 올라가면서 끝까지 올라갔을 때 가장 적은 비용으로 도착하는 비용은 무엇인가인 문제이다.
+
+따라서 DP를 이용해서 1칸과 2칸 중 가장 cost가 낮은 값을 구해서 계속 끝까지 나아가는 식으로 진행한다.
+
+---
