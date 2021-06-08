@@ -1492,3 +1492,48 @@ func min(a, b int) int {
 따라서 DP를 이용해서 1칸과 2칸 중 가장 cost가 낮은 값을 구해서 계속 끝까지 나아가는 식으로 진행한다.
 
 ---
+
+- 8 日
+
+# PS
+
+- Construct Binary Tree from Preorder and Inorder Traversal
+
+```go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func buildTree(preorder []int, inorder []int) *TreeNode {
+	if len(preorder) == 0 {
+		return nil
+	}
+
+	index := search(preorder[0], inorder)
+	node := &TreeNode{
+		Val:   preorder[0],
+		Left:  buildTree(preorder[1:1+index], inorder[:index]),
+		Right: buildTree(preorder[1+index:], inorder[index+1:]),
+	}
+
+	return node
+}
+
+func search(val int, array []int) int {
+	for i := 0; i < len(array); i++ {
+		if val == array[i] {
+			return i
+		}
+	}
+
+	return 0
+}
+```
+
+중위순회와 전위순회 배열이 주어졌을 때 전체 배열을 구하는 문제이다. 따라서 전위수회의 첫 원소가 중위순회 배열에 나오는 곳을 찾아서 인쪽 트리와 오른쪽 트리를 지정해준다.
+
+---
