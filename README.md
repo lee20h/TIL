@@ -1537,3 +1537,46 @@ func search(val int, array []int) int {
 중위순회와 전위순회 배열이 주어졌을 때 전체 배열을 구하는 문제이다. 따라서 전위수회의 첫 원소가 중위순회 배열에 나오는 곳을 찾아서 인쪽 트리와 오른쪽 트리를 지정해준다.
 
 ---
+
+- 9 日
+
+# PS
+
+- Jump Game VI
+
+```go
+func maxResult(nums []int, k int) int {
+    n := len(nums)
+    dp := make([]int, n) //dp[i] : the max score at index i
+    dp[0] = nums[0]
+
+    deque := make([]int, 0)
+    deque = append(deque, 0)
+
+    for i := 1; i < n; i++ {
+        for len(deque) > 0 && deque[0] < i - k {
+            deque = deque[1:]
+        }
+
+        dp[i] = dp[deque[0]] + nums[i]
+
+        for len(deque) > 0 && dp[deque[len(deque) - 1]] < dp[i] {
+            deque = deque[:len(deque) - 1]
+        }
+        deque = append(deque, i) // be noted append the index into the queue
+    }
+    return dp[n - 1]
+}
+```
+
+---
+
+# 머신러닝 시스템 디자인 패턴
+
+- [머신러닝 시스템 디자인 패턴](https://mercari.github.io/ml-system-design-pattern/README_ko.html)
+
+머신러닝을 쿠버네티스나 클라우드를 이용해서 배포할 를 기준으로 사용할 수 있는 머신러닝 시스템 디자인 패턴에 대해서 잘 정리된 부분이다.
+
+동기, 비동기를 비롯해서 여러가지 패턴을 머신러닝 파이프라인에 접목해서 사용하는 것으로 알아두면 좋을 것 같은 패턴이다.
+
+---
