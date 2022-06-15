@@ -9,6 +9,6 @@
     "vuepress-plugin-image": "^1.0.4"
   },
   "dependencies": {
-    "node-forge": "1.0.0"
+    "node-forge": "1.3.0"
   }
 }
